@@ -1,0 +1,2 @@
+-- GlobalLinkup seed data (placeholder).
+-- Populated when the local Supabase stack and migrations land.
