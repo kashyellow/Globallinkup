@@ -1,5 +1,0 @@
-[tools]
-"npm:@tailwindcss/language-server" = "latest"
-"npm:@vtsls/language-server" = "latest"
-"npm:prettier" = "latest"
-"npm:vscode-langservers-extracted" = "latest"
