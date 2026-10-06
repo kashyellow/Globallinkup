@@ -1,5 +1,5 @@
 [tools]
-node = "24"
+node = "24.21.0"
 supabase = "2.119.0"
 vercel = { version = "62.2.0", allow_builds = ["esbuild"], trust_policy_excludes = ["undici"] }
 
