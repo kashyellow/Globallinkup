@@ -1,4 +1,5 @@
 [tools]
 node = "24"
-supabase = "latest"
-vercel = { version = "latest", allow_builds = ["esbuild"], trust_policy_excludes = ["undici"] }
+supabase = "2.119.0"
+vercel = { version = "62.2.0", allow_builds = ["esbuild"], trust_policy_excludes = ["undici"] }
+
