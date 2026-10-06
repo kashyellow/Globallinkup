@@ -34,6 +34,19 @@ implementation. Where this summary and the PRD disagree, the PRD wins.
 - Runtime pinned in `mise.toml`: Node `24.21.0`, Supabase CLI `2.119.0`,
   Vercel CLI `62.2.0`.
 
+## Scripts & quality gates
+
+- `npm run dev|build|start|lint` — Next/ESLint.
+- `npm run format|format:check` — Prettier (+ Tailwind class sorting).
+- `npm run typecheck` — `tsc --noEmit`.
+- `npm test` / `npm run test:watch` — Vitest + Testing Library (jsdom).
+- `npm run e2e` — Playwright (Chromium).
+- Hooks: `pre-commit` → lint-staged (ESLint `--fix` + Prettier); `commit-msg` →
+  commitlint. CI (`.github/workflows/ci.yml`) runs commitlint on PRs plus
+  format:check, lint, typecheck, test, build, and e2e.
+- Commits follow Conventional Commits, enforced by commitlint. See
+  `docs/COMMITS.md`.
+
 ## Layout
 
 - `src/app/` — routes (locale-prefixed `[locale]`; `app/api/` for route handlers).

@@ -28,14 +28,36 @@ this file. `docs/CONTEXT.md` is auto-injected every session (see
 ## Commands (npm)
 
 ```
-npm run dev        # Next dev server
-npm run build      # production build
-npm start          # serve production build
-npm run lint       # ESLint (flat config)
+npm run dev          # Next dev server
+npm run build        # production build
+npm start            # serve production build
+npm run lint         # ESLint (flat config)
+npm run format       # Prettier write
+npm run format:check # Prettier check (CI)
+npm run typecheck    # tsc --noEmit
+npm test             # Vitest (unit/component)
+npm run test:watch   # Vitest watch
+npm run e2e          # Playwright
 ```
 
-`typecheck`, `test`, and `e2e` scripts are added in the foundation phase. Prefer
-the local tooling; the repo uses npm, not pnpm.
+Prefer the local tooling; the repo uses npm, not pnpm.
+
+## Commit convention
+
+This repository enforces Conventional Commits with commitlint (husky `commit-msg`
+hook) and lints commits in CI. Read `docs/COMMITS.md` before committing.
+
+- Read the enforced rules: `npx commitlint --print-config json`
+- Validate a message before using it:
+  `printf '%s' "<message>" | npx commitlint` (exit 0 = valid)
+- If the `commit-msg` hook rejects a commit, fix the rules named in brackets
+  (e.g. `[subject-case]`) and retry. **Never use `git commit --no-verify`.**
+- Allowed types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`,
+  `build`, `ci`, `chore`, `revert`.
+- Allowed scopes: `auth`, `persona`, `posts`, `connect`, `marketplace`, `admin`,
+  `i18n`, `ui`, `db`, `config`, `deps`, `docs`, `ci`.
+
+The `pre-commit` hook runs lint-staged (ESLint `--fix` + Prettier) on staged files.
 
 ## Conventions
 
@@ -56,4 +78,3 @@ the local tooling; the repo uses npm, not pnpm.
   `next dev`. Do not edit or remove it; add project rules below it.
 - `CLAUDE.md` only matters to Claude Code; OpenCode reads this file and
   `opencode.json`.
-
