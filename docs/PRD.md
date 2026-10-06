@@ -4,14 +4,16 @@
 | --- | --- |
 | **Product** | GlobalLinkup (formerly "Global Amor") |
 | **Document** | Product Requirements Document (PRD) |
-| **Version** | 0.1 — draft for review |
+| **Version** | 0.2 — foundation updates |
 | **Status** | Draft; pending stakeholder (client) review |
-| **Date** | 2026-10-05 |
-| **Source of truth** | `PROJECT_HANDOVER.md` (this PRD must not contradict it; where it does, the handover wins until it is explicitly amended) |
+| **Date** | 2026-10-06 |
+| **Source of truth** | `docs/PROJECT.md` (formerly `PROJECT_HANDOVER.md`) — this PRD must not contradict it; where it does, the handover wins until it is explicitly amended |
 | **Platform** | Responsive web application |
 | **Languages** | English, Spanish (both first-class) |
 
 > This is a **living document**. It converts the handover into concrete, testable requirements, resolves the handover's ambiguities with explicit decisions, and parks genuinely open questions in §13 so a human can confirm them. Nothing in §13 is assumed to be final; each has a proposed default to unblock work.
+>
+> **Foundation deviations (v0.2):** the project uses **npm** (not pnpm, which v0.1 §9/§10.1 listed); foundational docs (`SPEC.md`, `CONTEXT.md`, `CONSTRAINTS.md`) live under `docs/`; and the runtime is pinned in `mise.toml` to Node `24.21.0`, Supabase CLI `2.119.0`, and Vercel CLI `62.2.0`. Where v0.1 disagrees with these, this note wins.
 
 ---
 
@@ -122,7 +124,7 @@ These were agreed during architecture review and are binding for the build unles
 | D6 | Admin bootstrap | Seed/migration promotes the account matching `ADMIN_EMAIL` to `role = admin` |
 | D7 | Local database | `supabase start` (Docker) via mise-managed Supabase CLI; move to cloud once stable |
 | D8 | Design skills | `frontend-ui-engineering` primary; `design-taste-frontend` only on public/landing/auth surfaces; all other design skills disabled |
-| D9 | Runtime pinning | mise pins Node + pnpm + Supabase CLI + Vercel CLI (see §15) |
+| D9 | Runtime pinning | mise pins Node + Supabase CLI + Vercel CLI; **npm** is the package manager (bundled with Node) (see §10.1) |
 | D10 | Email confirmation | **Open** — see OQ-1 |
 
 ---
@@ -503,12 +505,11 @@ Keyboard navigation, visible focus states, proper form labels, accessible button
 ### 9.1 Proposed repository layout
 
 ```
-global-linkup/
-  PRD.md  PROJECT_HANDOVER.md
-  .mise.toml  package.json  tsconfig.json  next.config.ts
+globallinkup/
+  docs/{PRD.md, PROJECT.md, SPEC.md, CONTEXT.md, CONSTRAINTS.md, adr/}
+  mise.toml  package.json  package-lock.json  tsconfig.json  next.config.ts
   eslint.config.mjs  prettier.config.mjs  .env.example  .gitignore
-  AGENTS.md  SPEC.md  CONTEXT.md  CONSTRAINTS.md
-  docs/adr/
+  AGENTS.md  opencode.json
   supabase/{config.toml, migrations/, seed.sql, tests/}
   src/
     app/[locale]/…            # routes by locale
@@ -529,23 +530,22 @@ global-linkup/
 
 ### 10.1 mise
 
-Project `.mise.toml` pins exact versions (already installed locally):
+Project `mise.toml` pins exact versions (already installed locally):
 
 ```toml
 [tools]
 node = "24.21.0"
-pnpm = "12.5.1"
-supabase = "2.118.0"
-vercel = "59.16.0"
+supabase = "2.119.0"
+vercel = { version = "62.2.0", allow_builds = ["esbuild"], trust_policy_excludes = ["undici"] }
 ```
 
-If mise is unavailable, the same scripts work with any Node ≥ 24 + pnpm (`corepack enable`).
+`npm` (currently 11.19.0) is the package manager and ships with Node, so it is not pinned separately. If mise is unavailable, the same scripts work with any Node ≥ 24 + npm.
 
 ### 10.2 Skills strategy
 
 A hierarchy prevents conflicts (handover §39–40):
 
-1. `PROJECT_HANDOVER.md` + this PRD + `SPEC.md` + `CONTEXT.md` + `CONSTRAINTS.md` + `AGENTS.md` — **always override**.
+1. `docs/PROJECT.md` + `docs/PRD.md` + `docs/SPEC.md` + `docs/CONTEXT.md` + `docs/CONSTRAINTS.md` + root `AGENTS.md` — **always override**.
 2. Planning: `spec-driven-development`, `planning-and-task-breakdown`, `domain-modeling`, `doubt-driven-development`.
 3. Engineering: `incremental-implementation`, **one** TDD skill, **one** review skill, `security-and-hardening`, `api-and-interface-design`, `git-workflow-and-versioning`, `documentation-and-adrs`.
 4. UI: **`frontend-ui-engineering`** primary; `design-taste-frontend` only for public/landing/auth surfaces.
@@ -571,13 +571,13 @@ Work proceeds in small vertical slices: **spec → test → implement → verify
 
 ### Phase 0 — Specification & decisions (this document)
 
-- PRD (this file), then `SPEC.md` + capability map, `CONTEXT.md` glossary, `CONSTRAINTS.md`, `AGENTS.md`, and ADRs (stack, i18n, RLS, hybrid API).
+- PRD (this file), then `docs/SPEC.md` + capability map, `docs/CONTEXT.md` glossary, `docs/CONSTRAINTS.md`, root `AGENTS.md`, and ADRs in `docs/adr/` (stack, i18n, RLS, hybrid API).
 - Configure the repo for the engineering skills (`setup-matt-pocock-skills`).
 - Resolve §13 open questions.
 
 ### Phase 1 — Foundation
 
-1. `git init` (when approved); `.mise.toml`; `.gitignore`; `.env.example`.
+1. `git init` (when approved); `mise.toml`; `.gitignore`; `.env.example`.
 2. Scaffold Next.js + TS strict + App Router + Tailwind.
 3. `supabase init` + local stack (Docker).
 4. Tooling: ESLint, Prettier, husky, lint-staged, commitlint; scripts `dev/build/lint/typecheck/test/e2e`.
