@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+build
+coverage
+package-lock.json
+next-env.d.ts
+
+# Long-form, hand-authored source-of-truth docs: formatting them adds churn
+# without value. Edit them by hand.
+docs/PRD.md
+docs/PROJECT.md
