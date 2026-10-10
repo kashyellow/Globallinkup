@@ -57,3 +57,6 @@ Reference
 
 # agent workspace metadata (local notes, not project source)
 .workbuddy-ai/
+
+# throwaway design-audit tooling + screenshots (local only)
+/.audit/

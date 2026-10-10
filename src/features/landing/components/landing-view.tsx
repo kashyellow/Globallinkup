@@ -2,10 +2,16 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { Reveal } from "@/features/landing/components/reveal";
 import { Icon } from "@/components/ui/icon";
 import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
+/*
+ * Member photography supplied with the mockups. These are the `/aida-public/`
+ * paths, which are publicly readable and confirmed to render in Chromium. The
+ * `/aida/` variants 403 or silently fail to decode.
+ */
 const SOFIA =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuAATlSmkEIUqeeL2L5XxBOU6w03gzVzBw2Uzhhca7DwdYW4hDZd4o2AHMBhf1TzL67D6LizWd-FlfVA5rzm36kc_qs9lanO29UHXGB-OSFZtqfLJCv-9QAADdrJu-b1MpnO7Bk7BE5yKrjUuUxCafSczIqtPSB73rF_OXuT5UwFZcwTK2wqBodkDNA66r01n5t9K7H5kFx9Lg8ZtrZYW1pwWrb9focCtsu1qILGbUffIAcWXP7LwBQmuw";
 const MATEO =
@@ -17,18 +23,42 @@ const BAG =
 const STUDIO =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuDPMukyKSkNklwKos0zIPmrhussBbhIqH_DAe6FwMA840zx1UFDYjAozcSdotXytnwNMuS_QuhFYeBxvEsN8W_6w-mW5WquDMRQSHeiq5_AgLbtm5eRf3pSfR6BvrXAhe2X7EY5lkY1dhOFg5s3JdcnRgDUY1ysC-cbn-BFTNdZslFJEFPzUFwjdMbyNuXSy_-BY8hxhCPpgrmLQi3eOpjokx3tQhQ8Jq7bDUHb3_JoAU-BW_jDCaTVQw";
 
+/** Corner radius scale. One system, applied consistently (see globals.css). */
+/*
+ * Radius scale. `tray` = 26px and `core` = 20px are deliberately 6px apart:
+ * the tray's 0.375rem padding plus that gap is what produces the concentric
+ * bezel look. Panels that use the `bezel-tray`/`bezel-core` utilities get these
+ * values from CSS; the raw tokens remain for bespoke nesting (hero card slab,
+ * dispatch panel) and for chips.
+ */
+const R = {
+  tray: "rounded-[1.625rem]",
+  core: "rounded-[1.25rem]",
+  chip: "rounded-full",
+} as const;
+
 const STEPS = [
-  { n: 1, icon: "badge" },
-  { n: 2, icon: "send" },
-  { n: 3, icon: "thumbs_up_down" },
-  { n: 4, icon: "key" },
+  { key: "step1", accent: false },
+  { key: "step2", accent: false },
+  { key: "step3", accent: false },
+  { key: "step4", accent: true },
 ] as const;
 
-const PILLARS = [
-  { n: 1, icon: "person_pin", href: "/discover", anchor: "discover-personas" },
-  { n: 2, icon: "photo_library", href: "/posts", anchor: "editorial-feed" },
-  { n: 3, icon: "storefront", href: "/marketplace", anchor: "artisan-goods" },
-] as const;
+/** Shared primary/secondary CTA treatment, so the same intent looks identical everywhere. */
+const CTA_PRIMARY =
+  "group inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-6 font-label-lg text-label-lg whitespace-nowrap text-on-primary transition-[background-color,transform,box-shadow] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-primary-hover hover:shadow-lift-md active:translate-y-px active:scale-[0.985] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+
+const CTA_SECONDARY =
+  "group inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full border border-outline bg-marketing-core/70 px-6 font-label-lg text-label-lg whitespace-nowrap text-on-surface transition-[background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-outline-hover hover:bg-marketing-raised active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+
+/** Small trailing icon inside its own circle, so the arrow never sits naked. */
+function CtaIcon({ name }: { name: string }) {
+  return (
+    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-on-primary/15 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-px">
+      <Icon name={name} className="text-[16px]" />
+    </span>
+  );
+}
 
 export function LandingView() {
   const t = useTranslations("Landing");
@@ -36,667 +66,707 @@ export function LandingView() {
 
   return (
     <>
-      {/* ── HERO ─────────────────────────────────────────────────────────── */}
+      {/* ── HERO ─────────────────────────────────────────────────────────
+          Asymmetric split: 7 columns of message, 5 of artefact. Four text
+          elements only (eyebrow, headline, subtext, CTAs). */}
       <section
         id="hero"
-        className="relative mx-auto w-full max-w-[1240px] px-margin-mobile pt-space-lg pb-space-xl md:px-margin md:pt-space-xl"
+        className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-space-lg pb-section-mobile md:px-margin md:pt-section md:pb-section"
       >
-        <div className="grid grid-cols-1 items-center gap-space-lg lg:grid-cols-12 lg:gap-space-xl">
-          <div className="flex flex-col items-start space-y-space-md md:space-y-space-lg lg:col-span-7">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#2E2B27] bg-[#23201D] px-3 py-1.5 font-label-caps text-label-caps tracking-wider text-[#E0D9CF] uppercase">
-              <span className="h-2 w-2 rounded-full bg-[#E86A5B]" />
-              <span>{t("hero.badge")}</span>
-            </div>
+        <div className="grid grid-cols-1 gap-space-lg lg:grid-cols-12 lg:items-center lg:gap-x-space-xl">
+          <div className="flex flex-col items-start lg:col-span-7">
+            <p className="rounded-full border border-outline-variant bg-marketing-raised/70 px-3.5 py-1.5 font-label-caps text-label-caps tracking-[0.14em] text-on-surface-variant uppercase">
+              {t("hero.badge")}
+            </p>
 
-            <div className="space-y-2">
-              <h1 className="font-headline-xl text-headline-xl-mobile leading-tight font-bold tracking-tight text-[#F5F2EB] md:text-headline-xl">
-                {t("hero.titleLine1")}
-                <br className="hidden sm:inline" />
-                {t("hero.titleLine2")}
-              </h1>
-              <p className="font-headline-sm text-headline-sm font-medium text-[#C4BEB5] italic">
-                {t("hero.titleAlt")}
-              </p>
-            </div>
+            <h1 className="mt-space-md font-display-lg text-display-lg-mobile font-bold text-balance text-on-surface md:text-display-lg lg:text-display-xl">
+              {t("hero.titleLine1")}
+              <br />
+              <span className="text-primary">{t("hero.titleLine2")}</span>
+            </h1>
 
-            <p className="max-w-xl font-body-lg text-body-lg text-[#C4BEB5]">{t("hero.body")}</p>
+            <p className="mt-space-sm font-headline-sm text-headline-sm font-medium text-text-muted italic">
+              {t("hero.titleAlt")}
+            </p>
 
-            <div className="flex w-full flex-wrap items-center gap-space-md pt-space-xs sm:w-auto">
-              <Link
-                href="/register"
-                className="inline-flex h-12 items-center justify-center rounded-xl bg-[#E86A5B] px-7 font-label-lg text-label-lg text-white shadow-md transition-all hover:bg-[#d4584a]"
-              >
+            <p className="mt-space-md max-w-[52ch] font-body-lg text-body-lg text-pretty text-on-surface-variant">
+              {t("hero.body")}
+            </p>
+
+            <div className="mt-space-lg flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+              <Link href="/register" className={CTA_PRIMARY}>
                 {t("hero.join")}
-                <Icon name="north_east" className="ml-2 text-[20px]" />
+                <CtaIcon name="north_east" />
               </Link>
-              <Link
-                href="/discover"
-                className="inline-flex h-12 items-center justify-center rounded-xl border border-[#2E2B27] bg-[#1E1C19] px-6 font-label-lg text-label-lg text-[#F5F2EB] shadow-sm transition-all hover:border-[#3E3A34] hover:bg-[#282622]"
-              >
+              <Link href="/discover" className={CTA_SECONDARY}>
                 {t("hero.explore")}
-                <Icon name="explore" className="ml-2 text-[20px]" />
+                <Icon name="arrow_forward" className="text-[18px]" />
               </Link>
             </div>
-
-            <div className="flex flex-wrap items-center gap-x-space-md gap-y-2 pt-space-md font-label-md text-label-md text-[#9E988F]">
-              {(["personas", "consent", "spam"] as const).map((key, index) => (
-                <div key={key} className="flex items-center gap-1.5">
-                  {index > 0 ? (
-                    <span className="mr-2 hidden text-[#3E3A34] sm:inline">•</span>
-                  ) : null}
-                  <Icon
-                    name={
-                      key === "personas"
-                        ? "verified_user"
-                        : key === "consent"
-                          ? "lock_reset"
-                          : "format_image_left"
-                    }
-                    className="text-[18px] text-[#38a36f]"
-                  />
-                  <span>{t(`hero.trust.${key}`)}</span>
-                </div>
-              ))}
-            </div>
           </div>
 
-          {/* Hero persona card */}
-          <div className="relative mt-space-md lg:col-span-5 lg:mt-0">
-            <div className="absolute -top-6 -left-6 -z-10 h-full w-full -rotate-2 rounded-2xl border border-[#2E2B27] bg-[#201D1A]" />
-            <div className="w-full overflow-hidden rounded-2xl border border-[#2E2B27] bg-[#1D1B19] shadow-2xl">
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#23211E]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img alt={t("hero.cardAlt")} className="h-full w-full object-cover" src={SOFIA} />
-                <div className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full border border-[#2E2B27] bg-[#121110]/85 px-3 py-1 font-label-md text-label-md text-[#F5F2EB] shadow-md backdrop-blur-md">
-                  <Icon name="location_on" className="text-[16px] text-[#E86A5B]" />
-                  <span>{t("hero.city")}</span>
-                </div>
-                <div className="absolute right-4 bottom-4 inline-flex items-center gap-1 rounded-full bg-[#38a36f] px-3 py-1 font-label-caps text-label-caps font-semibold tracking-wider text-white uppercase shadow-md">
-                  <Icon name="verified" className="text-[14px]" />
-                  <span>{t("hero.verified")}</span>
-                </div>
-              </div>
-
-              <div className="space-y-space-md bg-[#1D1B19] p-space-lg">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="font-headline-sm text-headline-sm font-bold text-[#F5F2EB]">
-                      {t("hero.name")}
-                    </h3>
-                    <p className="font-body-sm text-body-sm text-[#9E988F]">{t("hero.role")}</p>
-                  </div>
-                  <div className="flex items-center gap-1 rounded-full border border-[#244A32] bg-[#16291E] px-2.5 py-1 font-label-caps text-label-caps text-[#38a36f]">
-                    <Icon name="language" className="text-[14px]" />
-                    <span>{t("hero.languages")}</span>
-                  </div>
-                </div>
-
-                <p className="line-clamp-2 font-body-sm text-body-sm text-[#C4BEB5]">
-                  {t("hero.bio")}
-                </p>
-
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {(["architecture", "photography", "ceramics"] as const).map((key) => (
-                    <span
-                      key={key}
-                      className="rounded border border-[#322F2A] bg-[#282622] px-2.5 py-1 font-label-md text-label-md text-[#C4BEB5]"
-                    >
-                      {t(`hero.interests.${key}`)}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="flex items-center justify-between rounded-xl border border-[#282622] bg-[#161513] p-3 pt-space-sm">
-                  <div className="flex items-center gap-2">
-                    <div className="h-2.5 w-2.5 animate-pulse rounded-full bg-[#38a36f]" />
-                    <span className="font-label-md text-label-md text-[#F5F2EB]">
-                      {t("hero.ready")}
-                    </span>
-                  </div>
-                  <Link
-                    href="/register"
-                    className="inline-flex items-center justify-center rounded-lg bg-[#E86A5B] px-4 py-1.5 font-label-lg text-label-lg text-white shadow-sm transition-colors hover:bg-[#d4584a]"
-                  >
-                    {t("hero.requestConnect")}
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            <div className="absolute -bottom-5 -left-5 hidden max-w-xs items-center gap-3 rounded-xl border border-[#2E2B27] bg-[#1A1917] p-3 shadow-xl sm:flex">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#2C2723] text-[#E86A5B]">
-                <Icon name="encrypted" className="text-[20px]" />
-              </div>
-              <div>
-                <div className="font-label-md text-label-md font-semibold text-[#F5F2EB]">
-                  {t("hero.floatTitle")}
-                </div>
-                <div className="font-body-sm text-body-sm text-[#9E988F]">
-                  {t("hero.floatBody")}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── HOW IT WORKS (4-step privacy protocol) ───────────────────────── */}
-      <section
-        id="how-it-works"
-        className="w-full border-y border-[#282622] bg-[#181715] py-space-xl"
-      >
-        <div className="mx-auto max-w-[1240px] space-y-space-xl px-margin-mobile md:px-margin">
-          <div className="max-w-2xl space-y-space-xs">
-            <div className="inline-flex items-center gap-2 rounded border border-[#322E29] bg-[#25221F] px-3 py-1 font-label-caps text-label-caps tracking-wider text-[#E0D9CF] uppercase">
-              {t("protocol.badge")}
-            </div>
-            <h2 className="font-headline-lg text-headline-lg-mobile font-bold tracking-tight text-[#F5F2EB] md:text-headline-lg">
-              {t("protocol.title")}
-            </h2>
-            <p className="font-body-lg text-body-lg text-[#C4BEB5]">{t("protocol.body")}</p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-space-md md:grid-cols-2 lg:grid-cols-4">
-            {STEPS.map((step) => (
-              <div
-                key={step.n}
-                className="flex flex-col justify-between space-y-space-md rounded-2xl border border-[#282622] bg-[#121110] p-space-lg"
-              >
-                <div className="space-y-space-sm">
-                  <div className="font-label-caps text-label-caps font-bold tracking-widest text-[#E86A5B] uppercase">
-                    {t(`protocol.step${step.n}Label`)}
-                  </div>
-                  <h3 className="font-headline-sm text-headline-sm font-semibold text-[#F5F2EB]">
-                    {t(`protocol.step${step.n}Title`)}
-                  </h3>
-                  <p className="font-body-sm text-body-sm leading-relaxed text-[#C4BEB5]">
-                    {t(`protocol.step${step.n}Body`)}
-                  </p>
-                </div>
-                <div
-                  className={cn(
-                    "flex h-10 w-10 items-center justify-center rounded-full border shadow-sm",
-                    step.n === 4
-                      ? "border-[#244A32] bg-[#182B20] text-[#38a36f]"
-                      : "border-[#2E2B27] bg-[#201E1B] text-[#E86A5B]",
-                  )}
-                >
-                  <Icon name={step.icon} className="text-[22px]" />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Locked / unlocked demo */}
-          {/* Interactive locker demo — the target of the nav's "Privacy Protocol" link. */}
-          <div
-            id="privacy-protocol"
-            className="w-full rounded-2xl border border-[#282622] bg-[#131210] p-space-lg md:p-space-xl"
-          >
-            <div className="mb-space-lg flex flex-col justify-between gap-space-md md:flex-row md:items-center">
-              <div>
-                <h3 className="font-headline-sm text-headline-sm font-bold text-[#F5F2EB]">
-                  {t("demo.title")}
-                </h3>
-                <p className="font-body-sm text-body-sm text-[#9E988F]">{t("demo.body")}</p>
-              </div>
-              <div className="inline-flex self-start rounded-xl border border-[#2E2B27] bg-[#1A1917] p-1 shadow-sm md:self-auto">
-                <button
-                  type="button"
-                  onClick={() => setLockerOpen(false)}
-                  aria-pressed={!lockerOpen}
-                  className={cn(
-                    "rounded-lg px-4 py-2 font-label-md text-label-md transition-all",
-                    !lockerOpen ? "bg-[#E86A5B] text-white" : "text-[#9E988F] hover:text-[#F5F2EB]",
-                  )}
-                >
-                  {t("demo.lockedTab")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setLockerOpen(true)}
-                  aria-pressed={lockerOpen}
-                  className={cn(
-                    "rounded-lg px-4 py-2 font-label-md text-label-md transition-all",
-                    lockerOpen ? "bg-[#E86A5B] text-white" : "text-[#9E988F] hover:text-[#F5F2EB]",
-                  )}
-                >
-                  {t("demo.unlockedTab")}
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 items-center gap-space-lg lg:grid-cols-12">
-              {/* Mini profile */}
-              <div className="space-y-space-sm rounded-xl border border-[#282622] bg-[#1C1A18] p-space-md shadow-sm lg:col-span-5">
-                <div className="flex items-center gap-space-md">
-                  <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full border border-[#2E2B27]">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      alt={t("demo.miniAlt")}
-                      className="h-full w-full object-cover"
-                      src={SOFIA}
-                    />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-1.5">
-                      <h4 className="font-headline-sm text-headline-sm font-bold text-[#F5F2EB]">
-                        {t("demo.miniName")}
-                      </h4>
-                      <Icon name="verified" className="text-[18px] text-[#38a36f]" />
-                    </div>
-                    <div className="font-body-sm text-body-sm text-[#9E988F]">
-                      {t("demo.miniMeta")}
-                    </div>
-                  </div>
-                </div>
-                <p className="pt-2 font-body-sm text-body-sm text-[#C4BEB5]">
-                  {t("demo.statusLabel")}{" "}
-                  <span className="font-semibold text-[#E86A5B]">
-                    {lockerOpen ? t("demo.statusUnlocked") : t("demo.statusLocked")}
-                  </span>
-                </p>
-              </div>
-
-              {/* Locker */}
-              <div className="rounded-xl border border-[#282622] bg-[#1C1A18] p-space-lg shadow-sm lg:col-span-7">
-                {lockerOpen ? (
-                  <div className="space-y-space-md">
-                    <div className="flex items-center justify-between border-b border-[#282622] pb-space-sm">
-                      <div className="flex items-center gap-2">
-                        <Icon name="lock_open" className="text-[20px] text-[#38a36f]" />
-                        <span className="font-label-lg text-label-lg font-bold text-[#F5F2EB]">
-                          {t("demo.unlockedTitle")}
-                        </span>
-                      </div>
-                      <span className="rounded border border-[#244A32] bg-[#182B20] px-2.5 py-0.5 font-label-caps text-label-caps font-semibold text-[#38a36f] uppercase">
-                        {t("demo.active")}
-                      </span>
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between rounded-lg border border-[#282622] bg-[#131210] p-3">
-                        <div className="flex items-center gap-3">
-                          <Icon name="photo_camera" className="text-[20px] text-[#E86A5B]" />
-                          <span className="font-body-sm text-body-sm font-semibold text-[#F5F2EB]">
-                            {t("demo.igUnlocked")}
-                          </span>
-                        </div>
-                        <a
-                          href="#"
-                          className="rounded border border-[#36322C] bg-[#25221F] px-3 py-1 font-label-md text-label-md text-[#E86A5B] shadow-sm transition-colors hover:bg-[#2F2B26]"
-                        >
-                          {t("demo.openProfile")}
-                        </a>
-                      </div>
-                      <div className="flex items-center justify-between rounded-lg border border-[#282622] bg-[#131210] p-3">
-                        <div className="flex items-center gap-3">
-                          <Icon name="chat" className="text-[20px] text-[#38a36f]" />
-                          <span className="font-body-sm text-body-sm font-semibold text-[#F5F2EB]">
-                            {t("demo.tgUnlocked")}
-                          </span>
-                        </div>
-                        <a
-                          href="#"
-                          className="rounded border border-[#36322C] bg-[#25221F] px-3 py-1 font-label-md text-label-md text-[#38a36f] shadow-sm transition-colors hover:bg-[#2F2B26]"
-                        >
-                          {t("demo.startChat")}
-                        </a>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-2 rounded-lg border border-[#1E3B2C] bg-[#15271D] p-3 font-body-sm text-body-sm text-[#A8D5BA]">
-                      <Icon
-                        name="verified"
-                        className="mt-0.5 shrink-0 text-[18px] text-[#38a36f]"
-                      />
-                      <span>{t("demo.unlockedNote")}</span>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-space-md">
-                    <div className="flex items-center justify-between border-b border-[#282622] pb-space-sm">
-                      <div className="flex items-center gap-2">
-                        <Icon name="lock" className="text-[20px] text-[#9E988F]" />
-                        <span className="font-label-lg text-label-lg font-bold text-[#F5F2EB]">
-                          {t("demo.lockedTitle")}
-                        </span>
-                      </div>
-                      <span className="rounded border border-[#34302A] bg-[#282622] px-2.5 py-0.5 font-label-caps text-label-caps text-[#9E988F] uppercase">
-                        {t("demo.encrypted")}
-                      </span>
-                    </div>
-
-                    <div className="space-y-2">
-                      {(["ig", "phone"] as const).map((row) => (
-                        <div
-                          key={row}
-                          className="flex items-center justify-between rounded-lg border border-[#282622] bg-[#131210] p-3"
-                        >
-                          <div className="flex items-center gap-3">
-                            <Icon
-                              name={row === "ig" ? "photo_camera" : "chat"}
-                              className="text-[20px] text-[#9E988F]"
-                            />
-                            <span className="font-body-sm text-body-sm font-medium text-[#7A746B] blur-[3px] select-none">
-                              {t(`demo.masked.${row}`)}
-                            </span>
-                          </div>
-                          <span className="font-label-caps text-label-caps font-semibold text-[#7A746B] uppercase">
-                            {t("demo.locked")}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="flex items-start gap-2 rounded-lg border border-[#342C27] bg-[#241F1C] p-3 font-body-sm text-body-sm text-[#C4BEB5]">
-                      <Icon name="info" className="mt-0.5 shrink-0 text-[18px] text-[#E86A5B]" />
-                      <span>{t("demo.lockedNote")}</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── THREE PILLARS ────────────────────────────────────────────────── */}
-      <section
-        id="pillars"
-        className="mx-auto w-full max-w-[1240px] px-margin-mobile py-space-xl md:px-margin"
-      >
-        <div className="space-y-space-xl">
-          <div className="mx-auto max-w-2xl space-y-space-xs text-center">
-            <span className="font-label-caps text-label-caps font-bold tracking-widest text-[#E86A5B] uppercase">
-              {t("pillars.badge")}
-            </span>
-            <h2 className="font-headline-lg text-headline-lg-mobile font-bold text-[#F5F2EB] md:text-headline-lg">
-              {t("pillars.title")}
-            </h2>
-            <p className="font-body-md text-body-md text-[#C4BEB5]">{t("pillars.body")}</p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-space-lg md:grid-cols-3">
-            {PILLARS.map((pillar) => (
-              <div
-                key={pillar.n}
-                id={pillar.anchor}
-                className="flex flex-col justify-between space-y-space-md rounded-2xl border border-[#282622] bg-[#1A1917] p-space-lg shadow-sm"
-              >
-                <div className="space-y-space-md">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#362E28] bg-[#28231F] text-[#E86A5B]">
-                    <Icon name={pillar.icon} className="text-[28px]" />
-                  </div>
-                  <div className="space-y-1">
-                    <span className="font-label-caps text-label-caps text-[#9E988F] uppercase">
-                      {t(`pillars.pillar${pillar.n}Label`)}
-                    </span>
-                    <h3 className="font-headline-sm text-headline-sm font-bold text-[#F5F2EB]">
-                      {t(`pillars.pillar${pillar.n}Title`)}
-                    </h3>
-                  </div>
-                  <p className="font-body-md text-body-md text-[#C4BEB5]">
-                    {t(`pillars.pillar${pillar.n}Body`)}
-                  </p>
-                </div>
-                <div className="pt-space-md">
-                  <Link
-                    href={pillar.href}
-                    className="inline-flex min-h-10 items-center py-2 font-label-lg text-label-lg text-[#E86A5B] hover:underline"
-                  >
-                    {t(`pillars.pillar${pillar.n}Cta`)}
-                    <Icon name="arrow_forward" className="ml-1 text-[18px]" />
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── COMMUNITY SNAPSHOT ───────────────────────────────────────────── */}
-      <section id="community" className="w-full border-y border-[#282622] bg-[#181715] py-space-xl">
-        <div className="mx-auto max-w-[1240px] space-y-space-xl px-margin-mobile md:px-margin">
-          <div className="flex flex-col justify-between gap-space-md md:flex-row md:items-end">
-            <div className="max-w-xl space-y-space-xs">
-              <span className="font-label-caps text-label-caps font-bold tracking-widest text-[#E86A5B] uppercase">
-                {t("snapshot.badge")}
-              </span>
-              <h2 className="font-headline-lg text-headline-lg-mobile font-bold text-[#F5F2EB] md:text-headline-lg">
-                {t("snapshot.title")}
-              </h2>
-              <p className="font-body-md text-body-md text-[#C4BEB5]">{t("snapshot.body")}</p>
-            </div>
-            <Link
-              href="/discover"
-              className="inline-flex items-center gap-2 rounded-xl border border-[#2E2B27] bg-[#201E1B] px-4 py-2 font-label-lg text-label-lg text-[#F5F2EB] transition-colors hover:bg-[#282622]"
-            >
-              {t("snapshot.viewAll")}
-              <Icon name="arrow_forward" className="text-[18px]" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 gap-space-lg md:grid-cols-12">
-            {/* Mateo */}
-            <SnapshotCard
-              image={MATEO}
-              imageAlt={t("snapshot.mateoAlt")}
-              location={t("snapshot.mateoCity")}
-              verifiedLabel={t("snapshot.verified")}
-              name={t("snapshot.mateoName")}
-              languages="ES / EN"
-              quote={t("snapshot.mateoQuote")}
-              tags={[t("snapshot.mateoTag1"), t("snapshot.mateoTag2")]}
-              ctaLabel={t("snapshot.requestConnect")}
-              ctaHref="/register"
+          {/* Persona card, built as a nested tray so it reads as a physical panel. */}
+          <div className="relative lg:col-span-5">
+            {/* Offset slab behind the card suggests depth and a single light source. */}
+            <div
+              aria-hidden
+              className={cn(
+                "absolute -top-4 -right-4 hidden h-full w-full rotate-[1.5deg] border border-outline-variant bg-marketing-shell sm:block",
+                R.tray,
+              )}
             />
 
-            {/* Lucas */}
-            <SnapshotCard
-              image={LUCAS}
-              imageAlt={t("snapshot.lucasAlt")}
-              location={t("snapshot.lucasCity")}
-              verifiedLabel={t("snapshot.verified")}
-              name={t("snapshot.lucasName")}
-              languages="ES / EN"
-              quote={t("snapshot.lucasQuote")}
-              tags={[t("snapshot.lucasTag1"), t("snapshot.lucasTag2")]}
-              ctaLabel={t("snapshot.requestConnect")}
-              ctaHref="/register"
-            />
-
-            {/* Marketplace item */}
-            <div className="flex flex-col justify-between overflow-hidden rounded-2xl border border-[#282622] bg-[#121110] shadow-sm md:col-span-4">
-              <div>
-                <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#23211E]">
+            <div className="relative bezel-tray">
+              <div className="overflow-hidden bezel-core">
+                <div className="relative aspect-[5/4] w-full overflow-hidden bg-marketing-raised">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    alt={t("snapshot.bagAlt")}
+                    alt={t("hero.cardAlt")}
                     className="h-full w-full object-cover"
-                    src={BAG}
+                    src={SOFIA}
+                    fetchPriority="high"
                   />
-                  <div className="absolute top-3 left-3 rounded-full border border-[#244A32] bg-[#182B20] px-2.5 py-1 font-label-caps text-label-caps font-semibold tracking-wider text-[#38a36f] uppercase">
-                    {t("snapshot.adminCurated")}
-                  </div>
-                  <div className="absolute top-3 right-3 rounded-full border border-[#282622] bg-[#121110]/85 px-2.5 py-1 font-label-md text-label-md font-bold text-[#F5F2EB] backdrop-blur-md">
-                    {t("snapshot.bagPrice")}
-                  </div>
-                </div>
-                <div className="space-y-space-xs p-space-md">
-                  <span className="font-label-caps text-label-caps font-bold text-[#E86A5B] uppercase">
-                    {t("snapshot.bagOrigin")}
+                  <div
+                    aria-hidden
+                    className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-marketing-core via-marketing-core/60 to-transparent"
+                  />
+
+                  <span
+                    className={cn(
+                      "absolute top-4 left-4 inline-flex items-center gap-1.5 border border-outline-variant bg-marketing-base/90 px-3 py-1 font-label-md text-label-md text-on-surface shadow-lift-sm",
+                      R.chip,
+                    )}
+                  >
+                    <Icon name="location_on" className="text-[15px] text-primary" />
+                    {t("hero.city")}
                   </span>
-                  <h4 className="font-headline-sm text-headline-sm font-bold text-[#F5F2EB]">
-                    {t("snapshot.bagName")}
-                  </h4>
-                  <p className="line-clamp-2 font-body-sm text-body-sm text-[#C4BEB5]">
-                    {t("snapshot.bagBody")}
+                </div>
+
+                <div className="space-y-space-md px-space-lg pt-space-md pb-space-lg">
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-space-md gap-y-1">
+                    <h2 className="font-headline-md text-headline-md font-bold tracking-tight text-on-surface">
+                      {t("hero.name")}
+                    </h2>
+                    <span className="font-label-md text-label-md text-tertiary">
+                      {t("hero.languages")}
+                    </span>
+                  </div>
+
+                  <p className="-mt-2 font-body-sm text-body-sm text-on-surface-variant">
+                    {t("hero.role")}
                   </p>
+
+                  <p className="font-body-sm text-body-sm text-pretty text-on-surface-variant">
+                    {t("hero.bio")}
+                  </p>
+
+                  <div className="flex flex-wrap gap-1.5">
+                    {(["architecture", "photography", "ceramics"] as const).map((key) => (
+                      <span
+                        key={key}
+                        className={cn(
+                          "border border-outline-variant bg-marketing-raised px-2.5 py-1 font-label-md text-label-md text-on-surface-variant",
+                          R.chip,
+                        )}
+                      >
+                        {t(`hero.interests.${key}`)}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div
+                    className={cn(
+                      "flex items-center justify-between gap-3 border border-outline-variant bg-marketing-base p-2 pl-3.5",
+                      R.chip,
+                    )}
+                  >
+                    <span className="inline-flex items-center gap-2 font-label-md text-label-md text-on-surface">
+                      <span
+                        aria-hidden
+                        className="h-2 w-2 shrink-0 rounded-full bg-tertiary motion-safe:animate-pulse"
+                      />
+                      {t("hero.ready")}
+                    </span>
+                    <Link
+                      href="/register"
+                      className="inline-flex shrink-0 items-center rounded-full bg-primary px-4 py-1.5 font-label-lg text-label-lg whitespace-nowrap text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    >
+                      {t("hero.requestConnect")}
+                    </Link>
+                  </div>
                 </div>
               </div>
-              <div className="p-space-md pt-0">
-                <Link
-                  href="/marketplace"
-                  className="block w-full rounded-lg border border-[#2E2B27] bg-[#201E1B] py-2 text-center font-label-md text-label-md text-[#F5F2EB] transition-colors hover:bg-[#282622]"
-                >
-                  {t("snapshot.viewProvenance")}
-                </Link>
+
+              {/* Sealed-handle note, tucked into the tray's padding rather than floating loose. */}
+              <div className="flex items-center gap-2.5 px-3.5 py-2.5 sm:px-4">
+                <Icon name="lock" className="shrink-0 text-[18px] text-jade" />
+                <p className="font-body-sm text-body-sm text-text-muted">
+                  <span className="font-label-lg text-label-lg text-on-surface">
+                    {t("hero.floatTitle")}
+                  </span>{" "}
+                  {t("hero.floatBody")}
+                </p>
               </div>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Sample post banner */}
-          <div className="rounded-2xl border border-[#282622] bg-[#121110] p-space-lg shadow-sm">
-            <div className="grid grid-cols-1 items-center gap-space-lg lg:grid-cols-12">
-              <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-[#23211E] lg:col-span-5">
+      {/* ── PROTOCOL ─────────────────────────────────────────────────────
+          A connected rail, not a row of equal cards: a hairline links the four
+          stages so the sequence reads as one mechanism. Single eyebrow for this
+          third of the page. */}
+      <section
+        id="how-it-works"
+        className="w-full border-y border-outline-variant bg-marketing-shell/60 py-section-mobile md:py-section"
+      >
+        <div className="mx-auto max-w-[1240px] px-margin-mobile md:px-margin">
+          <Reveal className="max-w-2xl">
+            <p className="font-label-caps text-label-caps tracking-[0.14em] text-primary uppercase">
+              {t("protocol.badge")}
+            </p>
+            <h2 className="mt-space-sm font-display-md text-display-md-mobile font-bold text-balance text-on-surface md:text-display-md">
+              {t("protocol.title")}
+            </h2>
+            <p className="mt-space-sm max-w-[58ch] font-body-lg text-body-lg text-pretty text-on-surface-variant">
+              {t("protocol.body")}
+            </p>
+          </Reveal>
+
+          {/* Rail: one hairline behind, four stops on top. 4 -> 2 -> 1 columns. */}
+          <div className="relative mt-space-xl">
+            <div
+              aria-hidden
+              className="absolute top-6 right-0 left-0 hidden h-px bg-gradient-to-r from-outline-variant via-outline to-outline-variant md:block"
+            />
+
+            <ol className="grid grid-cols-1 gap-space-lg md:grid-cols-2 md:gap-x-space-lg md:gap-y-space-xl lg:grid-cols-4">
+              {STEPS.map((step, index) => (
+                <Reveal as="li" key={step.key} delay={index * 80} className="relative">
+                  {/*
+                   * Step label sits beside the marker with the number in it, so the
+                   * stage name reads as a counter on a rail rather than as another
+                   * tracked-caps eyebrow above a heading.
+                   */}
+                  <div className="flex items-center gap-space-sm">
+                    <span
+                      className={cn(
+                        "relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border font-label-caps text-label-caps font-bold tabular-nums",
+                        step.accent
+                          ? "border-jade-border bg-jade-surface text-jade-bright"
+                          : "border-outline-variant bg-marketing-core text-primary",
+                      )}
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span
+                      className={cn(
+                        "font-label-lg text-label-lg font-semibold",
+                        step.accent ? "text-jade" : "text-on-surface",
+                      )}
+                    >
+                      {t(`protocol.${step.key}Label`)}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-space-md font-headline-sm text-headline-sm font-semibold text-on-surface">
+                    {t(`protocol.${step.key}Title`)}
+                  </h3>
+                  <p className="mt-2 max-w-[38ch] font-body-sm text-body-sm text-pretty text-on-surface-variant">
+                    {t(`protocol.${step.key}Body`)}
+                  </p>
+                </Reveal>
+              ))}
+            </ol>
+          </div>
+
+          {/* Interactive locker demo. */}
+          <Reveal className="mt-space-xl">
+            <LockerDemo open={lockerOpen} onOpenChange={setLockerOpen} />
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ── PILLARS + COMMUNITY (one asymmetric bento) ───────────────────
+          The three product pillars and the community snapshot are the same
+          story ("what you get" / "here it is"), so they share a single grid
+          instead of two consecutive cards-in-a-row sections. */}
+      <section
+        id="pillars"
+        className="mx-auto w-full max-w-[1240px] px-margin-mobile py-section-mobile md:px-margin md:py-section"
+      >
+        <Reveal className="max-w-2xl">
+          <h2 className="font-display-md text-display-md-mobile font-bold text-balance text-on-surface md:text-display-md">
+            {t("pillars.title")}
+          </h2>
+          <p className="mt-space-sm max-w-[55ch] font-body-lg text-body-lg text-pretty text-on-surface-variant">
+            {t("pillars.body")}
+          </p>
+        </Reveal>
+
+        <div className="mt-space-xl grid grid-cols-1 gap-space-md md:grid-cols-6 lg:grid-cols-12">
+          {/* Discover: tall portrait tile, 2 rows on the left rail. */}
+          <Reveal className="md:col-span-3 lg:col-span-5 lg:row-span-2">
+            <article id="discover-personas" className="h-full">
+              <Tray className="h-full">
+                <a
+                  href="#discover-personas"
+                  className="group relative block h-full min-h-[22rem] overflow-hidden bezel-core focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    alt={t("snapshot.mateoAlt")}
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.03]"
+                    src={MATEO}
+                    loading="lazy"
+                  />
+                  <div
+                    aria-hidden
+                    className="absolute inset-0 bg-gradient-to-t from-marketing-base via-marketing-base/45 to-transparent"
+                  />
+                  <span
+                    className={cn(
+                      "absolute top-4 left-4 border border-jade-border bg-jade-surface px-2.5 py-1 font-label-caps text-label-caps tracking-[0.12em] text-jade-bright uppercase shadow-lift-sm",
+                      R.chip,
+                    )}
+                  >
+                    {t("snapshot.verified")}
+                  </span>
+
+                  <div className="absolute inset-x-0 bottom-0 p-space-lg">
+                    <p className="font-label-lg text-label-lg font-semibold text-primary">
+                      {t("pillars.pillar1Label")}
+                    </p>
+                    <h3 className="mt-2 font-headline-md text-headline-md font-bold tracking-tight text-on-surface">
+                      {t("pillars.pillar1Title")}
+                    </h3>
+                    <p className="mt-2 max-w-[42ch] font-body-sm text-body-sm text-pretty text-on-surface-strong">
+                      {t("pillars.pillar1Body")}
+                    </p>
+                    <span className="mt-space-md inline-flex items-center gap-1.5 font-label-lg text-label-lg text-primary">
+                      {t("pillars.pillar1Cta")}
+                      <Icon
+                        name="arrow_forward"
+                        className="text-[18px] transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-1"
+                      />
+                    </span>
+                  </div>
+                </a>
+              </Tray>
+            </article>
+          </Reveal>
+
+          {/* Posts: wide photographic tile. */}
+          <Reveal delay={80} className="md:col-span-3 lg:col-span-7">
+            <article id="editorial-feed" className="h-full">
+              <Tray className="h-full">
+                <div className="grid h-full grid-cols-1 overflow-hidden bezel-core sm:grid-cols-2">
+                  <div className="relative min-h-[13rem] overflow-hidden sm:min-h-full">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      alt={t("snapshot.postAlt")}
+                      className="absolute inset-0 h-full w-full object-cover"
+                      src={STUDIO}
+                      loading="lazy"
+                    />
+                  </div>
+                  <div className="flex flex-col justify-center gap-space-sm bg-marketing-core p-space-lg">
+                    <p className="font-label-lg text-label-lg font-semibold text-primary">
+                      {t("pillars.pillar2Label")}
+                    </p>
+                    <h3 className="font-headline-sm text-headline-sm font-bold text-on-surface">
+                      {t("pillars.pillar2Title")}
+                    </h3>
+                    <p className="font-body-sm text-body-sm text-pretty text-on-surface-variant">
+                      {t("pillars.pillar2Body")}
+                    </p>
+                    <Link
+                      href="/posts"
+                      className="inline-flex w-fit items-center gap-1.5 rounded-full font-label-lg text-label-lg text-primary transition-colors duration-300 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    >
+                      {t("pillars.pillar2Cta")}
+                      <Icon name="arrow_forward" className="text-[18px]" />
+                    </Link>
+                  </div>
+                </div>
+              </Tray>
+            </article>
+          </Reveal>
+
+          {/* Marketplace: product tile. */}
+          <Reveal delay={140} className="md:col-span-3 lg:col-span-4">
+            <article id="artisan-goods" className="h-full">
+              <Tray className="h-full">
+                <div className="flex h-full flex-col overflow-hidden bezel-core">
+                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-marketing-raised">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      alt={t("snapshot.bagAlt")}
+                      className="h-full w-full object-cover"
+                      src={BAG}
+                      loading="lazy"
+                    />
+                    <span
+                      className={cn(
+                        "absolute top-3 left-3 border border-outline-variant bg-marketing-base/92 px-2.5 py-1 font-label-md text-label-md text-on-surface shadow-lift-sm",
+                        R.chip,
+                      )}
+                    >
+                      {t("snapshot.bagPrice")}
+                    </span>
+                  </div>
+                  <div className="flex flex-1 flex-col gap-1.5 p-space-lg">
+                    <p className="font-label-lg text-label-lg font-semibold text-primary">
+                      {t("pillars.pillar3Label")}
+                    </p>
+                    <h3 className="font-headline-sm text-headline-sm font-bold text-on-surface">
+                      {t("pillars.pillar3Title")}
+                    </h3>
+                    <p className="font-body-sm text-body-sm text-pretty text-on-surface-variant">
+                      {t("pillars.pillar3Body")}
+                    </p>
+                    <p className="mt-auto pt-space-sm font-body-sm text-body-sm text-text-muted">
+                      {t("snapshot.bagName")}
+                    </p>
+                    <Link
+                      href="/marketplace"
+                      className="inline-flex w-fit items-center gap-1.5 rounded-full font-label-lg text-label-lg text-primary transition-colors duration-300 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    >
+                      {t("pillars.pillar3Cta")}
+                      <Icon name="arrow_forward" className="text-[18px]" />
+                    </Link>
+                  </div>
+                </div>
+              </Tray>
+            </article>
+          </Reveal>
+
+          {/* Third community member: keeps the raster varied instead of three identical cards. */}
+          <Reveal delay={200} className="md:col-span-3 lg:col-span-3">
+            <SnapshotTile
+              image={LUCAS}
+              imageAlt={t("snapshot.lucasAlt")}
+              name={t("snapshot.lucasName")}
+              location={t("snapshot.lucasCity")}
+              quote={t("snapshot.lucasQuote")}
+              kind={t("snapshot.memberKind")}
+              verifiedLabel={t("snapshot.verified")}
+            />
+          </Reveal>
+        </div>
+
+        {/* Featured dispatch. Full-width, so it breaks the grid rhythm. */}
+        <Reveal delay={120} className="mt-space-md">
+          <Tray>
+            <div className="grid grid-cols-1 items-center gap-space-lg overflow-hidden bezel-core p-space-lg lg:grid-cols-12 lg:p-space-xl">
+              <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-marketing-raised lg:col-span-5">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   alt={t("snapshot.postAlt")}
                   className="h-full w-full object-cover"
                   src={STUDIO}
+                  loading="lazy"
                 />
-                <div className="absolute bottom-3 left-3 rounded-full border border-[#282622] bg-[#121110]/85 px-3 py-1 font-label-md text-label-md text-[#F5F2EB] backdrop-blur-md">
-                  {t("snapshot.postTag")}
-                </div>
               </div>
 
               <div className="space-y-space-sm lg:col-span-7">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[#34302A] bg-[#2A2622] font-label-md text-label-md font-bold text-[#E86A5B]">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full border border-outline-variant bg-marketing-raised font-label-md text-label-md font-bold text-primary">
                     CL
-                  </div>
-                  <div>
-                    <span className="font-label-md text-label-md font-semibold text-[#F5F2EB]">
-                      {t("snapshot.postAuthor")}
-                    </span>
-                    <span className="font-body-sm text-body-sm text-[#9E988F]">
+                  </span>
+                  <p className="font-label-lg text-label-lg text-on-surface">
+                    {t("snapshot.postAuthor")}
+                    <span className="font-body-sm font-normal text-text-muted">
                       {" "}
-                      · {t("snapshot.postTime")}
+                      / {t("snapshot.postTime")}
                     </span>
-                  </div>
+                  </p>
                 </div>
-                <h3 className="font-headline-sm text-headline-sm font-bold text-[#F5F2EB]">
+                <h3 className="font-headline-md text-headline-md font-bold tracking-tight text-balance text-on-surface">
                   {t("snapshot.postTitle")}
                 </h3>
-                <p className="font-body-md text-body-md text-[#C4BEB5]">{t("snapshot.postBody")}</p>
-                <p className="font-body-sm text-body-sm text-[#9E988F] italic">
+                <p className="max-w-[62ch] font-body-md text-body-md text-pretty text-on-surface-variant">
+                  {t("snapshot.postBody")}
+                </p>
+                <p className="max-w-[62ch] font-body-sm text-body-sm text-pretty text-text-muted italic">
                   {t("snapshot.postBodyAlt")}
                 </p>
               </div>
             </div>
-          </div>
-        </div>
+          </Tray>
+        </Reveal>
       </section>
 
-      {/* ── FINAL CTA ────────────────────────────────────────────────────── */}
-      <section className="mx-auto w-full max-w-[1240px] px-margin-mobile py-space-xl md:px-margin">
-        <div className="relative w-full space-y-space-md overflow-hidden rounded-3xl border border-[#2E2B27] bg-[#1A1816] p-space-lg text-center shadow-xl md:p-space-xl">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#322E29] bg-[#221F1C] px-3 py-1 font-label-caps text-label-caps tracking-wider text-[#F5F2EB] uppercase shadow-sm">
-            <span className="h-2 w-2 rounded-full bg-[#38a36f]" />
-            <span>{t("cta.badge")}</span>
+      {/* ── FINAL CTA ──────────────────────────────────────────────────── */}
+      <section className="mx-auto w-full max-w-[1240px] px-margin-mobile pb-section-mobile md:px-margin md:pb-section">
+        <Reveal>
+          <div className="relative overflow-hidden rounded-[1.75rem] border border-outline-variant bg-marketing-shell px-margin-mobile py-section-mobile text-center md:px-margin md:py-section">
+            {/* Ambient wash, replaces a flat panel background. */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-[radial-gradient(46rem_24rem_at_50%_-10%,color-mix(in_oklab,var(--color-primary)_16%,transparent),transparent_70%)]"
+            />
+            <div className="relative mx-auto max-w-3xl">
+              <h2 className="font-display-md text-display-md-mobile font-bold text-balance text-on-surface md:text-display-md">
+                {t("cta.title")}
+              </h2>
+              <p className="mt-space-xs font-headline-sm text-headline-sm font-medium text-text-muted italic">
+                {t("cta.titleAlt")}
+              </p>
+              <p className="mx-auto mt-space-md max-w-[56ch] font-body-lg text-body-lg text-pretty text-on-surface-variant">
+                {t("cta.body")}
+              </p>
+
+              <div className="mt-space-lg flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+                <Link href="/register" className={cn(CTA_PRIMARY, "sm:px-8")}>
+                  {t("cta.join")}
+                  <CtaIcon name="north_east" />
+                </Link>
+                <Link href="/discover" className={CTA_SECONDARY}>
+                  {t("cta.explore")}
+                  <Icon name="arrow_forward" className="text-[18px]" />
+                </Link>
+              </div>
+
+              <p className="mt-space-lg font-label-md text-label-md tracking-[0.08em] text-text-muted">
+                {t("cta.assurance")}
+              </p>
+            </div>
           </div>
-
-          <div className="mx-auto max-w-2xl space-y-2">
-            <h2 className="font-headline-xl text-headline-xl-mobile font-bold tracking-tight text-[#F5F2EB] md:text-headline-xl">
-              {t("cta.title")}
-            </h2>
-            <p className="font-headline-sm text-headline-sm font-medium text-[#C4BEB5] italic">
-              {t("cta.titleAlt")}
-            </p>
-          </div>
-
-          <p className="mx-auto max-w-xl font-body-lg text-body-lg text-[#C4BEB5]">
-            {t("cta.body")}
-          </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-space-md pt-space-xs">
-            <Link
-              href="/register"
-              className="inline-flex h-12 items-center justify-center rounded-xl bg-[#E86A5B] px-8 font-label-lg text-label-lg text-white shadow-md transition-all hover:bg-[#d4584a]"
-            >
-              {t("cta.join")}
-              <Icon name="north_east" className="ml-2 text-[20px]" />
-            </Link>
-            <Link
-              href="/discover"
-              className="inline-flex h-12 items-center justify-center rounded-xl border border-[#2E2B27] bg-[#201E1B] px-7 font-label-lg text-label-lg text-[#F5F2EB] shadow-sm transition-all hover:bg-[#282622]"
-            >
-              {t("cta.explore")}
-              <Icon name="group" className="ml-2 text-[20px]" />
-            </Link>
-          </div>
-
-          <p className="pt-space-sm font-label-caps text-label-caps tracking-widest text-[#9E988F] uppercase">
-            {t("cta.assurance")}
-          </p>
-        </div>
+        </Reveal>
       </section>
     </>
   );
 }
 
-function SnapshotCard({
+/** Outer tray of the double-bezel surface. */
+function Tray({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <div className={cn("bezel-tray", className)}>{children}</div>;
+}
+
+/** Compact member tile used inside the bento. */
+function SnapshotTile({
   image,
   imageAlt,
-  location,
-  verifiedLabel,
   name,
-  languages,
+  location,
   quote,
-  tags,
-  ctaLabel,
-  ctaHref,
+  kind,
+  verifiedLabel,
 }: {
   image: string;
   imageAlt: string;
-  location: string;
-  verifiedLabel: string;
   name: string;
-  languages: string;
+  location: string;
   quote: string;
-  tags: string[];
-  ctaLabel: string;
-  ctaHref: string;
+  kind: string;
+  verifiedLabel: string;
 }) {
   return (
-    <div className="flex flex-col justify-between overflow-hidden rounded-2xl border border-[#282622] bg-[#121110] shadow-sm md:col-span-4">
-      <div>
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#23211E]">
+    <Tray className="h-full">
+      <div className="flex h-full flex-col overflow-hidden bezel-core">
+        <div className="relative aspect-[5/4] w-full overflow-hidden bg-marketing-raised">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img alt={imageAlt} className="h-full w-full object-cover" src={image} loading="lazy" />
-          <div className="absolute top-3 left-3 rounded-full border border-[#282622] bg-[#121110]/85 px-2.5 py-1 font-label-md text-label-md text-[#F5F2EB] backdrop-blur-md">
+          <span
+            className={cn(
+              "absolute top-3 left-3 border border-outline-variant bg-marketing-base/92 px-2.5 py-1 font-label-md text-label-md text-on-surface shadow-lift-sm",
+              R.chip,
+            )}
+          >
             {location}
-          </div>
-          <div className="absolute top-3 right-3 rounded bg-[#38a36f] px-2 py-0.5 font-label-caps text-label-caps font-semibold text-white uppercase">
-            {verifiedLabel}
-          </div>
+          </span>
         </div>
-        <div className="space-y-space-xs p-space-md">
-          <div className="flex items-center justify-between">
-            <h4 className="font-headline-sm text-headline-sm font-bold text-[#F5F2EB]">{name}</h4>
-            <span className="font-label-caps text-label-caps text-[#9E988F]">{languages}</span>
+
+        <div className="flex flex-1 flex-col gap-1.5 p-space-md">
+          <div className="flex items-center justify-between gap-2">
+            <h3 className="font-headline-sm text-headline-sm font-bold text-on-surface">{name}</h3>
+            <span className="shrink-0 font-label-md text-label-md text-jade">{verifiedLabel}</span>
           </div>
-          <p className="line-clamp-2 font-body-sm text-body-sm text-[#C4BEB5]">{quote}</p>
-          <div className="flex flex-wrap gap-1 pt-1">
-            {tags.map((tag) => (
-              <span
-                key={tag}
-                className="rounded border border-[#2C2925] bg-[#201E1B] px-2 py-0.5 font-label-md text-label-md text-[#C4BEB5]"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
+          <p className="font-body-sm text-body-sm text-pretty text-on-surface-variant">{quote}</p>
+          <p className="mt-auto pt-space-sm font-label-md text-label-md text-text-muted">{kind}</p>
         </div>
       </div>
-      <div className="p-space-md pt-0">
-        <Link
-          href={ctaHref}
-          className="block w-full rounded-lg border border-[#2E2B27] bg-[#201E1B] py-2 text-center font-label-md text-label-md text-[#F5F2EB] transition-colors hover:bg-[#282622]"
+    </Tray>
+  );
+}
+
+/**
+ * The privacy demo: one member, two states of their contact locker.
+ *
+ * The setter is funnelled through an explicit wrapper rather than being passed
+ * straight to `onClick`. React Compiler hoists the handler, and calling a bare
+ * `setState` reference from a memoised subtree is not reliably the same thing as
+ * calling it from the owning component's scope.
+ */
+function LockerDemo({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (next: boolean) => void;
+}) {
+  const t = useTranslations("Landing");
+
+  return (
+    <div
+      className="border border-outline-variant bg-marketing-core p-space-lg md:p-space-xl"
+      style={{ borderRadius: R.tray }}
+    >
+      <div className="flex flex-col gap-space-md md:flex-row md:items-end md:justify-between">
+        <div className="max-w-[48ch]">
+          <h3 className="font-headline-md text-headline-md font-bold tracking-tight text-balance text-on-surface">
+            {t("demo.title")}
+          </h3>
+          <p className="mt-1.5 font-body-sm text-body-sm text-pretty text-on-surface-variant">
+            {t("demo.body")}
+          </p>
+        </div>
+
+        <div
+          role="group"
+          aria-label={t("demo.title")}
+          className="inline-flex self-start rounded-full border border-outline-variant bg-marketing-base p-1 md:self-auto"
         >
-          {ctaLabel}
-        </Link>
+          <button
+            type="button"
+            onClick={() => onOpenChange(false)}
+            aria-pressed={!open}
+            className={cn(
+              "rounded-full px-3.5 py-2 font-label-md text-label-md whitespace-nowrap transition-[background-color,color] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:px-4",
+              !open
+                ? "bg-primary font-semibold text-on-primary"
+                : "text-text-muted hover:text-on-surface",
+            )}
+          >
+            {t("demo.lockedTab")}
+          </button>
+          <button
+            type="button"
+            onClick={() => onOpenChange(true)}
+            aria-pressed={open}
+            className={cn(
+              "rounded-full px-3.5 py-2 font-label-md text-label-md whitespace-nowrap transition-[background-color,color] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:px-4",
+              open
+                ? "bg-primary font-semibold text-on-primary"
+                : "text-text-muted hover:text-on-surface",
+            )}
+          >
+            {t("demo.unlockedTab")}
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-space-lg grid grid-cols-1 items-stretch gap-space-md lg:grid-cols-12">
+        {/* Member identity */}
+        <div className="flex items-center gap-space-md rounded-xl border border-outline-variant bg-marketing-shell p-space-md lg:col-span-5">
+          <span className="h-16 w-16 shrink-0 overflow-hidden rounded-full border border-outline-variant">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img alt={t("demo.miniAlt")} className="h-full w-full object-cover" src={SOFIA} />
+          </span>
+          <div className="min-w-0">
+            <p className="flex items-center gap-1.5 font-headline-sm text-headline-sm font-bold text-on-surface">
+              {t("demo.miniName")}
+              <Icon name="verified" className="text-[17px] text-jade" />
+            </p>
+            <p className="font-body-sm text-body-sm text-text-muted">{t("demo.miniMeta")}</p>
+            <p className="mt-2 font-body-sm text-body-sm text-on-surface-variant">
+              {t("demo.statusLabel")}:{" "}
+              <span className={cn("font-label-lg", open ? "text-jade" : "text-primary")}>
+                {open ? t("demo.statusUnlocked") : t("demo.statusLocked")}
+              </span>
+            </p>
+          </div>
+        </div>
+
+        {/* Locker itself. `aria-live` announces the state change for screen readers. */}
+        <div
+          aria-live="polite"
+          className="rounded-xl border border-outline-variant bg-marketing-shell p-space-lg lg:col-span-7"
+        >
+          <div className="flex items-center justify-between gap-3 border-b border-outline-variant pb-space-sm">
+            <span className="flex items-center gap-2 font-label-lg text-label-lg font-bold text-on-surface">
+              <Icon
+                name={open ? "lock_open" : "lock"}
+                className={cn("text-[20px]", open ? "text-jade" : "text-text-muted")}
+              />
+              {open ? t("demo.unlockedTitle") : t("demo.lockedTitle")}
+            </span>
+            <span
+              className={cn(
+                "shrink-0 rounded-full border px-2.5 py-0.5 font-label-caps text-label-caps tracking-[0.12em] uppercase",
+                open
+                  ? "border-jade-border bg-jade-surface text-jade-bright"
+                  : "border-outline bg-marketing-raised text-text-muted",
+              )}
+            >
+              {open ? t("demo.active") : t("demo.encrypted")}
+            </span>
+          </div>
+
+          <div className="mt-space-md space-y-2">
+            {(open
+              ? ([
+                  { key: "igUnlocked", icon: "photo_camera", action: "openProfile" },
+                  { key: "tgUnlocked", icon: "chat", action: "startChat" },
+                ] as const)
+              : ([
+                  { key: "ig", icon: "photo_camera" },
+                  { key: "phone", icon: "chat" },
+                ] as const)
+            ).map((row) => (
+              <div
+                key={row.key}
+                className="flex items-center justify-between gap-3 rounded-lg border border-outline-variant bg-marketing-base p-3"
+              >
+                <span className="flex min-w-0 items-center gap-3">
+                  <Icon
+                    name={row.icon}
+                    className={cn(
+                      "shrink-0 text-[20px]",
+                      open ? "text-primary" : "text-text-muted",
+                    )}
+                  />
+                  <span
+                    className={cn(
+                      "truncate font-body-sm text-body-sm",
+                      open
+                        ? "font-semibold text-on-surface"
+                        : "font-medium text-text-muted blur-[3px] select-none",
+                    )}
+                  >
+                    {open ? t(`demo.${row.key}`) : t(`demo.masked.${row.key}`)}
+                  </span>
+                </span>
+
+                {open && "action" in row ? (
+                  <span className="shrink-0 rounded-full border border-outline-variant bg-marketing-raised px-3 py-1 font-label-md text-label-md text-on-surface">
+                    {t(`demo.${row.action}`)}
+                  </span>
+                ) : (
+                  <span className="shrink-0 font-label-caps text-label-caps tracking-[0.12em] text-text-muted uppercase">
+                    {t("demo.locked")}
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <p
+            className={cn(
+              "mt-space-md flex items-start gap-2 rounded-lg border p-3 font-body-sm text-body-sm",
+              open
+                ? "border-jade-border bg-jade-surface text-jade-bright"
+                : "border-outline-variant bg-marketing-raised text-on-surface-variant",
+            )}
+          >
+            <Icon
+              name={open ? "verified" : "info"}
+              className={cn("mt-0.5 shrink-0 text-[18px]", open ? "text-jade" : "text-primary")}
+            />
+            <span>{open ? t("demo.unlockedNote") : t("demo.lockedNote")}</span>
+          </p>
+        </div>
       </div>
     </div>
   );

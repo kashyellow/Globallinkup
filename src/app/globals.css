@@ -109,6 +109,14 @@
   --spacing-space-md: 1rem;
   --spacing-space-lg: 1.5rem;
   --spacing-space-xl: 2.5rem;
+  /*
+   * Section rhythm. Deliberately separate from `space-xl`: that token also
+   * drives intra-card gaps, so inflating it would blow out every panel's
+   * internal padding. Landing sections need display-scale breathing room
+   * (>=96px), which these two tokens provide at each breakpoint.
+   */
+  --spacing-section: 6rem;
+  --spacing-section-mobile: 3.5rem;
   --spacing-margin: 2.5rem;
   --spacing-margin-mobile: 1.25rem;
   --spacing-gutter: 1.5rem;
@@ -176,6 +184,38 @@
   --text-label-caps--letter-spacing: 0.08em;
   --text-label-caps--font-weight: 700;
 
+  /*
+   * ── Display scale (landing / marketing only) ────────────────────────
+   * The headline-* scale above is tuned for dense product chrome. Marketing
+   * pages need real display presence, so these sit above it and are used
+   * exclusively by the (marketing) route group.
+   */
+  --text-display-xl: 76px;
+  --text-display-xl--line-height: 78px;
+  --text-display-xl--letter-spacing: -0.035em;
+  --text-display-xl--font-weight: 700;
+
+  --text-display-lg: 58px;
+  --text-display-lg--line-height: 62px;
+  --text-display-lg--letter-spacing: -0.032em;
+  --text-display-lg--font-weight: 700;
+
+  --text-display-md: 44px;
+  --text-display-md--line-height: 48px;
+  --text-display-md--letter-spacing: -0.028em;
+  --text-display-md--font-weight: 700;
+
+  /* Mobile counterparts — the mockups define mobile sizes but never apply them. */
+  --text-display-lg-mobile: 38px;
+  --text-display-lg-mobile--line-height: 42px;
+  --text-display-lg-mobile--letter-spacing: -0.03em;
+  --text-display-lg-mobile--font-weight: 700;
+
+  --text-display-md-mobile: 30px;
+  --text-display-md-mobile--line-height: 35px;
+  --text-display-md-mobile--letter-spacing: -0.026em;
+  --text-display-md-mobile--font-weight: 700;
+
   /* ── Radii ─────────────────────────────────────────────────────────── */
   --radius-sm: 0.125rem;
   --radius-md: 0.25rem;
@@ -184,6 +224,40 @@
   --radius-2xl: 0.75rem;
   --radius-3xl: 1rem;
   --radius-full: 9999px;
+
+  /*
+   * ── Marketing surface ladder ────────────────────────────────────────
+   * The reference mockups jump straight from #121110 to #1E1C1A, which
+   * flattens every panel into the same value. These add the intermediate
+   * steps the redesign needs for nested (double-bezel) surfaces.
+   */
+  --color-marketing-base: #100e0d;
+  --color-marketing-shell: #171513;
+  --color-marketing-core: #1c1917;
+  --color-marketing-raised: #23201d;
+  --color-marketing-high: #2b2724;
+
+  /*
+   * ── Marketing accent: muted jade ────────────────────────────────────
+   * The coral (#e86a5b) stays the product accent and the single locked
+   * landing accent. Jade is used for a small number of genuinely
+   * privacy-related signals so green always reads as "protected".
+   */
+  --color-jade: #4aab77;
+  --color-jade-bright: #6ecf98;
+  --color-jade-dim: #2f6b4b;
+  --color-jade-surface: #15271d;
+  --color-jade-border: #234332;
+
+  /*
+   * ── Warm-tinted shadows ─────────────────────────────────────────────
+   * Pure-black shadows on a warm off-black page read as grey smudges.
+   * These carry the page hue and a single implied light source.
+   */
+  --shadow-lift-sm: 0 1px 2px rgb(6 5 4 / 0.4), 0 2px 8px -2px rgb(6 5 4 / 0.5);
+  --shadow-lift-md: 0 2px 4px rgb(6 5 4 / 0.35), 0 12px 28px -8px rgb(6 5 4 / 0.6);
+  --shadow-lift-lg: 0 4px 8px rgb(6 5 4 / 0.3), 0 28px 60px -16px rgb(6 5 4 / 0.7);
+  --shadow-bevel: inset 0 1px 0 rgb(255 246 238 / 0.07);
 }
 
 /*
@@ -198,12 +272,17 @@
   --font-headline-xl-mobile: var(--font-manrope);
   --font-headline-lg-mobile: var(--font-manrope);
   --font-label-caps: var(--font-manrope);
-  --font-body-lg: var(--font-inter);
-  --font-body-md: var(--font-inter);
-  --font-body-sm: var(--font-inter);
-  --font-label-lg: var(--font-inter);
-  --font-label-md: var(--font-inter);
-  --font-sans: var(--font-inter);
+  --font-display-xl: var(--font-manrope);
+  --font-display-lg: var(--font-manrope);
+  --font-display-md: var(--font-manrope);
+  --font-display-lg-mobile: var(--font-manrope);
+  --font-display-md-mobile: var(--font-manrope);
+  --font-body-lg: var(--font-body);
+  --font-body-md: var(--font-body);
+  --font-body-sm: var(--font-body);
+  --font-label-lg: var(--font-body);
+  --font-label-md: var(--font-body);
+  --font-sans: var(--font-body);
 }
 
 @layer base {
@@ -264,5 +343,96 @@
     display: none;
     width: 0;
     height: 0;
+  }
+}
+
+/*
+ * Marketing page backdrop.
+ *
+ * A single fixed layer carrying a warm radial wash plus a fine grain. Both live
+ * on one pointer-events-none pseudo-element so the GPU never repaints it while
+ * the page scrolls. `background-attachment: fixed` on a scrolling container is
+ * the classic mobile frame-drop trap, hence the fixed-position overlay.
+ */
+@utility marketing-backdrop {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--color-marketing-base);
+
+  &::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        78rem 52rem at 12% -8%,
+        color-mix(in oklab, var(--color-primary) 13%, transparent),
+        transparent 62%
+      ),
+      radial-gradient(
+        64rem 46rem at 88% 6%,
+        color-mix(in oklab, var(--color-jade) 9%, transparent),
+        transparent 60%
+      ),
+      linear-gradient(180deg, #14110f 0%, var(--color-marketing-base) 38%);
+  }
+
+  &::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.16;
+    /* Fractal noise keeps the surface from reading as a flat digital fill. */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+}
+
+/*
+ * Double-bezel surface: an outer tinted tray holding an inner core, so panels
+ * read as machined hardware rather than flat rectangles. Declared as one
+ * utility because the outer/inner relationship cannot be expressed with a
+ * single set of child utilities.
+ */
+@utility bezel-tray {
+  padding: 0.375rem;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: 1.625rem;
+  background-color: color-mix(in oklab, var(--color-surface-low) 70%, transparent);
+  box-shadow: var(--shadow-bevel);
+}
+
+@utility bezel-core {
+  border: 1px solid color-mix(in oklab, var(--color-outline-variant) 78%, transparent);
+  border-radius: 1.25rem;
+  background-color: var(--color-marketing-core);
+}
+
+/*
+ * Scroll reveal. The `.reveal` element is opted in from React by an
+ * IntersectionObserver; without JS (or with reduced motion) the default state is
+ * already visible, so the page never depends on scripts to be readable.
+ */
+@utility reveal {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal[data-armed="true"] {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+  }
+
+  .reveal[data-armed="true"][data-shown="true"] {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 720ms cubic-bezier(0.16, 1, 0.3, 1),
+      transform 720ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition-delay: var(--reveal-delay, 0ms);
   }
 }

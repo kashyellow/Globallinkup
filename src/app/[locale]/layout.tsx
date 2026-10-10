@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Manrope } from "next/font/google";
+import { Instrument_Sans, Manrope } from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -12,9 +12,9 @@ const manrope = Manrope({
   display: "swap",
 });
 
-const inter = Inter({
+const body = Instrument_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-body",
   display: "swap",
 });
 
@@ -51,7 +51,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   return (
     <html
       lang={locale}
-      className={`${manrope.variable} ${inter.variable} dark h-full scroll-pt-24 antialiased motion-safe:scroll-smooth`}
+      className={`${manrope.variable} ${body.variable} dark h-full scroll-pt-24 antialiased motion-safe:scroll-smooth`}
       suppressHydrationWarning
     >
       <head>

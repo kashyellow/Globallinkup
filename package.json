@@ -24,6 +24,9 @@
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
+  "overrides": {
+    "@swc/core": "1.15.33"
+  },
   "devDependencies": {
     "@commitlint/cli": "^21.2.3",
     "@commitlint/config-conventional": "^21.2.3",
