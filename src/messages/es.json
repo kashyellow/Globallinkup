@@ -1,1 +1,1077 @@
-{}
+{
+  "Metadata": {
+    "title": "GlobalLinkup — Descubrimiento Bilingüe",
+    "description": "Descubre personas verificadas de todo el mundo, comparte publicaciones, conecta mutuamente y explora el mercado curado. Bilingüe EN/ES."
+  },
+  "Nav": {
+    "discover": "Descubrir",
+    "posts": "Publicaciones",
+    "marketplace": "Mercado",
+    "connections": "Conexiones",
+    "adminPortal": "Portal Admin",
+    "logoAlt": "Logotipo de GlobalLinkup",
+    "profileAlt": "Tu perfil",
+    "toggleMenu": "Alternar menú de navegación",
+    "profile": "Perfil"
+  },
+  "Footer": {
+    "logoAlt": "Logotipo de GlobalLinkup",
+    "tagline": "Plataforma bilingüe de descubrimiento / Bilingual discovery platform",
+    "copyright": "© 2024 GlobalLinkup Inc. Todos los derechos reservados.",
+    "privacy": "Política de Privacidad",
+    "guidelines": "Normas de Conexión",
+    "adminAccess": "Acceso Admin"
+  },
+  "Common": {
+    "verified": "Verificado",
+    "connect": "Conectar",
+    "connected": "Conectado",
+    "requestSent": "Solicitud Enviada · Esperando",
+    "accept": "Aceptar",
+    "decline": "Rechazar",
+    "reset": "Restablecer",
+    "unlocked": "Desbloqueado",
+    "guidelines": "Normas",
+    "languages": "Idiomas: EN / ES",
+    "interests": "Intereses"
+  },
+  "Discover": {
+    "eyebrow": "Curaduría Intercultural / Red Global",
+    "title": "Descubrir Personas",
+    "intro": "Explora personas verificadas de todo el mundo e intercambia perspectivas interculturales. Conecta mutuamente para descubrir contactos sociales directos.",
+    "activePersonas": "1.482 Personas Activas en el Extranjero",
+    "searchPlaceholder": "Busca por nombre, ciudad, idioma o pasiones (p. ej. Barcelona, Historia de la Arquitectura, Español)...",
+    "refineCriteria": "Refinar Criterios",
+    "clearFilters": "Limpiar Filtros",
+    "allRegions": "Todas las Regiones",
+    "regions": {
+      "spain": "España",
+      "mexico": "México (CDMX)",
+      "colombia": "Colombia",
+      "unitedStates": "Estados Unidos"
+    },
+    "privacy": {
+      "badge": "Protocolo de Privacidad",
+      "title": "El Intercambio Respetuoso en 4 Pasos",
+      "body": "Cero spam no solicitado ni mensajes intrusivos. Los perfiles personales de WhatsApp e Instagram permanecen cifrados hasta que ambas personas confirman deliberadamente su interés.",
+      "step1Label": "01 / DESCUBRIMIENTO",
+      "step1Title": "Revisar Persona",
+      "step1Body": "Explora biografías auténticas y diarios visuales publicados.",
+      "step2Label": "02 / ACERCAMIENTO",
+      "step2Title": "Enviar Solicitud",
+      "step2Body": "Transmite una única consulta cortés con contexto.",
+      "step3Label": "03 / APROBACIÓN",
+      "step3Title": "Consentimiento Mutuo",
+      "step3Body": "Ambas partes aceptan explícitamente establecer una conexión.",
+      "step4Label": "04 / REVELACIÓN",
+      "step4Title": "Contacto Directo",
+      "step4Body": "Contactos verificados y diálogo directo desbloqueados al instante."
+    },
+    "feed": {
+      "listTitle": "Embajadores Verificados · Lista Curada",
+      "resultsCount": "Mostrando 5 de 32 resultados",
+      "profilePreviewed": "Perfil Visto",
+      "directContactVisible": "Contacto Directo Visible",
+      "ctaTitle": "Conoce Viajeros en tu Ciudad",
+      "ctaBody": "Convierte tu conocimiento local en amistades internacionales. Organiza caminatas con café o colabora en rutas arquitectónicas por la ciudad.",
+      "ctaButton": "Publica tu Persona"
+    },
+    "fluency": {
+      "label": "Fluidez Lingüística",
+      "native": "Nativo",
+      "fluent": "Fluido",
+      "advanced": "Avanzado",
+      "conversational": "Conversacional",
+      "proficient": "Competente",
+      "basic": "Básico",
+      "spanish": "Español",
+      "english": "Inglés",
+      "nativeC2": "Nativo (C2)",
+      "conversationalB2": "Conversacional (B2)"
+    },
+    "interests": {
+      "architecture": "Arquitectura",
+      "photography": "Fotografía",
+      "espresso": "Espresso",
+      "artDirection": "Dirección de Arte",
+      "gastronomy": "Gastronomía",
+      "cinema": "Cine",
+      "textiles": "Textiles",
+      "hiking": "Senderismo",
+      "botanicals": "Botánica",
+      "soundArt": "Arte Sonoro",
+      "literature": "Literatura",
+      "vinyl": "Vinilo",
+      "documentary": "Documental",
+      "culinaryArts": "Artes Culinarias",
+      "ceramics": "Cerámica"
+    },
+    "dossier": {
+      "activeDossier": "Expediente Activo",
+      "meta": "27 · Nacida y radicada en Barcelona, España",
+      "photoCount": "1 / 4 Fotos",
+      "personaNote": "Nota de la Persona",
+      "bio": "“Fotógrafa e investigadora de arquitectura radicada en Barcelona. Fluida en español y aprendiendo inglés conversacional. Busca conectar con creativos de todo el mundo para intercambios culturales y paseos locales.”",
+      "contactLayer": "Capa de Seguridad de Contacto Social",
+      "lockedTitle": "Contactos Privados Protegidos",
+      "lockedBody": "Conecta con {name} para revelar los contactos sociales. El contacto social es estrictamente privado hasta que se acepta la solicitud de conexión.",
+      "lockedHandle": "@sofia.mtz_bcn (Bloqueado)",
+      "lockedPhone": "+34 ••• ••• ••• (Bloqueado)",
+      "simulateAcceptance": "Simular Estado de Aceptación",
+      "autoEncrypted": "Auto-Cifrado",
+      "unlockedTitle": "Conexión Verificada y Activa",
+      "instagram": "Instagram:",
+      "whatsapp": "WhatsApp / Signal:",
+      "email": "Correo:",
+      "unlockedNote": "Acuerdo mutuo registrado el 12 de mayo de 2024. Se aplican las normas de contacto respetuoso.",
+      "sendRequest": "Enviar Solicitud de Conexión a {name}"
+    },
+    "requests": {
+      "title": "Solicitudes Recibidas",
+      "pending": "{count} Pendientes",
+      "manageAll": "Gestionar Todo",
+      "connectedToast": "✓ ¡Conectado! Contactos sociales intercambiados con {name}.",
+      "items": {
+        "daniel": {
+          "name": "Daniel Rivera, 30",
+          "meta": "Ciudad de México · Quiere intercambiar notas sobre urbanismo"
+        },
+        "valentina": {
+          "name": "Valentina Gomez, 26",
+          "meta": "Bogotá · Interesada en tu ruta fotográfica por Madrid"
+        }
+      }
+    },
+    "trustSeal": "Sello de Verificación Humana de GlobalLinkup"
+  },
+  "Posts": {
+    "eyebrowPrimary": "Cronología Visual",
+    "eyebrowSecondary": "Feed Cronológico",
+    "title": "Publicaciones de la Comunidad",
+    "titleAlt": "Publicaciones",
+    "intro": "Momentos, viajes y destellos de la vida cotidiana más allá de las fronteras. Fotografía pura sin ruido algorítmico.",
+    "filters": {
+      "all": "Todas las Publicaciones",
+      "connectionsOnly": "Solo Conexiones",
+      "spainLatam": "España y LatAm"
+    },
+    "composer": {
+      "placeholder": "Comparte un momento, una foto o una novedad de viaje con la comunidad...",
+      "uploadPhoto": "Subir Foto",
+      "addLocation": "Añadir Ubicación",
+      "languageEnEs": "EN / ES",
+      "languageAuto": "AUTO",
+      "publish": "Publicar",
+      "publishing": "Publicando...",
+      "posted": "Publicado",
+      "emptyPrompt": "Escribe una frase o elige una captura analógica...",
+      "previewTitle": "CAPTURA ANALÓGICA ADJUNTA",
+      "previewFileName": "barcelona_elborn_35mm.jpg",
+      "previewMeta": "2.4 MB · Preajuste Kodak Portra 400"
+    },
+    "roles": {
+      "member": "Miembro",
+      "curator": "Curadora"
+    },
+    "postMeta": {
+      "hoursAgo": "hace {count} horas",
+      "yesterday": "Ayer",
+      "likes": "{count} me gusta",
+      "notes": "{count} notas",
+      "share": "Compartir",
+      "save": "Guardar en colección",
+      "seeTranslation": "Ver traducción ({lang})",
+      "hideTranslation": "Ocultar traducción",
+      "requested": "Solicitado",
+      "viewComments": "Ver los {count} comentarios y reflexiones →"
+    },
+    "captions": {
+      "sofia": "Golden hour after a long walk through El Born. Exploring new perspectives through analog film this week ☕️📷",
+      "mateo": "Morning stroll in Coyoacán. Always amazed by the morning light here. ¿Cuál es su rincón favorito de la ciudad?",
+      "elena": "Contemporary art weekend. Great conversations with fellow designers exploring sustainable architectural forms!"
+    },
+    "captionsTranslated": {
+      "sofia": "Hora dorada después de una larga caminata por El Born. Explorando nuevas perspectivas a través de película analógica esta semana ☕️📷",
+      "mateo": "Paseo matutino en Coyoacán. Siempre asombrado por la luz de la mañana aquí. ¿Cuál es tu rincón favorito de la ciudad?",
+      "elena": "Fin de semana de arte contemporáneo. ¡Grandes conversaciones con colegas diseñadores explorando formas arquitectónicas sostenibles!"
+    },
+    "photoBadges": {
+      "sofia": "35mm Analógico · Barcelona",
+      "mateo": "Temporada de Jacarandas · Coyoacán",
+      "elena": "Galería Albarrán Bourdais · Madrid"
+    },
+    "comments": {
+      "sofiaAuthor": "Lucas Ramos",
+      "sofiaBody": "La luz sobre los arcos de piedra caliza es increíble. ¿Con qué objetivo tomaste esta foto?",
+      "sofiaTime": "1h",
+      "mateoAuthor": "Camila Ortiz",
+      "mateoBody": "Plaza Santa Catarina por la tarde, sin duda. Un café en El Jarocho y sentarse a leer.",
+      "mateoTime": "3h"
+    },
+    "end": {
+      "caughtUp": "Estás al día con los momentos recientes de la comunidad",
+      "checkBack": "Vuelve más tarde o publica tu propio mensaje arriba"
+    },
+    "sidebar": {
+      "aboutTitle": "Acerca de las Publicaciones de GlobalLinkup",
+      "aboutBody": "Sin algoritmos, sin historias, sin reels efímeros. Solo fotografía auténtica y novedades culturales compartidas cronológicamente por miembros internacionales más allá de las fronteras.",
+      "humanCurated": "Comunidad curada por humanos",
+      "networkTitle": "Activos en tu Red",
+      "viewAll": "Ver Todos",
+      "sendNote": "Enviar Nota Directa",
+      "etiquetteTitle": "Etiqueta Comunitaria",
+      "etiquetteBody": "Respetuosos, intencionales y culturalmente curiosos. Celebramos la fotografía que captura el contexto local, reflexiones reales de viaje y amistad intercultural.",
+      "readGuidelines": "Leer las Normas de la Comunidad →",
+      "feedLanguage": "IDIOMA DEL FEED: BILINGÜE (EN/ES)",
+      "change": "Cambiar"
+    }
+  },
+  "Marketplace": {
+    "banner": {
+      "badge": "Catálogo Curado Oficial de GlobalLinkup",
+      "title": "Mercado GlobalLinkup",
+      "titleAlt": "Mercado Curado",
+      "intro": "Bienes culturales curados, artesanías, esenciales de viaje y artículos de socios internacionales verificados y publicados exclusivamente por los administradores de GlobalLinkup.",
+      "note": "Todos los artículos se curan y gestionan mediante alianzas directas con artesanos. Los usuarios normales no pueden publicar anuncios.",
+      "statTitle": "100% Verificado",
+      "statSubtitle": "Cero comisiones de terceros"
+    },
+    "controls": {
+      "searchPlaceholder": "Busca productos, artesanías, guías de idiomas...",
+      "sortBy": "Ordenar por:",
+      "sortFeatured": "Curadurías Destacadas",
+      "sortPriceLow": "Precio: Menor a Mayor",
+      "sortPriceHigh": "Precio: Mayor a Menor",
+      "sortNewest": "Novedades"
+    },
+    "filters": {
+      "all": "Todos los Productos ({count})",
+      "artisanCrafts": "Artesanías y Bienes",
+      "travelGear": "Equipaje de Viaje y Nómada",
+      "booksCulture": "Libros de Idioma y Cultura",
+      "localGoods": "Productos Locales y Despensa"
+    },
+    "categories": {
+      "artisanCrafts": "Artesanías",
+      "homeLiving": "Hogar y Vida",
+      "booksCulture": "Libros y Cultura",
+      "localGoods": "Productos Locales",
+      "travelGear": "Equipaje de Viaje"
+    },
+    "badges": {
+      "artisanPartner": "Socio Artesano",
+      "adminCurated": "Curado por Admin",
+      "globalLinkupOriginal": "Original de GlobalLinkup",
+      "adminVerified": "Verificado por Admin",
+      "directTrade": "Comercio Directo"
+    },
+    "card": {
+      "priceLabel": "PRECIO",
+      "inspectSpecs": "Ver Detalles"
+    },
+    "notice": {
+      "title": "Cómo Funciona el Comercio Curado de GlobalLinkup",
+      "body": "Conectamos a compradores interculturales conscientes directamente con makers regionales verificados. El equipo de GlobalLinkup coordina la logística, el cumplimiento aduanero y los pagos directos sin el desorden de un carrito de compra automatizado.",
+      "cta": "Consultas para Socios Artesanos"
+    },
+    "drawer": {
+      "adminVerified": "Verificado por Admin",
+      "sku": "SKU DEL ARTÍCULO: {sku}",
+      "close": "Cerrar panel de detalles",
+      "artisanPartnerDirect": "Socio Artesano Directo",
+      "currencyUsd": "USD",
+      "specsTitle": "Especificaciones y Procedencia",
+      "specOrigin": "ORIGEN",
+      "specArtisan": "ARTESANO",
+      "specMaterial": "MATERIAL",
+      "specDimensions": "DIMENSIONES",
+      "specWeight": "PESO",
+      "specFulfillment": "ENTREGA",
+      "fulfillmentCourier": "Mensajería Directa Asegurada",
+      "fulfillmentPostal": "Envío Postal con Seguimiento",
+      "howToOrderTitle": "Cómo Pedir / Consultas Directas",
+      "howToOrderBody": "GlobalLinkup gestiona los pedidos personalmente con nuestros makers regionales. Como las cantidades son limitadas y se producen en lotes pequeños, los pedidos se confirman directamente a través de nuestro conserje multilingüe. Sin pago mediante carrito ni reventa entre usuarios.",
+      "contactCta": "Contactar al Conserje / Consultar Compra",
+      "whatsappPrefix": "O escribe por WhatsApp:",
+      "emailPrefix": "Correo Oficial:",
+      "whatsappMessage": "Hola Conserje de GlobalLinkup, quisiera consultar sobre pedir el {product} (SKU: {sku}).",
+      "trust": {
+        "fairCompensation": "Compensación Justa",
+        "customsInsured": "Aduana Asegurada",
+        "directMaker": "Trazabilidad Directa"
+      }
+    }
+  },
+  "Admin": {
+    "portal": "Portal de Administración",
+    "panelTitle": "Panel de Control General",
+    "roleBadge": "Rol: Administrador de la Plataforma",
+    "metrics": {
+      "pendingProfiles": "<b>{count}</b> Perfiles Pendientes",
+      "reportedPosts": "<b>{count}</b> Publicaciones Reportadas",
+      "curatedProducts": "<b>{count}</b> Productos Curados",
+      "openReports": "<b>{count}</b> Reportes Abiertos"
+    },
+    "eyebrow": "Mesa Administrativa · Monitoreo y Verificación",
+    "title": "Gobernanza y Control de Contenido",
+    "tabs": {
+      "users": "Usuarios y Personas",
+      "marketplace": "Catálogo del Mercado",
+      "moderation": "Reportes y Moderación"
+    },
+    "users": {
+      "title": "Flujo de Verificación de Miembros",
+      "body": "Revisa las solicitudes de conexión bilingües entrantes y autentica la intención humana real.",
+      "filterLabel": "Filtro:",
+      "filterAll": "Todos Pendientes (14)",
+      "filterPhoto": "Requiere Inspección de Foto (3)",
+      "filterVerifiedToday": "Verificados Hoy (8)",
+      "registeredAgo": "Registrado hace {time}",
+      "phoneVerified": "Teléfono Verificado:",
+      "yes": "Sí",
+      "photoIntegrity": "Puntaje de Integridad de Foto:",
+      "photoIntegrityHigh": "98% Alto",
+      "inspectDossier": "Inspeccionar Expediente",
+      "reject": "Rechazar",
+      "approveProfile": "Aprobar Perfil",
+      "flagged": "Marcado",
+      "lowLighting": "Iluminación Baja / Revisar",
+      "instagramSynced": "Instagram Sincronizado:",
+      "verified": "Verificado",
+      "needsClearFace": "Necesita Foto Clara del Rostro",
+      "requestPhoto": "Solicitar Foto",
+      "approveAnyway": "Aprobar de Todos Modos",
+      "approved": "Aprobado",
+      "verifiedActiveMember": "Miembro Activo Verificado",
+      "identityConfirmed": "Identidad Confirmada por Admin ID #419",
+      "publishedToDiscover": "Publicado en Descubrir",
+      "revoke": "Revocar"
+    },
+    "marketplace": {
+      "restrictedAccess": "Acceso Restringido",
+      "curatedCatalog": "Catálogo Curado",
+      "title": "Mercado Artesanal Curado",
+      "body": "Solo los administradores de la plataforma pueden publicar y gestionar los anuncios artesanales.",
+      "addProduct": "+ Añadir Nuevo Producto",
+      "table": {
+        "item": "Artículo y Procedencia",
+        "price": "Precio",
+        "category": "Categoría",
+        "status": "Estado",
+        "inquiries": "Consultas de Compradores",
+        "actions": "Acciones de Admin"
+      },
+      "statusLive": "Activo / En Stock",
+      "statusReserved": "Reservado / Poco Stock",
+      "inquiries": "{count} Consultas",
+      "conciergeBookings": "{count} reservas de conserjería",
+      "ordersFulfilled": "{count} pedidos completados",
+      "pendingPickup": "{count} pendientes de recogida",
+      "editListing": "Editar Anuncio",
+      "toggleVisibility": "Alternar Visibilidad",
+      "deleteFromStore": "Eliminar de la Tienda",
+      "categories": {
+        "artisanCrafts": "Artesanías",
+        "homeLiving": "Hogar y Vida",
+        "textiles": "Textiles",
+        "travelGear": "Equipaje de Viaje Curado"
+      },
+      "form": {
+        "title": "Publicar Nueva Pieza del Mercado",
+        "body": "Los productos curados pasan por verificación del administrador antes de su exhibición pública.",
+        "adminDirectPublish": "Publicación Directa de Admin",
+        "productTitle": "Título del Producto (Bilingüe o Inglés)",
+        "productTitlePlaceholder": "p. ej. Bolso de Piel Oaxaqueño Hecho a Mano",
+        "category": "Categoría",
+        "price": "Precio ($ USD)",
+        "origin": "Origen Geográfico y Taller Artesanal",
+        "originPlaceholder": "Oaxaca, México · Taller San Martín",
+        "narrative": "Narrativa / Descripción Artesanal (se recomienda EN + ES)",
+        "narrativePlaceholder": "Describe los materiales, la procedencia y el significado cultural...",
+        "instantRelease": "Publicación inmediata del catálogo al confirmar",
+        "saveDraft": "Guardar como Borrador",
+        "publish": "Publicar Producto en el Mercado",
+        "defaultTitle": "Bolso de Piel Oaxaqueño Hecho a Mano",
+        "defaultOrigin": "Oaxaca, México · Taller De la Cruz",
+        "defaultNarrative": "Piel curtida al vegetal elaborada con costura de montura mexicana indígena. Obtenida directamente de talleres familiares en los Valles Centrales."
+      }
+    },
+    "moderation": {
+      "title": "Confianza Comunitaria y Cola de Moderación",
+      "body": "Revisa los reportes de miembros, casos de spam e infracciones de las normas comunitarias.",
+      "needsReview": "{count} Elementos por Revisar",
+      "dismissFlag": "Descartar Marca",
+      "removePostWarn": "Eliminar Publicación y Advertir",
+      "askForVerification": "Solicitar Verificación",
+      "suspendAccount": "Suspender Cuenta",
+      "author": "Autor:",
+      "reportedBy": "Reportado por:",
+      "profile": "Perfil:",
+      "incidents": {
+        "spamBadge": "Enlace de Spam Detectado",
+        "spamTime": "Hoy a las 11:24",
+        "spamTitle": "Enlace de WhatsApp de Criptomonedas Comercial",
+        "spamBody": "“¡Hola chicas, únanse a mi grupo secreto de inversión para nómadas digitales latinos! Hagan clic en wa.me/34689... para ganar rendimientos diarios.”",
+        "spamAuthor": "user_9918 (Cuenta nueva)",
+        "spamReporter": "Mariana R.",
+        "impersonationBadge": "Sospecha de Suplantación",
+        "impersonationTime": "Ayer a las 18:40",
+        "impersonationTitle": "Fotografía de Modelo Robada en la Biografía",
+        "impersonationBody": "Un miembro reportó que la foto de perfil coincide con una modelo de moda destacada de Pinterest sin contactos sociales mutuos vinculados.",
+        "impersonationAuthor": "Lucas V. (Bogotá)",
+        "impersonationReporter": "Marca Automática del Admin"
+      }
+    }
+  },
+  "Connections": {
+    "header": {
+      "eyebrow": "CONEXIONES Y PRIVACIDAD MUTUA · CONFIANZA BILATERAL",
+      "title": "Tus Conexiones",
+      "titleAlt": "Your Connections",
+      "intro": "Donde el consentimiento mutuo desbloquea el diálogo directo. Explora conexiones verificadas, revisa invitaciones bilaterales y coordina con seguridad la comunicación internacional sin intermediarios.",
+      "activeConnections": "Conexiones Activas",
+      "pendingRequests": "Solicitudes Pendientes",
+      "exportVCard": "Exportar VCard"
+    },
+    "tabs": {
+      "active": "Conexiones Activas",
+      "requests": "Solicitudes Recibidas",
+      "sent": "Solicitudes Enviadas",
+      "archived": "Diálogos Archivados",
+      "pendingBadge": "{count} Pendientes"
+    },
+    "privacyChip": "Cero Compartición Sin Consentimiento",
+    "search": {
+      "placeholder": "Busca por nombre, ciudad (Medellín, Madrid, CDMX) o etiquetas culturales..."
+    },
+    "regionFilters": {
+      "all": "Todas las Regiones",
+      "latam": "Latinoamérica ({count})",
+      "europe": "Europa ({count})",
+      "recent": "Recientes Primero"
+    },
+    "active": {
+      "calloutTitle": "{count} Solicitudes de Conexión Bilaterales Esperan tu Revisión",
+      "calloutBody": "Daniel de Ciudad de México y Valentina de Bogotá solicitaron canales de contacto directo. Tu información permanece oculta de forma segura hasta que aceptes.",
+      "reviewInquiries": "Revisar Solicitudes",
+      "badges": {
+        "ambassador": "Embajador Verificado",
+        "resident": "Residente Verificado",
+        "creator": "Creador Verificado"
+      },
+      "connectedSince": "Conectado desde {date}",
+      "vaultTitle": "Canales Directos Revelados",
+      "vaultStatus": "Consentimiento Bilateral Activo",
+      "whatsapp": "(WhatsApp)",
+      "whatsappTelegram": "(WhatsApp / Telegram)",
+      "copy": "Copiar",
+      "copied": "¡Copiado!",
+      "copyTitle": "Copiar al portapapeles",
+      "open": "Abrir",
+      "openInstagram": "Abrir perfil de Instagram",
+      "sendNote": "Enviar Nota",
+      "coordinateCall": "Coordinar Llamada",
+      "settings": "Ajustes de Conexión y Revocación de Consentimiento"
+    },
+    "requests": {
+      "guidanceTitle": "Garantía de Confidencialidad Sin Presión",
+      "guidanceBody": "Rechazar una invitación es 100% silencioso y confidencial. Los canales de contacto directo nunca se exponen sin tu consentimiento bilateral explícito.",
+      "awaitingDecision": "{count} Esperando Decisión",
+      "sentAgo": "Enviada hace {time}",
+      "personalIntroduction": "Presentación Personal",
+      "masked": "Enmascarado",
+      "accept": "Aceptar y Revelar Contactos Directos",
+      "decline": "Rechazar Cortésmente",
+      "grantedTitle": "Consentimiento Mutuo Concedido",
+      "grantedBody": "Has revelado tus canales de contacto a {name}. Esta persona ya tiene acceso a tu bóveda directa."
+    },
+    "sent": {
+      "title": "Consultas Enviadas Esperando Aceptación Bilateral ({count})",
+      "body": "Contactaste a estos miembros de la comunidad. Cuando otorguen su consentimiento bilateral, sus canales directos se revelarán automáticamente aquí.",
+      "sentAgoAwaiting": "Enviada hace {time} · Esperando revisión",
+      "viewNote": "Ver Nota Enviada",
+      "withdraw": "Retirar"
+    },
+    "archived": {
+      "title": "No Hay Diálogos Archivados",
+      "body": "Cuando un ciclo de diálogo sin intermediarios termina o eliges silenciar las notificaciones, las conexiones pueden guardarse aquí de forma segura sin revocar la confianza."
+    },
+    "security": {
+      "title": "Arquitectura de Consentimiento Bilateral de Extremo a Extremo",
+      "body": "Conservas la soberanía absoluta sobre la visibilidad de tus contactos. Cuando se revoca el acceso, tus credenciales cifradas se vuelven a bloquear de inmediato y se eliminan por completo de todas las sesiones activas de los destinatarios.",
+      "manageKeys": "Gestionar Claves de Privacidad",
+      "auditLogs": "Auditar Registros de Consentimiento"
+    },
+    "tags": {
+      "textiles": "Textiles",
+      "botanicals": "Botánica",
+      "analogFilm": "Película Analógica",
+      "architecture": "Arquitectura",
+      "brutalism": "Brutalismo",
+      "ceramics": "Cerámica",
+      "coffeeCupping": "Cata de Café",
+      "urbanWalk": "Paseo Urbano",
+      "contemporaryArt": "Arte Contemporáneo",
+      "gastronomy": "Gastronomía",
+      "independentCinema": "Cine Independiente",
+      "cinema": "Cine",
+      "vintageRecords": "Discos Vintage",
+      "cycling": "Ciclismo",
+      "bookbindery": "Encuadernación"
+    },
+    "context": {
+      "camila": "“Conectados durante el intercambio del Salón de Arquitectura Barcelona–Medellín.”",
+      "mateo": "“Intercambiamos notas sobre la gira retrospectiva de Luis Barragán.”",
+      "elena": "“Coanfitriona local para los paseos por librerías ocultas de Chamberí.”",
+      "lucas": "“Colaborando en un guion de documental sonoro bilingüe.”"
+    },
+    "topics": {
+      "artisanCeramics": "Cerámica Artesanal",
+      "publishingTravel": "Editorial y Viajes"
+    }
+  },
+  "PublicNav": {
+    "tagline": "Conexiones Interculturales",
+    "signIn": "Iniciar Sesión",
+    "register": "Registrarse",
+    "safetyTrust": "Seguridad y Confianza",
+    "helpCenter": "Centro de Ayuda",
+    "toggleMenu": "Alternar menú de navegación"
+  },
+  "PublicFooter": {
+    "badge": "Comunidad Bilingüe",
+    "tagline": "Curaduría intercultural intencional y conexiones verificadas. Fomentamos la confianza mutua y el diálogo bilingüe auténtico.",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos del Servicio",
+    "guidelines": "Normas de la Comunidad",
+    "safety": "Centro de Seguridad",
+    "explore": "Explorar la app",
+    "copyright": "© 2024 GlobalLinkup Inc. Todos los derechos reservados. Diseñado con calidez y respeto mutuo.",
+    "assurance": "Autenticación Cifrada de Extremo a Extremo y Garantía de Identidad"
+  },
+  "MarketingNav": {
+    "tagline": "Comunidad Bilingüe",
+    "vettedBadge": "Verificado y Solo por Invitación",
+    "howItWorks": "Cómo Funciona",
+    "discoverPersonas": "Descubrir Personas",
+    "editorialFeed": "Feed Editorial",
+    "artisanGoods": "Bienes Artesanales",
+    "privacyProtocol": "Protocolo de Privacidad",
+    "signIn": "Iniciar Sesión",
+    "join": "Únete a GlobalLinkup",
+    "joinShort": "Unirse",
+    "toggleMenu": "Alternar menú de navegación",
+    "language": "Idioma"
+  },
+  "MarketingFooter": {
+    "blurb": "Cultivamos conexiones interculturales auténticas y curaduría de estilo de vida entre comunidades angloparlantes e hispanohablantes. Construido sobre interacción intencional, confianza mutua y narrativa cultural.",
+    "blurbAlt": "Cultivating authentic cross-cultural connections and lifestyle curation across English and Spanish-speaking communities. Built on intentional interaction, mutual trust, and cultural storytelling.",
+    "navigationTitle": "Navegación",
+    "navigation": {
+      "howItWorks": "Cómo Funciona",
+      "discoverPeople": "Descubrir Personas",
+      "communityPosts": "Publicaciones",
+      "artisanMarketplace": "Mercado Artesanal"
+    },
+    "trustTitle": "Confianza y Admin",
+    "trust": {
+      "privacyPolicy": "Política de Privacidad",
+      "connectGuidelines": "Normas de Conexión",
+      "adminAccess": "Acceso Admin"
+    },
+    "copyright": "© 2025 GlobalLinkup Inc. Todos los derechos reservados.",
+    "motto": "AUTÉNTICO • DISCRETO • CURADO"
+  },
+  "Auth": {
+    "login": {
+      "previewLabel": "Vista previa de estados de autenticación:",
+      "state_ready": "1. Listo por defecto",
+      "state_invalid": "2. Error: credenciales inválidas",
+      "state_pending": "3. Error: en revisión",
+      "state_loading": "4. Estado de verificación",
+      "backdropAlt": "Fotografía editorial de dos personas compartiendo café artesanal en una terraza soleada de Ciudad de México.",
+      "badgeEdition": "Edición 2024 / Vol. IV",
+      "badgeMeta": "Identidad y Santuario",
+      "welcomeEs": "Bienvenido de nuevo.",
+      "welcomeEn": "— Welcome back",
+      "quote": "“Un espacio tranquilo e intencional para el descubrimiento intercultural. Cero ruido algorítmico, humanos verificados, conexiones con la privacidad primero.”",
+      "peerVerified": "100% Verificado por Pares",
+      "bilingualNarrative": "Narrativa Bilingüe",
+      "title": "Bienvenido de nuevo",
+      "titleAlt": "Acceso Seguro",
+      "subtitle": "Ingresa tu correo y contraseña para acceder a tu cuenta de GlobalLinkup.",
+      "invalidTitle": "Incorrect credentials / Credenciales incorrectas",
+      "invalidBody": "Correo o contraseña incorrectos. Intenta de nuevo o",
+      "resetPassword": "restablece tu contraseña",
+      "pendingTitle": "Verification Underway / En revisión",
+      "pendingBody": "Tu cuenta está siendo revisada por nuestro equipo de moderación.",
+      "viewStatus": "Ver estado de verificación",
+      "emailLabel": "Email Address / Correo Electrónico",
+      "emailHelper": "Identidad verificada",
+      "emailPlaceholder": "nombre@dominio.com",
+      "passwordLabel": "Password / Contraseña",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "togglePassword": "Mostrar u ocultar contraseña",
+      "remember": "Recordar este dispositivo durante 30 días",
+      "submit": "Log In / Iniciar Sesión",
+      "submitting": "Verificando credenciales...",
+      "noAccount": "Don't have an account?",
+      "createAccount": "Create an account",
+      "noAccountEs": "¿No tienes una cuenta?",
+      "registerFree": "Regístrate gratis",
+      "trackers": "Cero rastreadores de terceros o SDKs sociales.",
+      "policies": "Políticas"
+    },
+    "register": {
+      "stepperLabel": "Paso Inicial / Onboarding",
+      "step1": "01 Cuenta",
+      "step2": "02 Persona",
+      "step3": "03 Verificación",
+      "photoAlt": "Miembros de la comunidad global conectando en un cálido patio exterior.",
+      "photoBadge": "Comunidad Global Verificada",
+      "photoCaption": "Elena (Barcelona) & Mateo (Bogotá) · Conectados hace 8 meses",
+      "quoteTitle": "Conexiones humanas sin fronteras.",
+      "quoteBody": "Conecta más allá de las fronteras con personas verificadas de todo el mundo. Simple, respetuoso y estrictamente con la privacidad primero. Tu dossier personal se cura con pleno consentimiento.",
+      "privacyTitle": "Sin intermediarios ni rastreadores",
+      "privacyBody": "Identidad protegida por criptografía de extremo a extremo.",
+      "cardBadge": "Paso 1 de 3 · Configuración de Cuenta",
+      "title": "Crea tu cuenta",
+      "titleAlt": "/ Create your account",
+      "subtitle": "Ingresa tu correo y una contraseña segura. Tu perfil público y dossier cultural se configurarán en el siguiente paso.",
+      "bannerTitle": "Revisa los datos ingresados",
+      "bannerBody": "El correo electrónico ya tiene un dossier registrado o las contraseñas no coinciden. Por favor intenta de nuevo.",
+      "emailLabel": "Correo electrónico",
+      "emailHelper": "Correspondencia bilingüe",
+      "emailPlaceholder": "elena.rostova@ejemplo.com",
+      "emailError": "Ingresa un correo electrónico corporativo o personal válido.",
+      "passwordLabel": "Contraseña",
+      "passwordHint": "Mínimo 8 caracteres",
+      "passwordPlaceholder": "Crea tu clave secreta",
+      "togglePassword": "Mostrar u ocultar contraseña",
+      "strengthLabel": "Nivel de seguridad",
+      "strengthWeak": "Débil",
+      "strengthMedium": "Moderada",
+      "strengthStrong": "Fuerte",
+      "ruleLength": "8+ caracteres",
+      "ruleCase": "Mayús. y minús.",
+      "ruleNumber": "Al menos 1 número",
+      "confirmLabel": "Confirmar contraseña",
+      "confirmPlaceholder": "Repite tu clave secreta",
+      "toggleConfirm": "Mostrar u ocultar confirmación de contraseña",
+      "confirmError": "Las contraseñas deben ser exactamente idénticas.",
+      "terms": "Acepto los <terms>Términos del Servicio</terms> y la <privacy>Política de Privacidad</privacy> de GlobalLinkup. Entiendo que la verificación de identidad se completará tras la revisión de mi perfil.",
+      "submit": "Crear Cuenta y Continuar",
+      "haveAccount": "¿Ya tienes una cuenta registrada?",
+      "logIn": "Inicia sesión / Log in"
+    },
+    "verify": {
+      "previewLabel": "Vista previa del estado de la cuenta",
+      "previewHint": "• Sandbox de validación visual",
+      "state_pending": "1. Revisión pendiente",
+      "state_approved": "2. Verificado y activo",
+      "state_action": "3. Aclaración necesaria",
+      "progressLabel": "Progreso de Incorporación",
+      "step1": "01 Cuenta",
+      "step1Sub": "Credenciales",
+      "step2": "02 Persona",
+      "step2Sub": "Biografía Cultural",
+      "step3": "03 Revisión Humana",
+      "step3Sub": "Verificación",
+      "approvedTitle": "Identidad Verificada y Autenticada",
+      "approvedBadge": "Ciudadano Activo",
+      "approvedBody": "¡Tu perfil ha sido verificado con éxito! Ya tienes acceso completo a los dossiers comunitarios, la narrativa bicultural y la mensajería privada.",
+      "approvedCta": "Entrar a Descubrir",
+      "actionTitle": "Clarificación Requerida • Clarification Required",
+      "actionBadge": "Acción 1 de 1",
+      "actionBody": "Nuestro revisor notó que tu imagen de retrato tiene un desenfoque artístico intenso o gafas de sol. Para mantener la confianza de la comunidad, proporciona una foto natural que muestre claramente tus rasgos faciales.",
+      "actionCta": "Actualizar Retrato del Dossier",
+      "title": "Tu perfil ha sido enviado para verificación",
+      "titleAlt": "Your persona has been submitted",
+      "statusPending": "Estado: Pendiente de revisión del administrador",
+      "statusApproved": "Estado: Identidad verificada y activa",
+      "statusAction": "Estado: Aclaración requerida",
+      "timeline": "Tiempo de espera estimado:",
+      "timelineStrong": "Normalmente verificado en 4–12 horas",
+      "timelineHint": "(Usual response time)",
+      "reassurePrimary": "Gracias por crear tu Persona de GlobalLinkup. Para proteger a nuestra comunidad del spam, los bots y el scraping automatizado, cada dossier nuevo lo revisa personalmente nuestro equipo antes de que puedas empezar a conectar.",
+      "reassureSecondary": "Apreciamos tu paciencia. Cada solicitud se revisa manualmente para garantizar una comunidad cálida, segura y 100% auténtica.",
+      "dossierTitle": "Vista Previa del Dossier Enviado",
+      "dossierBadge": "Cápsula Cifrada",
+      "portraitAlt": "Fotografía editorial de retrato de Sofia Martinez en Barcelona.",
+      "private": "Privado",
+      "name": "Sofia Martínez, 27",
+      "location": "• Barcelona, España / Spain",
+      "langEs": "ES Nativo",
+      "langEn": "EN Fluido (C1)",
+      "interest1": "Intercambio Cultural",
+      "interest2": "Arquitectura y Comida",
+      "interest3": "Cafés Literarios",
+      "socialLabel": "Contactos y enlaces sociales verificados",
+      "socialLocked": "Bloqueado hasta aprobación mutua",
+      "nextTitle": "¿Qué sucederá ahora? / What happens next?",
+      "nextMeta": "Proceso de Curaduría Humana",
+      "next1Label": "Paso 01",
+      "next1Title": "Revisión Humana de Foto y Bio",
+      "next1Body": "Un oficial de confianza bilingüe revisa tu foto contra patrones de bots y marcadores de generación por IA para mantener el diálogo humano.",
+      "next1Footer": "En Cola",
+      "next2Label": "Paso 02",
+      "next2Title": "Notificación Instantánea",
+      "next2Body": "Recibirás un correo de invitación editorial con el enlace a tu insignia verificada en cuanto la revisión finalice con éxito.",
+      "next2Footer": "Envío Automatizado",
+      "next3Label": "Paso 03",
+      "next3Title": "Acceso a Descubrir y Match",
+      "next3Body": "El acceso completo sin máscaras a salones bilingües, envíos de viaje curados y solicitudes de conexión privadas se desbloquea al instante.",
+      "next3Footer": "Listo al aprobar",
+      "exploreStories": "Explorar Historias Públicas",
+      "editPersona": "Editar Persona Enviada",
+      "trustDesk": "Mesa de Verificación Bilingüe: activa 24/7 en Madrid, Ciudad de México y Nueva York",
+      "trustManifesto": "Lee nuestro manifiesto de ética de verificación",
+      "metric1Label": "Tolerancia Cero a Bots",
+      "metric1Value": "99.8%",
+      "metric1Body": "Dossiers humanos auténticos",
+      "metric2Label": "Velocidad de Respuesta",
+      "metric2Value": "6.2 Horas",
+      "metric2Body": "Tiempo medio de revisión",
+      "metric3Label": "Contexto Dual",
+      "metric3Value": "Bicultural",
+      "metric3Body": "Revisión humana en EN y ES"
+    }
+  },
+  "PersonaForm": {
+    "eyebrow": "Fase de Registro • Paso 02",
+    "eyebrowMeta": "Curaduría Editorial Bilingüe",
+    "title": "Crea tu Persona",
+    "titleAlt": "Create your persona and cultural identity",
+    "pipeStep1": "01 Cuenta",
+    "pipeStep2": "02 Persona",
+    "pipeStep3": "03 Revisión",
+    "plateAlt": "Retrato cándido a la luz del sol de un artista creativo en un estudio de cerámica con textiles de lino natural.",
+    "plateBadge": "Comunidad Humanista",
+    "plateQuote": "“Cada perfil es una puerta abierta a otro hemisferio y a una sensibilidad compartida.”",
+    "guideTitle": "Curando tu Narrativa",
+    "guideBody": "GlobalLinkup reemplaza el deslizamiento algorítmico por una narrativa bilingüe y respetuosa. Tómate un minuto para expresar qué te mueve: desde la arquitectura costera hasta las tradiciones musicales vernáculas.",
+    "guideVetted": "100% Identidad Verificada",
+    "guideBilingual": "Dinámica Bilingüe",
+    "privacyTitle": "Protocolo de Privacidad Respetuoso",
+    "privacyBadge": "Garantía",
+    "privacyBody": "Tus contactos sociales directos (WhatsApp, Instagram, Telegram) se guardan en un registro cifrado de extremo a extremo. Permanecen totalmente ocultos de los directorios abiertos y de los índices de búsqueda.",
+    "privacyNote": "Se revelan solo tras la aceptación mutua",
+    "privacyZero": "Cero Rastreadores",
+    "photoLabel": "Profile Photo / Retrato de Perfil",
+    "photoHint": "Una foto tuya cándida y auténtica con luz natural.",
+    "required": "Obligatorio",
+    "avatarAlt": "Retrato cándido en primer plano de una persona sonriendo suavemente con luz natural cálida.",
+    "change": "Cambiar",
+    "uploadImage": "Subir Imagen",
+    "useCamera": "Usar Cámara",
+    "photoFormats": "JPG, WEBP o PNG de hasta 10MB. Se prefiere el grano natural a los filtros de estudio.",
+    "fullName": "Full Name / Nombre y Apellido",
+    "fullNameMeta": "Público",
+    "fullNamePlaceholder": "p. ej. Sofia Martínez",
+    "country": "Country / País",
+    "countryMeta": "Residencia",
+    "city": "City / Ciudad Base",
+    "cityMeta": "Metrópolis",
+    "cityPlaceholder": "p. ej. Barcelona, Oaxaca, Medellín",
+    "anchor": "Cultural Anchor / Raíces",
+    "anchorMeta": "Opcional",
+    "anchorPlaceholder": "p. ej. raíces catalanas / andaluzas",
+    "languagesLabel": "Languages & Fluency / Idiomas",
+    "languagesHint": "Selecciona todos los que definan tu vida bilingüe diaria o tus ambiciones conversacionales.",
+    "levels": {
+      "native": "Nativo",
+      "fluent": "Fluido",
+      "learning": "Aprendiendo",
+      "basic": "Básico"
+    },
+    "bioLabel": "Short Bio / Semblanza Breve",
+    "bioCounter": "{count} / {max}",
+    "bioPlaceholder": "Cuéntales a los demás sobre tus pasiones culturales, experiencias de viaje u oficio...",
+    "bioHint": "Comparte qué tipo de intercambios te inspiran: colaboraciones artísticas, consejos de viaje o conversaciones pausadas.",
+    "interestsLabel": "Cultural Interests / Afinidades Culturales",
+    "interestsHint": "Selecciona al menos 3 ({count} seleccionados)",
+    "interests": {
+      "architecture": "Arquitectura",
+      "analogPhotography": "Fotografía Analógica",
+      "ceramicsCraft": "Cerámica y Oficio",
+      "independentCinema": "Cine Independiente",
+      "culinaryHeritage": "Herencia Culinaria",
+      "hikingNature": "Senderismo y Naturaleza",
+      "literature": "Literatura",
+      "latinMusic": "Música y Ritmos Latinos"
+    },
+    "countries": {
+      "ES": "España",
+      "MX": "México",
+      "CO": "Colombia",
+      "AR": "Argentina",
+      "US": "Estados Unidos",
+      "CR": "Costa Rica",
+      "CL": "Chile",
+      "PE": "Perú"
+    },
+    "vaultTitle": "Canales de Contacto Privados",
+    "vaultBadge": "Bóveda de 256 Bits",
+    "vaultBody": "Estos canales directos nunca se muestran públicamente. Solo cuando decidas confirmar una invitación de conexión mutua tu contraparte recibirá estos datos.",
+    "instagram": "Instagram",
+    "instagramMeta": "(Cifrado)",
+    "instagramPlaceholder": "sofia.arquitectura",
+    "chat": "WhatsApp / Telegram",
+    "chatMeta": "(Línea Directa)",
+    "chatPlaceholder": "+34 612 345 678",
+    "vaultNote": "Guardado con cifrado de clave soberana. Conservas la capacidad de revocar el acceso en cualquier momento.",
+    "back": "Volver al Paso 1",
+    "submit": "Completar y Enviar Persona para Revisión"
+  },
+  "Landing": {
+    "hero": {
+      "badge": "Plataforma Bilingüe de Descubrimiento · Bilingual Discovery Platform",
+      "titleLine1": "Conecta más allá de las ",
+      "titleLine2": "fronteras.",
+      "titleAlt": "Connect beyond borders.",
+      "body": "Descubre personas reales, comparte tu mundo y conecta entre culturas sin ruido algorítmico, mensajes directos no solicitados ni privacidad comprometida. Pensado para el intercambio cultural consciente entre comunidades hispanohablantes y angloparlantes.",
+      "join": "Únete a GlobalLinkup",
+      "explore": "Explorar Personas",
+      "trust": {
+        "personas": "Personas Verificadas",
+        "consent": "Desbloqueo por Consentimiento Mutuo",
+        "spam": "Cero Spam de Terceros"
+      },
+      "cardAlt": "Retrato de Sofia Martínez",
+      "city": "Barcelona, España",
+      "verified": "Persona Verificada",
+      "name": "Sofia Martínez, 27",
+      "role": "Arquitecta y Documentalista Cultural",
+      "languages": "ES (Nat) · EN (Flu)",
+      "bio": "“Curiosa por la restauración brutalista, las terrazas soleadas y los paseos en película analógica por el Barrio Gótico. Busca conexiones genuinas entre perspectivas hispanas y anglosajonas.”",
+      "interests": {
+        "architecture": "Arquitectura",
+        "photography": "Fotografía",
+        "ceramics": "Cerámica"
+      },
+      "ready": "Lista para conectar",
+      "requestConnect": "Solicitar Conexión",
+      "floatTitle": "Cero Spam de Mensajes Directos",
+      "floatBody": "Los contactos permanecen bloqueados hasta la elección mutua."
+    },
+    "protocol": {
+      "badge": "Protocolo de Privacidad · Privacy Protocol",
+      "title": "El Protocolo de Privacidad Respetuoso",
+      "body": "Por qué GlobalLinkup no tiene bandejas de entrada no solicitadas, mensajes en frío no deseados ni filtraciones sociales abiertas. Los contactos sociales directos solo se revelan cuando ambas personas eligen conectarse deliberadamente.",
+      "step1Label": "01 · Paso Uno",
+      "step1Title": "Explora Personas Verificadas",
+      "step1Body": "Explora dossiers auténticos, idiomas hablados, pasiones compartidas e indicadores de identidad verificada sin perfiles falsos.",
+      "step2Label": "02 · Paso Dos",
+      "step2Title": "Envía una Solicitud Cortés",
+      "step2Body": "Haz clic en Conectar con intención. Sin cuadros de texto abiertos al spam ni llamadas no invitadas. El estado se registra de forma segura como “Esperando la aprobación de Sofia”.",
+      "step3Label": "03 · Paso Tres",
+      "step3Title": "Decisión Mutua",
+      "step3Body": "La persona destinataria revisa tu dossier en privado y decide si aceptar o rechazar sin ninguna presión social incómoda.",
+      "step4Label": "04 · Paso Cuatro",
+      "step4Title": "Contacto Directo Revelado",
+      "step4Body": "Solo tras la aceptación mutua se abre la bóveda de forma segura: se desbloquean los contactos verificados de Instagram, WhatsApp personal o enlaces de viaje."
+    },
+    "demo": {
+      "title": "Demostración Interactiva: Cómo la Bóveda de Privacidad Protege a los Miembros",
+      "body": "Alterna entre el estado bloqueado y el estado de aprobación mutua para previsualizar cómo se protegen los contactos.",
+      "lockedTab": "Estado: Antes de Conectar (Bloqueado)",
+      "unlockedTab": "Estado: Tras Aprobación Mutua (Desbloqueado)",
+      "miniAlt": "Sofia Martínez",
+      "miniName": "Sofia Martínez",
+      "miniMeta": "Barcelona • ES y EN",
+      "statusLabel": "Estado:",
+      "statusLocked": "Pendiente de Aprobación Mutua",
+      "statusUnlocked": "Aprobación Mutua Concedida",
+      "lockedTitle": "Bóveda de Contacto Privado",
+      "encrypted": "Cifrado",
+      "masked": {
+        "ig": "@sofia.martinez.bcn",
+        "phone": "+34 622 ••• ••"
+      },
+      "locked": "Bloqueado",
+      "lockedNote": "Los canales directos están enmascarados hasta que Sofia acepte tu solicitud de conexión. Ninguna de las partes puede ver contactos privados no verificados.",
+      "unlockedTitle": "Conexión Verificada y Desbloqueada",
+      "active": "Activo",
+      "igUnlocked": "Instagram: @sofia.martinez.arch",
+      "tgUnlocked": "Telegram: @sofia_bcn",
+      "openProfile": "Abrir Perfil",
+      "startChat": "Iniciar Chat",
+      "unlockedNote": "Ambas partes acordaron mutuamente conectarse el 24 de octubre. Los canales de comunicación directa ya están autenticados y activos."
+    },
+    "pillars": {
+      "badge": "Los 3 Pilares · The 3 Pillars",
+      "title": "Diseñado para la vida intencional, no para bucles de atención.",
+      "body": "GlobalLinkup reúne personas verificadas, historias visuales auténticas y artesanía regional validada.",
+      "pillar1Label": "Pilar 01 · Descubrimiento Humano",
+      "pillar1Title": "Persona Verificada",
+      "pillar1Body": "Descubrimiento humano y auténtico. Personas reales con contexto cultural genuino, ubicaciones verificadas, idiomas nativos e intereses reales en lugar de deslizamiento gamificado de perfiles.",
+      "pillar1Cta": "Explorar Personas",
+      "pillar2Label": "Pilar 02 · Feed Editorial",
+      "pillar2Title": "Feed Visual Cronológico",
+      "pillar2Body": "Sin trampas algorítmicas de dopamina, reels ruidosos ni interrupciones patrocinadas. Solo fotografía serena en alta resolución y crónicas de viaje compartidas por viajeros genuinos.",
+      "pillar2Cta": "Explorar Publicaciones",
+      "pillar3Label": "Pilar 03 · Procedencia Directa",
+      "pillar3Title": "Mercado Curado",
+      "pillar3Body": "Creaciones artesanales 100% verificadas por administradores. Cero revendedores genéricos. Cada pieza procede directamente de talleres regionales éticos en México, España, Colombia y Argentina.",
+      "pillar3Cta": "Descubrir Bienes Artesanales"
+    },
+    "snapshot": {
+      "badge": "Instantánea de la Comunidad · Community Snapshot",
+      "title": "Un vistazo a la vida verificada en América y Europa",
+      "body": "Explora miembros auténticos, crónicas de viaje reales y procedencia acabada a mano.",
+      "viewAll": "Ver Todos los Miembros",
+      "verified": "Verificado",
+      "requestConnect": "Solicitar Conexión",
+      "mateoAlt": "Retrato natural y cálido de Mateo en un café soleado de Roma Norte, Ciudad de México.",
+      "mateoCity": "Ciudad de México, MX",
+      "mateoName": "Mateo Silva, 31",
+      "mateoQuote": "“Narrador visual fascinado por la tipografía modernista, las tradiciones del mezcal y el ciclismo urbano en la CDMX.”",
+      "mateoTag1": "Tipografía",
+      "mateoTag2": "Culinario",
+      "lucasAlt": "Retrato editorial cándido de Lucas caminando con un bolso de lona en San Telmo, Buenos Aires.",
+      "lucasCity": "Buenos Aires, AR",
+      "lucasName": "Lucas Benítez, 29",
+      "lucasQuote": "“Escribiendo código abierto por la mañana, ensayando bandoneón por la tarde. Con ganas de recibir a viajeros que pasen por Palermo.”",
+      "lucasTag1": "Tango",
+      "lucasTag2": "Código Abierto",
+      "adminCurated": "100% Curado por Admin",
+      "bagPrice": "$120 USD",
+      "bagAlt": "Bodegón editorial de estudio de un bolso de piel curtida hecho a mano por artesanos oaxaqueños.",
+      "bagOrigin": "Taller Artesanal · Oaxaca",
+      "bagName": "Bolso de Piel de Montura Hecho a Mano",
+      "bagBody": "Curtido al vegetal por el maestro Emiliano en San Martín Tilcajete. Cosido a mano con hilo de lino encerado.",
+      "viewProvenance": "Ver Detalles de Procedencia",
+      "postAlt": "Fotografía documental atmosférica de un taller de cerámica rústico en Sevilla, España.",
+      "postTag": "Sevilla, España • Crónica Comunitaria",
+      "postAuthor": "Clara Linares",
+      "postTime": "hace 3 horas",
+      "postTitle": "“Encontrando serenidad en el viejo barrio alfarero de Triana.”",
+      "postBody": "“Cada rincón de este callejón huele a barro húmedo y azahar. Me encontré con Don Ramón, que mantiene su horno de leña encendido desde 1974. Sin turistas, solo conversación honesta.”",
+      "postBodyAlt": "“Every corner of this alley smells of damp clay and orange blossom. Honest conversation without haste or intermediaries.”"
+    },
+    "cta": {
+      "badge": "Disponible en Inglés y Español · EN / ES",
+      "title": "¿Listo para conectar más allá de las fronteras?",
+      "titleAlt": "Ready to connect beyond borders?",
+      "body": "Únete a una comunidad internacional curada, construida sobre la confianza, el respeto y el descubrimiento mutuo. Sin algoritmos, sin mensajes no deseados, solo profundidad cultural genuina.",
+      "join": "Únete a GlobalLinkup",
+      "explore": "Explorar Personas",
+      "assurance": "Moderación Humana · Cero Rastreadores Publicitarios · Consentimiento Mutuo Garantizado"
+    }
+  },
+  "Profile": {
+    "meta": {
+      "dossier": "Expediente del Miembro",
+      "verifiedActive": "Verificado Activo"
+    },
+    "actions": {
+      "share": "Compartir Expediente",
+      "shared": "Enlace copiado",
+      "edit": "Edit Profile / Editar",
+      "logout": "Cerrar Sesión"
+    },
+    "identity": {
+      "mutual": "Mutuo 100%",
+      "mutualConsent": "Consentimiento Mutuo Verificado"
+    },
+    "trust": {
+      "label": "Puntuación de Confianza",
+      "body": "Cero revelaciones no deseadas • Verificación recíproca"
+    },
+    "metrics": {
+      "connections": "Conexiones Verificadas",
+      "dispatches": "Crónicas Compartidas",
+      "saved": "Bienes Artesanales Guardados",
+      "unlockRate": "Tasa de Desbloqueo Mutuo"
+    },
+    "bio": {
+      "title": "Bilingual Bio / Perfil",
+      "autoMirrored": "Sincronizado",
+      "english": "English Edition",
+      "spanish": "Edición en Español",
+      "culturalFocus": "Enfoque Cultural"
+    },
+    "tags": {
+      "architecture": "Arquitectura",
+      "analogPhotography": "Fotografía Analógica",
+      "ceramics": "Cerámica",
+      "espressoCulture": "Cultura del Espresso",
+      "urbanism": "Urbanismo"
+    },
+    "locker": {
+      "title": "Bóveda de Contacto",
+      "badge": "Cero MD en Frío",
+      "body": "Tus contactos personales están cifrados por defecto. Los canales de contacto se revelan estrictamente tras el consentimiento recíproco de la invitación.",
+      "masked": "(Enmascarado)",
+      "handles": {
+        "whatsapp": "WhatsApp Seguro",
+        "instagram": "Instagram (Curaduría Privada)",
+        "substack": "Substack y Bitácora de Arquitectura"
+      },
+      "openArchive": "Archivo Público Disponible",
+      "status": {
+        "shielded": "Protegido",
+        "open": "Abierto"
+      },
+      "rulesTitle": "Reglas del Protocolo",
+      "rules": {
+        "inquiries": {
+          "label": "Aceptar consultas de descubrimiento",
+          "body": "Permite que pares verificados soliciten revelación mutua"
+        },
+        "bilingualNote": {
+          "label": "Exigir nota de presentación bilingüe",
+          "body": "Requiere un mensaje contextual en inglés o español"
+        },
+        "incognito": {
+          "label": "Incógnito en feeds regionales",
+          "body": "Oculta el perfil en la red amplia de descubrimiento de Barcelona"
+        }
+      },
+      "unveiledTitle": "Revelado a ({shown} de {total})",
+      "manageAll": "Gestionar Todo",
+      "unlocked": "Desbloqueado {time}",
+      "revoke": "Revocar",
+      "revoked": "Acceso revocado"
+    },
+    "tabs": {
+      "dispatches": "Crónicas ({count})",
+      "saved": "Guardados ({count})",
+      "circles": "Círculos ({count})",
+      "security": "Registro de Seguridad"
+    },
+    "dispatches": {
+      "title": "Crónicas Curadas",
+      "body": "Cuadernos de campo, estudios arquitectónicos y ensayos fílmicos desde Barcelona y Andalucía.",
+      "visibility": "Público para Círculos",
+      "circlesOnly": "Solo Círculos Revelados",
+      "appreciations": "{count, plural, =1 {# Apreciación} other {# Apreciaciones}}",
+      "notes": "{count, plural, =1 {# Nota Cultural} other {# Notas Culturales}}",
+      "series": "Serie: {name}",
+      "loadEarlier": "Cargar Crónicas Anteriores",
+      "archiveEnd": "Has llegado al inicio de tu archivo de campo."
+    },
+    "saved": {
+      "title": "Bienes Artesanales Guardados",
+      "body": "Piezas que marcaste del catálogo curado del mercado.",
+      "browse": "Explorar el Mercado"
+    },
+    "circles": {
+      "title": "Círculos Mutuos",
+      "body": "Miembros con los que te has conectado. Los canales de contacto se desbloquean solo tras el consentimiento de ambas partes.",
+      "unveiled": "Contactos revelados",
+      "awaiting": "Esperando consentimiento mutuo",
+      "more": "{count} miembros más en tu círculo"
+    },
+    "security": {
+      "title": "Registro de Seguridad",
+      "body": "Cada evento de consentimiento en tu expediente, del más reciente al más antiguo.",
+      "events": {
+        "unveiled": "Canales de contacto revelados a {name}",
+        "revoked": "Revocaste el acceso de {name}",
+        "declined": "Rechazaste una consulta de {name}",
+        "ruleChanged": "Reglas del protocolo actualizadas"
+      }
+    }
+  }
+}

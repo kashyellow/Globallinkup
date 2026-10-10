@@ -51,3 +51,9 @@ mise.local.toml
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+#Reference
+Reference
+
+# agent workspace metadata (local notes, not project source)
+.workbuddy-ai/

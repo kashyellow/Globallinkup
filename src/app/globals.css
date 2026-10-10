@@ -1,26 +1,268 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * GlobalLinkup design tokens.
+ *
+ * Ported from the reference HTML (Reference/*.html) Tailwind config so the
+ * semantic class names used by the converted components resolve:
+ *   colors    → bg-surface-card, text-on-surface, border-outline-variant, …
+ *   spacing   → px-margin, gap-space-md, py-space-xl, …
+ *   type      → font-headline-xl + text-headline-xl, text-label-caps, …
+ *   radii     → rounded-xl (0.5rem), rounded-full (pill/circle)
+ */
+
+@theme {
+  /* ── Brand ─────────────────────────────────────────────────────────── */
+  --color-primary: #e86a5b;
+  --color-primary-container: #e86a5b;
+  --color-primary-hover: #d85e50;
+  --color-inverse-primary: #a6392e;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #ffffff;
+
+  /* ── Backgrounds & surfaces (dark) ─────────────────────────────────── */
+  --color-background: #0b0a09;
+  --color-background-cream: #0b0a09;
+  --color-surface: #121110;
+  --color-surface-dark: #121110;
+  --color-surface-dim: #141311;
+  --color-surface-lowest: #0e0d0c;
+  --color-surface-low: #181715;
+  --color-surface-card: #181715;
+  --color-surface-container: #1e1c1a;
+  --color-surface-container-high: #262320;
+  --color-surface-container-highest: #2b2824;
+  --color-surface-bright: #262320;
+  --color-surface-variant: #242220;
+  --color-inverse-surface: #f6f3ee;
+  --color-inverse-on-surface: #121110;
+
+  /* ── Foreground / text ─────────────────────────────────────────────── */
+  --color-on-background: #f6f3ee;
+  --color-on-surface: #f6f3ee;
+  --color-text-ivory: #f6f3ee;
+  --color-on-surface-variant: #b0aaa2;
+  --color-on-surface-strong: #ede9e3;
+  --color-on-surface-muted: #c8c3bd;
+  --color-text-muted: #878179;
+  --color-text-muted-dark: #9e9992;
+  --color-placeholder: #5c564f;
+
+  /* ── Secondary (warm grey) ─────────────────────────────────────────── */
+  --color-secondary: #9e9992;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #2b2320;
+  --color-secondary-container-alt: #26201d;
+  --color-secondary-fixed: #2b2220;
+  --color-secondary-fixed-dim: #362e2b;
+  --color-on-secondary-container: #ede9e3;
+
+  /* ── Tertiary / success (green) ────────────────────────────────────── */
+  --color-tertiary: #2e9b68;
+  --color-tertiary-container: #2e9b68;
+  --color-tertiary-fixed: #1a402f;
+  --color-tertiary-fixed-dim: #2e9b68;
+  --color-on-tertiary: #ffffff;
+  --color-on-tertiary-container: #73dba2;
+  --color-success: #2e9b68;
+  --color-success-bright: #22c55e;
+  --color-success-strong: #006d44;
+  --color-success-hover: #258257;
+  --color-success-surface: #163d2c;
+  --color-success-surface-alt: #1b382b;
+  --color-success-container: #184e36;
+  --color-success-border: #2d7d56;
+  --color-success-ring: #38a36f;
+  --color-success-text: #73dba2;
+  --color-success-text-bright: #8ff7bc;
+
+  /* ── Error / danger ────────────────────────────────────────────────── */
+  --color-error: #cf6679;
+  --color-error-container: #491a1a;
+  --color-on-error: #ffffff;
+  --color-on-error-container: #ffdad6;
+  --color-danger: #ef4444;
+  --color-danger-surface: #3d1414;
+  --color-danger-border: #5c1d1d;
+  --color-danger-border-strong: #ba1a1a;
+  --color-danger-text: #fca5a5;
+
+  /* ── Admin accent (coral-tinted) ───────────────────────────────────── */
+  --color-admin-surface: #2e201e;
+  --color-admin-border: #482823;
+  --color-admin-text: #ffb4a9;
+  --color-admin-text-soft: #ffdad5;
+
+  /* ── Lines ─────────────────────────────────────────────────────────── */
+  --color-outline: #3d3833;
+  --color-outline-variant: #2e2b27;
+  --color-border-subtle: #2e2b27;
+  --color-border-dark: #383430;
+  --color-border-strong: #3e3430;
+  --color-outline-strong: #524d47;
+  --color-outline-hover: #48433d;
+  --color-surface-tint: #e86a5b;
+
+  /* ── Spacing (named, mirrors the reference config) ─────────────────── */
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-md: 1rem;
+  --spacing-space-lg: 1.5rem;
+  --spacing-space-xl: 2.5rem;
+  --spacing-margin: 2.5rem;
+  --spacing-margin-mobile: 1.25rem;
+  --spacing-gutter: 1.5rem;
+  --spacing-gutter-mobile: 1rem;
+
+  /* ── Type scale ────────────────────────────────────────────────────── */
+  --text-headline-xl: 44px;
+  --text-headline-xl--line-height: 52px;
+  --text-headline-xl--letter-spacing: -0.02em;
+  --text-headline-xl--font-weight: 600;
+
+  --text-headline-lg: 32px;
+  --text-headline-lg--line-height: 40px;
+  --text-headline-lg--letter-spacing: -0.015em;
+  --text-headline-lg--font-weight: 600;
+
+  --text-headline-md: 24px;
+  --text-headline-md--line-height: 32px;
+  --text-headline-md--letter-spacing: -0.01em;
+  --text-headline-md--font-weight: 600;
+
+  --text-headline-sm: 20px;
+  --text-headline-sm--line-height: 28px;
+  --text-headline-sm--font-weight: 500;
+
+  /*
+   * Mobile display sizes from the reference config. The mockups define these but
+   * never apply them; components opt in with e.g.
+   * `text-headline-xl-mobile md:text-headline-xl`.
+   */
+  --text-headline-xl-mobile: 32px;
+  --text-headline-xl-mobile--line-height: 40px;
+  --text-headline-xl-mobile--letter-spacing: -0.02em;
+  --text-headline-xl-mobile--font-weight: 600;
+
+  --text-headline-lg-mobile: 26px;
+  --text-headline-lg-mobile--line-height: 34px;
+  --text-headline-lg-mobile--letter-spacing: -0.015em;
+  --text-headline-lg-mobile--font-weight: 600;
+
+  --text-body-lg: 17px;
+  --text-body-lg--line-height: 26px;
+  --text-body-lg--font-weight: 400;
+
+  --text-body-md: 15px;
+  --text-body-md--line-height: 24px;
+  --text-body-md--font-weight: 400;
+
+  --text-body-sm: 13px;
+  --text-body-sm--line-height: 20px;
+  --text-body-sm--font-weight: 400;
+
+  --text-label-lg: 14px;
+  --text-label-lg--line-height: 20px;
+  --text-label-lg--letter-spacing: 0.01em;
+  --text-label-lg--font-weight: 600;
+
+  --text-label-md: 12px;
+  --text-label-md--line-height: 16px;
+  --text-label-md--letter-spacing: 0.02em;
+  --text-label-md--font-weight: 500;
+
+  --text-label-caps: 11px;
+  --text-label-caps--line-height: 16px;
+  --text-label-caps--letter-spacing: 0.08em;
+  --text-label-caps--font-weight: 700;
+
+  /* ── Radii ─────────────────────────────────────────────────────────── */
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.75rem;
+  --radius-3xl: 1rem;
+  --radius-full: 9999px;
 }
 
+/*
+ * Font families reference the CSS variables emitted by next/font, so they must
+ * live in an `inline` theme block for the value to be inlined at build time.
+ */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-headline-xl: var(--font-manrope);
+  --font-headline-lg: var(--font-manrope);
+  --font-headline-md: var(--font-manrope);
+  --font-headline-sm: var(--font-manrope);
+  --font-headline-xl-mobile: var(--font-manrope);
+  --font-headline-lg-mobile: var(--font-manrope);
+  --font-label-caps: var(--font-manrope);
+  --font-body-lg: var(--font-inter);
+  --font-body-md: var(--font-inter);
+  --font-body-sm: var(--font-inter);
+  --font-label-lg: var(--font-inter);
+  --font-label-md: var(--font-inter);
+  --font-sans: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-on-surface);
+    overscroll-behavior-y: none;
+  }
+
+  /* Material Symbols icon defaults (font stylesheet loaded in the layout). */
+  .material-symbols-outlined {
+    font-variation-settings:
+      "FILL" 0,
+      "wght" 400,
+      "GRAD" 0,
+      "opsz" 24;
+    line-height: 1;
+    user-select: none;
+  }
+
+  main > :first-child {
+    margin-top: 0;
+  }
+
+  main > :last-child {
+    margin-bottom: 0;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@utility material-symbols-outlined {
+  font-family: "Material Symbols Outlined", sans-serif;
+  font-weight: normal;
+  font-style: normal;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: "liga";
+  -webkit-font-smoothing: antialiased;
+}
+
+/*
+ * Hides the native scrollbar on horizontally-scrollable pill/tab rows.
+ * The reference mockups apply `no-scrollbar` / `scrollbar-none` to those rows, but neither
+ * utility existed in this project, so an OS scrollbar was rendering under every filter row.
+ * Content stays swipeable/scrollable — only the track is hidden.
+ */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
 }
