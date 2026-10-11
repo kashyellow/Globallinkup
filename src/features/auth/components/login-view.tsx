@@ -140,12 +140,12 @@ export function LoginView() {
                     </span>
                     <p className="mt-0.5 font-body-sm text-body-sm text-on-surface-strong">
                       {t("invalidBody")}{" "}
-                      <a
-                        href="#"
+                      <Link
+                        href="/forgot-password"
                         className="font-medium text-admin-text underline hover:text-white"
                       >
                         {t("resetPassword")}
-                      </a>
+                      </Link>
                       .
                     </p>
                   </div>
@@ -222,12 +222,12 @@ export function LoginView() {
                   >
                     {t("passwordLabel")}
                   </label>
-                  <a
-                    href="#"
+                  <Link
+                    href="/forgot-password"
                     className="font-label-md text-label-md text-primary transition-all hover:underline"
                   >
                     {t("forgotPassword")}
-                  </a>
+                  </Link>
                 </div>
                 <div className="relative">
                   <input
