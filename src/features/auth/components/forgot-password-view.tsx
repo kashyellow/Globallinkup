@@ -9,6 +9,11 @@ import { RecoveryShell } from "./recovery-shell";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
+const EASE = "duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]";
+
+const FIELD_BASE =
+  "w-full border bg-surface px-space-md font-body-md text-body-md text-on-surface transition-colors placeholder:text-placeholder focus-visible:outline-2 focus-visible:outline-offset-2";
+
 export function ForgotPasswordView() {
   const t = useTranslations("Auth.forgotPassword");
   const router = useRouter();
@@ -34,28 +39,30 @@ export function ForgotPasswordView() {
   return (
     <RecoveryShell step={1}>
       <div className="flex flex-col gap-space-lg">
-        <h1 className="font-headline-lg text-headline-lg-mobile font-semibold tracking-tight text-on-surface md:text-headline-lg">
-          {t("title")}{" "}
-          <span className="font-headline-md text-headline-md font-normal text-secondary">
-            {t("titleAlt")}
-          </span>
-        </h1>
+        <div className="flex flex-col gap-space-xs">
+          <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
+            {t("title")}{" "}
+            <span className="font-headline-md text-headline-md font-normal text-secondary">
+              {t("titleAlt")}
+            </span>
+          </h1>
+        </div>
 
-        <div className="flex flex-col gap-space-sm rounded-lg border border-outline-variant bg-surface p-space-md">
-          <p className="font-body-md text-body-md text-on-surface-strong">{t("bodyEn")}</p>
+        <div className="flex flex-col gap-space-sm rounded-2xl border border-outline-variant bg-surface-container p-space-md">
+          <p className="font-body-md text-body-md text-on-surface">{t("bodyEn")}</p>
           <p className="font-body-sm text-body-sm text-secondary">{t("bodyEs")}</p>
         </div>
 
         <form className="flex flex-col gap-space-md" onSubmit={submit} noValidate>
           <div className="flex flex-col gap-1.5">
-            <div className="flex items-baseline justify-between gap-space-sm">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-space-sm">
               <label
-                className="font-label-md text-label-md font-semibold text-on-surface-strong"
+                className="font-label-md text-label-md font-semibold text-on-surface"
                 htmlFor="forgot-email"
               >
                 {t("emailLabel")}
               </label>
-              <span className="font-label-caps text-label-caps text-secondary uppercase">
+              <span className="font-body-sm text-body-sm text-text-muted">
                 {t("emailRequired")}
               </span>
             </div>
@@ -66,27 +73,34 @@ export function ForgotPasswordView() {
                 type="email"
                 autoComplete="email"
                 required
+                aria-invalid={showEmailError || undefined}
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder={t("emailPlaceholder")}
                 className={cn(
-                  "h-11 w-full rounded-lg border bg-surface pr-space-md pl-10 font-body-md text-body-md text-on-surface shadow-sm transition-all placeholder:text-secondary/60 focus:border-transparent focus:ring-2 focus:ring-primary focus:outline-none",
-                  showEmailError ? "border-[#f87171]" : "border-outline-variant",
+                  FIELD_BASE,
+                  "h-11 rounded-full pr-space-md pl-11",
+                  showEmailError
+                    ? "border-danger-border-strong focus-visible:outline-danger-border-strong"
+                    : "border-outline-variant focus-visible:outline-primary",
                 )}
               />
               <Icon
                 name="mail"
-                className="pointer-events-none absolute top-2.5 left-3 text-[20px] text-secondary"
+                className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-lg text-secondary"
               />
             </div>
             {showEmailError ? (
-              <span className="mt-0.5 flex items-center gap-1 font-body-sm text-body-sm text-[#f87171]">
-                <Icon name="cancel" className="text-[16px]" />
+              <span
+                role="alert"
+                className="mt-0.5 flex items-center gap-1 font-body-sm text-body-sm text-danger-text"
+              >
+                <Icon name="cancel" className="text-base" />
                 {t("emailError")}
               </span>
             ) : (
               <span className="flex items-center gap-1 font-body-sm text-body-sm text-secondary">
-                <Icon name="info" className="text-[16px]" />
+                <Icon name="info" className="text-base" />
                 {t("emailHelper")}
               </span>
             )}
@@ -95,17 +109,21 @@ export function ForgotPasswordView() {
           <button
             type="submit"
             disabled={submitting}
-            className="flex h-12 w-full items-center justify-center gap-space-xs rounded-xl bg-primary-container font-label-lg text-label-lg font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover focus:ring-2 focus:ring-primary/40 focus:outline-none disabled:opacity-70"
+            className={cn(
+              "flex h-12 w-full items-center justify-center gap-space-xs rounded-full bg-primary font-label-lg text-label-lg font-semibold text-on-primary transition-colors",
+              EASE,
+              "hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:pointer-events-none disabled:opacity-70",
+            )}
           >
             {submitting ? (
               <>
-                <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/25 border-t-white" />
+                <span className="h-5 w-5 animate-spin rounded-full border-2 border-on-primary/25 border-t-on-primary motion-reduce:animate-none" />
                 <span>{t("submitting")}</span>
               </>
             ) : (
               <>
                 <span>{t("submit")}</span>
-                <Icon name="arrow_forward" className="text-[18px]" />
+                <Icon name="arrow_forward" className="text-lg" />
               </>
             )}
           </button>
@@ -114,16 +132,18 @@ export function ForgotPasswordView() {
         <div className="flex flex-col gap-space-md">
           <div className="flex items-center gap-space-md">
             <span className="h-px flex-1 bg-outline-variant" />
-            <span className="font-label-caps text-label-caps tracking-wider text-secondary uppercase">
-              {t("or")}
-            </span>
+            <span className="font-label-md text-label-md text-text-muted">{t("or")}</span>
             <span className="h-px flex-1 bg-outline-variant" />
           </div>
           <Link
             href="/login"
-            className="mx-auto inline-flex items-center gap-1.5 font-label-md text-label-md font-semibold text-on-surface transition-colors hover:text-primary"
+            className={cn(
+              "mx-auto inline-flex items-center gap-1.5 rounded-full px-space-md py-2 font-label-md text-label-md font-semibold text-on-surface transition-colors hover:text-primary",
+              EASE,
+              "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+            )}
           >
-            <Icon name="arrow_back" className="text-[18px]" />
+            <Icon name="arrow_back" className="text-lg" />
             {t("returnToLogin")}
           </Link>
         </div>

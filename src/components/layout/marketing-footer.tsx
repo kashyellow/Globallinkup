@@ -17,9 +17,9 @@ export async function MarketingFooter() {
   ] as const;
 
   const legal = [
-    { key: "privacyPolicy", href: "#" },
-    { key: "connectGuidelines", href: "#" },
-    { key: "adminAccess", href: "/admin" },
+    { key: "privacyPolicy" },
+    { key: "connectGuidelines" },
+    { key: "adminAccess", href: "/admin" as const },
   ] as const;
 
   return (
@@ -69,7 +69,7 @@ export async function MarketingFooter() {
             <ul className="mt-space-sm space-y-1">
               {legal.map((item) => (
                 <li key={item.key}>
-                  {item.href === "/admin" ? (
+                  {"href" in item ? (
                     <Link
                       href={item.href}
                       className="inline-flex min-h-8 items-center font-body-sm text-body-sm text-on-surface-variant transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -77,12 +77,11 @@ export async function MarketingFooter() {
                       {t(`trust.${item.key}`)}
                     </Link>
                   ) : (
-                    <a
-                      href={item.href}
-                      className="inline-flex min-h-8 items-center font-body-sm text-body-sm text-on-surface-variant transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                    >
+                    // No policy route exists yet, so these render as plain text
+                    // rather than a dead `href="#"` anchor.
+                    <span className="inline-flex min-h-8 items-center font-body-sm text-body-sm text-on-surface-variant">
                       {t(`trust.${item.key}`)}
-                    </a>
+                    </span>
                   )}
                 </li>
               ))}

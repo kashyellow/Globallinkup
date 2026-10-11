@@ -9,6 +9,11 @@ import { RecoveryShell } from "./recovery-shell";
 
 type LinkState = "valid" | "invalid";
 
+const EASE = "duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]";
+
+const FIELD_BASE =
+  "h-11 w-full rounded-full border bg-surface pr-12 pl-11 font-body-md text-body-md text-on-surface transition-colors placeholder:text-placeholder focus-visible:outline-2 focus-visible:outline-offset-2";
+
 export function ResetPasswordView() {
   const t = useTranslations("Auth.resetPassword");
   const router = useRouter();
@@ -53,10 +58,8 @@ export function ResetPasswordView() {
       {process.env.NODE_ENV === "development" ? (
         <div className="mx-auto flex w-full max-w-[1240px] flex-col items-start justify-between gap-space-sm px-margin-mobile pt-space-lg md:flex-row md:items-center lg:px-margin">
           <div className="flex items-center gap-space-xs text-secondary">
-            <Icon name="tune" filled className="text-[18px] text-primary" />
-            <span className="font-label-caps text-label-caps tracking-wider uppercase">
-              {t("previewLabel")}
-            </span>
+            <Icon name="tune" filled className="text-lg text-primary" />
+            <span className="font-label-md text-label-md">{t("previewLabel")}</span>
           </div>
           <div className="flex flex-wrap items-center gap-space-xs">
             {(["valid", "invalid"] as const).map((key) => (
@@ -65,9 +68,10 @@ export function ResetPasswordView() {
                 type="button"
                 onClick={() => setLinkState(key)}
                 className={cn(
-                  "rounded-lg px-space-sm py-1 font-label-md text-label-md transition-all",
+                  "rounded-full px-space-sm py-1.5 font-label-md text-label-md transition-colors",
+                  EASE,
                   linkState === key
-                    ? "bg-outline-variant font-semibold text-on-surface"
+                    ? "bg-surface-container-high font-semibold text-on-surface"
                     : "text-secondary hover:text-on-surface",
                 )}
               >
@@ -81,25 +85,29 @@ export function ResetPasswordView() {
       <RecoveryShell>
         {linkState === "invalid" ? (
           <div className="flex flex-col items-center gap-space-md py-space-xs text-center">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full border border-danger-border bg-danger-surface text-danger">
-              <Icon name="link_off" className="text-[32px]" />
-            </div>
-            <h1 className="font-headline-lg text-headline-lg-mobile font-semibold tracking-tight text-on-surface md:text-headline-lg">
+            <span className="flex h-16 w-16 items-center justify-center rounded-full border border-danger-border bg-danger-surface text-danger-text">
+              <Icon name="link_off" className="text-3xl" />
+            </span>
+            <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
               {t("invalidTitle")}
             </h1>
             <p className="max-w-md font-body-md text-body-md text-secondary">{t("invalidBody")}</p>
             <Link
               href="/forgot-password"
-              className="inline-flex h-12 items-center justify-center gap-space-xs rounded-xl bg-primary-container px-space-lg font-label-lg text-label-lg font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover"
+              className={cn(
+                "inline-flex h-12 items-center justify-center gap-space-xs rounded-full bg-primary px-space-lg font-label-lg text-label-lg font-semibold text-on-primary transition-colors",
+                EASE,
+                "hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+              )}
             >
-              <Icon name="refresh" className="text-[18px]" />
+              <Icon name="refresh" className="text-lg" />
               {t("requestNewLink")}
             </Link>
           </div>
         ) : (
           <div className="flex flex-col gap-space-lg">
             <div className="flex flex-col gap-space-xs">
-              <h1 className="font-headline-lg text-headline-lg-mobile font-semibold tracking-tight text-on-surface md:text-headline-lg">
+              <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
                 {t("title")}{" "}
                 <span className="font-headline-md text-headline-md font-normal text-secondary">
                   {t("titleAlt")}
@@ -111,14 +119,14 @@ export function ResetPasswordView() {
             <form className="flex flex-col gap-space-md" onSubmit={submit} noValidate>
               {/* New password */}
               <div className="flex flex-col gap-1.5">
-                <div className="flex items-baseline justify-between gap-space-sm">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-space-sm">
                   <label
-                    className="font-label-md text-label-md font-semibold text-on-surface-strong"
+                    className="font-label-md text-label-md font-semibold text-on-surface"
                     htmlFor="reset-password"
                   >
                     {t("passwordLabel")} <span className="text-primary">*</span>
                   </label>
-                  <span className="font-body-sm text-body-sm text-secondary">
+                  <span className="font-body-sm text-body-sm text-text-muted">
                     {t("passwordHint")}
                   </span>
                 </div>
@@ -129,38 +137,46 @@ export function ResetPasswordView() {
                     type={showPassword ? "text" : "password"}
                     autoComplete="new-password"
                     required
+                    aria-invalid={showConfirmError || undefined}
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
                     placeholder={t("passwordPlaceholder")}
-                    className="h-11 w-full rounded-lg border border-outline-variant bg-surface pr-10 pl-10 font-body-md text-body-md text-on-surface shadow-sm transition-all placeholder:text-secondary/60 focus:border-transparent focus:ring-2 focus:ring-primary focus:outline-none"
+                    className={cn(
+                      FIELD_BASE,
+                      "border-outline-variant focus-visible:outline-primary",
+                    )}
                   />
                   <Icon
                     name="lock"
-                    className="pointer-events-none absolute top-2.5 left-3 text-[20px] text-secondary"
+                    className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-lg text-secondary"
                   />
                   <button
                     type="button"
                     aria-label={t("togglePassword")}
                     onClick={() => setShowPassword((value) => !value)}
-                    className="absolute top-2 right-2.5 rounded-lg p-1 text-secondary transition-colors hover:text-on-surface focus:outline-none"
+                    className={cn(
+                      "absolute top-1/2 right-1.5 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full text-secondary transition-colors hover:bg-surface-container hover:text-on-surface",
+                      EASE,
+                      "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                    )}
                   >
                     <Icon
                       name={showPassword ? "visibility_off" : "visibility"}
-                      className="text-[20px]"
+                      className="text-lg"
                     />
                   </button>
                 </div>
 
                 {/* Strength meter */}
-                <div className="mt-1 flex flex-col gap-2 rounded-lg border border-outline-variant bg-surface p-space-sm">
-                  <div className="flex items-center justify-between">
-                    <span className="font-label-caps text-label-caps text-secondary uppercase">
+                <div className="mt-1 flex flex-col gap-2 rounded-2xl border border-outline-variant bg-surface p-space-sm">
+                  <div className="flex items-center justify-between gap-space-sm">
+                    <span className="font-label-md text-label-md text-secondary">
                       {t("strengthLabel")}
                     </span>
                     <span
                       className={cn(
-                        "font-label-caps text-label-caps font-semibold uppercase",
-                        passed >= 3 ? "text-tertiary" : "text-on-surface-strong",
+                        "font-label-md text-label-md font-semibold",
+                        passed >= 3 ? "text-success-text" : "text-on-surface",
                       )}
                     >
                       {t(strengthKey)}
@@ -171,10 +187,10 @@ export function ResetPasswordView() {
                       <div
                         key={index}
                         className={cn(
-                          "h-full w-1/3 transition-all duration-300",
+                          "h-full w-1/3 transition-colors duration-300",
                           index < passed
                             ? passed >= 3
-                              ? "bg-tertiary"
+                              ? "bg-success-ring"
                               : "bg-primary"
                             : "bg-outline-variant",
                         )}
@@ -192,7 +208,7 @@ export function ResetPasswordView() {
               {/* Confirm password */}
               <div className="flex flex-col gap-1.5">
                 <label
-                  className="font-label-md text-label-md font-semibold text-on-surface-strong"
+                  className="font-label-md text-label-md font-semibold text-on-surface"
                   htmlFor="reset-confirm"
                 >
                   {t("confirmLabel")} <span className="text-primary">*</span>
@@ -204,33 +220,44 @@ export function ResetPasswordView() {
                     type={showConfirm ? "text" : "password"}
                     autoComplete="new-password"
                     required
+                    aria-invalid={showConfirmError || undefined}
                     value={confirm}
                     onChange={(event) => setConfirm(event.target.value)}
                     placeholder={t("confirmPlaceholder")}
                     className={cn(
-                      "h-11 w-full rounded-lg border bg-surface pr-10 pl-10 font-body-md text-body-md text-on-surface shadow-sm transition-all placeholder:text-secondary/60 focus:border-transparent focus:ring-2 focus:ring-primary focus:outline-none",
-                      showConfirmError ? "border-[#f87171]" : "border-outline-variant",
+                      FIELD_BASE,
+                      "h-11 rounded-full pr-12 pl-11",
+                      showConfirmError
+                        ? "border-danger-border-strong focus-visible:outline-danger-border-strong"
+                        : "border-outline-variant focus-visible:outline-primary",
                     )}
                   />
                   <Icon
                     name="lock_reset"
-                    className="pointer-events-none absolute top-2.5 left-3 text-[20px] text-secondary"
+                    className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-lg text-secondary"
                   />
                   <button
                     type="button"
                     aria-label={t("toggleConfirm")}
                     onClick={() => setShowConfirm((value) => !value)}
-                    className="absolute top-2 right-2.5 rounded-lg p-1 text-secondary transition-colors hover:text-on-surface focus:outline-none"
+                    className={cn(
+                      "absolute top-1/2 right-1.5 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full text-secondary transition-colors hover:bg-surface-container hover:text-on-surface",
+                      EASE,
+                      "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                    )}
                   >
                     <Icon
                       name={showConfirm ? "visibility_off" : "visibility"}
-                      className="text-[20px]"
+                      className="text-lg"
                     />
                   </button>
                 </div>
                 {showConfirmError ? (
-                  <span className="mt-0.5 flex items-center gap-1 font-body-sm text-body-sm text-[#f87171]">
-                    <Icon name="cancel" className="text-[16px]" />
+                  <span
+                    role="alert"
+                    className="mt-0.5 flex items-center gap-1 font-body-sm text-body-sm text-danger-text"
+                  >
+                    <Icon name="cancel" className="text-base" />
                     {t("confirmError")}
                   </span>
                 ) : null}
@@ -239,17 +266,21 @@ export function ResetPasswordView() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="flex h-12 w-full items-center justify-center gap-space-xs rounded-xl bg-primary-container font-label-lg text-label-lg font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover focus:ring-2 focus:ring-primary/40 focus:outline-none disabled:opacity-70"
+                className={cn(
+                  "flex h-12 w-full items-center justify-center gap-space-xs rounded-full bg-primary font-label-lg text-label-lg font-semibold text-on-primary transition-colors",
+                  EASE,
+                  "hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:pointer-events-none disabled:opacity-70",
+                )}
               >
                 {submitting ? (
                   <>
-                    <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/25 border-t-white" />
+                    <span className="h-5 w-5 animate-spin rounded-full border-2 border-on-primary/25 border-t-on-primary motion-reduce:animate-none" />
                     <span>{t("submitting")}</span>
                   </>
                 ) : (
                   <>
                     <span>{t("submit")}</span>
-                    <Icon name="arrow_forward" className="text-[18px]" />
+                    <Icon name="arrow_forward" className="text-lg" />
                   </>
                 )}
               </button>
@@ -257,9 +288,13 @@ export function ResetPasswordView() {
 
             <Link
               href="/login"
-              className="mx-auto inline-flex items-center gap-1.5 font-label-md text-label-md font-semibold text-on-surface transition-colors hover:text-primary"
+              className={cn(
+                "mx-auto inline-flex min-h-10 items-center gap-1.5 rounded-full px-space-md py-2 font-label-md text-label-md font-semibold text-on-surface transition-colors hover:text-primary",
+                EASE,
+                "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+              )}
             >
-              <Icon name="arrow_back" className="text-[18px]" />
+              <Icon name="arrow_back" className="text-lg" />
               {t("backToLogin")}
             </Link>
           </div>
@@ -275,7 +310,7 @@ function Rule({ ok, label }: { ok: boolean; label: string }) {
       <Icon
         name={ok ? "check_circle" : "radio_button_unchecked"}
         filled={ok}
-        className={cn("text-[16px]", ok ? "text-[#38a36f]" : "text-secondary")}
+        className={cn("text-base", ok ? "text-success-text" : "text-secondary")}
       />
       <span>{label}</span>
     </div>
