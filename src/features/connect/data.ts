@@ -52,7 +52,7 @@ export const ACTIVE_CONNECTIONS: ActiveConnection[] = [
     whatsappDisplay: "+57 312 849 2011",
     whatsappRaw: "+573128492011",
     instagram: "@camila.textiles",
-    instagramUrl: "#",
+    instagramUrl: "https://instagram.com/camila.textiles",
     email: "camila@osorio.co",
   },
   {
@@ -76,7 +76,7 @@ export const ACTIVE_CONNECTIONS: ActiveConnection[] = [
     whatsappDisplay: "+52 55 4910 8823",
     whatsappRaw: "+525549108823",
     instagram: "@mateo_silv",
-    instagramUrl: "#",
+    instagramUrl: "https://instagram.com/mateo_silv",
     email: "mateo@silvaestudio.mx",
   },
   {
@@ -100,7 +100,7 @@ export const ACTIVE_CONNECTIONS: ActiveConnection[] = [
     whatsappDisplay: "+34 611 729 334",
     whatsappRaw: "+34611729334",
     instagram: "@elena_curaduria",
-    instagramUrl: "#",
+    instagramUrl: "https://instagram.com/elena_curaduria",
     email: "elena.ramos@curaduria.es",
   },
   {
@@ -125,7 +125,7 @@ export const ACTIVE_CONNECTIONS: ActiveConnection[] = [
     whatsappDisplay: "+54 9 11 3820 9140",
     whatsappRaw: "+5491138209140",
     instagram: "@lucasvarela.doc",
-    instagramUrl: "#",
+    instagramUrl: "https://instagram.com/lucasvarela.doc",
     email: "varela@surfilm.ar",
   },
 ];

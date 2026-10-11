@@ -423,9 +423,8 @@
   },
   "Connections": {
     "header": {
-      "eyebrow": "CONEXIONES Y PRIVACIDAD MUTUA · CONFIANZA BILATERAL",
+      "eyebrow": "Conexiones y Privacidad Mutua",
       "title": "Tus Conexiones",
-      "titleAlt": "Your Connections",
       "intro": "Donde el consentimiento mutuo desbloquea el diálogo directo. Explora conexiones verificadas, revisa invitaciones bilaterales y coordina con seguridad la comunicación internacional sin intermediarios.",
       "activeConnections": "Conexiones Activas",
       "pendingRequests": "Solicitudes Pendientes",
@@ -435,8 +434,7 @@
       "active": "Conexiones Activas",
       "requests": "Solicitudes Recibidas",
       "sent": "Solicitudes Enviadas",
-      "archived": "Diálogos Archivados",
-      "pendingBadge": "{count} Pendientes"
+      "archived": "Diálogos Archivados"
     },
     "privacyChip": "Cero Compartición Sin Consentimiento",
     "search": {
@@ -486,6 +484,8 @@
     "sent": {
       "title": "Consultas Enviadas Esperando Aceptación Bilateral ({count})",
       "body": "Contactaste a estos miembros de la comunidad. Cuando otorguen su consentimiento bilateral, sus canales directos se revelarán automáticamente aquí.",
+      "emptyTitle": "No hay invitaciones pendientes",
+      "emptyBody": "Todas las invitaciones que has enviado han sido respondidas. Las nuevas solicitudes aparecerán aquí mientras esperas.",
       "sentAgoAwaiting": "Enviada hace {time} · Esperando revisión",
       "viewNote": "Ver Nota Enviada",
       "withdraw": "Retirar"
@@ -1024,6 +1024,7 @@
       "manageAll": "Gestionar Todo",
       "unlocked": "Desbloqueado {time}",
       "revoke": "Revocar",
+      "allRevoked": "Has revocado el acceso a todos los contactos revelados.",
       "revoked": "Acceso revocado"
     },
     "tabs": {

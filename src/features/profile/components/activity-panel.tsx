@@ -17,6 +17,8 @@ import {
 } from "../data";
 import { DispatchCard } from "./dispatch-card";
 
+const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
+
 const TABS = ["dispatches", "saved", "circles", "security"] as const;
 type TabId = (typeof TABS)[number];
 
@@ -29,9 +31,9 @@ const SECURITY_ICONS: Record<SecurityEventType, string> = {
 
 function PanelHeading({ title, body }: { title: string; body: string }) {
   return (
-    <div className="px-1">
-      <h3 className="font-headline-sm text-headline-sm font-semibold text-on-surface">{title}</h3>
-      <p className="font-body-sm text-body-sm text-text-muted">{body}</p>
+    <div className="space-y-1">
+      <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">{title}</h2>
+      <p className="max-w-[62ch] font-body-sm text-body-sm text-text-muted">{body}</p>
     </div>
   );
 }
@@ -53,12 +55,7 @@ export function ProfileActivity() {
 
   return (
     <div className="space-y-space-lg">
-      {/*
-        `justify-between` spreads the tabs across the full-width track so shorter labels (e.g.
-        Spanish) don't leave dead space at the right. When the labels overflow the track on
-        narrow screens, flexbox falls back to flex-start and the row scrolls instead.
-      */}
-      <div className="no-scrollbar flex items-center justify-between gap-1 overflow-x-auto rounded-2xl bg-surface-container p-1">
+      <div className="-mx-margin-mobile no-scrollbar flex items-center gap-1 overflow-x-auto px-margin-mobile md:mx-0 md:px-0">
         {TABS.map((id) => {
           const active = tab === id;
           const count = counts[id];
@@ -69,10 +66,12 @@ export function ProfileActivity() {
               aria-pressed={active}
               onClick={() => setTab(id)}
               className={cn(
-                "min-h-10 shrink-0 rounded-xl px-3 py-2 font-label-md text-label-md transition-colors",
+                "min-h-10 shrink-0 rounded-full px-4 py-2 font-label-lg text-label-lg whitespace-nowrap",
+                "transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+                EASE,
                 active
-                  ? "bg-surface-container-highest font-semibold text-on-surface shadow-sm"
-                  : "hover:bg-surface-container-low text-text-muted hover:text-on-surface",
+                  ? "bg-primary font-semibold text-on-primary"
+                  : "border border-outline-variant bg-surface-container text-secondary hover:border-outline-hover hover:bg-surface-variant hover:text-on-surface",
               )}
             >
               {count === null ? t(`tabs.${id}`) : t(`tabs.${id}`, { count })}
@@ -83,14 +82,9 @@ export function ProfileActivity() {
 
       {tab === "dispatches" ? (
         <div className="space-y-space-lg">
-          <div className="flex flex-wrap items-center justify-between gap-space-sm px-1">
-            <div>
-              <h3 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
-                {t("dispatches.title")}
-              </h3>
-              <p className="font-body-sm text-body-sm text-text-muted">{t("dispatches.body")}</p>
-            </div>
-            <span className="font-label-caps text-label-caps font-bold tracking-wider text-primary uppercase">
+          <div className="flex flex-wrap items-center justify-between gap-space-sm">
+            <PanelHeading title={t("dispatches.title")} body={t("dispatches.body")} />
+            <span className="shrink-0 rounded-full border border-success-border bg-success-surface px-2.5 py-1 font-label-md text-label-md font-semibold text-success-text">
               {t("dispatches.visibility")}
             </span>
           </div>
@@ -99,7 +93,7 @@ export function ProfileActivity() {
             <DispatchCard key={dispatch.id} dispatch={dispatch} />
           ))}
 
-          <div className="flex items-center justify-center pt-space-md">
+          <div className="flex items-center justify-center pt-space-sm">
             {archiveEnded ? (
               <p className="font-body-sm text-body-sm text-text-muted">
                 {t("dispatches.archiveEnd")}
@@ -108,10 +102,15 @@ export function ProfileActivity() {
               <button
                 type="button"
                 onClick={() => setArchiveEnded(true)}
-                className="inline-flex min-h-10 items-center gap-2 rounded-full bg-surface-container px-6 py-2.5 font-label-md text-label-md text-on-surface transition-all hover:bg-surface-container-high"
+                className={cn(
+                  "inline-flex min-h-11 items-center gap-2 rounded-full border border-outline-variant bg-surface-container px-6 py-2.5 font-label-lg text-label-lg text-on-surface",
+                  "hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+                  "transition-colors duration-300",
+                  EASE,
+                )}
               >
                 <span>{t("dispatches.loadEarlier")}</span>
-                <Icon name="expand_more" className="text-[18px]" />
+                <Icon name="expand_more" className="text-lg" />
               </button>
             )}
           </div>
@@ -126,9 +125,9 @@ export function ProfileActivity() {
             {SAVED_GOODS.map((product) => (
               <div
                 key={product.id}
-                className="flex items-center gap-space-md rounded-2xl bg-surface-container p-space-sm transition-colors hover:bg-surface-container-high"
+                className="flex items-center gap-space-md rounded-2xl border border-outline-variant bg-surface-container p-space-sm transition-colors duration-300 hover:border-outline-hover"
               >
-                <div className="bg-surface-container-low h-16 w-16 shrink-0 overflow-hidden rounded-xl">
+                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl bg-surface-low">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     alt={product.imageAlt}
@@ -140,11 +139,11 @@ export function ProfileActivity() {
                   <span className="block truncate font-label-md text-label-md font-semibold text-on-surface">
                     {product.name}
                   </span>
-                  <span className="font-label-caps text-label-caps text-text-muted uppercase">
+                  <span className="font-label-md text-label-md text-text-muted">
                     {product.originLabel}
                   </span>
                 </div>
-                <span className="shrink-0 font-label-lg text-label-lg font-semibold text-on-surface">
+                <span className="shrink-0 font-label-lg text-label-lg font-semibold text-on-surface tabular-nums">
                   {format.number(product.price, "currency")}
                 </span>
               </div>
@@ -154,10 +153,15 @@ export function ProfileActivity() {
           <div className="flex justify-center pt-space-sm">
             <Link
               href="/marketplace"
-              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-surface-container px-6 py-2.5 font-label-md text-label-md text-on-surface transition-all hover:bg-surface-container-high"
+              className={cn(
+                "inline-flex min-h-11 items-center gap-2 rounded-full border border-outline-variant bg-surface-container px-6 py-2.5 font-label-lg text-label-lg text-on-surface",
+                "hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+                "transition-colors duration-300",
+                EASE,
+              )}
             >
               <span>{t("saved.browse")}</span>
-              <Icon name="arrow_forward" className="text-[18px]" />
+              <Icon name="arrow_forward" className="text-lg" />
             </Link>
           </div>
         </div>
@@ -171,7 +175,7 @@ export function ProfileActivity() {
             {CIRCLE_MEMBERS.map((member) => (
               <div
                 key={member.id}
-                className="flex items-center justify-between gap-space-sm rounded-2xl bg-surface-container p-space-sm"
+                className="flex items-center justify-between gap-space-sm rounded-2xl border border-outline-variant bg-surface-container p-space-sm"
               >
                 <div className="flex min-w-0 items-center gap-space-sm">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-container-highest font-label-md font-bold text-on-surface">
@@ -181,27 +185,27 @@ export function ProfileActivity() {
                     <span className="block truncate font-label-md text-label-md font-semibold text-on-surface">
                       {member.name}
                     </span>
-                    <span className="font-label-caps text-label-caps text-text-muted">
+                    <span className="font-label-md text-label-md text-text-muted">
                       {member.city}
                     </span>
                   </div>
                 </div>
                 <span
                   className={cn(
-                    "flex shrink-0 items-center gap-1 rounded-full px-2.5 py-0.5 font-label-caps text-[10px] font-bold tracking-wider uppercase",
+                    "flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 font-label-md text-label-md font-semibold",
                     member.unveiled
-                      ? "bg-tertiary/10 text-tertiary"
+                      ? "border border-success-border bg-success-surface text-success-text"
                       : "bg-surface-container-highest text-text-muted",
                   )}
                 >
-                  <Icon name={member.unveiled ? "lock_open" : "lock"} className="text-[13px]" />
+                  <Icon name={member.unveiled ? "lock_open" : "lock"} className="text-sm" />
                   {member.unveiled ? t("circles.unveiled") : t("circles.awaiting")}
                 </span>
               </div>
             ))}
           </div>
 
-          <p className="px-1 font-body-sm text-body-sm text-text-muted">
+          <p className="font-body-sm text-body-sm text-text-muted">
             {t("circles.more", { count: PROFILE_TOTALS.circles - CIRCLE_MEMBERS.length })}
           </p>
         </div>
@@ -215,17 +219,17 @@ export function ProfileActivity() {
             {SECURITY_LOG.map((event) => (
               <div
                 key={event.id}
-                className="flex items-center justify-between gap-space-sm rounded-2xl bg-surface-container p-space-sm"
+                className="flex items-center justify-between gap-space-sm rounded-2xl border border-outline-variant bg-surface-container p-space-sm"
               >
                 <div className="flex min-w-0 items-center gap-space-sm">
                   <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-container-highest text-text-muted">
-                    <Icon name={SECURITY_ICONS[event.type]} className="text-[18px]" />
+                    <Icon name={SECURITY_ICONS[event.type]} className="text-lg" />
                   </div>
                   <span className="min-w-0 font-label-md text-label-md text-on-surface">
                     {t(`security.events.${event.type}`, { name: event.name ?? "" })}
                   </span>
                 </div>
-                <span className="shrink-0 font-label-caps text-label-caps text-text-muted">
+                <span className="shrink-0 font-label-md text-label-md text-text-muted">
                   {relative(event.daysAgo)}
                 </span>
               </div>

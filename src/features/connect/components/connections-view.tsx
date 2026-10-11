@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
@@ -17,8 +18,47 @@ import { ActiveConnectionsPanel } from "./active-connections-panel";
 import { ReceivedRequestsPanel } from "./received-requests-panel";
 import { ArchivedPanel, SentRequestsPanel } from "./sent-requests-panel";
 
+const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
+
 const LATAM_COUNT = ACTIVE_CONNECTIONS.filter((c) => c.region === "latam").length;
 const EUROPE_COUNT = ACTIVE_CONNECTIONS.filter((c) => c.region === "europe").length;
+
+/** Shared styling for the two header stat chips. */
+function StatChip({
+  value,
+  label,
+  accent,
+  pulse,
+}: {
+  value: number;
+  label: string;
+  accent?: boolean;
+  pulse?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex items-center gap-space-xs rounded-full border px-space-md py-2",
+        accent
+          ? "border-primary-container/40 bg-primary-container/10"
+          : "border-outline-variant bg-surface-container",
+      )}
+    >
+      {pulse ? (
+        <span className="inline-flex h-2 w-2 animate-pulse rounded-full bg-primary-container" />
+      ) : null}
+      <span
+        className={cn(
+          "font-headline-sm text-headline-sm font-bold tabular-nums",
+          accent ? "text-primary" : "text-on-surface",
+        )}
+      >
+        {value}
+      </span>
+      <span className="font-label-md text-label-md text-secondary">{label}</span>
+    </div>
+  );
+}
 
 export function ConnectionsView() {
   const t = useTranslations("Connections");
@@ -40,65 +80,55 @@ export function ConnectionsView() {
   };
 
   return (
-    <>
-      {/* Page header */}
-      <section className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-space-xl pb-space-lg md:px-margin">
-        <div className="flex flex-col gap-space-xs">
-          <div className="flex items-center gap-space-xs">
-            <span className="inline-block h-2 w-2 rounded-full bg-tertiary" />
-            <span className="font-label-caps text-label-caps tracking-widest text-secondary uppercase">
-              {t("header.eyebrow")}
-            </span>
-          </div>
-
-          <div className="mt-space-xs flex flex-col justify-between gap-space-lg lg:flex-row lg:items-end">
-            <div className="max-w-2xl">
-              <h1 className="font-headline-xl text-headline-xl-mobile tracking-tight text-on-surface md:text-headline-xl">
-                {t("header.title")}{" "}
-                <span className="font-light text-secondary">/ {t("header.titleAlt")}</span>
-              </h1>
-              <p className="mt-space-xs font-body-md text-body-md text-on-surface-strong">
-                {t("header.intro")}
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-space-sm">
-              <div className="flex items-center gap-space-xs rounded-xl border border-outline-variant bg-surface-low px-space-md py-2 shadow-sm">
-                <span className="font-headline-sm text-headline-sm font-bold text-primary">
-                  {ACTIVE_CONNECTIONS.length}
-                </span>
-                <span className="font-label-md text-label-md text-secondary">
-                  {t("header.activeConnections")}
-                </span>
-              </div>
-              <div className="flex items-center gap-space-xs rounded-xl border border-border-dark bg-secondary-container-alt px-space-md py-2 shadow-sm">
-                <span className="inline-flex h-2 w-2 animate-pulse rounded-full bg-primary-container" />
-                <span className="font-headline-sm text-headline-sm font-bold text-on-surface">
-                  {RECEIVED_REQUESTS.length}
-                </span>
-                <span className="font-label-md text-label-md font-medium text-on-surface-strong">
-                  {t("header.pendingRequests")}
-                </span>
-              </div>
-              <button
-                type="button"
-                className="inline-flex items-center gap-space-xs rounded-xl border border-outline-variant bg-surface-low px-space-md py-2.5 font-label-lg text-label-lg text-on-surface shadow-sm transition-colors hover:bg-surface-variant"
-              >
-                <Icon name="badge" className="text-sm text-secondary" />
-                <span>{t("header.exportVCard")}</span>
-              </button>
-            </div>
-          </div>
+    <div className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
+      {/* Editorial header */}
+      <header className="flex flex-col justify-between gap-space-lg lg:flex-row lg:items-end">
+        <div className="flex max-w-2xl flex-col gap-space-sm">
+          <p className="font-label-caps text-label-caps tracking-[0.16em] text-primary uppercase">
+            {t("header.eyebrow")}
+          </p>
+          <h1 className="font-display-md text-display-md-mobile font-bold text-balance text-on-surface md:text-display-md">
+            {t("header.title")}
+          </h1>
+          <p className="max-w-[58ch] font-body-lg text-body-lg text-pretty text-on-surface-variant">
+            {t("header.intro")}
+          </p>
         </div>
-      </section>
 
-      {/* Filter & tab navigation */}
-      <section className="mx-auto mb-space-lg w-full max-w-[1240px] px-margin-mobile md:px-margin">
-        <div className="flex flex-col gap-space-md rounded-xl border border-outline-variant bg-surface-low p-space-md shadow-sm md:p-space-lg">
+        <div className="flex flex-wrap items-center gap-space-sm">
+          <StatChip value={ACTIVE_CONNECTIONS.length} label={t("header.activeConnections")} />
+          <StatChip
+            value={RECEIVED_REQUESTS.length}
+            label={t("header.pendingRequests")}
+            accent
+            pulse
+          />
+          <button
+            type="button"
+            className={cn(
+              "inline-flex min-h-11 items-center gap-space-xs rounded-full border border-outline-variant bg-surface-container px-space-md py-2 font-label-lg text-label-lg text-on-surface",
+              "hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+              "transition-colors duration-300",
+              EASE,
+            )}
+          >
+            <Icon name="badge" className="text-sm text-secondary" />
+            <span>{t("header.exportVCard")}</span>
+          </button>
+        </div>
+      </header>
+
+      {/* Tab + filter bar */}
+      <section className="mt-block-mobile bezel-tray md:mt-block">
+        <div
+          className="flex flex-col gap-space-md bezel-core p-space-md md:p-space-lg"
+          style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
+        >
           <div className="flex flex-wrap items-center justify-between gap-space-md">
-            <div className="no-scrollbar flex w-full items-center gap-space-lg overflow-x-auto md:w-auto">
+            <div className="-mx-margin-mobile no-scrollbar flex w-full items-center gap-2 overflow-x-auto px-margin-mobile md:mx-0 md:w-auto md:px-0">
               {CONNECTION_TABS.map((key) => {
                 const active = tab === key;
+                const pending = key === "requests";
                 return (
                   <button
                     key={key}
@@ -106,27 +136,27 @@ export function ConnectionsView() {
                     onClick={() => setTab(key)}
                     aria-pressed={active}
                     className={cn(
-                      "flex items-center gap-space-xs pb-space-sm font-label-lg text-label-lg whitespace-nowrap transition-all",
+                      "flex min-h-10 shrink-0 items-center gap-2 rounded-full px-4 py-2 font-label-lg text-label-lg whitespace-nowrap",
+                      "transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+                      EASE,
                       active
-                        ? "border-b-2 border-primary-container font-semibold text-primary-container"
-                        : "text-secondary hover:text-on-surface",
+                        ? "bg-primary font-semibold text-on-primary"
+                        : "border border-outline-variant bg-surface-container text-secondary hover:border-outline-hover hover:bg-surface-variant hover:text-on-surface",
                     )}
                   >
                     <span>{t(`tabs.${key}`)}</span>
                     {tabCounts[key] !== null ? (
                       <span
                         className={cn(
-                          "rounded-full px-1.5 py-0.5 font-label-caps text-label-caps",
-                          key === "requests"
-                            ? "bg-primary-container font-bold text-white"
-                            : active
-                              ? "bg-surface-variant text-on-surface"
-                              : "bg-surface-variant text-secondary",
+                          "rounded-full px-1.5 py-0.5 font-label-md text-label-md font-semibold tabular-nums",
+                          active
+                            ? "bg-on-primary/20 text-on-primary"
+                            : pending
+                              ? "bg-primary-container text-on-primary"
+                              : "bg-surface-container-highest text-secondary",
                         )}
                       >
-                        {key === "requests"
-                          ? t("tabs.pendingBadge", { count: tabCounts[key] })
-                          : tabCounts[key]}
+                        {tabCounts[key]}
                       </span>
                     ) : null}
                   </button>
@@ -141,20 +171,20 @@ export function ConnectionsView() {
           </div>
 
           {/* Search + region pills */}
-          <div className="flex flex-col items-stretch justify-between gap-space-md pt-space-xs md:flex-row md:items-center">
+          <div className="flex flex-col items-stretch justify-between gap-space-md md:flex-row md:items-center">
             <div className="relative max-w-lg flex-1">
               <Icon
                 name="search"
                 className="absolute top-1/2 left-space-md -translate-y-1/2 text-lg text-secondary"
               />
               <input
-                type="text"
+                type="search"
                 placeholder={t("search.placeholder")}
-                className="w-full rounded-lg border border-outline-variant bg-surface-container py-2 pr-space-md pl-10 font-body-sm text-body-sm text-on-surface placeholder:text-secondary focus:ring-1 focus:ring-primary focus:outline-none"
+                className="h-11 w-full rounded-full border border-outline-variant bg-surface-container pr-space-md pl-11 font-body-sm text-body-sm text-on-surface transition-colors duration-300 placeholder:text-text-muted hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               />
             </div>
 
-            <div className="no-scrollbar flex items-center gap-space-xs overflow-x-auto pb-1 md:pb-0">
+            <div className="-mx-margin-mobile no-scrollbar flex items-center gap-space-xs overflow-x-auto px-margin-mobile pb-1 md:mx-0 md:px-0 md:pb-0">
               {REGION_FILTERS.map((key) => {
                 const selected = region === key;
                 const count = regionCounts[key];
@@ -165,10 +195,12 @@ export function ConnectionsView() {
                     onClick={() => setRegion(key)}
                     aria-pressed={selected}
                     className={cn(
-                      "rounded px-space-md py-1 font-label-md text-label-md whitespace-nowrap transition-all",
+                      "min-h-10 shrink-0 rounded-full px-space-md py-1.5 font-label-md text-label-md whitespace-nowrap",
+                      "transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+                      EASE,
                       selected
-                        ? "border border-border-dark bg-secondary-container-alt font-semibold text-on-surface"
-                        : "border border-outline-variant bg-surface-low text-secondary hover:text-on-surface",
+                        ? "bg-surface-container-highest font-semibold text-on-surface"
+                        : "border border-outline-variant bg-surface-container text-secondary hover:border-outline-hover hover:text-on-surface",
                     )}
                   >
                     {count === null
@@ -183,7 +215,7 @@ export function ConnectionsView() {
       </section>
 
       {/* Panels */}
-      <div className="mx-auto w-full max-w-[1240px] px-margin-mobile md:px-margin">
+      <div className="mt-space-xl">
         {tab === "active" ? (
           <ActiveConnectionsPanel onReviewInquiries={() => setTab("requests")} />
         ) : null}
@@ -193,37 +225,38 @@ export function ConnectionsView() {
       </div>
 
       {/* Sovereign privacy banner */}
-      <section className="mx-auto mt-space-xl mb-space-xl w-full max-w-[1240px] px-margin-mobile md:px-margin">
-        <div className="flex flex-col items-center justify-between gap-space-lg rounded-xl border border-outline-variant bg-surface-low p-space-lg shadow-sm md:flex-row">
+      <section className="mt-space-xl bezel-tray">
+        <div
+          className="flex flex-col items-center justify-between gap-space-lg bezel-core p-space-lg md:flex-row"
+          style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
+        >
           <div className="flex items-center gap-space-md">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-tertiary/30 bg-tertiary/15 text-tertiary">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-success-border bg-success-surface text-success-text">
               <Icon name="shield" className="text-2xl" />
             </div>
             <div className="space-y-0.5">
-              <h4 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
+              <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
                 {t("security.title")}
-              </h4>
+              </h2>
               <p className="max-w-2xl font-body-sm text-body-sm text-on-surface-strong">
                 {t("security.body")}
               </p>
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-space-sm">
-            <button
-              type="button"
-              className="rounded-xl border border-outline-variant bg-surface-variant px-space-md py-2 font-label-md text-label-md text-on-surface transition-all hover:bg-[#2e2b27]"
-            >
+          {/* No key-management or audit-log screen exists yet, so these are
+              stated as facts rather than dead buttons. */}
+          <div className="flex shrink-0 flex-wrap items-center gap-space-sm">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-success-border bg-success-surface px-space-md py-2 font-label-md text-label-md text-success-text">
+              <Icon name="key" className="text-sm" />
               {t("security.manageKeys")}
-            </button>
-            <button
-              type="button"
-              className="rounded-xl border border-outline-variant bg-surface-low px-space-md py-2 font-label-md text-label-md text-secondary transition-all hover:bg-surface-variant hover:text-on-surface"
-            >
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-outline-variant bg-surface-container px-space-md py-2 font-label-md text-label-md text-secondary">
+              <Icon name="history" className="text-sm" />
               {t("security.auditLogs")}
-            </button>
+            </span>
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

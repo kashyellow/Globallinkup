@@ -423,9 +423,8 @@
   },
   "Connections": {
     "header": {
-      "eyebrow": "CONNECTIONS & MUTUAL PRIVACY · BILATERAL TRUST",
+      "eyebrow": "Connections & Mutual Privacy",
       "title": "Your Connections",
-      "titleAlt": "Tus Conexiones",
       "intro": "Where mutual consent unlocks direct dialogue. Browse verified connections, review bilateral invitations, and safely coordinate unmediated international communication.",
       "activeConnections": "Active Connections",
       "pendingRequests": "Pending Requests",
@@ -435,8 +434,7 @@
       "active": "Active Connections",
       "requests": "Received Requests",
       "sent": "Sent Requests",
-      "archived": "Archived Dialogues",
-      "pendingBadge": "{count} Pending"
+      "archived": "Archived Dialogues"
     },
     "privacyChip": "Zero Unconsented Sharing Enforced",
     "search": {
@@ -486,6 +484,8 @@
     "sent": {
       "title": "Sent Inquiries Awaiting Bilateral Acceptance ({count})",
       "body": "You reached out to these community members. Once they grant bilateral consent, their direct channels will automatically unveil here.",
+      "emptyTitle": "No pending invitations",
+      "emptyBody": "Every invitation you have sent has been answered. New requests will appear here while you wait.",
       "sentAgoAwaiting": "Sent {time} ago · Awaiting review",
       "viewNote": "View Sent Note",
       "withdraw": "Withdraw"
@@ -1024,6 +1024,7 @@
       "manageAll": "Manage All",
       "unlocked": "Unlocked {time}",
       "revoke": "Revoke",
+      "allRevoked": "You have revoked access to every unveiled contact.",
       "revoked": "Access revoked"
     },
     "tabs": {
