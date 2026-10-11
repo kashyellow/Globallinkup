@@ -30,31 +30,37 @@ export function AdminView() {
     <>
       {/* Administrative context sub-bar */}
       <section className="w-full border-b border-outline-variant bg-surface">
-        <div className="mx-auto flex max-w-[1240px] flex-col justify-between gap-space-md px-margin-mobile py-space-md md:flex-row md:items-center md:px-margin">
+        <div className="mx-auto flex max-w-[1240px] flex-col justify-between gap-space-md px-margin-mobile py-space-md lg:flex-row lg:items-center lg:px-margin">
           <div className="flex flex-col gap-space-sm sm:flex-row sm:items-center sm:gap-space-md">
             <div className="flex items-center gap-space-xs font-label-md text-label-md text-secondary">
-              <Icon name="shield_person" className="text-base" />
-              <span>{t("portal")}</span>
+              <Icon name="shield_person" className="shrink-0 text-base" />
+              <span className="whitespace-nowrap">{t("portal")}</span>
               <span className="text-outline-variant">/</span>
-              <span className="font-medium text-on-surface">{t("panelTitle")}</span>
+              <span className="font-medium whitespace-nowrap text-on-surface">
+                {t("panelTitle")}
+              </span>
             </div>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-admin-border bg-admin-surface px-2.5 py-0.5 font-label-caps text-label-caps font-semibold text-admin-text">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+            <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-admin-border bg-admin-surface px-space-sm py-1 font-label-md text-label-md font-semibold text-admin-text">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
               {t("roleBadge")}
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-space-xs sm:gap-space-sm">
+          <div className="no-scrollbar flex items-center gap-space-xs overflow-x-auto pb-0.5 lg:flex-wrap lg:gap-space-sm lg:overflow-visible lg:pb-0">
             {METRIC_KEYS.map((metric) => (
               <div
                 key={metric.key}
-                className="flex items-center gap-1.5 rounded-full border border-outline-variant bg-surface-container px-3 py-1 font-label-caps text-label-caps text-on-surface shadow-sm"
+                className="flex shrink-0 items-center gap-1.5 rounded-full border border-outline-variant bg-surface-container px-space-sm py-1 font-label-md text-label-md text-secondary"
               >
-                <span className={cn("h-2 w-2 rounded-full", metric.dot)} />
+                <span className={cn("h-2 w-2 shrink-0 rounded-full", metric.dot)} />
                 <span>
                   {t.rich(`metrics.${metric.key}`, {
                     count: metric.count,
-                    b: (chunks) => <strong className="text-white">{chunks}</strong>,
+                    b: (chunks) => (
+                      <strong className="font-semibold text-on-surface tabular-nums">
+                        {chunks}
+                      </strong>
+                    ),
                   })}
                 </span>
               </div>
@@ -64,18 +70,18 @@ export function AdminView() {
       </section>
 
       {/* Workstation */}
-      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-space-xl px-margin-mobile py-space-xl md:px-margin">
-        <div className="flex flex-col justify-between gap-space-md border-b border-outline-variant pb-space-sm md:flex-row md:items-end">
+      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-space-lg px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
+        <div className="flex flex-col gap-space-md border-b border-outline-variant pb-space-md xl:flex-row xl:items-end xl:justify-between">
           <div>
-            <p className="mb-1 font-label-caps text-label-caps tracking-widest text-primary uppercase">
+            <p className="mb-2 font-label-md text-label-md font-semibold text-primary">
               {t("eyebrow")}
             </p>
-            <h1 className="font-headline-lg text-headline-lg-mobile text-on-surface md:text-headline-lg">
+            <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
               {t("title")}
             </h1>
           </div>
 
-          <div className="no-scrollbar flex items-center gap-space-xs overflow-x-auto pb-1">
+          <div className="-mx-margin-mobile no-scrollbar flex items-center gap-space-xs overflow-x-auto px-margin-mobile pb-1 md:mx-0 md:px-0 xl:overflow-visible xl:pb-0">
             {ADMIN_TABS.map((key) => {
               const active = tab === key;
               return (
@@ -85,17 +91,18 @@ export function AdminView() {
                   onClick={() => setTab(key)}
                   aria-pressed={active}
                   className={cn(
-                    "flex items-center gap-2 rounded-lg px-space-md py-2 font-label-lg text-label-lg transition-colors",
+                    "flex shrink-0 items-center gap-2 rounded-full px-space-md py-2.5 font-label-md text-label-md transition-colors duration-300",
+                    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
                     active
-                      ? "border border-outline-variant bg-surface-low font-semibold text-on-surface shadow-sm"
-                      : "border border-transparent text-secondary hover:bg-surface-low hover:text-on-surface",
+                      ? "bg-surface-container-high font-semibold text-on-surface"
+                      : "text-secondary hover:bg-surface-container hover:text-on-surface",
                   )}
                 >
                   <Icon name={TAB_ICONS[key]} className={cn("text-lg", active && "text-primary")} />
                   <span>{t(`tabs.${key}`)}</span>
                   <span
                     className={cn(
-                      "rounded-full border px-1.5 py-0.5 font-label-caps text-label-caps",
+                      "rounded-full border px-1.5 py-0.5 font-label-md text-label-md font-semibold tabular-nums",
                       key === "moderation"
                         ? "border-danger-border bg-danger-surface text-danger-text"
                         : active
