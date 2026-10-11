@@ -36,7 +36,7 @@
     "interests": "Interests"
   },
   "Discover": {
-    "eyebrow": "Cross-Cultural Curation / Red Global",
+    "eyebrow": "Cross-Cultural Curation",
     "title": "Discover People",
     "intro": "Explore verified personas across the globe and exchange cross-cultural perspectives. Connect mutually to unveil direct social contacts.",
     "activePersonas": "1,482 Active Personas Abroad",
@@ -54,16 +54,12 @@
       "badge": "Privacy Guard Protocol",
       "title": "The 4-Step Respectful Exchange",
       "body": "Zero unsolicited spam or intrusive messages. Personal WhatsApp and Instagram profiles stay encrypted until both individuals deliberately confirm interest.",
-      "step1Label": "01 / DISCOVERY",
       "step1Title": "Review Persona",
       "step1Body": "Browse genuine biographies and published visual journals.",
-      "step2Label": "02 / OUTREACH",
       "step2Title": "Send Request",
       "step2Body": "Transmit a single polite inquiry with context.",
-      "step3Label": "03 / APPROVAL",
       "step3Title": "Mutual Consent",
       "step3Body": "Both parties explicitly agree to establish rapport.",
-      "step4Label": "04 / REVEAL",
       "step4Title": "Direct Social",
       "step4Body": "Verified handles and direct dialogue instantly unlocked."
     },
@@ -146,14 +142,16 @@
   },
   "Posts": {
     "eyebrowPrimary": "Visual Chronology",
-    "eyebrowSecondary": "Chronological Feed",
     "title": "Community Posts",
     "titleAlt": "Posts",
     "intro": "Moments, travels, and glimpses into daily life across borders. Pure photography without algorithmic noise.",
     "filters": {
       "all": "All Dispatches",
       "connectionsOnly": "Connections Only",
-      "spainLatam": "Spain & LatAm"
+      "spainLatam": "Spain & LatAm",
+      "emptyTitle": "No dispatches match this view",
+      "emptyBody": "Nothing has been published in this selection yet. Try another filter.",
+      "showAll": "Show all dispatches"
     },
     "composer": {
       "placeholder": "Share a moment, photo, or travel update with the community...",

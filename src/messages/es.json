@@ -36,7 +36,7 @@
     "interests": "Intereses"
   },
   "Discover": {
-    "eyebrow": "Curaduría Intercultural / Red Global",
+    "eyebrow": "Curaduría Intercultural",
     "title": "Descubrir Personas",
     "intro": "Explora personas verificadas de todo el mundo e intercambia perspectivas interculturales. Conecta mutuamente para descubrir contactos sociales directos.",
     "activePersonas": "1.482 Personas Activas en el Extranjero",
@@ -54,16 +54,12 @@
       "badge": "Protocolo de Privacidad",
       "title": "El Intercambio Respetuoso en 4 Pasos",
       "body": "Cero spam no solicitado ni mensajes intrusivos. Los perfiles personales de WhatsApp e Instagram permanecen cifrados hasta que ambas personas confirman deliberadamente su interés.",
-      "step1Label": "01 / DESCUBRIMIENTO",
       "step1Title": "Revisar Persona",
       "step1Body": "Explora biografías auténticas y diarios visuales publicados.",
-      "step2Label": "02 / ACERCAMIENTO",
       "step2Title": "Enviar Solicitud",
       "step2Body": "Transmite una única consulta cortés con contexto.",
-      "step3Label": "03 / APROBACIÓN",
       "step3Title": "Consentimiento Mutuo",
       "step3Body": "Ambas partes aceptan explícitamente establecer una conexión.",
-      "step4Label": "04 / REVELACIÓN",
       "step4Title": "Contacto Directo",
       "step4Body": "Contactos verificados y diálogo directo desbloqueados al instante."
     },
@@ -146,14 +142,16 @@
   },
   "Posts": {
     "eyebrowPrimary": "Cronología Visual",
-    "eyebrowSecondary": "Feed Cronológico",
     "title": "Publicaciones de la Comunidad",
     "titleAlt": "Publicaciones",
     "intro": "Momentos, viajes y destellos de la vida cotidiana más allá de las fronteras. Fotografía pura sin ruido algorítmico.",
     "filters": {
       "all": "Todas las Publicaciones",
       "connectionsOnly": "Solo Conexiones",
-      "spainLatam": "España y LatAm"
+      "spainLatam": "España y LatAm",
+      "emptyTitle": "Ninguna publicación coincide con esta vista",
+      "emptyBody": "Todavía no se ha publicado nada en esta selección. Prueba otro filtro.",
+      "showAll": "Ver todas las publicaciones"
     },
     "composer": {
       "placeholder": "Comparte un momento, una foto o una novedad de viaje con la comunidad...",

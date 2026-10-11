@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
@@ -15,12 +16,14 @@ import {
 import { ProductDrawer } from "./product-drawer";
 
 const BADGE_ICONS: Record<MarketplaceBadge, string> = {
-  artisanPartner: "verified",
+  artisanPartner: "handyman",
   adminCurated: "verified",
   globalLinkupOriginal: "stars",
   adminVerified: "verified",
-  directTrade: "verified",
+  directTrade: "handshake",
 };
+
+const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
 export function MarketplaceView() {
   const t = useTranslations("Marketplace");
@@ -31,6 +34,9 @@ export function MarketplaceView() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const visible = PRODUCTS.filter((product) => filter === "all" || product.category === filter);
+  // The first card in the "all" view carries the featured treatment. When a
+  // category filter is active the set is small, so every tile stays compact.
+  const featuredId = filter === "all" ? visible[0]?.id : undefined;
 
   function openProduct(product: Product) {
     setSelected(product);
@@ -39,78 +45,82 @@ export function MarketplaceView() {
 
   return (
     <>
-      {/* Editorial banner */}
-      <section className="w-full border-b border-outline-variant bg-surface py-space-xl">
-        <div className="mx-auto max-w-[1240px] px-margin-mobile md:px-margin">
-          <div className="flex flex-col justify-between gap-space-lg md:flex-row md:items-end">
+      {/* Editorial header */}
+      <section className="border-b border-outline-variant bg-surface-low">
+        <div className="mx-auto max-w-[1240px] px-margin-mobile pt-block-mobile pb-space-xl md:px-margin md:pt-block">
+          <div className="flex flex-col justify-between gap-space-lg lg:flex-row lg:items-end">
             <div className="flex max-w-3xl flex-col gap-space-sm">
-              <div className="inline-flex w-fit items-center gap-2 rounded-full border border-border-dark bg-secondary-container-alt px-3 py-1 text-primary">
-                <Icon name="verified_user" className="text-base text-tertiary" />
-                <span className="font-label-caps text-label-caps tracking-wider uppercase">
-                  {t("banner.badge")}
-                </span>
-              </div>
-
-              <div className="mt-1 flex flex-wrap items-baseline gap-x-space-md gap-y-1">
-                <h1 className="font-headline-xl text-headline-xl-mobile font-semibold tracking-tight text-on-surface md:text-headline-xl">
-                  {t("banner.title")}
-                </h1>
-                <span className="font-headline-md text-headline-md font-normal text-secondary italic">
-                  / {t("banner.titleAlt")}
-                </span>
-              </div>
-
-              <p className="max-w-2xl font-body-lg text-body-lg leading-relaxed text-on-surface-strong">
-                {t("banner.intro")}
+              <p className="font-label-caps text-label-caps tracking-[0.16em] text-primary uppercase">
+                {t("banner.badge")}
               </p>
 
-              <div className="mt-2 flex items-center gap-2 font-body-sm text-body-sm text-secondary">
-                <Icon name="lock" className="text-sm text-tertiary" />
-                <span>{t("banner.note")}</span>
-              </div>
+              <h1 className="font-display-md text-display-md-mobile font-bold text-balance text-on-surface md:text-display-md">
+                {t("banner.title")}
+              </h1>
+
+              <p className="max-w-[58ch] font-body-lg text-body-lg text-pretty text-on-surface-variant">
+                {t("banner.intro")}
+              </p>
             </div>
 
-            <div className="flex min-w-[260px] items-center gap-space-md self-start rounded-xl border border-outline-variant bg-surface-low p-space-md shadow-sm md:self-auto">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg border border-outline-variant bg-surface-variant text-primary">
-                <Icon name="approval_delegation" className="text-2xl" />
-              </div>
-              <div>
-                <div className="font-headline-sm text-headline-sm font-semibold text-on-surface">
-                  {t("banner.statTitle")}
-                </div>
-                <div className="font-label-md text-label-md text-secondary">
-                  {t("banner.statSubtitle")}
+            <div className="shrink-0 self-start bezel-tray lg:self-auto">
+              <div
+                className="flex items-center gap-space-md bezel-core px-space-md py-space-sm"
+                style={{ "--bezel-core-bg": "var(--color-surface-container)" } as CSSProperties}
+              >
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                  <Icon name="approval_delegation" className="text-xl" />
+                </span>
+                <div>
+                  <div className="font-label-lg text-label-lg font-semibold text-on-surface">
+                    {t("banner.statTitle")}
+                  </div>
+                  <div className="font-body-sm text-body-sm text-secondary">
+                    {t("banner.statSubtitle")}
+                  </div>
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="mt-space-lg flex items-center gap-2 font-body-sm text-body-sm text-secondary">
+            <Icon name="lock" className="shrink-0 text-base text-tertiary" />
+            <span>{t("banner.note")}</span>
           </div>
         </div>
       </section>
 
       {/* Controls */}
-      <section className="w-full bg-background py-space-lg">
-        <div className="mx-auto flex max-w-[1240px] flex-col gap-space-md px-margin-mobile md:px-margin">
+      <section className="mx-auto max-w-[1240px] px-margin-mobile py-space-lg md:px-margin">
+        <div className="flex flex-col gap-space-md">
           <div className="flex flex-col items-stretch justify-between gap-space-md md:flex-row md:items-center">
             <div className="relative max-w-xl flex-1">
               <Icon
                 name="search"
-                className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-xl text-secondary"
+                className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-xl text-text-muted"
               />
               <input
                 type="text"
                 placeholder={t("controls.searchPlaceholder")}
-                className="h-11 w-full rounded-lg border border-outline-variant bg-surface-low pr-4 pl-11 font-body-md text-body-md text-on-surface transition-all placeholder:text-secondary focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none"
+                className="h-12 w-full rounded-full border border-outline-variant bg-surface-low pr-4 pl-12 font-body-md text-body-md text-on-surface transition-colors duration-300 placeholder:text-text-muted hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               />
             </div>
 
             <div className="flex items-center justify-between gap-space-sm md:justify-end">
-              <span className="font-label-md text-label-md whitespace-nowrap text-secondary">
+              <label
+                htmlFor="marketplace-sort"
+                className="font-label-lg text-label-lg whitespace-nowrap text-secondary"
+              >
                 {t("controls.sortBy")}
-              </span>
+              </label>
               <div className="relative">
                 <select
+                  id="marketplace-sort"
                   defaultValue="featured"
-                  className="h-11 cursor-pointer appearance-none rounded-lg border border-outline-variant bg-surface-low pr-8 pl-3.5 font-label-lg text-label-lg text-on-surface transition-all focus:border-primary focus:outline-none"
+                  className={cn(
+                    "h-12 cursor-pointer appearance-none rounded-full border border-outline-variant bg-surface-low pr-10 pl-4 font-label-lg text-label-lg text-on-surface transition-colors duration-300 hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                    EASE,
+                  )}
                 >
                   <option value="featured">{t("controls.sortFeatured")}</option>
                   <option value="price-low">{t("controls.sortPriceLow")}</option>
@@ -119,23 +129,25 @@ export function MarketplaceView() {
                 </select>
                 <Icon
                   name="expand_more"
-                  className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-base text-secondary"
+                  className="pointer-events-none absolute top-1/2 right-3.5 -translate-y-1/2 text-base text-secondary"
                 />
               </div>
             </div>
           </div>
 
-          <div className="no-scrollbar flex items-center gap-2 overflow-x-auto pb-1">
+          <div className="-mx-margin-mobile no-scrollbar flex items-center gap-2 overflow-x-auto px-margin-mobile md:mx-0 md:px-0">
             {MARKETPLACE_FILTERS.map((key) => (
               <button
                 key={key}
                 type="button"
                 onClick={() => setFilter(key)}
+                aria-pressed={filter === key}
                 className={cn(
-                  "rounded-lg px-4 py-1.5 font-label-md text-label-md whitespace-nowrap transition-all",
+                  "min-h-9 shrink-0 rounded-full px-4 py-1.5 font-label-lg text-label-lg whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+                  EASE,
                   filter === key
-                    ? "border border-primary bg-secondary-container-alt font-semibold text-on-surface"
-                    : "border border-outline-variant bg-surface-low text-on-surface-strong hover:border-secondary",
+                    ? "bg-primary font-semibold text-on-primary"
+                    : "border border-outline-variant bg-surface-low text-on-surface-variant hover:border-outline-hover hover:bg-surface-container hover:text-on-surface",
                 )}
               >
                 {key === "all" ? t("filters.all", { count: PRODUCTS.length }) : t(`filters.${key}`)}
@@ -145,35 +157,51 @@ export function MarketplaceView() {
         </div>
       </section>
 
-      {/* Product grid */}
-      <section className="w-full bg-background pb-space-xl">
-        <div className="mx-auto max-w-[1240px] px-margin-mobile md:px-margin">
-          <div className="grid grid-cols-1 gap-space-lg md:grid-cols-2 lg:grid-cols-3">
-            {visible.map((product) => (
-              <ProductCard key={product.id} product={product} onOpen={() => openProduct(product)} />
-            ))}
-          </div>
+      {/* Catalog. An asymmetric bento rather than an even 3-up grid, so the
+          catalogue reads as an editorial selection instead of a product wall. */}
+      <section className="mx-auto max-w-[1240px] px-margin-mobile pb-page-mobile md:px-margin md:pb-page">
+        <div className="grid grid-cols-1 gap-space-md sm:grid-cols-2 lg:grid-cols-6">
+          {visible.map((product, index) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              productIndex={index}
+              featured={product.id === featuredId}
+              onOpen={() => openProduct(product)}
+            />
+          ))}
+        </div>
 
-          {/* No-cart model notice */}
-          <div className="mt-space-xl flex flex-col items-center justify-between gap-space-md rounded-xl border border-outline-variant bg-surface-low p-space-lg text-center shadow-sm md:flex-row md:text-left">
-            <div className="flex items-center gap-space-md">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-border-dark bg-secondary-container-alt text-primary">
+        {/* No-cart model notice */}
+        <div className="mt-block-mobile bezel-tray md:mt-block">
+          <div
+            className="flex flex-col items-start justify-between gap-space-md bezel-core p-space-lg md:flex-row md:items-center"
+            style={{ "--bezel-core-bg": "var(--color-surface-container)" } as CSSProperties}
+          >
+            <div className="flex items-start gap-space-md">
+              <span className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary sm:flex">
                 <Icon name="handshake" className="text-2xl" />
-              </div>
+              </span>
               <div>
-                <h3 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
+                <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
                   {t("notice.title")}
-                </h3>
-                <p className="max-w-xl font-body-sm text-body-sm text-secondary">
+                </h2>
+                <p className="mt-1 max-w-xl font-body-sm text-body-sm text-pretty text-secondary">
                   {t("notice.body")}
                 </p>
               </div>
             </div>
             <a
               href={`mailto:${MARKETPLACE_CONTACT.email}`}
-              className="rounded-lg border border-outline-variant bg-surface-container px-5 py-2.5 font-label-lg text-label-lg whitespace-nowrap text-on-surface transition-colors hover:border-border-dark hover:bg-surface-variant"
+              className={cn(
+                "group inline-flex h-11 shrink-0 items-center gap-2 rounded-full border border-outline bg-surface-low px-5 font-label-lg text-label-lg whitespace-nowrap text-on-surface transition-colors duration-300 hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+                EASE,
+              )}
             >
               {t("notice.cta")}
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-on-surface/10 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-px">
+                <Icon name="north_east" className="text-[15px]" />
+              </span>
             </a>
           </div>
         </div>
@@ -188,82 +216,137 @@ export function MarketplaceView() {
   );
 }
 
-function ProductCard({ product, onOpen }: { product: Product; onOpen: () => void }) {
+function ProductCard({
+  product,
+  productIndex,
+  featured,
+  onOpen,
+}: {
+  product: Product;
+  productIndex: number;
+  featured: boolean;
+  onOpen: () => void;
+}) {
   const t = useTranslations("Marketplace");
   const isOriginal = product.badge === "globalLinkupOriginal";
 
   return (
     <article
-      role="button"
-      tabIndex={0}
-      onClick={onOpen}
-      onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          onOpen();
-        }
-      }}
-      className="group flex cursor-pointer flex-col overflow-hidden rounded-xl border border-outline-variant bg-surface-low transition-all duration-300 hover:border-border-dark hover:shadow-lg focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+      className={cn(
+        "group flex flex-col",
+        /*
+         * Asymmetric bento spans on a 6-column track. The featured tile takes a
+         * 4-wide, 2-row block; the rest mix 2-wide and 3-wide cells so no row
+         * resolves into a set of equal-width cards.
+         */
+        featured
+          ? "lg:col-span-4 lg:row-span-2"
+          : productIndex % 3 === 1
+            ? "lg:col-span-2"
+            : "lg:col-span-3",
+      )}
     >
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface-container">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          alt={product.imageAlt}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          src={product.image}
-          loading="lazy"
-        />
-
+      <div className={cn("flex h-full bezel-tray", featured && "lg:h-auto")}>
         <div
-          className={cn(
-            "absolute top-3 left-3 flex items-center gap-1.5 rounded px-2.5 py-1 font-label-caps text-label-caps font-bold tracking-wider uppercase",
-            isOriginal
-              ? "bg-primary-container font-semibold text-white shadow-sm"
-              : "border border-outline-variant bg-surface-low/90 text-tertiary shadow-sm backdrop-blur-sm",
-          )}
+          className="flex w-full flex-col overflow-hidden bezel-core"
+          style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
         >
-          <Icon name={BADGE_ICONS[product.badge]} className="text-sm" />
-          <span>{t(`badges.${product.badge}`)}</span>
-        </div>
-
-        <div className="absolute top-3 right-3 rounded border border-outline-variant bg-background/85 px-2 py-0.5 font-label-caps text-label-caps text-on-surface-strong backdrop-blur-sm">
-          {product.originLabel}
-        </div>
-      </div>
-
-      <div className="flex flex-1 flex-col justify-between p-space-lg">
-        <div className="flex flex-col gap-1">
-          <span className="font-label-caps text-label-caps tracking-wider text-secondary uppercase">
-            {t(`categories.${product.category}`)}
-          </span>
-          <h2 className="line-clamp-1 font-headline-sm text-headline-sm font-semibold text-on-surface transition-colors group-hover:text-primary-container">
-            {product.name}
-          </h2>
-          <p className="mt-1 line-clamp-2 font-body-sm text-body-sm text-secondary">
-            {product.summary}
-          </p>
-        </div>
-
-        <div className="mt-space-md flex items-center justify-between border-t border-outline-variant pt-space-md">
-          <div>
-            <span className="block font-label-caps text-label-caps text-secondary">
-              {t("card.priceLabel")}
-            </span>
-            <span className="font-headline-sm text-headline-sm font-bold text-on-surface">
-              ${product.price} {t("drawer.currencyUsd")}
-            </span>
-          </div>
           <button
             type="button"
-            onClick={(event) => {
-              event.stopPropagation();
-              onOpen();
-            }}
-            className="flex items-center gap-1 rounded-lg border border-border-dark bg-secondary-container-alt px-3.5 py-1.5 font-label-md text-label-md font-semibold text-on-surface-strong transition-colors hover:bg-primary-container hover:text-white"
+            onClick={onOpen}
+            aria-label={t("card.inspectSpecs")}
+            className="relative block w-full overflow-hidden bg-surface-container focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
           >
-            {t("card.inspectSpecs")}
-            <Icon name="arrow_forward" className="text-sm" />
+            <span className={cn("block w-full", featured ? "aspect-[16/11]" : "aspect-[4/3]")}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                alt={product.imageAlt}
+                className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
+                src={product.image}
+                loading="lazy"
+              />
+            </span>
+
+            {/*
+             * Solid tinted surfaces rather than `backdrop-blur`: these sit in
+             * normal flow over a photo, and blur is reserved for fixed/sticky
+             * chrome.
+             */}
+            <span
+              className={cn(
+                "absolute top-3 left-3 flex items-center gap-1.5 rounded-full px-2.5 py-1 font-label-md text-label-md shadow-lift-sm",
+                isOriginal
+                  ? "bg-primary text-on-primary"
+                  : "border border-success-border bg-success-surface text-success-text",
+              )}
+            >
+              <Icon name={BADGE_ICONS[product.badge]} className="text-sm" />
+              {t(`badges.${product.badge}`)}
+            </span>
+
+            <span className="absolute top-3 right-3 rounded-full border border-outline-variant bg-surface-low/95 px-2.5 py-1 font-label-md text-label-md text-on-surface shadow-lift-sm">
+              {product.originLabel}
+            </span>
           </button>
+
+          <div className="flex flex-1 flex-col justify-between gap-space-sm p-space-md">
+            <div className="flex flex-col gap-1">
+              <span className="font-label-md text-label-md font-semibold text-primary">
+                {t(`categories.${product.category}`)}
+              </span>
+              <h2
+                className={cn(
+                  "font-semibold text-balance text-on-surface transition-colors duration-300 group-hover:text-primary",
+                  featured
+                    ? "line-clamp-2 font-headline-md text-headline-md"
+                    : "line-clamp-2 font-headline-sm text-headline-sm",
+                )}
+              >
+                {product.name}
+              </h2>
+              <p
+                className={cn(
+                  "mt-0.5 text-pretty text-secondary",
+                  featured
+                    ? "line-clamp-3 font-body-md text-body-md"
+                    : "line-clamp-2 font-body-sm text-body-sm",
+                )}
+              >
+                {product.summary}
+              </p>
+            </div>
+
+            <div className="mt-space-xs flex items-center justify-between gap-space-sm border-t border-outline-variant pt-space-sm">
+              <div>
+                <span className="block font-label-md text-label-md text-text-muted">
+                  {t("card.priceLabel")}
+                </span>
+                <span
+                  className={cn(
+                    "font-bold text-on-surface tabular-nums",
+                    featured
+                      ? "font-headline-md text-headline-md"
+                      : "font-headline-sm text-headline-sm",
+                  )}
+                >
+                  ${product.price} {t("drawer.currencyUsd")}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={onOpen}
+                className={cn(
+                  "group/btn flex h-10 items-center gap-1.5 rounded-full border border-outline bg-surface-container pr-1.5 pl-4 font-label-lg text-label-lg font-semibold whitespace-nowrap text-on-surface transition-colors duration-300 hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+                  EASE,
+                )}
+              >
+                {t("card.inspectSpecs")}
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-on-surface/10 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-px">
+                  <Icon name="arrow_forward" className="text-[15px]" />
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </article>

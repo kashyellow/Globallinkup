@@ -1,10 +1,13 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import { PERSONAS, type ConnectState, type Persona } from "../data";
+
+const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
 export function PersonaFeed() {
   const t = useTranslations("Discover");
@@ -18,11 +21,11 @@ export function PersonaFeed() {
 
   return (
     <section className="space-y-space-md lg:col-span-7">
-      <div className="flex items-center justify-between px-space-xs">
-        <span className="font-label-caps text-label-caps tracking-widest text-secondary uppercase">
+      <div className="flex items-center justify-between gap-space-sm px-space-xs">
+        <h2 className="font-label-lg text-label-lg font-semibold text-on-surface">
           {t("feed.listTitle")}
-        </span>
-        <span className="font-label-md text-label-md text-text-muted">
+        </h2>
+        <span className="font-label-lg text-label-lg text-text-muted">
           {t("feed.resultsCount")}
         </span>
       </div>
@@ -38,20 +41,30 @@ export function PersonaFeed() {
           />
         ))}
 
-        <article className="flex flex-col justify-between rounded-xl border border-outline-variant bg-surface-container p-space-lg shadow-sm">
-          <div className="space-y-space-xs">
-            <Icon name="diversity_1" className="text-3xl text-primary-container" />
-            <h3 className="font-headline-sm text-headline-sm text-on-surface">
-              {t("feed.ctaTitle")}
-            </h3>
-            <p className="font-body-sm text-body-sm text-secondary">{t("feed.ctaBody")}</p>
-          </div>
-          <button
-            type="button"
-            className="mt-space-lg w-full rounded-xl border border-outline-variant bg-surface-low px-space-md py-2.5 font-label-lg text-label-lg font-medium text-on-surface-strong shadow-sm transition-colors hover:bg-surface-variant"
+        <article className="bezel-tray">
+          <div
+            className="flex h-full flex-col justify-between gap-space-lg bezel-core p-space-lg"
+            style={{ "--bezel-core-bg": "var(--color-surface-container)" } as CSSProperties}
           >
-            {t("feed.ctaButton")}
-          </button>
+            <div className="space-y-space-xs">
+              <Icon name="diversity_1" className="text-3xl text-primary" />
+              <h3 className="font-headline-sm text-headline-sm text-on-surface">
+                {t("feed.ctaTitle")}
+              </h3>
+              <p className="font-body-sm text-body-sm text-pretty text-secondary">
+                {t("feed.ctaBody")}
+              </p>
+            </div>
+            <button
+              type="button"
+              className={cn(
+                "w-full rounded-full border border-outline-variant bg-surface-low px-space-md py-2.5 font-label-lg text-label-lg font-medium text-on-surface transition-colors duration-300 hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+                EASE,
+              )}
+            >
+              {t("feed.ctaButton")}
+            </button>
+          </div>
         </article>
       </div>
     </section>
@@ -75,33 +88,38 @@ function PersonaCard({
   return (
     <article
       className={cn(
-        "flex flex-col justify-between overflow-hidden rounded-xl bg-surface-low shadow-sm",
-        selected ? "border-2 border-primary-container" : "border border-outline-variant",
+        "group flex flex-col justify-between overflow-hidden rounded-[1.25rem] bg-surface-low transition-colors duration-300",
+        selected ? "border border-primary" : "border border-outline-variant hover:border-outline",
       )}
     >
-      <div className="relative aspect-[4/3] w-full bg-surface-container">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface-container">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           alt={persona.imageAlt}
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
           src={persona.image}
           loading="lazy"
         />
 
-        <div className="absolute top-2.5 left-2.5 flex items-center gap-1 rounded-full border border-outline-variant bg-surface-low/85 px-2 py-0.5 font-label-caps text-label-caps text-on-surface-strong shadow-sm backdrop-blur">
-          <Icon name="verified" className="text-xs text-tertiary" />
+        {/*
+         * Solid tinted surfaces rather than `backdrop-blur`: these sit in normal
+         * flow over a photo, and the design rules reserve blur for fixed/sticky
+         * chrome.
+         */}
+        <div className="absolute top-3 left-3 flex items-center gap-1 rounded-full border border-outline-variant bg-surface-low/95 px-2.5 py-1 font-label-md text-label-md text-on-surface shadow-lift-sm">
+          <Icon name="verified" className="text-sm text-tertiary" />
           <span>{tCommon("verified")}</span>
         </div>
 
         {persona.badge === "previewed" ? (
-          <div className="absolute right-2.5 bottom-2.5 rounded-md border border-outline-variant bg-background/85 px-2 py-0.5 font-label-caps text-label-caps text-on-surface-strong backdrop-blur">
+          <div className="absolute right-3 bottom-3 rounded-full border border-outline-variant bg-surface-low/95 px-2.5 py-1 font-label-md text-label-md text-on-surface shadow-lift-sm">
             {t("feed.profilePreviewed")}
           </div>
         ) : null}
 
         {persona.badge === "directContact" ? (
-          <div className="absolute bottom-2.5 left-2.5 flex items-center gap-1 rounded-md border border-tertiary/30 bg-success-container/90 px-2 py-0.5 font-label-caps text-label-caps text-success-text shadow-sm backdrop-blur">
-            <Icon name="lock_open" className="text-xs" />
+          <div className="absolute bottom-3 left-3 flex items-center gap-1 rounded-full border border-success-border bg-success-surface px-2.5 py-1 font-label-md text-label-md text-success-text shadow-lift-sm">
+            <Icon name="lock_open" className="text-sm" />
             <span>{t("feed.directContactVisible")}</span>
           </div>
         ) : null}
@@ -113,15 +131,15 @@ function PersonaCard({
             {persona.name}, {persona.age}
           </h3>
           <div className="mt-0.5 flex items-center gap-1 text-secondary">
-            <Icon name="location_on" className="text-xs" />
+            <Icon name="location_on" className="text-sm" />
             <span className="font-body-sm text-body-sm">{persona.location}</span>
           </div>
 
-          <div className="mt-space-sm flex items-center gap-1.5">
+          <div className="mt-space-sm flex flex-wrap items-center gap-1.5">
             {persona.languages.map((language) => (
               <span
                 key={language.code}
-                className="rounded border border-outline-variant bg-surface-variant px-1.5 py-0.5 font-label-caps text-label-caps text-on-surface-variant"
+                className="rounded-full border border-outline-variant bg-surface-variant px-2 py-0.5 font-label-md text-label-md text-on-surface-variant"
               >
                 {language.code} · {t(`fluency.${language.level}`)}
               </span>
@@ -132,7 +150,7 @@ function PersonaCard({
             {persona.interests.map((interest) => (
               <span
                 key={interest}
-                className="rounded border border-outline-variant bg-surface-container px-2 py-0.5 font-label-md text-xs text-on-surface-strong"
+                className="rounded-full border border-outline-variant bg-surface-container px-2 py-0.5 font-label-md text-label-md text-on-surface-strong"
               >
                 {t(`interests.${interest}`)}
               </span>
@@ -141,26 +159,26 @@ function PersonaCard({
         </div>
 
         {state === "connected" ? (
-          <button
-            type="button"
-            className="mt-space-sm flex w-full items-center justify-center gap-space-xs rounded-xl border border-tertiary/40 bg-success-surface px-space-md py-2.5 font-label-lg text-label-lg font-semibold text-success-text"
-          >
+          <div className="mt-space-sm flex w-full items-center justify-center gap-space-xs rounded-full border border-success-border bg-success-surface px-space-md py-2.5 font-label-lg text-label-lg font-semibold text-success-text">
             <Icon name="check_circle" className="text-lg" />
-            <span>✓ {tCommon("connected")}</span>
-          </button>
+            <span>{tCommon("connected")}</span>
+          </div>
         ) : state === "requested" ? (
-          <button
-            type="button"
-            className="mt-space-sm flex w-full cursor-default items-center justify-center gap-space-xs rounded-xl border border-border-strong bg-secondary-container px-space-md py-2.5 font-label-lg text-label-lg text-on-surface-strong"
+          <div
+            aria-live="polite"
+            className="mt-space-sm flex w-full items-center justify-center gap-space-xs rounded-full border border-outline-variant bg-surface-container px-space-md py-2.5 font-label-lg text-label-lg text-on-surface-strong"
           >
-            <Icon name="schedule" className="text-lg text-primary-container" />
+            <Icon name="schedule" className="text-lg text-primary" />
             <span>{tCommon("requestSent")}</span>
-          </button>
+          </div>
         ) : (
           <button
             type="button"
             onClick={onConnect}
-            className="mt-space-sm flex w-full items-center justify-center gap-space-xs rounded-xl bg-primary-container px-space-md py-2.5 font-label-lg text-label-lg font-semibold text-white shadow-sm transition-colors hover:bg-primary-hover"
+            className={cn(
+              "mt-space-sm flex w-full items-center justify-center gap-space-xs rounded-full bg-primary px-space-md py-2.5 font-label-lg text-label-lg font-semibold text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+              EASE,
+            )}
           >
             <Icon name="person_add" className="text-lg" />
             <span>{tCommon("connect")}</span>

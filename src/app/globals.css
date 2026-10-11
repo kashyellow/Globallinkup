@@ -117,6 +117,15 @@
    */
   --spacing-section: 6rem;
   --spacing-section-mobile: 3.5rem;
+  /*
+   * App-page rhythm. Signed-in pages are denser than the marketing page but
+   * still need real breathing room at the top and between blocks; these sit
+   * between `space-xl` (2.5rem) and `section` (6rem).
+   */
+  --spacing-page: 4.5rem;
+  --spacing-page-mobile: 2.5rem;
+  --spacing-block: 3rem;
+  --spacing-block-mobile: 2rem;
   --spacing-margin: 2.5rem;
   --spacing-margin-mobile: 1.25rem;
   --spacing-gutter: 1.5rem;
@@ -408,7 +417,12 @@
 @utility bezel-core {
   border: 1px solid color-mix(in oklab, var(--color-outline-variant) 78%, transparent);
   border-radius: 1.25rem;
-  background-color: var(--color-marketing-core);
+  /*
+   * Defaults to the marketing core, but callers may set `--bezel-core-bg`
+   * (e.g. the signed-in app uses `surface-low`/`surface-container`) so the same
+   * nesting works across both palettes without a second utility.
+   */
+  background-color: var(--bezel-core-bg, var(--color-marketing-core));
 }
 
 /*
