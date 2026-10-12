@@ -74,7 +74,7 @@ export function DispatchCard({ dispatch }: { dispatch: Dispatch }) {
                 aria-pressed={appreciated}
                 onClick={() => setAppreciated((value) => !value)}
                 className={cn(
-                  "inline-flex min-h-10 items-center gap-1.5 rounded-full px-2.5 font-label-md text-label-md",
+                  "inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 font-label-md text-label-md",
                   "transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
                   appreciated ? "text-primary" : "text-text-muted hover:text-primary",
                 )}
@@ -82,7 +82,7 @@ export function DispatchCard({ dispatch }: { dispatch: Dispatch }) {
                 <Icon name="favorite" filled={appreciated} className="text-lg" />
                 <span className="tabular-nums">{t("appreciations", { count: appreciations })}</span>
               </button>
-              <span className="flex min-h-10 items-center gap-1.5 px-1 font-label-md text-label-md text-text-muted">
+              <span className="flex min-h-11 items-center gap-1.5 px-1 font-label-md text-label-md text-text-muted">
                 <Icon name="chat_bubble" className="text-lg" />
                 <span className="tabular-nums">{t("notes", { count: dispatch.notes })}</span>
               </span>

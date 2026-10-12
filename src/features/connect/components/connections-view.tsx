@@ -125,7 +125,12 @@ export function ConnectionsView() {
           style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
         >
           <div className="flex flex-wrap items-center justify-between gap-space-md">
-            <div className="-mx-margin-mobile no-scrollbar flex w-full items-center gap-2 overflow-x-auto px-margin-mobile md:mx-0 md:w-auto md:px-0">
+            {/*
+             * The rail bleeds to the bezel-core padding edge (`-mx-space-md`)
+             * rather than the page margin. Using `-mx-margin-mobile` here
+             * overhung the inner panel by 0.25rem and clipped the last tab.
+             */}
+            <div className="-mx-space-md no-scrollbar flex w-full items-center gap-2 overflow-x-auto px-space-md md:mx-0 md:w-auto md:px-0">
               {CONNECTION_TABS.map((key) => {
                 const active = tab === key;
                 const pending = key === "requests";
@@ -136,7 +141,7 @@ export function ConnectionsView() {
                     onClick={() => setTab(key)}
                     aria-pressed={active}
                     className={cn(
-                      "flex min-h-10 shrink-0 items-center gap-2 rounded-full px-4 py-2 font-label-lg text-label-lg whitespace-nowrap",
+                      "flex min-h-11 shrink-0 items-center gap-2 rounded-full px-4 py-2 font-label-lg text-label-lg whitespace-nowrap",
                       "transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
                       EASE,
                       active
@@ -184,7 +189,7 @@ export function ConnectionsView() {
               />
             </div>
 
-            <div className="-mx-margin-mobile no-scrollbar flex items-center gap-space-xs overflow-x-auto px-margin-mobile pb-1 md:mx-0 md:px-0 md:pb-0">
+            <div className="-mx-space-md no-scrollbar flex items-center gap-space-xs overflow-x-auto px-space-md py-1 md:mx-0 md:px-0 md:py-0">
               {REGION_FILTERS.map((key) => {
                 const selected = region === key;
                 const count = regionCounts[key];
@@ -195,7 +200,7 @@ export function ConnectionsView() {
                     onClick={() => setRegion(key)}
                     aria-pressed={selected}
                     className={cn(
-                      "min-h-10 shrink-0 rounded-full px-space-md py-1.5 font-label-md text-label-md whitespace-nowrap",
+                      "min-h-11 shrink-0 rounded-full px-space-md py-2 font-label-md text-label-md whitespace-nowrap",
                       "transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
                       EASE,
                       selected

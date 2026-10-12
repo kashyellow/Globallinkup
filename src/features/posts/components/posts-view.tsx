@@ -49,7 +49,7 @@ export function PostsView() {
               onClick={() => setFilter(key)}
               aria-pressed={filter === key}
               className={cn(
-                "flex min-h-9 shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 font-label-lg text-label-lg whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+                "flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 font-label-lg text-label-lg whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
                 EASE,
                 filter === key
                   ? "bg-primary font-semibold text-on-primary"
@@ -97,7 +97,7 @@ export function PostsView() {
                 <button
                   type="button"
                   onClick={() => setFilter("all")}
-                  className="mt-space-xs inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full border border-outline-variant bg-surface-container px-space-md py-2 font-label-lg text-label-lg font-semibold text-on-surface transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-outline-hover hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
+                  className="mt-space-xs inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-outline-variant bg-surface-container px-space-md py-2 font-label-lg text-label-lg font-semibold text-on-surface transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-outline-hover hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
                 >
                   {t("filters.showAll")}
                 </button>

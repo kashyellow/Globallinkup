@@ -60,7 +60,7 @@ export function SearchRibbon() {
             onClick={() => setRegion(key)}
             aria-pressed={region === key}
             className={cn(
-              "min-h-9 shrink-0 rounded-full px-space-md py-1.5 font-label-lg text-label-lg whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+              "min-h-11 shrink-0 rounded-full px-space-md py-2 font-label-lg text-label-lg whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
               EASE,
               region === key
                 ? "bg-primary font-semibold text-on-primary"
@@ -74,7 +74,7 @@ export function SearchRibbon() {
         <button
           type="button"
           className={cn(
-            "flex min-h-9 shrink-0 items-center gap-1 rounded-full border border-outline-variant bg-surface-low px-space-md py-1.5 font-label-lg text-label-lg whitespace-nowrap text-on-surface-variant transition-colors duration-300 hover:border-outline-hover hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+            "flex min-h-11 shrink-0 items-center gap-1 rounded-full border border-outline-variant bg-surface-low px-space-md py-2 font-label-lg text-label-lg whitespace-nowrap text-on-surface-variant transition-colors duration-300 hover:border-outline-hover hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
             EASE,
           )}
         >
@@ -84,7 +84,7 @@ export function SearchRibbon() {
         <button
           type="button"
           className={cn(
-            "flex min-h-9 shrink-0 items-center gap-1 rounded-full border border-outline-variant bg-surface-low px-space-md py-1.5 font-label-lg text-label-lg whitespace-nowrap text-on-surface-variant transition-colors duration-300 hover:border-outline-hover hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+            "flex min-h-11 shrink-0 items-center gap-1 rounded-full border border-outline-variant bg-surface-low px-space-md py-2 font-label-lg text-label-lg whitespace-nowrap text-on-surface-variant transition-colors duration-300 hover:border-outline-hover hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
             EASE,
           )}
         >

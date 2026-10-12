@@ -83,7 +83,7 @@ function DrawerContent({ product, onClose }: { product: Product; onClose: () => 
           type="button"
           onClick={onClose}
           aria-label={t("close")}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-outline-variant bg-surface-container text-on-surface transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-outline-variant bg-surface-container text-on-surface transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <Icon name="close" className="text-xl" />
         </button>

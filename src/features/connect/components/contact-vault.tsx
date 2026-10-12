@@ -43,7 +43,7 @@ export function ContactVault({ connection }: { connection: ActiveConnection }) {
               href={`https://wa.me/${connection.whatsappRaw.replace(/\D/g, "")}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-9 items-center gap-1 rounded-full border border-success-border bg-success-surface px-2.5 py-1 font-label-md text-label-md text-success-text transition-colors duration-300 hover:bg-success-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="inline-flex min-h-11 items-center gap-1 rounded-full border border-success-border bg-success-surface px-3 py-2 font-label-md text-label-md text-success-text transition-colors duration-300 hover:bg-success-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               <span>{t("open")}</span>
               <Icon name="arrow_outward" className="text-xs" />
@@ -62,7 +62,7 @@ export function ContactVault({ connection }: { connection: ActiveConnection }) {
               href={connection.instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-variant hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-variant hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               aria-label={t("openInstagram")}
             >
               <Icon name="open_in_new" className="text-sm" />
@@ -103,7 +103,7 @@ function CopyButton({ value, variant = "text" }: { value: string; variant?: "tex
         onClick={copy}
         title={copied ? t("copied") : t("copy")}
         aria-label={copied ? t("copied") : t("copy")}
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-variant hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-variant hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
       >
         <Icon name={copied ? "check" : "content_copy"} className="text-sm" />
       </button>
@@ -116,7 +116,7 @@ function CopyButton({ value, variant = "text" }: { value: string; variant?: "tex
       onClick={copy}
       title={t("copyTitle")}
       className={cn(
-        "inline-flex min-h-9 items-center rounded-full px-2.5 font-label-md text-label-md text-secondary",
+        "inline-flex min-h-11 items-center rounded-full px-3 font-label-md text-label-md text-secondary",
         "hover:bg-surface-variant hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
         "transition-colors duration-300",
         EASE,

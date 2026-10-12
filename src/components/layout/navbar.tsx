@@ -52,7 +52,7 @@ export function Navbar() {
       <div className="mx-auto mt-3 flex h-14 max-w-[1240px] items-center justify-between gap-2 rounded-full border border-outline-variant bg-surface-low/85 pr-1.5 pl-1.5 shadow-lift-sm backdrop-blur-xl md:gap-space-md">
         <Link
           href="/discover"
-          className="flex min-w-0 items-center gap-2 rounded-full px-2.5 py-1.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="flex min-h-11 min-w-0 items-center gap-2 rounded-full px-2.5 py-1.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <BrandMark className="h-6 w-6 shrink-0 text-primary" />
           <span className="truncate font-headline-sm text-headline-sm leading-none font-bold tracking-tight text-on-surface">
@@ -103,7 +103,7 @@ export function Navbar() {
                 onClick={() => switchLocale(code)}
                 aria-current={code === locale ? "true" : undefined}
                 className={cn(
-                  "min-h-7 rounded-full px-2.5 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                  "min-h-11 rounded-full px-2.5 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-7",
                   EASE,
                   code === locale
                     ? "bg-surface-container-highest font-semibold text-on-surface"
@@ -126,7 +126,7 @@ export function Navbar() {
             href="/profile"
             aria-current={isActive("/profile") ? "page" : undefined}
             className={cn(
-              "flex min-h-9 items-center gap-2 rounded-full py-0.5 pr-2.5 pl-0.5 transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+              "flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full py-0.5 pr-2.5 pl-0.5 transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
               EASE,
               isActive("/profile") ? "bg-surface-container-high" : "hover:bg-surface-container",
             )}
@@ -155,7 +155,7 @@ export function Navbar() {
             aria-label={t("toggleMenu")}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-outline-variant bg-surface-container text-secondary transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-outline-variant bg-surface-container text-secondary transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden"
           >
             <Icon name={menuOpen ? "close" : "menu"} className="text-[20px]" />
           </button>
@@ -186,7 +186,7 @@ export function Navbar() {
                 aria-current={active ? "page" : undefined}
                 tabIndex={menuOpen ? undefined : -1}
                 className={cn(
-                  "flex items-center justify-between rounded-[0.75rem] px-3 py-2.5 font-label-lg text-label-lg transition-colors duration-200",
+                  "flex min-h-12 items-center justify-between rounded-[0.75rem] px-3 py-2.5 font-label-lg text-label-lg transition-colors duration-200",
                   active
                     ? "bg-surface-container-high font-semibold text-on-surface"
                     : "text-secondary hover:bg-surface-container hover:text-on-surface",
@@ -208,7 +208,7 @@ export function Navbar() {
             aria-current={isActive("/profile") ? "page" : undefined}
             tabIndex={menuOpen ? undefined : -1}
             className={cn(
-              "flex items-center justify-between rounded-[0.75rem] px-3 py-2.5 font-label-lg text-label-lg transition-colors duration-200",
+              "flex min-h-12 items-center justify-between rounded-[0.75rem] px-3 py-2.5 font-label-lg text-label-lg transition-colors duration-200",
               isActive("/profile")
                 ? "bg-surface-container-high font-semibold text-on-surface"
                 : "text-secondary hover:bg-surface-container hover:text-on-surface",
@@ -226,7 +226,7 @@ export function Navbar() {
             href="/admin"
             onClick={() => setMenuOpen(false)}
             tabIndex={menuOpen ? undefined : -1}
-            className="flex items-center justify-between rounded-[0.75rem] px-3 py-2.5 font-label-lg text-label-lg text-secondary transition-colors duration-200 hover:bg-surface-container hover:text-on-surface"
+            className="flex min-h-12 items-center justify-between rounded-[0.75rem] px-3 py-2.5 font-label-lg text-label-lg text-secondary transition-colors duration-200 hover:bg-surface-container hover:text-on-surface"
           >
             {t("adminPortal")}
           </Link>

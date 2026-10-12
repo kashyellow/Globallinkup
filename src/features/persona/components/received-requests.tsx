@@ -79,14 +79,14 @@ export function ReceivedRequests() {
                       <button
                         type="button"
                         onClick={() => setStatus(request.id, "accepted")}
-                        className="inline-flex min-h-10 items-center justify-center rounded-full bg-tertiary px-space-sm py-1.5 font-label-md text-label-md font-semibold text-on-primary transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-success-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
+                        className="inline-flex min-h-11 items-center justify-center rounded-full bg-tertiary px-space-md py-2 font-label-md text-label-md font-semibold text-on-primary transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-success-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
                       >
                         {tCommon("accept")}
                       </button>
                       <button
                         type="button"
                         onClick={() => setStatus(request.id, "declined")}
-                        className="inline-flex min-h-10 items-center justify-center rounded-full border border-outline-variant bg-surface-variant px-space-sm py-1.5 font-label-md text-label-md text-on-surface-variant transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-surface-container-high hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
+                        className="inline-flex min-h-11 items-center justify-center rounded-full border border-outline-variant bg-surface-variant px-space-md py-2 font-label-md text-label-md text-on-surface-variant transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-surface-container-high hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
                       >
                         {tCommon("decline")}
                       </button>

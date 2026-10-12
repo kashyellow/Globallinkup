@@ -74,7 +74,7 @@ export function SentRequestsPanel() {
                   <button
                     type="button"
                     className={cn(
-                      "inline-flex min-h-10 items-center rounded-full border border-outline-variant bg-surface-container-high px-space-md py-1.5 font-label-md text-label-md text-on-surface",
+                      "inline-flex min-h-11 items-center rounded-full border border-outline-variant bg-surface-container-high px-space-md py-2 font-label-md text-label-md text-on-surface",
                       "hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
                       "transition-colors duration-300",
                       EASE,
@@ -85,7 +85,7 @@ export function SentRequestsPanel() {
                   <button
                     type="button"
                     onClick={() => setWithdrawn((prev) => ({ ...prev, [request.id]: true }))}
-                    className="inline-flex min-h-10 items-center rounded-full px-space-md py-1.5 font-label-md text-label-md text-secondary transition-colors duration-300 hover:bg-surface-variant hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    className="inline-flex min-h-11 items-center rounded-full px-space-md py-2 font-label-md text-label-md text-secondary transition-colors duration-300 hover:bg-surface-variant hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
                     {t("withdraw")}
                   </button>

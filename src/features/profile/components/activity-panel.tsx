@@ -66,7 +66,7 @@ export function ProfileActivity() {
               aria-pressed={active}
               onClick={() => setTab(id)}
               className={cn(
-                "min-h-10 shrink-0 rounded-full px-4 py-2 font-label-lg text-label-lg whitespace-nowrap",
+                "min-h-11 shrink-0 rounded-full px-4 py-2 font-label-lg text-label-lg whitespace-nowrap",
                 "transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
                 EASE,
                 active

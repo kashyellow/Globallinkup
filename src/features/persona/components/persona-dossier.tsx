@@ -82,20 +82,20 @@ export function PersonaDossier() {
             <span className="font-label-lg text-label-lg font-semibold text-on-surface">
               {t("fluency.label")}
             </span>
-            <div className="grid grid-cols-2 gap-space-sm">
-              <div className="flex items-center justify-between rounded-lg border border-outline-variant bg-surface-container p-space-sm">
+            <div className="grid grid-cols-1 gap-space-sm sm:grid-cols-2">
+              <div className="flex items-center justify-between gap-space-sm rounded-lg border border-outline-variant bg-surface-container p-space-sm">
                 <span className="font-label-md text-label-md font-semibold text-on-surface-strong">
                   {t("fluency.spanish")}
                 </span>
-                <span className="font-label-caps text-label-caps text-tertiary">
+                <span className="font-label-md text-label-md text-tertiary">
                   {t("fluency.nativeC2")}
                 </span>
               </div>
-              <div className="flex items-center justify-between rounded-lg border border-outline-variant bg-surface-container p-space-sm">
+              <div className="flex items-center justify-between gap-space-sm rounded-lg border border-outline-variant bg-surface-container p-space-sm">
                 <span className="font-label-md text-label-md font-semibold text-on-surface-strong">
                   {t("fluency.english")}
                 </span>
-                <span className="font-label-caps text-label-caps text-secondary">
+                <span className="font-label-md text-label-md text-secondary">
                   {t("fluency.conversationalB2")}
                 </span>
               </div>
@@ -185,7 +185,7 @@ export function PersonaDossier() {
                   <button
                     type="button"
                     onClick={() => setRevealed(true)}
-                    className="flex min-h-9 cursor-pointer items-center gap-1 rounded-full px-2 font-label-lg text-label-lg font-semibold text-primary transition-colors duration-300 hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    className="flex min-h-11 cursor-pointer items-center gap-1.5 rounded-full px-3 font-label-lg text-label-lg font-semibold text-primary transition-colors duration-300 hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
                     <span>{t("dossier.simulateAcceptance")}</span>
                     <Icon name="arrow_forward" className="text-xs" />

@@ -63,7 +63,7 @@ export async function DiscoverView() {
                 <Icon name="shield" className="text-sm" />
                 {t("privacy.badge")}
               </span>
-              <h2 className="font-headline-lg text-headline-lg text-balance text-on-surface">
+              <h2 className="font-headline-lg text-headline-lg-mobile text-balance text-on-surface md:text-headline-lg">
                 {t("privacy.title")}
               </h2>
               <p className="font-body-sm text-body-sm text-pretty text-on-surface-variant">

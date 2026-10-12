@@ -136,7 +136,7 @@ export function ContactLocker() {
               ) : null}
               <Link
                 href="/connections"
-                className="inline-flex min-h-9 items-center rounded-full px-2.5 font-label-md text-label-md text-primary transition-colors duration-300 hover:bg-surface-low focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="inline-flex min-h-11 items-center rounded-full px-3 font-label-md text-label-md text-primary transition-colors duration-300 hover:bg-surface-low focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 {t("manageAll")}
               </Link>
@@ -172,7 +172,7 @@ export function ContactLocker() {
                     type="button"
                     onClick={() => setRevoked((prev) => [...prev, member.id])}
                     className={cn(
-                      "inline-flex min-h-10 shrink-0 items-center rounded-full px-3 font-label-md text-label-md text-text-muted",
+                      "inline-flex min-h-11 shrink-0 items-center rounded-full px-3 font-label-md text-label-md text-text-muted",
                       "hover:bg-surface-container-highest hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                       "transition-colors duration-300",
                       EASE,

@@ -106,19 +106,19 @@ export function MarketplaceView() {
               />
             </div>
 
-            <div className="flex items-center justify-between gap-space-sm md:justify-end">
+            <div className="flex items-center gap-space-sm md:justify-end">
               <label
                 htmlFor="marketplace-sort"
                 className="font-label-lg text-label-lg whitespace-nowrap text-secondary"
               >
                 {t("controls.sortBy")}
               </label>
-              <div className="relative">
+              <div className="relative min-w-0 flex-1 md:flex-none">
                 <select
                   id="marketplace-sort"
                   defaultValue="featured"
                   className={cn(
-                    "h-12 cursor-pointer appearance-none rounded-full border border-outline-variant bg-surface-low pr-10 pl-4 font-label-lg text-label-lg text-on-surface transition-colors duration-300 hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                    "h-12 w-full cursor-pointer appearance-none rounded-full border border-outline-variant bg-surface-low pr-10 pl-4 font-label-lg text-label-lg text-on-surface transition-colors duration-300 hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:w-auto",
                     EASE,
                   )}
                 >
@@ -143,7 +143,7 @@ export function MarketplaceView() {
                 onClick={() => setFilter(key)}
                 aria-pressed={filter === key}
                 className={cn(
-                  "min-h-9 shrink-0 rounded-full px-4 py-1.5 font-label-lg text-label-lg whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+                  "min-h-11 shrink-0 rounded-full px-4 py-2 font-label-lg text-label-lg whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
                   EASE,
                   filter === key
                     ? "bg-primary font-semibold text-on-primary"
@@ -336,7 +336,7 @@ function ProductCard({
                 type="button"
                 onClick={onOpen}
                 className={cn(
-                  "group/btn flex h-10 items-center gap-1.5 rounded-full border border-outline bg-surface-container pr-1.5 pl-4 font-label-lg text-label-lg font-semibold whitespace-nowrap text-on-surface transition-colors duration-300 hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+                  "group/btn flex h-11 items-center gap-1.5 rounded-full border border-outline bg-surface-container pr-1.5 pl-4 font-label-lg text-label-lg font-semibold whitespace-nowrap text-on-surface transition-colors duration-300 hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
                   EASE,
                 )}
               >

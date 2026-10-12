@@ -10,7 +10,7 @@ import { PROFILE_IDENTITY, PROFILE_METRICS, TRUST_SCORE } from "../data";
 
 /** Shared button shape for the dossier action row. */
 const ACTION_BASE =
-  "inline-flex min-h-10 items-center gap-1.5 rounded-full px-4 py-2 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px";
+  "inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 py-2 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px";
 
 /** Radial consent-trust gauge (0–100) drawn with a single SVG stroke. */
 function TrustGauge({ value }: { value: number }) {

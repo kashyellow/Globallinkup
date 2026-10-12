@@ -32,7 +32,7 @@ export async function Footer() {
             <span className="font-label-lg text-label-lg text-text-muted">{t("guidelines")}</span>
             <Link
               href="/admin"
-              className="inline-flex min-h-9 items-center rounded-full px-3 font-label-lg text-label-lg text-secondary transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="inline-flex min-h-11 items-center rounded-full px-3 font-label-lg text-label-lg text-secondary transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               {t("adminAccess")}
             </Link>

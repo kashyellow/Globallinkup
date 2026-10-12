@@ -78,7 +78,7 @@ export function PostCard({ post }: { post: Post }) {
               onClick={() => setRequested(true)}
               disabled={requested}
               className={cn(
-                "inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 font-label-md text-label-md transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+                "inline-flex min-h-11 items-center gap-1.5 rounded-full px-3.5 py-2 font-label-md text-label-md transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
                 requested
                   ? "border border-success-border bg-success-surface text-success-text"
                   : "border border-outline-variant bg-surface-container text-on-surface-strong hover:bg-surface-variant hover:text-on-surface",
@@ -110,12 +110,12 @@ export function PostCard({ post }: { post: Post }) {
 
         {/* Content & reactions */}
         <div className="flex flex-col gap-space-md p-space-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-space-md">
+          <div className="flex items-center justify-between gap-space-sm">
+            <div className="flex min-w-0 items-center gap-space-md">
               <button
                 type="button"
                 onClick={() => setLiked((value) => !value)}
-                className="group flex min-h-10 items-center gap-1.5 rounded-full px-1 text-on-surface-strong transition-colors duration-300 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="group flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-1 text-on-surface-strong transition-colors duration-300 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 <Icon
                   name="favorite"
@@ -131,7 +131,7 @@ export function PostCard({ post }: { post: Post }) {
               </button>
               <button
                 type="button"
-                className="flex min-h-10 items-center gap-1.5 rounded-full px-1 text-secondary transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-1 text-secondary transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 <Icon name="chat_bubble" className="text-2xl" />
                 <span className="font-label-md text-label-md">
@@ -141,7 +141,7 @@ export function PostCard({ post }: { post: Post }) {
               <button
                 type="button"
                 title={t("postMeta.share")}
-                className="flex h-10 w-10 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 <Icon name="share" className="text-xl" />
               </button>
@@ -149,7 +149,7 @@ export function PostCard({ post }: { post: Post }) {
             <button
               type="button"
               title={t("postMeta.save")}
-              className="flex h-10 w-10 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-container hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-container hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               <Icon name="bookmark" className="text-2xl" />
             </button>
@@ -164,7 +164,7 @@ export function PostCard({ post }: { post: Post }) {
               <button
                 type="button"
                 onClick={() => setShowTranslation((value) => !value)}
-                className="flex min-h-10 items-center gap-1 rounded-full px-1 font-label-lg text-label-lg font-semibold text-primary transition-colors duration-300 hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="flex min-h-11 items-center gap-1 rounded-full px-1 font-label-lg text-label-lg font-semibold text-primary transition-colors duration-300 hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 <Icon name={showTranslation ? "undo" : "translate"} className="text-xs" />
                 <span>
