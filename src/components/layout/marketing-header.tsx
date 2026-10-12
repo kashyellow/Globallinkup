@@ -10,11 +10,16 @@ import { cn } from "@/lib/utils";
 /**
  * Landing-page nav targets. The marketing shell only wraps the landing page, so
  * these are in-page anchors that scroll to a section rather than app routes.
+ *
+ * Order must track the page's own section order, otherwise a link scrolls
+ * backwards past content the visitor has already read. The page runs
+ * hero -> protocol (privacy) -> locker demo -> pillars, so the two privacy
+ * entries sit together and "What you get" comes last.
  */
 const SECTION_LINKS = [
   { anchor: "how-it-works", key: "howItWorks" },
-  { anchor: "pillars", key: "theThree" },
   { anchor: "privacy-protocol", key: "privacyProtocol" },
+  { anchor: "pillars", key: "theThree" },
 ] as const;
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";

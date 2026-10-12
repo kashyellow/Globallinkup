@@ -280,9 +280,13 @@ export function LandingView() {
             </ol>
           </div>
 
-          {/* Interactive locker demo. */}
+          {/* Interactive locker demo. Carries its own anchor so the nav's
+              "See it locked" link can land on the demo itself rather than the
+              top of the section that contains it. */}
           <Reveal className="mt-space-xl">
-            <LockerDemo open={lockerOpen} onOpenChange={setLockerOpen} />
+            <div id="privacy-protocol" className="scroll-mt-28">
+              <LockerDemo open={lockerOpen} onOpenChange={setLockerOpen} />
+            </div>
           </Reveal>
         </div>
       </section>
