@@ -142,38 +142,13 @@ function ConnectionCard({ connection }: { connection: ActiveConnection }) {
         </div>
 
         {/* Action row */}
-        <div className="flex flex-wrap items-center justify-between gap-space-sm border-t border-outline-variant bg-surface-container p-space-md">
-          <div className="flex flex-wrap items-center gap-space-xs">
-            <button
-              type="button"
-              className={cn(
-                "inline-flex min-h-10 items-center gap-1.5 rounded-full border border-outline-variant bg-surface-container-high px-space-md py-1.5 font-label-md text-label-md text-on-surface",
-                "hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
-                "transition-colors duration-300",
-                EASE,
-              )}
-            >
-              <Icon name="edit_note" className="text-sm" />
-              <span>{t("sendNote")}</span>
-            </button>
-            <button
-              type="button"
-              className={cn(
-                "inline-flex min-h-10 items-center gap-1.5 rounded-full border border-outline-variant bg-surface-container-high px-space-md py-1.5 font-label-md text-label-md text-on-surface",
-                "hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
-                "transition-colors duration-300",
-                EASE,
-              )}
-            >
-              <Icon name="calendar_month" className="text-sm" />
-              <span>{t("coordinateCall")}</span>
-            </button>
-          </div>
+        <div className="flex items-center justify-between gap-space-sm border-t border-outline-variant bg-surface-container p-space-md">
+          <p className="min-w-0 font-body-sm text-body-sm text-secondary">{t("vaultStatus")}</p>
           <button
             type="button"
             title={t("settings")}
             aria-label={t("settings")}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-variant hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-variant hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             <Icon name="shield_with_heart" className="text-lg" />
           </button>
