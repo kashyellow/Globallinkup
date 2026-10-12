@@ -4,12 +4,17 @@ import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
+import { Pagination } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 import { NETWORK_MEMBERS, POSTS, POST_FILTERS, type Post, type PostFilter } from "../data";
 import { PostCard } from "./post-card";
 import { PostComposer } from "./post-composer";
+import { usePagination } from "@/features/shared/use-pagination";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
+
+/** Posts per page — the feed is a tall single column, so two is a full viewport. */
+const PAGE_SIZE = 2;
 
 /** Iberian + LatAm locations, matched against the post's free-text `location`. */
 const SPAIN_LATAM = /Spain|España|Mexico|México|Colombia|Argentina|Chile|Peru|Perú/i;
@@ -24,6 +29,17 @@ export function PostsView() {
   const t = useTranslations("Posts");
   const [filter, setFilter] = useState<PostFilter>("all");
   const visiblePosts = POSTS.filter((post) => matchesFilter(post, filter));
+  const { page, totalPages, pageItems, setPage, resetPage } = usePagination(
+    visiblePosts,
+    PAGE_SIZE,
+  );
+
+  // Changing the filter changes the result set, so the old page index is
+  // meaningless. Reset in the handler rather than an effect.
+  function changeFilter(next: PostFilter) {
+    setFilter(next);
+    resetPage();
+  }
 
   return (
     <div className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
@@ -46,7 +62,7 @@ export function PostsView() {
             <button
               key={key}
               type="button"
-              onClick={() => setFilter(key)}
+              onClick={() => changeFilter(key)}
               aria-pressed={filter === key}
               className={cn(
                 "flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 font-label-lg text-label-lg whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
@@ -77,8 +93,8 @@ export function PostsView() {
         <div className="mx-auto flex w-full max-w-[700px] flex-col gap-space-lg lg:col-span-8 lg:mx-0 lg:max-w-none">
           <PostComposer />
 
-          {visiblePosts.map((post) => (
-            <PostCard key={post.id} post={post} />
+          {pageItems.map((post, index) => (
+            <PostCard key={`${post.id}-${page}-${index}`} post={post} />
           ))}
 
           {visiblePosts.length === 0 ? (
@@ -96,7 +112,7 @@ export function PostsView() {
                 </p>
                 <button
                   type="button"
-                  onClick={() => setFilter("all")}
+                  onClick={() => changeFilter("all")}
                   className="mt-space-xs inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-outline-variant bg-surface-container px-space-md py-2 font-label-lg text-label-lg font-semibold text-on-surface transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-outline-hover hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
                 >
                   {t("filters.showAll")}
@@ -105,13 +121,24 @@ export function PostsView() {
             </div>
           ) : null}
 
-          <div className="flex flex-col items-center justify-center gap-2 py-space-md text-center">
-            <div className="h-1 w-8 rounded-full bg-outline-variant" />
-            <p className="font-label-lg text-label-lg font-semibold text-on-surface">
-              {t("end.caughtUp")}
-            </p>
-            <p className="font-body-sm text-body-sm text-secondary">{t("end.checkBack")}</p>
-          </div>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            className="mt-space-xs"
+          />
+
+          {/* The end cap belongs to the end of the list, so it only renders on
+              the final page — otherwise it reads as "no more posts" mid-feed. */}
+          {page === totalPages ? (
+            <div className="flex flex-col items-center justify-center gap-2 py-space-md text-center">
+              <div className="h-1 w-8 rounded-full bg-outline-variant" />
+              <p className="font-label-lg text-label-lg font-semibold text-on-surface">
+                {t("end.caughtUp")}
+              </p>
+              <p className="font-body-sm text-body-sm text-secondary">{t("end.checkBack")}</p>
+            </div>
+          ) : null}
         </div>
 
         <aside className="flex flex-col gap-space-lg lg:sticky lg:top-24 lg:col-span-4">

@@ -33,7 +33,15 @@
     "unlocked": "Desbloqueado",
     "guidelines": "Normas",
     "languages": "Idiomas: EN / ES",
-    "interests": "Intereses"
+    "interests": "Intereses",
+    "pagination": {
+      "previous": "Página anterior",
+      "next": "Página siguiente",
+      "pageOf": "Página {page} de {total}",
+      "goToPage": "Ir a la página {page}",
+      "prevShort": "Anterior",
+      "nextShort": "Siguiente"
+    }
   },
   "Discover": {
     "eyebrow": "Curaduría Intercultural",

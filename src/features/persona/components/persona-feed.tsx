@@ -4,16 +4,22 @@ import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
+import { Pagination } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 import { PERSONAS, type ConnectState, type Persona } from "../data";
+import { usePagination } from "@/features/shared/use-pagination";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
+
+/** Cards per page. Two rows of the 2-up grid, keeping the CTA tile last. */
+const PAGE_SIZE = 4;
 
 export function PersonaFeed() {
   const t = useTranslations("Discover");
   const [states, setStates] = useState<Record<string, ConnectState>>(() =>
     Object.fromEntries(PERSONAS.map((persona) => [persona.id, persona.state])),
   );
+  const { page, totalPages, pageItems, setPage } = usePagination(PERSONAS, PAGE_SIZE);
 
   function sendRequest(id: string) {
     setStates((prev) => ({ ...prev, [id]: "requested" }));
@@ -31,9 +37,9 @@ export function PersonaFeed() {
       </div>
 
       <div className="grid grid-cols-1 gap-space-md sm:grid-cols-2">
-        {PERSONAS.map((persona) => (
+        {pageItems.map((persona, index) => (
           <PersonaCard
-            key={persona.id}
+            key={`${persona.id}-${page}-${index}`}
             persona={persona}
             state={states[persona.id]}
             selected={persona.id === "sofia"}
@@ -67,6 +73,8 @@ export function PersonaFeed() {
           </div>
         </article>
       </div>
+
+      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </section>
   );
 }

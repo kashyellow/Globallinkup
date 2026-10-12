@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
+import { Pagination } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 import {
   MARKETPLACE_CONTACT,
@@ -14,6 +15,7 @@ import {
   type Product,
 } from "../data";
 import { ProductDrawer } from "./product-drawer";
+import { usePagination } from "@/features/shared/use-pagination";
 
 const BADGE_ICONS: Record<MarketplaceBadge, string> = {
   artisanPartner: "handyman",
@@ -25,6 +27,12 @@ const BADGE_ICONS: Record<MarketplaceBadge, string> = {
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
+/**
+ * Products per page. Four keeps the bento balanced: one 4-wide featured tile
+ * plus three cells that resolve across the 6-column track.
+ */
+const PAGE_SIZE = 4;
+
 export function MarketplaceView() {
   const t = useTranslations("Marketplace");
   const [filter, setFilter] = useState<MarketplaceFilter>("all");
@@ -34,9 +42,17 @@ export function MarketplaceView() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const visible = PRODUCTS.filter((product) => filter === "all" || product.category === filter);
-  // The first card in the "all" view carries the featured treatment. When a
-  // category filter is active the set is small, so every tile stays compact.
-  const featuredId = filter === "all" ? visible[0]?.id : undefined;
+  const { page, totalPages, pageItems, setPage, resetPage } = usePagination(visible, PAGE_SIZE);
+
+  // The first card *on this page* carries the featured treatment, so each page
+  // has its own anchor tile rather than a featured card that only exists on
+  // page one.
+  const featuredId = pageItems[0]?.id;
+
+  function changeFilter(next: MarketplaceFilter) {
+    setFilter(next);
+    resetPage();
+  }
 
   function openProduct(product: Product) {
     setSelected(product);
@@ -140,7 +156,7 @@ export function MarketplaceView() {
               <button
                 key={key}
                 type="button"
-                onClick={() => setFilter(key)}
+                onClick={() => changeFilter(key)}
                 aria-pressed={filter === key}
                 className={cn(
                   "min-h-11 shrink-0 rounded-full px-4 py-2 font-label-lg text-label-lg whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
@@ -161,9 +177,9 @@ export function MarketplaceView() {
           catalogue reads as an editorial selection instead of a product wall. */}
       <section className="mx-auto max-w-[1240px] px-margin-mobile pb-page-mobile md:px-margin md:pb-page">
         <div className="grid grid-cols-1 gap-space-md sm:grid-cols-2 lg:grid-cols-6">
-          {visible.map((product, index) => (
+          {pageItems.map((product, index) => (
             <ProductCard
-              key={product.id}
+              key={`${product.id}-${page}-${index}`}
               product={product}
               productIndex={index}
               featured={product.id === featuredId}
@@ -171,6 +187,13 @@ export function MarketplaceView() {
             />
           ))}
         </div>
+
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          className="mt-space-lg"
+        />
 
         {/* No-cart model notice */}
         <div className="mt-block-mobile bezel-tray md:mt-block">

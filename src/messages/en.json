@@ -33,7 +33,15 @@
     "unlocked": "Unlocked",
     "guidelines": "Guidelines",
     "languages": "Languages: EN / ES",
-    "interests": "Interests"
+    "interests": "Interests",
+    "pagination": {
+      "previous": "Previous page",
+      "next": "Next page",
+      "pageOf": "Page {page} of {total}",
+      "goToPage": "Go to page {page}",
+      "prevShort": "Previous",
+      "nextShort": "Next"
+    }
   },
   "Discover": {
     "eyebrow": "Cross-Cultural Curation",
