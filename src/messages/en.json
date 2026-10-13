@@ -475,7 +475,7 @@
       "sentAgo": "Sent {time} ago",
       "personalIntroduction": "Personal Introduction",
       "masked": "Masked",
-      "accept": "Accept & Reveal Direct Contacts",
+      "accept": "Accept",
       "decline": "Decline Politely",
       "grantedTitle": "Mutual Consent Granted",
       "grantedBody": "You have revealed your contact channels to {name}. This person now has access to your direct vault."

@@ -475,7 +475,7 @@
       "sentAgo": "Enviada hace {time}",
       "personalIntroduction": "Presentación Personal",
       "masked": "Enmascarado",
-      "accept": "Aceptar y Revelar Contactos Directos",
+      "accept": "Aceptar",
       "decline": "Rechazar Cortésmente",
       "grantedTitle": "Consentimiento Mutuo Concedido",
       "grantedBody": "Has revelado tus canales de contacto a {name}. Esta persona ya tiene acceso a tu bóveda directa."
