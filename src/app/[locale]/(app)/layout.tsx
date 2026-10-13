@@ -1,14 +1,22 @@
 import type { ReactNode } from "react";
+import { BottomNav } from "@/components/layout/bottom-nav";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
 
-/** Signed-in application shell: fixed navbar + footer. */
+/**
+ * Signed-in application shell: fixed navbar + footer, plus a mobile tab bar
+ * below `lg`. The bottom bar overlays content, so `<main>` reserves ~5rem of
+ * space for it on phones only — the same reserve the top pill needs via `pt-20`.
+ */
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <Navbar />
-      <main className="min-h-[100dvh] w-full flex-1 bg-background pt-20">{children}</main>
+      <main className="min-h-[100dvh] w-full flex-1 bg-background pt-20 pb-20 lg:pb-0">
+        {children}
+      </main>
       <Footer />
+      <BottomNav />
     </>
   );
 }

@@ -163,8 +163,11 @@ export function Navbar() {
       </div>
 
       {/*
-       * Mobile sheet. Animates opacity and transform only, and is fully removed
-       * from the tab order while closed.
+       * Mobile sheet. Holds the occasional destinations only — profile, the admin
+       * portal and the locale switch. The four primary sections move to the
+       * bottom tab bar (`BottomNav`), which keeps them one tap away instead of
+       * two. Animates opacity and transform only, and is fully removed from the
+       * tab order while closed.
        */}
       <div
         className={cn(
@@ -176,32 +179,6 @@ export function Navbar() {
         )}
       >
         <nav className="max-h-[calc(100dvh-5.5rem)] overflow-y-auto p-2" aria-hidden={!menuOpen}>
-          {NAV_ITEMS.map((item) => {
-            const active = isActive(item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMenuOpen(false)}
-                aria-current={active ? "page" : undefined}
-                tabIndex={menuOpen ? undefined : -1}
-                className={cn(
-                  "flex min-h-12 items-center justify-between rounded-[0.75rem] px-3 py-2.5 font-label-lg text-label-lg transition-colors duration-200",
-                  active
-                    ? "bg-surface-container-high font-semibold text-on-surface"
-                    : "text-secondary hover:bg-surface-container hover:text-on-surface",
-                )}
-              >
-                {t(item.key)}
-                {item.key === "connections" ? (
-                  <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-surface-container-highest px-1.5 py-0.5 font-label-caps text-label-caps text-secondary tabular-nums">
-                    {PENDING_REQUEST_COUNT}
-                  </span>
-                ) : null}
-              </Link>
-            );
-          })}
-          <div className="my-1 h-px bg-outline-variant" />
           <Link
             href="/profile"
             onClick={() => setMenuOpen(false)}
@@ -230,6 +207,35 @@ export function Navbar() {
           >
             {t("adminPortal")}
           </Link>
+          <div className="my-1 h-px bg-outline-variant" />
+
+          {/*
+           * The pill in the top bar only shows the switch from `sm` up, so the
+           * sheet carries it too — otherwise a 360px phone has no way to change
+           * locale.
+           */}
+          <div className="flex items-center justify-between gap-space-sm px-3 py-2">
+            <span className="font-label-md text-label-md text-text-muted">{t("language")}</span>
+            <div className="flex items-center gap-1" role="group" aria-label={t("language")}>
+              {routing.locales.map((code) => (
+                <button
+                  key={code}
+                  type="button"
+                  onClick={() => switchLocale(code)}
+                  aria-current={code === locale ? "true" : undefined}
+                  tabIndex={menuOpen ? undefined : -1}
+                  className={cn(
+                    "flex min-h-11 min-w-11 items-center justify-center rounded-full border px-3 font-label-md text-label-md transition-colors duration-200",
+                    code === locale
+                      ? "border-primary bg-primary/15 font-semibold text-primary"
+                      : "border-outline-variant text-secondary hover:bg-surface-container hover:text-on-surface",
+                  )}
+                >
+                  {code.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </div>
         </nav>
       </div>
     </header>
