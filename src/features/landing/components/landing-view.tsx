@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { Reveal } from "@/features/landing/components/reveal";
+import { Reveal } from "@/components/ui/reveal";
 import { Icon } from "@/components/ui/icon";
 import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";

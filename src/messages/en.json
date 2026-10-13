@@ -1035,6 +1035,11 @@
       "label": "Consent Trust Score",
       "body": "Zero unwanted unveils • Reciprocal vetting"
     },
+    "sections": {
+      "identity": "Identity",
+      "record": "The Record",
+      "archive": "The Archive"
+    },
     "metrics": {
       "connections": "Verified Connections",
       "dispatches": "Dispatches Shared",

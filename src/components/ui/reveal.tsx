@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type ElementType, type ReactNode } from "r
 import { cn } from "@/lib/utils";
 
 /**
- * Scroll reveal wrapper.
+ * Scroll reveal wrapper (shared by marketing and signed-in app surfaces).
  *
  * Uses IntersectionObserver rather than a scroll listener, and arms itself only
  * after mount so the pre-hydration markup is already visible: with JS disabled

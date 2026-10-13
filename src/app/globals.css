@@ -401,6 +401,50 @@
 }
 
 /*
+ * Dossier backdrop.
+ *
+ * Surface for the member dossier's register treatment: a warm wash anchored to
+ * the top-left corner plus a fine fixed grain, both on pointer-events-none
+ * pseudo-elements so the compositor never repaints them while the page scrolls.
+ * Deliberately quieter than `marketing-backdrop` — the dossier reads as paper,
+ * the landing page as a poster.
+ */
+@utility dossier-backdrop {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--color-background);
+
+  &::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        70rem 38rem at 6% -10%,
+        color-mix(in oklab, var(--color-primary) 7%, transparent),
+        transparent 70%
+      ),
+      radial-gradient(
+        56rem 30rem at 96% 0%,
+        color-mix(in oklab, var(--color-jade) 5%, transparent),
+        transparent 66%
+      );
+  }
+
+  &::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+}
+
+/*
  * Double-bezel surface: an outer tinted tray holding an inner core, so panels
  * read as machined hardware rather than flat rectangles. Declared as one
  * utility because the outer/inner relationship cannot be expressed with a

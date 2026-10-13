@@ -1035,6 +1035,11 @@
       "label": "Puntuación de Confianza",
       "body": "Cero revelaciones no deseadas • Verificación recíproca"
     },
+    "sections": {
+      "identity": "Identidad",
+      "record": "El Registro",
+      "archive": "El Archivo"
+    },
     "metrics": {
       "connections": "Conexiones Verificadas",
       "dispatches": "Crónicas Compartidas",
