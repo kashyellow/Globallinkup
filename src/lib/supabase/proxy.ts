@@ -15,7 +15,7 @@ let warnedAboutMissingEnv = false;
  * unconfigured (CI, or a dev without `.env.local`) or unreachable, we skip the
  * refresh and let the app render logged-out — which is fail-closed, because RLS
  * denies anonymous access anyway. Authoritative authorization lives in the data
- * layer and RLS, never here (see `docs/plan/api-layer.md` §1 A2/A6).
+ * layer and RLS, never here (see `docs/plan/api-layer/README.md` §1 A2/A6).
  *
  * Do not put logic between creating the client and `getUser()`, or the
  * refreshed cookies will not be written.

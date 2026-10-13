@@ -9,7 +9,7 @@ import type { Database } from "@/types/database";
  *
  * Create a fresh client per call; use this for realtime/auth listeners rather
  * than for app reads (reads go through server components — see
- * docs/plan/api-layer.md §6).
+ * docs/plan/api-layer/README.md §5).
  */
 export function createClient() {
   const env = getPublicEnv();

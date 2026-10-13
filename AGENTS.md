@@ -39,7 +39,7 @@ npm test             # Vitest (unit/component)
 npm run test:watch   # Vitest watch
 npm run e2e          # Playwright
 
-npm run db:start     # local Supabase (545xx ports; see docs/plan/api-layer.md)
+npm run db:start     # local Supabase (545xx; see docs/plan/api-layer/README.md)
 npm run db:stop
 npm run db:status    # add `-- -o env` for the local URL + keys
 npm run db:reset     # re-apply migrations + seed

@@ -42,7 +42,8 @@ implementation. Where this summary and the PRD disagree, the PRD wins.
 - `npm test` / `npm run test:watch` — Vitest + Testing Library (jsdom).
 - `npm run e2e` — Playwright (Chromium).
 - `npm run db:*` — local Supabase (`start|stop|status|reset|diff|push|types`).
-  This project runs on the **545xx** port block (see `docs/plan/api-layer.md` §3);
+  This project runs on the **545xx** port block (see
+  `docs/plan/api-layer/README.md` §2);
   `.env.local` is created from `supabase status -o env`.
 - Hooks: `pre-commit` → lint-staged (ESLint `--fix` + Prettier); `commit-msg` →
   commitlint. CI (`.github/workflows/ci.yml`) runs commitlint on PRs plus

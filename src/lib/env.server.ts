@@ -35,7 +35,7 @@ export function getServerEnv(): ServerEnv {
 
     throw new Error(
       `Missing or invalid server-only environment variables:\n${details}\n` +
-        "Copy .env.example to .env.local and fill in the values (see docs/plan/api-layer.md §5).",
+        "Copy .env.example to .env.local and fill in the values (see docs/plan/api-layer/README.md §4).",
     );
   }
 
