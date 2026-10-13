@@ -279,12 +279,12 @@ export function LoginView() {
 
                 {/* Remember device */}
                 <div className="flex items-center justify-between gap-space-sm pt-space-xs">
-                  <label className="flex cursor-pointer items-center gap-space-sm select-none">
+                  <label className="flex min-h-11 cursor-pointer items-center gap-space-sm select-none">
                     <input
                       type="checkbox"
                       checked={remember}
                       onChange={(event) => setRemember(event.target.checked)}
-                      className="h-4 w-4 cursor-pointer rounded border-outline-variant bg-surface accent-primary"
+                      className="h-6 w-6 cursor-pointer rounded border-outline-variant bg-surface accent-primary"
                     />
                     <span className="font-body-sm text-body-sm text-secondary">
                       {t("remember")}
@@ -324,7 +324,7 @@ export function LoginView() {
                   {t("noAccount")}{" "}
                   <Link
                     href="/register"
-                    className="font-semibold text-primary transition-colors hover:underline"
+                    className="inline-flex min-h-11 items-center font-semibold whitespace-nowrap text-primary transition-colors hover:underline"
                   >
                     {t("createAccount")}
                   </Link>
@@ -333,7 +333,7 @@ export function LoginView() {
                   {t("noAccountEs")}{" "}
                   <Link
                     href="/register"
-                    className="font-medium text-secondary transition-colors hover:text-primary"
+                    className="inline-flex min-h-11 items-center font-medium whitespace-nowrap text-secondary transition-colors hover:text-primary"
                   >
                     {t("registerFree")}
                   </Link>

@@ -348,9 +348,14 @@ export function VerifyView() {
                       src={PORTRAIT}
                       loading="lazy"
                     />
-                    <span className="absolute right-1 bottom-1 flex items-center gap-0.5 rounded-full bg-surface-lowest/90 px-1.5 py-0.5">
-                      <Icon name="lock" className="text-[0.75rem] text-primary" />
-                      <span className="font-label-md text-[0.625rem] text-on-surface">
+                    {/*
+                      Privacy stamp on the locked portrait preview. Sized at the
+                      11px label-caps floor (was 10px) with enough padding to read
+                      as a stamp rather than a caption.
+                    */}
+                    <span className="absolute right-1.5 bottom-1.5 flex items-center gap-1 rounded-full bg-surface-lowest/90 px-2 py-1">
+                      <Icon name="lock" className="text-sm text-primary" />
+                      <span className="font-label-caps text-label-caps text-on-surface">
                         {t("private")}
                       </span>
                     </span>

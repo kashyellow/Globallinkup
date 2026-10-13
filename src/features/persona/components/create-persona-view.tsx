@@ -225,14 +225,14 @@ export function CreatePersonaView() {
                   <div className="flex flex-wrap items-center gap-space-xs">
                     <button
                       type="button"
-                      className="flex items-center gap-space-xs rounded-lg border border-outline-variant bg-surface-variant px-space-md py-2 font-label-lg text-label-lg text-on-surface shadow-sm transition-colors hover:bg-[#2E2B27]"
+                      className="flex min-h-11 items-center gap-space-xs rounded-lg border border-outline-variant bg-surface-variant px-space-md py-2 font-label-lg text-label-lg text-on-surface shadow-sm transition-colors hover:bg-surface-container-high"
                     >
                       <Icon name="upload_file" className="text-[18px] text-primary" />
                       <span>{t("uploadImage")}</span>
                     </button>
                     <button
                       type="button"
-                      className="flex items-center gap-space-xs rounded-lg border border-outline-variant bg-surface-variant px-space-md py-2 font-label-lg text-label-lg text-on-surface shadow-sm transition-colors hover:bg-[#2E2B27]"
+                      className="flex min-h-11 items-center gap-space-xs rounded-lg border border-outline-variant bg-surface-variant px-space-md py-2 font-label-lg text-label-lg text-on-surface shadow-sm transition-colors hover:bg-surface-container-high"
                     >
                       <Icon name="videocam" className="text-[18px] text-secondary" />
                       <span>{t("useCamera")}</span>
@@ -331,7 +331,7 @@ export function CreatePersonaView() {
                       aria-pressed={active}
                       onClick={() => toggleLanguage(language.code)}
                       className={cn(
-                        "flex items-center justify-between rounded-lg p-space-sm font-label-md text-label-md shadow-sm transition-all",
+                        "flex min-h-11 items-center justify-between rounded-lg p-space-sm font-label-md text-label-md shadow-sm transition-all",
                         active
                           ? "border border-primary/40 bg-admin-surface font-semibold text-on-surface"
                           : "border border-outline-variant bg-surface-low text-secondary hover:bg-surface-variant hover:text-on-surface",
@@ -401,7 +401,7 @@ export function CreatePersonaView() {
                       aria-pressed={selected}
                       onClick={() => toggleInterest(interest.key)}
                       className={cn(
-                        "flex min-h-10 items-center gap-1.5 rounded-lg px-space-md py-1.5 font-label-md text-label-md shadow-sm transition-all",
+                        "flex min-h-11 items-center gap-1.5 rounded-lg px-space-md py-1.5 font-label-md text-label-md shadow-sm transition-all",
                         selected
                           ? "border border-primary/40 bg-admin-surface font-semibold text-on-surface"
                           : "border border-outline-variant bg-surface-low text-secondary hover:bg-surface-variant hover:text-on-surface",

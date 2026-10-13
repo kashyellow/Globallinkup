@@ -41,7 +41,7 @@ function LocaleSwitch({
             onClick={() => onSwitch(code)}
             aria-pressed={active}
             className={cn(
-              "min-h-11 rounded-full px-space-sm py-1 font-label-md text-label-md font-semibold transition-colors sm:min-h-8",
+              "min-h-11 min-w-11 rounded-full px-space-sm py-1 font-label-md text-label-md font-semibold transition-colors sm:min-h-8",
               EASE,
               "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
               active
@@ -76,7 +76,7 @@ export function PublicHeader() {
       <div className="mx-auto flex h-20 max-w-[1240px] items-center justify-between gap-space-sm px-margin-mobile lg:px-margin">
         <Link
           href="/"
-          className="flex min-w-0 items-center gap-space-sm rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+          className="flex min-h-11 min-w-0 items-center gap-space-sm rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
         >
           <BrandMark className="h-8 w-8 shrink-0 text-primary" />
           <span className="flex min-w-0 flex-col">

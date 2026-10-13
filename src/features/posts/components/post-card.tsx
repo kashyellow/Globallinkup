@@ -27,7 +27,12 @@ export function PostCard({ post }: { post: Post }) {
       >
         {/* Author header */}
         <div className="flex flex-wrap items-center justify-between gap-x-space-md gap-y-space-sm p-space-lg">
-          <div className="flex min-w-0 items-center gap-space-md">
+          {/*
+            `flex-1` (basis 0) keeps the name block from claiming its full
+            content width, so the connect control shares the row beside the
+            name on phones instead of wrapping onto its own line.
+          */}
+          <div className="flex min-w-0 flex-1 items-center gap-space-md">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               alt={post.avatarAlt}
@@ -40,18 +45,11 @@ export function PostCard({ post }: { post: Post }) {
                 <h2 className="font-label-lg text-label-lg font-semibold text-on-surface">
                   {post.author}
                 </h2>
-                {post.roleKey ? (
-                  <>
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-tertiary" />
-                    <span className="font-label-md text-label-md font-semibold text-tertiary">
-                      {t(`roles.${post.roleKey}`)}
-                    </span>
-                  </>
-                ) : (
+                {post.roleText ? (
                   <span className="font-label-md text-label-md text-secondary">
                     {post.roleText}
                   </span>
-                )}
+                ) : null}
               </div>
               <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-secondary">
                 <span className="flex items-center gap-1.5">
@@ -66,10 +64,18 @@ export function PostCard({ post }: { post: Post }) {
             </div>
           </div>
 
+          {/*
+            Connect / connected control. Below `sm` it collapses to a 44px icon
+            button so it stays beside the author name instead of wrapping onto
+            its own row and pushing the photo down; the label returns from `sm`
+            up and stays screen-reader visible at every width.
+          */}
           {post.state === "connected" ? (
-            <div className="inline-flex items-center gap-1 rounded-full border border-success-border bg-success-surface px-3 py-1 font-label-md text-label-md text-success-text">
+            <div className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-success-border bg-success-surface text-success-text sm:h-auto sm:w-auto sm:gap-1 sm:px-3 sm:py-1">
               <Icon name="check_circle" className="text-sm text-tertiary" />
-              <span className="font-medium text-tertiary">{tCommon("connected")}</span>
+              <span className="sr-only font-medium text-tertiary sm:not-sr-only">
+                {tCommon("connected")}
+              </span>
             </div>
           ) : (
             <button
@@ -77,7 +83,7 @@ export function PostCard({ post }: { post: Post }) {
               onClick={() => setRequested(true)}
               disabled={requested}
               className={cn(
-                "inline-flex min-h-11 items-center gap-1.5 rounded-full px-3.5 py-2 font-label-md text-label-md transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+                "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-label-md text-label-md transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px sm:h-auto sm:w-auto sm:gap-1.5 sm:px-3.5 sm:py-2",
                 requested
                   ? "border border-success-border bg-success-surface text-success-text"
                   : "border border-outline-variant bg-surface-container text-on-surface-strong hover:bg-surface-variant hover:text-on-surface",
@@ -87,7 +93,9 @@ export function PostCard({ post }: { post: Post }) {
                 name={requested ? "check" : "person_add"}
                 className={cn("text-base", requested ? "text-sm text-tertiary" : "text-primary")}
               />
-              <span>{requested ? t("postMeta.requested") : tCommon("connect")}</span>
+              <span className="sr-only sm:not-sr-only">
+                {requested ? t("postMeta.requested") : tCommon("connect")}
+              </span>
             </button>
           )}
         </div>

@@ -4,7 +4,7 @@ Living note for the phone-width (browser, not PWA) pass. Written to be picked up
 by anyone: what was found, what was fixed, how to re-run the checks, and the one
 decision that is still open.
 
-- **Status:** fixed round 3; one open question (§4)
+- **Status:** fixed round 4; one open question (§4)
 - **Scope:** responsive behaviour at **360 / 375 / 390 / 768 px** (PRD §8.4) and
   touch targets (PRD §8.5). Browser only; PWA is out of scope for now.
 - **Both locales:** everything below is verified for **EN and ES** — Spanish text
@@ -118,6 +118,53 @@ on-scroll animation leaves sections at `opacity:0` until they intersect.)
 **Verification after round 3:** overflow sweep clean at 360/390 for **EN and ES**;
 `format:check`, `typecheck`, `lint` (1 pre-existing `navbar.tsx:195` `<img>`
 warning), `build`, and `e2e` (7/7) all pass.
+
+---
+
+## 3b. Fixed (round 4 — follow-up audit, tap targets + one typography outlier)
+
+Audit re-run with `.audit/design-audit.mjs` (all 11 routes × 360/390/414 × EN/ES;
+superset of probes A/B/C — also counts tap targets, fixed-bar overlap and a
+font-size inventory). Round 3's fixes held; these were the leftovers:
+
+| Area                    | Problem                                                                                                                        | File                                                                                                    |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| Verify privacy stamp    | "Private" badge on the locked portrait was **10px** (`text-[0.625rem]`) — the smallest text in the app, below the 11px floor   | `auth/verify-view.tsx` (now 11px `label-caps`, `px-2 py-1`)                                             |
+| Login remember checkbox | `h-4 w-4` (16px) — below WCAG 2.5.8's 24px AA minimum; label row had no min-height                                             | `auth/login-view.tsx` (now `h-6 w-6`, label `min-h-11`)                                                 |
+| Register terms checkbox | same 16px checkbox, `mt-1` misaligned                                                                                          | `auth/register-view.tsx` (now `h-6 w-6 shrink-0 mt-0`)                                                  |
+| Header brand links      | marketing brand was a 120×20 tap area, public header 164×32 — no padding                                                       | `marketing-header.tsx`, `public-header.tsx` (`min-h-11`)                                                |
+| Locale switch           | EN/ES buttons 35px wide (`min-h-11` but no `min-w`)                                                                            | `public-header.tsx` (`min-w-11`)                                                                        |
+| create-persona controls | Upload Image / Use Camera + language pills at ~42px (`py-2`, no `min-h`); interest chips at 40px (`min-h-10`)                  | `persona/create-persona-view.tsx` (all `min-h-11`)                                                      |
+| Auth secondary links    | "Create an account" wrapped mid-phrase and measured 143px; "Regístrate gratis" 16px; register "Log in / Inicia sesión" wrapped | `auth/login-view.tsx`, `auth/register-view.tsx` (`inline-flex min-h-11 items-center whitespace-nowrap`) |
+
+Also replaced two hardcoded `hover:bg-[#2E2B27]` hexes on the create-persona photo
+buttons with the `surface-container-high` token (hardcoded hex is banned by the
+design system).
+
+**Remaining, accepted:** the two auth checkboxes now measure exactly 24×24 (WCAG
+2.5.8 AA minimum; the surrounding label row is 44px). The only other sub-44px
+"control" the probe finds is the profile locker's `sr-only` checkbox input — a
+false positive (visually hidden, the styled switch is the control).
+
+**Verification after round 4:** tap-target sweep clean at 360/390/414 for EN
+(create-persona 8→0, login 6→1\*, register 5→1\*; \* = the 24px AA checkbox);
+font inventory no longer contains any 10px text; zero page-level horizontal
+overflow in EN **and** ES; `tsc`, `eslint` (1 pre-existing `navbar.tsx` `<img>`
+warning), `prettier`, and `build` all pass.
+
+---
+
+## 3c. Fixed (round 5 — posts, user-requested)
+
+| Area               | Problem                                                                                                                                                                                                                                                                                                                                                    | File                                   |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| Post author badges | "• Member" / "• Curator" role labels rendered beside the author name on every post card                                                                                                                                                                                                                                                                    | `posts/post-card.tsx`, `posts/data.ts` |
+| Orphaned keys      | `Posts.roles.{member,curator}` left unused after the badge removal (removed from both locales; 920 → 916 keys)                                                                                                                                                                                                                                             | `messages/{en,es}.json`                |
+| Connect control    | below `sm` the Connect button / Connected pill wrapped onto their own row under the name block (flex-wrap puts an over-wide first item on its own line); now a compact 44×44 icon control (`person_add` / `check_circle`) with the label `sr-only sm:not-sr-only`, and the name block got `flex-1` (basis 0) so the control shares the row beside the name | `posts/post-card.tsx`                  |
+
+The `roleText` location hint ("CDMX") is kept — it is a place tag, not a role. Verified
+at 390px in EN + ES: both card states render 44×44 controls in the author row, no
+Member/Curator text anywhere, zero overflow.
 
 ---
 

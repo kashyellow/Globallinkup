@@ -175,10 +175,6 @@
       "previewFileName": "barcelona_elborn_35mm.jpg",
       "previewMeta": "2.4 MB · Preajuste Kodak Portra 400"
     },
-    "roles": {
-      "member": "Miembro",
-      "curator": "Curadora"
-    },
     "postMeta": {
       "hoursAgo": "hace {count} horas",
       "yesterday": "Ayer",

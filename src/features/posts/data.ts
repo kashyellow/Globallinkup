@@ -7,9 +7,7 @@ export type PostTime = { kind: "hoursAgo"; value: number } | { kind: "yesterday"
 export type Post = {
   id: PostAuthorId;
   author: string;
-  /** Resolved against `Posts.roles.*`; `null` renders the inline text badge. */
-  roleKey: "member" | "curator" | null;
-  /** Inline text badge shown when `roleKey` is null (e.g. "CDMX"). */
+  /** Inline text badge shown beside the name (e.g. "CDMX"). */
   roleText?: string;
   location: string;
   time: PostTime;
@@ -28,7 +26,6 @@ export const POSTS: Post[] = [
   {
     id: "sofia",
     author: "Sofia Martinez",
-    roleKey: "member",
     location: "Barcelona, Spain",
     time: { kind: "hoursAgo", value: 2 },
     avatar: `${CDN}AB6AXuBXTn0THA4HVMeGABbs8wWwBCx2WjYfMbZpMDVXOSIcx9p2HQMpHnA5WkIkfN4DMN5XNYwJe-cnEV6FfOnqfP2SVoTocMYb9zibNwP85pNRW89c7DIWpZsZOONw0u5UGlPFVzpMCypE9ENwvtLboWZNX4HNMSHD5d5-vE51LZ0FcBCXUxb3yg_JskNNiQDc-_BvaSTm4JChDR8iDeVNYN04QBJW6xhaE0cMseP1bLdmt_2E_syklbGIvw`,
@@ -45,7 +42,6 @@ export const POSTS: Post[] = [
   {
     id: "mateo",
     author: "Mateo Delgado",
-    roleKey: null,
     roleText: "CDMX",
     location: "Coyoacán, Mexico City",
     time: { kind: "hoursAgo", value: 5 },
@@ -63,7 +59,6 @@ export const POSTS: Post[] = [
   {
     id: "elena",
     author: "Elena Vance",
-    roleKey: "curator",
     location: "Madrid, Spain",
     time: { kind: "yesterday" },
     avatar: `${CDN}AB6AXuCNSydODYoo_WqZzZtxK7s_NJ6bcjgidDQky4-mL6ln0IR8ECaLD4Br4c4dvQS-ZEI52bH406IMy1kh08swQ4cHy9AGHehnJqsjMIWKubcjh-eV0JetwQTQcFSRAr1XzavD75ZWlnomEZz9prfWTgYpnp_SnK3uColUQzGaaR5MoKY_rqkiYEkLcYMbztflLDJblf3Y6sEQt_GpGCxU4fZsarULTLr9SSWjloqZG_JvHspc9UnnjIYTYA`,

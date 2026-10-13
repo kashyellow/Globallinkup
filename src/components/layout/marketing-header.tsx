@@ -93,7 +93,7 @@ export function MarketingHeader() {
       <div className="mx-auto mt-3 flex h-14 max-w-[1240px] items-center justify-between gap-2 rounded-full border border-outline-variant bg-marketing-shell/80 pr-1.5 pl-4 shadow-lift-sm backdrop-blur-xl md:gap-space-md">
         <a
           href="#hero"
-          className="flex min-w-0 items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
+          className="flex min-h-11 min-w-0 items-center rounded-full px-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
         >
           <span className="truncate font-headline-sm text-headline-sm leading-none font-bold tracking-tight text-on-surface">
             GlobalLinkup

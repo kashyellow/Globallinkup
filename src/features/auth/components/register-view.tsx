@@ -304,7 +304,7 @@ export function RegisterView() {
                     required
                     checked={terms}
                     onChange={(event) => setTerms(event.target.checked)}
-                    className="mt-1 h-4 w-4 cursor-pointer rounded border-outline-variant bg-surface accent-primary"
+                    className="mt-0 h-6 w-6 shrink-0 cursor-pointer rounded border-outline-variant bg-surface accent-primary"
                   />
                   <label
                     className="cursor-pointer font-body-sm text-body-sm leading-relaxed text-secondary select-none"
@@ -344,7 +344,7 @@ export function RegisterView() {
                       {t("haveAccount")}{" "}
                       <Link
                         href="/login"
-                        className="ml-1 font-label-lg text-label-lg font-semibold text-primary transition-colors hover:text-primary-hover"
+                        className="ml-1 inline-flex min-h-11 items-center font-label-lg text-label-lg font-semibold whitespace-nowrap text-primary transition-colors hover:text-primary-hover"
                       >
                         {t("logIn")}
                       </Link>
