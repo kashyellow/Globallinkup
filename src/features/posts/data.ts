@@ -22,8 +22,6 @@ export type Post = {
   notes: number;
   state: "connect" | "connected";
   hasComment: boolean;
-  /** Locale code the translation toggle reveals. */
-  translationLang: "ES" | "EN";
 };
 
 export const POSTS: Post[] = [
@@ -43,7 +41,6 @@ export const POSTS: Post[] = [
     notes: 6,
     state: "connect",
     hasComment: true,
-    translationLang: "ES",
   },
   {
     id: "mateo",
@@ -62,7 +59,6 @@ export const POSTS: Post[] = [
     notes: 11,
     state: "connected",
     hasComment: true,
-    translationLang: "EN",
   },
   {
     id: "elena",
@@ -79,7 +75,6 @@ export const POSTS: Post[] = [
     notes: 4,
     state: "connect",
     hasComment: false,
-    translationLang: "ES",
   },
 ];
 

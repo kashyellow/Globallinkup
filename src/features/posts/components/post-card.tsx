@@ -12,7 +12,6 @@ export function PostCard({ post }: { post: Post }) {
   const tCommon = useTranslations("Common");
   const [liked, setLiked] = useState(false);
   const [requested, setRequested] = useState(false);
-  const [showTranslation, setShowTranslation] = useState(false);
 
   const likeCount = post.likes + (liked ? 1 : 0);
   const timeLabel =
@@ -160,25 +159,6 @@ export function PostCard({ post }: { post: Post }) {
               <span className="font-semibold text-on-surface">{post.author}</span>{" "}
               {t(`captions.${post.id}`)}
             </p>
-            <div className="pt-1">
-              <button
-                type="button"
-                onClick={() => setShowTranslation((value) => !value)}
-                className="flex min-h-11 items-center gap-1 rounded-full px-1 font-label-lg text-label-lg font-semibold text-primary transition-colors duration-300 hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              >
-                <Icon name={showTranslation ? "undo" : "translate"} className="text-xs" />
-                <span>
-                  {showTranslation
-                    ? t("postMeta.hideTranslation")
-                    : t("postMeta.seeTranslation", { lang: post.translationLang })}
-                </span>
-              </button>
-            </div>
-            {showTranslation ? (
-              <p className="mt-2 rounded-[0.75rem] border border-outline-variant bg-surface p-2.5 font-body-sm text-body-sm text-on-surface-strong italic">
-                {t(`captionsTranslated.${post.id}`)}
-              </p>
-            ) : null}
           </div>
 
           {post.hasComment ? (

@@ -184,8 +184,6 @@
       "notes": "{count} notas",
       "share": "Compartir",
       "save": "Guardar en colección",
-      "seeTranslation": "Ver traducción ({lang})",
-      "hideTranslation": "Ocultar traducción",
       "requested": "Solicitado",
       "viewComments": "Ver los {count} comentarios y reflexiones →"
     },
@@ -193,11 +191,6 @@
       "sofia": "Golden hour after a long walk through El Born. Exploring new perspectives through analog film this week ☕️📷",
       "mateo": "Morning stroll in Coyoacán. Always amazed by the morning light here. ¿Cuál es su rincón favorito de la ciudad?",
       "elena": "Contemporary art weekend. Great conversations with fellow designers exploring sustainable architectural forms!"
-    },
-    "captionsTranslated": {
-      "sofia": "Hora dorada después de una larga caminata por El Born. Explorando nuevas perspectivas a través de película analógica esta semana ☕️📷",
-      "mateo": "Paseo matutino en Coyoacán. Siempre asombrado por la luz de la mañana aquí. ¿Cuál es tu rincón favorito de la ciudad?",
-      "elena": "Fin de semana de arte contemporáneo. ¡Grandes conversaciones con colegas diseñadores explorando formas arquitectónicas sostenibles!"
     },
     "photoBadges": {
       "sofia": "35mm Analógico · Barcelona",
