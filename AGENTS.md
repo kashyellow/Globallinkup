@@ -38,6 +38,12 @@ npm run typecheck    # tsc --noEmit
 npm test             # Vitest (unit/component)
 npm run test:watch   # Vitest watch
 npm run e2e          # Playwright
+
+npm run db:start     # local Supabase (545xx ports; see docs/plan/api-layer.md)
+npm run db:stop
+npm run db:status    # add `-- -o env` for the local URL + keys
+npm run db:reset     # re-apply migrations + seed
+npm run db:types     # regenerate src/types/database.ts
 ```
 
 Prefer the local tooling; the repo uses npm, not pnpm.
