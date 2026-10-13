@@ -174,7 +174,7 @@ export function PostsView() {
                 <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
                   {t("sidebar.networkTitle")}
                 </h2>
-                <span className="font-label-lg text-label-lg font-semibold text-text-muted">
+                <span className="shrink-0 font-label-lg text-label-lg font-semibold whitespace-nowrap text-text-muted">
                   {t("sidebar.viewAll")}
                 </span>
               </div>

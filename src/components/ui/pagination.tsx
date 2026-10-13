@@ -36,7 +36,7 @@ export function Pagination({
   const atEnd = page === totalPages;
 
   const stepClass = cn(
-    "flex h-11 flex-1 items-center justify-center gap-1.5 rounded-full px-3 font-label-lg text-label-lg font-semibold whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:flex-none sm:px-4",
+    "flex h-11 shrink-0 items-center justify-center gap-1.5 rounded-full px-3 font-label-lg text-label-lg font-semibold whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:px-4",
     EASE,
   );
 
@@ -44,7 +44,7 @@ export function Pagination({
     <nav
       aria-label={t("pageOf", { page, total: totalPages })}
       className={cn(
-        "flex flex-wrap items-center justify-between gap-space-sm border-t border-outline-variant pt-space-lg",
+        "flex items-center justify-between gap-space-sm border-t border-outline-variant pt-space-lg",
         className,
       )}
     >
@@ -61,13 +61,12 @@ export function Pagination({
         )}
       >
         <Icon name="arrow_back" className="text-base" />
-        {/* Label shortens rather than wraps: "Previous" plus a number strip
-            overflows a 360px row. */}
+        {/* Icon-only on phones: the row is Prev | pages | Next, so a text label
+            on both sides would push the number strip onto its own line. */}
         <span className="hidden sm:inline">{t("prevShort")}</span>
-        <span className="sm:hidden">{t("previous")}</span>
       </button>
 
-      <ol className="flex items-center gap-1">
+      <ol className="no-scrollbar flex min-w-0 items-center gap-1 overflow-x-auto">
         {pages.map((number) => {
           const active = number === page;
           return (
@@ -105,7 +104,6 @@ export function Pagination({
         )}
       >
         <span className="hidden sm:inline">{t("nextShort")}</span>
-        <span className="sm:hidden">{t("next")}</span>
         <Icon name="arrow_forward" className="text-base" />
       </button>
     </nav>

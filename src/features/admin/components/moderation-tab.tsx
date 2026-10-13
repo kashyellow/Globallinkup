@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { INCIDENTS, type Incident } from "../data";
 
 const ACTION_BASE =
-  "inline-flex min-h-10 items-center gap-1.5 rounded-full px-4 py-2 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-px";
+  "inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 py-2 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-px";
 
 export function AdminModerationTab() {
   const t = useTranslations("Admin.moderation");

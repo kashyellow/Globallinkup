@@ -75,7 +75,7 @@ export function LandingView() {
       >
         <div className="grid grid-cols-1 gap-space-lg lg:grid-cols-12 lg:items-center lg:gap-x-space-xl">
           <div className="flex flex-col items-start lg:col-span-7">
-            <p className="rounded-full border border-outline-variant bg-marketing-raised/70 px-3.5 py-1.5 font-label-caps text-label-caps tracking-[0.14em] text-on-surface-variant uppercase">
+            <p className="rounded-full border border-outline-variant bg-marketing-raised/70 px-3.5 py-1.5 text-center font-label-caps text-label-caps tracking-[0.08em] text-on-surface-variant uppercase sm:tracking-[0.14em]">
               {t("hero.badge")}
             </p>
 
@@ -176,11 +176,11 @@ export function LandingView() {
 
                   <div
                     className={cn(
-                      "flex items-center justify-between gap-3 border border-outline-variant bg-marketing-base p-2 pl-3.5",
+                      "flex flex-col items-start gap-2 border border-outline-variant bg-marketing-base p-2 pl-3.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3",
                       R.chip,
                     )}
                   >
-                    <span className="inline-flex items-center gap-2 font-label-md text-label-md text-on-surface">
+                    <span className="inline-flex items-center gap-2 font-label-md text-label-md whitespace-nowrap text-on-surface">
                       <span
                         aria-hidden
                         className="h-2 w-2 shrink-0 rounded-full bg-tertiary motion-safe:animate-pulse"
@@ -189,7 +189,7 @@ export function LandingView() {
                     </span>
                     <Link
                       href="/register"
-                      className="inline-flex shrink-0 items-center rounded-full bg-primary px-4 py-1.5 font-label-lg text-label-lg whitespace-nowrap text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-primary px-4 py-1.5 font-label-lg text-label-lg whitespace-nowrap text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     >
                       {t("hero.requestConnect")}
                     </Link>
@@ -386,7 +386,7 @@ export function LandingView() {
                     </p>
                     <Link
                       href="/posts"
-                      className="inline-flex w-fit items-center gap-1.5 rounded-full font-label-lg text-label-lg text-primary transition-colors duration-300 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      className="inline-flex min-h-11 w-fit items-center gap-1.5 rounded-full font-label-lg text-label-lg text-primary transition-colors duration-300 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     >
                       {t("pillars.pillar2Cta")}
                       <Icon name="arrow_forward" className="text-[18px]" />
@@ -434,7 +434,7 @@ export function LandingView() {
                     </p>
                     <Link
                       href="/marketplace"
-                      className="inline-flex w-fit items-center gap-1.5 rounded-full font-label-lg text-label-lg text-primary transition-colors duration-300 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      className="inline-flex min-h-11 w-fit items-center gap-1.5 rounded-full font-label-lg text-label-lg text-primary transition-colors duration-300 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     >
                       {t("pillars.pillar3Cta")}
                       <Icon name="arrow_forward" className="text-[18px]" />
@@ -614,7 +614,7 @@ function LockerDemo({
 
   return (
     <div
-      className="border border-outline-variant bg-marketing-core p-space-lg md:p-space-xl"
+      className="border border-outline-variant bg-marketing-core p-space-md md:p-space-xl"
       style={{ borderRadius: R.tray }}
     >
       <div className="flex flex-col gap-space-md md:flex-row md:items-end md:justify-between">
@@ -627,17 +627,22 @@ function LockerDemo({
           </p>
         </div>
 
+        {/*
+         * Full-width segmented control on mobile so the two (long) labels can
+         * share the row and wrap instead of forcing the page wider than the
+         * viewport. From `sm` up it shrinks back to its content width.
+         */}
         <div
           role="group"
           aria-label={t("demo.title")}
-          className="inline-flex self-start rounded-full border border-outline-variant bg-marketing-base p-1 md:self-auto"
+          className="flex w-full items-stretch rounded-full border border-outline-variant bg-marketing-base p-1 sm:inline-flex sm:w-auto sm:self-start md:self-auto"
         >
           <button
             type="button"
             onClick={() => onOpenChange(false)}
             aria-pressed={!open}
             className={cn(
-              "rounded-full px-3.5 py-2 font-label-md text-label-md whitespace-nowrap transition-[background-color,color] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:px-4",
+              "flex min-h-11 flex-1 items-center justify-center rounded-full px-2 py-1.5 text-center font-label-md text-label-md transition-[background-color,color] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:flex-none sm:px-4",
               !open
                 ? "bg-primary font-semibold text-on-primary"
                 : "text-text-muted hover:text-on-surface",
@@ -650,7 +655,7 @@ function LockerDemo({
             onClick={() => onOpenChange(true)}
             aria-pressed={open}
             className={cn(
-              "rounded-full px-3.5 py-2 font-label-md text-label-md whitespace-nowrap transition-[background-color,color] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:px-4",
+              "flex min-h-11 flex-1 items-center justify-center rounded-full px-2 py-1.5 text-center font-label-md text-label-md transition-[background-color,color] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:flex-none sm:px-4",
               open
                 ? "bg-primary font-semibold text-on-primary"
                 : "text-text-muted hover:text-on-surface",

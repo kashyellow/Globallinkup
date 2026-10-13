@@ -100,7 +100,12 @@ export function DossierHeader() {
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          {/*
+           * On mobile the three controls cannot share a row (the bilingual
+           * labels overflow), so they stack full-width instead of wrapping into
+           * an uneven two-row block. From `sm` up they sit inline as before.
+           */}
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
             <button type="button" onClick={share} className={CONTROL}>
               <Icon
                 name={copied ? "check" : "share"}

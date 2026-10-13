@@ -38,7 +38,7 @@ function StatChip({
   return (
     <div
       className={cn(
-        "flex items-center gap-space-xs rounded-full border px-space-md py-2",
+        "flex items-center gap-space-xs rounded-full border px-space-md py-2 whitespace-nowrap",
         accent
           ? "border-primary-container/40 bg-primary-container/10"
           : "border-outline-variant bg-surface-container",

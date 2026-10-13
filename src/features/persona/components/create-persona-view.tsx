@@ -70,7 +70,7 @@ export function CreatePersonaView() {
       {/* Header */}
       <div className="mb-space-xl flex flex-col justify-between gap-space-md md:flex-row md:items-end">
         <div className="flex flex-col gap-space-xs">
-          <div className="flex items-center gap-space-sm">
+          <div className="flex flex-wrap items-center gap-space-sm">
             <span className="font-label-caps text-label-caps font-bold tracking-wider text-primary uppercase">
               {t("eyebrow")}
             </span>
@@ -79,7 +79,7 @@ export function CreatePersonaView() {
               {t("eyebrowMeta")}
             </span>
           </div>
-          <h1 className="font-headline-xl text-headline-xl-mobile tracking-tight text-on-surface md:text-headline-xl">
+          <h1 className="font-display-md text-display-md-mobile text-balance text-on-surface md:text-display-md">
             {t("title")}
           </h1>
           <p className="font-headline-sm text-headline-sm font-normal text-secondary italic">
@@ -87,27 +87,29 @@ export function CreatePersonaView() {
           </p>
         </div>
 
-        <div className="flex items-center gap-space-sm rounded-xl border border-outline-variant bg-surface-low px-space-md py-space-sm">
+        <div className="flex flex-wrap items-center gap-space-sm rounded-xl border border-outline-variant bg-surface-low px-space-md py-space-sm">
           <div className="flex items-center gap-space-xs text-tertiary">
             <Icon name="check_circle" filled className="text-[18px]" />
-            <span className="font-label-md text-label-md font-semibold">{t("pipeStep1")}</span>
+            <span className="font-label-md text-label-md font-semibold whitespace-nowrap">
+              {t("pipeStep1")}
+            </span>
           </div>
           <span className="font-label-md text-label-md text-outline-variant">/</span>
           <div className="flex items-center gap-space-xs font-semibold text-primary">
             <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
-            <span className="font-label-md text-label-md">{t("pipeStep2")}</span>
+            <span className="font-label-md text-label-md whitespace-nowrap">{t("pipeStep2")}</span>
           </div>
           <span className="font-label-md text-label-md text-outline-variant">/</span>
           <div className="flex items-center gap-space-xs text-secondary">
             <span className="h-2 w-2 rounded-full bg-[#3E3A35]" />
-            <span className="font-label-md text-label-md">{t("pipeStep3")}</span>
+            <span className="font-label-md text-label-md whitespace-nowrap">{t("pipeStep3")}</span>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 items-start gap-space-xl lg:grid-cols-12">
-        {/* Guidance column */}
-        <aside className="flex flex-col gap-space-lg lg:sticky lg:top-28 lg:col-span-5">
+      <div className="grid grid-cols-1 items-start gap-space-lg lg:grid-cols-12 lg:gap-space-xl">
+        {/* Guidance column — kept after the form on mobile so the task leads. */}
+        <aside className="order-2 flex flex-col gap-space-lg lg:sticky lg:top-28 lg:order-1 lg:col-span-5">
           <div className="group relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-outline-variant bg-surface-low shadow-sm">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -136,16 +138,16 @@ export function CreatePersonaView() {
             <p className="font-body-md text-body-md leading-relaxed text-secondary">
               {t("guideBody")}
             </p>
-            <div className="flex items-center gap-space-md pt-space-xs">
+            <div className="flex flex-wrap items-center gap-x-space-md gap-y-1 pt-space-xs">
               <div className="flex items-center gap-1.5 text-primary">
                 <Icon name="verified" className="text-[16px]" />
-                <span className="font-label-caps text-label-caps uppercase">
+                <span className="font-label-caps text-label-caps whitespace-nowrap uppercase">
                   {t("guideVetted")}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 text-secondary">
                 <Icon name="translate" className="text-[16px]" />
-                <span className="font-label-caps text-label-caps uppercase">
+                <span className="font-label-caps text-label-caps whitespace-nowrap uppercase">
                   {t("guideBilingual")}
                 </span>
               </div>
@@ -162,7 +164,7 @@ export function CreatePersonaView() {
                   <h4 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
                     {t("privacyTitle")}
                   </h4>
-                  <span className="rounded-lg border border-outline-variant bg-surface-variant px-2 py-0.5 font-label-caps text-label-caps text-secondary shadow-sm">
+                  <span className="shrink-0 rounded-lg border border-outline-variant bg-surface-variant px-2 py-0.5 font-label-caps text-label-caps whitespace-nowrap text-secondary shadow-sm">
                     {t("privacyBadge")}
                   </span>
                 </div>
@@ -178,16 +180,16 @@ export function CreatePersonaView() {
                   {t("privacyNote")}
                 </span>
               </div>
-              <span className="font-label-caps text-label-caps font-bold tracking-wider text-tertiary uppercase">
+              <span className="shrink-0 font-label-caps text-label-caps font-bold tracking-wider whitespace-nowrap text-tertiary uppercase">
                 {t("privacyZero")}
               </span>
             </div>
           </div>
         </aside>
 
-        {/* Form column */}
-        <div className="flex flex-col gap-space-xl rounded-xl border border-outline-variant bg-surface-container p-space-lg shadow-sm md:p-space-xl lg:col-span-7">
-          <form className="flex flex-col gap-space-xl" onSubmit={submit}>
+        {/* Form column — leads on mobile */}
+        <div className="order-1 flex flex-col gap-space-lg rounded-xl border border-outline-variant bg-surface-container p-space-lg shadow-sm md:gap-space-xl md:p-space-xl lg:order-2 lg:col-span-7">
+          <form className="flex flex-col gap-space-lg md:gap-space-xl" onSubmit={submit}>
             {/* 1. Profile photo */}
             <section className="flex flex-col gap-space-md">
               <div className="flex items-center justify-between">
@@ -376,7 +378,7 @@ export function CreatePersonaView() {
 
             {/* 5. Interests */}
             <section className="flex flex-col gap-space-sm">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                 <span className="font-label-lg text-label-lg font-semibold text-on-surface">
                   {t("interestsLabel")}
                 </span>
@@ -427,7 +429,7 @@ export function CreatePersonaView() {
                     {t("vaultTitle")}
                   </h4>
                 </div>
-                <span className="rounded-lg bg-tertiary px-2 py-0.5 font-label-caps text-label-caps font-bold text-white uppercase">
+                <span className="shrink-0 rounded-lg bg-tertiary px-2 py-0.5 font-label-caps text-label-caps font-bold whitespace-nowrap text-white uppercase">
                   {t("vaultBadge")}
                 </span>
               </div>
@@ -487,7 +489,7 @@ export function CreatePersonaView() {
             </section>
 
             {/* Actions */}
-            <div className="flex flex-col-reverse items-center justify-between gap-space-md pt-space-md sm:flex-row">
+            <div className="flex flex-col items-center justify-between gap-space-md pt-space-md sm:flex-row">
               <button
                 type="button"
                 className="flex w-full items-center justify-center gap-space-xs rounded-lg border border-outline-variant bg-surface-variant px-space-lg py-3 font-label-lg text-label-lg text-on-surface shadow-sm transition-colors hover:bg-[#2E2B27] sm:w-auto"
@@ -499,7 +501,7 @@ export function CreatePersonaView() {
                 type="submit"
                 disabled={!canSubmit}
                 className={cn(
-                  "group flex w-full items-center justify-center gap-space-xs rounded-lg px-space-xl py-3 font-label-lg text-label-lg font-semibold shadow-md transition-colors sm:w-auto",
+                  "group flex w-full items-center justify-center gap-space-xs rounded-lg px-space-md py-3 text-center font-label-lg text-label-lg font-semibold shadow-md transition-colors sm:w-auto sm:px-space-xl",
                   canSubmit
                     ? "bg-primary-container text-white hover:bg-primary-hover"
                     : "cursor-not-allowed bg-surface-variant text-secondary",

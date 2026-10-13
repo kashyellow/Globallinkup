@@ -130,7 +130,7 @@
       "whatsapp": "WhatsApp / Signal:",
       "email": "Email:",
       "unlockedNote": "Mutual agreement recorded on May 12, 2024. Respectful outreach guidelines apply.",
-      "sendRequest": "Send Connection Request to {name}"
+      "sendRequest": "Send Connection Request"
     },
     "requests": {
       "title": "Received Requests",
@@ -554,6 +554,7 @@
     "signIn": "Sign In",
     "join": "Join GlobalLinkup",
     "joinShort": "Join",
+    "language": "Language",
     "toggleMenu": "Toggle navigation menu"
   },
   "MarketingFooter": {
@@ -875,7 +876,7 @@
     "chatPlaceholder": "+34 612 345 678",
     "vaultNote": "Stored with sovereign key encryption. You retain the ability to revoke access at any time.",
     "back": "Back to Step 1",
-    "submit": "Complete & Submit Persona for Review"
+    "submit": "Submit Persona for Review"
   },
   "Landing": {
     "hero": {
@@ -924,7 +925,7 @@
       "title": "See the locker before and after a mutual approval",
       "body": "Switch between the two states to see exactly what is visible at each stage.",
       "lockedTab": "Before Connect",
-      "unlockedTab": "After Mutual Approval",
+      "unlockedTab": "After Approval",
       "miniAlt": "Sofia Martínez",
       "miniName": "Sofia Martínez",
       "miniMeta": "Barcelona, ES and EN",

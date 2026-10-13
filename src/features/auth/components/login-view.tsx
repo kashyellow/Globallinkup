@@ -71,8 +71,8 @@ export function LoginView() {
       ) : null}
 
       <div className="grid grid-cols-1 items-stretch gap-gutter lg:grid-cols-12">
-        {/* Editorial brand panel */}
-        <div className="bezel-tray lg:col-span-6">
+        {/* Editorial brand panel — below the form on mobile */}
+        <div className="order-2 bezel-tray lg:order-1 lg:col-span-6">
           <div
             className="relative flex min-h-[520px] flex-col justify-between overflow-hidden bezel-core p-space-lg lg:min-h-[640px] lg:p-space-xl"
             style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
@@ -127,8 +127,8 @@ export function LoginView() {
           </div>
         </div>
 
-        {/* Auth card */}
-        <div className="bezel-tray lg:col-span-6">
+        {/* Auth card — leads on mobile */}
+        <div className="order-1 bezel-tray lg:order-2 lg:col-span-6">
           <div
             className="flex h-full flex-col justify-center bezel-core p-space-lg lg:p-space-xl"
             style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
@@ -194,7 +194,7 @@ export function LoginView() {
               <form className="flex flex-col gap-space-md" onSubmit={submit} noValidate>
                 {/* Email */}
                 <div className="flex flex-col gap-space-xs">
-                  <div className="flex items-center justify-between gap-space-sm">
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-space-sm gap-y-1">
                     <label
                       className="font-label-md text-label-md font-semibold text-on-surface"
                       htmlFor="login-email"
@@ -231,7 +231,7 @@ export function LoginView() {
 
                 {/* Password */}
                 <div className="flex flex-col gap-space-xs">
-                  <div className="flex items-center justify-between gap-space-sm">
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-space-sm gap-y-1">
                     <label
                       className="font-label-md text-label-md font-semibold text-on-surface"
                       htmlFor="login-password"
@@ -240,7 +240,7 @@ export function LoginView() {
                     </label>
                     <Link
                       href="/forgot-password"
-                      className="font-label-md text-label-md text-primary transition-colors hover:underline"
+                      className="inline-flex min-h-11 items-center font-label-md text-label-md text-primary transition-colors hover:underline"
                     >
                       {t("forgotPassword")}
                     </Link>
@@ -264,7 +264,7 @@ export function LoginView() {
                       aria-label={t("togglePassword")}
                       onClick={() => setShowPassword((value) => !value)}
                       className={cn(
-                        "absolute inset-y-0 right-0 my-auto mr-1.5 flex h-9 w-9 items-center justify-center rounded-full text-secondary transition-colors hover:bg-surface-container hover:text-on-surface",
+                        "absolute inset-y-0 right-0 my-auto mr-1 flex h-11 w-11 items-center justify-center rounded-full text-secondary transition-colors hover:bg-surface-container hover:text-on-surface",
                         EASE,
                         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                       )}

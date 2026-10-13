@@ -64,7 +64,7 @@ export function BottomNav() {
                 {item.key === "connections" ? (
                   <span
                     className={cn(
-                      "absolute -top-1 -right-[0.55rem] flex h-3.5 min-w-3.5 items-center justify-center rounded-full px-1 font-label-caps text-[10px] tabular-nums",
+                      "absolute -top-1 -right-[0.55rem] flex h-4 min-w-4 items-center justify-center rounded-full px-1 font-label-caps text-[11px] tabular-nums",
                       active ? "bg-primary text-on-primary" : "bg-primary/15 text-primary",
                     )}
                   >
@@ -74,7 +74,7 @@ export function BottomNav() {
               </span>
               <span
                 className={cn(
-                  "max-w-full truncate text-[11px] leading-none",
+                  "max-w-full truncate text-[12px] leading-none",
                   active ? "font-semibold text-on-surface" : "font-medium text-secondary",
                 )}
               >

@@ -30,7 +30,7 @@ export async function PublicFooter() {
           <nav className="flex flex-col gap-space-sm md:items-end">
             <Link
               href="/discover"
-              className="inline-flex min-h-10 items-center rounded-full text-secondary transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="inline-flex min-h-11 items-center rounded-full text-secondary transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               <span className="font-label-md text-label-md">{t("explore")}</span>
             </Link>

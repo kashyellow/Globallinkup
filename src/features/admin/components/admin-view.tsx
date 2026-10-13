@@ -32,13 +32,11 @@ export function AdminView() {
       <section className="w-full border-b border-outline-variant bg-surface">
         <div className="mx-auto flex max-w-[1240px] flex-col justify-between gap-space-md px-margin-mobile py-space-md lg:flex-row lg:items-center lg:px-margin">
           <div className="flex flex-col gap-space-sm sm:flex-row sm:items-center sm:gap-space-md">
-            <div className="flex items-center gap-space-xs font-label-md text-label-md text-secondary">
+            <div className="flex flex-wrap items-center gap-x-space-xs gap-y-0.5 font-label-md text-label-md text-secondary">
               <Icon name="shield_person" className="shrink-0 text-base" />
               <span className="whitespace-nowrap">{t("portal")}</span>
               <span className="text-outline-variant">/</span>
-              <span className="font-medium whitespace-nowrap text-on-surface">
-                {t("panelTitle")}
-              </span>
+              <span className="font-medium text-on-surface">{t("panelTitle")}</span>
             </div>
             <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-admin-border bg-admin-surface px-space-sm py-1 font-label-md text-label-md font-semibold text-admin-text">
               <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />

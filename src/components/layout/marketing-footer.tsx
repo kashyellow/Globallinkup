@@ -45,14 +45,14 @@ export async function MarketingFooter() {
                   {item.isAnchor ? (
                     <a
                       href={item.href}
-                      className="inline-flex min-h-8 items-center font-body-sm text-body-sm text-on-surface-variant transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      className="inline-flex min-h-11 items-center font-body-sm text-body-sm text-on-surface-variant transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     >
                       {t(`navigation.${item.key}`)}
                     </a>
                   ) : (
                     <Link
                       href={item.href}
-                      className="inline-flex min-h-8 items-center font-body-sm text-body-sm text-on-surface-variant transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      className="inline-flex min-h-11 items-center font-body-sm text-body-sm text-on-surface-variant transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     >
                       {t(`navigation.${item.key}`)}
                     </Link>
@@ -72,14 +72,14 @@ export async function MarketingFooter() {
                   {"href" in item ? (
                     <Link
                       href={item.href}
-                      className="inline-flex min-h-8 items-center font-body-sm text-body-sm text-on-surface-variant transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      className="inline-flex min-h-11 items-center font-body-sm text-body-sm text-on-surface-variant transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                     >
                       {t(`trust.${item.key}`)}
                     </Link>
                   ) : (
                     // No policy route exists yet, so these render as plain text
                     // rather than a dead `href="#"` anchor.
-                    <span className="inline-flex min-h-8 items-center font-body-sm text-body-sm text-on-surface-variant">
+                    <span className="inline-flex min-h-11 items-center font-body-sm text-body-sm text-on-surface-variant">
                       {t(`trust.${item.key}`)}
                     </span>
                   )}

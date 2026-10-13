@@ -346,7 +346,7 @@ function ProductCard({
                 </span>
                 <span
                   className={cn(
-                    "font-bold text-on-surface tabular-nums",
+                    "font-bold whitespace-nowrap text-on-surface tabular-nums",
                     featured
                       ? "font-headline-md text-headline-md"
                       : "font-headline-sm text-headline-sm",

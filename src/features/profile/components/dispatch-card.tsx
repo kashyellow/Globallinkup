@@ -71,13 +71,13 @@ export function DispatchCard({ dispatch, index }: { dispatch: Dispatch; index: n
       ) : null}
 
       <div className="mt-space-md flex flex-wrap items-center justify-between gap-space-sm border-t border-outline-variant pt-space-sm">
-        <div className="flex items-center gap-space-sm">
+        <div className="flex flex-wrap items-center gap-x-space-sm gap-y-1">
           <button
             type="button"
             aria-pressed={appreciated}
             onClick={() => setAppreciated((value) => !value)}
             className={cn(
-              "inline-flex min-h-11 items-center gap-1.5 rounded-md border border-outline-variant px-3 font-label-md text-label-md text-text-muted",
+              "inline-flex min-h-11 items-center gap-1.5 rounded-md border border-outline-variant px-3 font-label-md text-label-md whitespace-nowrap text-text-muted",
               "transition-colors duration-300 hover:border-outline-hover hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px active:scale-[0.98]",
               EASE,
               appreciated && "border-primary text-primary",
@@ -86,13 +86,13 @@ export function DispatchCard({ dispatch, index }: { dispatch: Dispatch; index: n
             <Icon name="favorite" filled={appreciated} className="text-lg" />
             <span className="tabular-nums">{t("appreciations", { count: appreciations })}</span>
           </button>
-          <span className="flex min-h-11 items-center gap-1.5 px-1 font-label-md text-label-md text-text-muted">
+          <span className="flex min-h-11 items-center gap-1.5 px-1 font-label-md text-label-md whitespace-nowrap text-text-muted">
             <Icon name="chat_bubble" className="text-lg" />
             <span className="tabular-nums">{t("notes", { count: dispatch.notes })}</span>
           </span>
         </div>
 
-        <span className="flex items-center gap-1.5 rounded-md border border-success-border px-2.5 py-1 font-label-md text-label-md font-semibold tracking-[0.08em] text-success-text uppercase">
+        <span className="flex items-center gap-1.5 rounded-md border border-success-border px-2.5 py-1 font-label-md text-label-md font-semibold tracking-[0.08em] whitespace-nowrap text-success-text uppercase">
           <Icon name="lock_open" className="text-sm" />
           <span>{t("circlesOnly")}</span>
         </span>

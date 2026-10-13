@@ -41,7 +41,7 @@ function LocaleSwitch({
             onClick={() => onSwitch(code)}
             aria-pressed={active}
             className={cn(
-              "min-h-8 rounded-full px-space-sm py-1 font-label-md text-label-md font-semibold transition-colors",
+              "min-h-11 rounded-full px-space-sm py-1 font-label-md text-label-md font-semibold transition-colors sm:min-h-8",
               EASE,
               "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
               active
@@ -83,7 +83,7 @@ export function PublicHeader() {
             <span className="truncate font-headline-sm text-headline-sm leading-tight font-semibold text-on-surface">
               GlobalLinkup
             </span>
-            <span className="truncate font-label-md text-label-md text-secondary">
+            <span className="hidden truncate font-label-md text-label-md text-secondary sm:block">
               {t("tagline")}
             </span>
           </span>
@@ -125,7 +125,7 @@ export function PublicHeader() {
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((value) => !value)}
             className={cn(
-              "flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-outline-variant bg-surface-low text-secondary transition-colors sm:hidden",
+              "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-outline-variant bg-surface-low text-secondary transition-colors sm:hidden",
               EASE,
               "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
             )}

@@ -186,7 +186,7 @@ export function RegisterView() {
                       aria-label={t("togglePassword")}
                       onClick={() => setShowPassword((value) => !value)}
                       className={cn(
-                        "absolute top-1/2 right-1.5 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full text-secondary transition-colors hover:bg-surface-container hover:text-on-surface",
+                        "absolute top-1/2 right-0.5 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-secondary transition-colors hover:bg-surface-container hover:text-on-surface",
                         EASE,
                         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                       )}
@@ -273,7 +273,7 @@ export function RegisterView() {
                       aria-label={t("toggleConfirm")}
                       onClick={() => setShowConfirm((value) => !value)}
                       className={cn(
-                        "absolute top-1/2 right-1.5 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full text-secondary transition-colors hover:bg-surface-container hover:text-on-surface",
+                        "absolute top-1/2 right-0.5 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full text-secondary transition-colors hover:bg-surface-container hover:text-on-surface",
                         EASE,
                         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                       )}
@@ -331,7 +331,7 @@ export function RegisterView() {
                   <button
                     type="submit"
                     className={cn(
-                      "flex min-h-12 w-full items-center justify-center gap-space-xs rounded-full bg-primary px-space-lg font-label-lg text-label-lg font-semibold text-on-primary transition-colors hover:bg-primary-hover",
+                      "flex min-h-12 w-full items-center justify-center gap-space-xs rounded-full bg-primary px-space-md text-center font-label-lg text-label-lg font-semibold text-on-primary transition-colors hover:bg-primary-hover",
                       EASE,
                       "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
                     )}

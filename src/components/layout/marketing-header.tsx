@@ -24,9 +24,22 @@ const SECTION_LINKS = [
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
-function LocaleSwitch({ locale, onSwitch }: { locale: string; onSwitch: (next: Locale) => void }) {
+function LocaleSwitch({
+  locale,
+  onSwitch,
+  className,
+}: {
+  locale: string;
+  onSwitch: (next: Locale) => void;
+  className?: string;
+}) {
   return (
-    <div className="flex items-center rounded-full border border-outline-variant bg-marketing-raised p-0.5">
+    <div
+      className={cn(
+        "flex items-center rounded-full border border-outline-variant bg-marketing-raised p-0.5",
+        className,
+      )}
+    >
       {routing.locales.map((code) => (
         <button
           key={code}
@@ -34,7 +47,7 @@ function LocaleSwitch({ locale, onSwitch }: { locale: string; onSwitch: (next: L
           onClick={() => onSwitch(code)}
           aria-current={code === locale ? "true" : undefined}
           className={cn(
-            "min-h-7 rounded-full px-2.5 font-label-md text-label-md transition-colors duration-300",
+            "min-h-11 rounded-full px-2.5 font-label-md text-label-md transition-colors duration-300 sm:min-h-7",
             EASE,
             code === locale
               ? "bg-marketing-high font-semibold text-on-surface"
@@ -103,7 +116,9 @@ export function MarketingHeader() {
         </nav>
 
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-          <LocaleSwitch locale={locale} onSwitch={switchLocale} />
+          {/* The locale switch moves into the mobile sheet below `sm`, freeing
+              the row so the brand is not truncated to "Glob…" at 360px. */}
+          <LocaleSwitch locale={locale} onSwitch={switchLocale} className="hidden sm:flex" />
 
           {/* One sign-in affordance and one join affordance, both single-line. */}
           <Link
@@ -115,7 +130,7 @@ export function MarketingHeader() {
 
           <Link
             href="/register"
-            className="group inline-flex h-9 items-center gap-1.5 rounded-full bg-primary pr-1.5 pl-4 font-label-lg text-label-lg whitespace-nowrap text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="group inline-flex h-11 items-center gap-1.5 rounded-full bg-primary pr-1.5 pl-4 font-label-lg text-label-lg whitespace-nowrap text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:h-9"
           >
             <span className="hidden sm:inline">{t("join")}</span>
             <span className="sm:hidden">{t("joinShort")}</span>
@@ -135,7 +150,7 @@ export function MarketingHeader() {
             aria-label={t("toggleMenu")}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-outline-variant bg-marketing-raised text-on-surface-variant transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-outline-variant bg-marketing-raised text-on-surface-variant transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:h-9 sm:w-9 lg:hidden"
           >
             <Icon name={menuOpen ? "close" : "menu"} className="text-[20px]" />
           </button>
@@ -175,6 +190,33 @@ export function MarketingHeader() {
           >
             {t("signIn")}
           </Link>
+
+          {/* Language switch, since the top pill hides it below `sm`. */}
+          <div className="mt-1 flex items-center justify-between gap-space-sm border-t border-outline-variant px-4 py-3">
+            <span className="font-label-md text-label-md text-text-muted">{t("language")}</span>
+            <div className="flex items-center gap-1" role="group" aria-label={t("language")}>
+              {routing.locales.map((code) => (
+                <button
+                  key={code}
+                  type="button"
+                  onClick={() => {
+                    switchLocale(code);
+                    setMenuOpen(false);
+                  }}
+                  aria-pressed={code === locale}
+                  tabIndex={menuOpen ? undefined : -1}
+                  className={cn(
+                    "flex min-h-11 min-w-11 items-center justify-center rounded-full border px-3 font-label-md text-label-md transition-colors duration-200",
+                    code === locale
+                      ? "border-primary bg-primary/15 font-semibold text-primary"
+                      : "border-outline-variant text-secondary hover:bg-marketing-raised hover:text-on-surface",
+                  )}
+                >
+                  {code.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </div>
         </nav>
       </div>
     </header>

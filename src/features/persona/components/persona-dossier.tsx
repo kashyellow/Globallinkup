@@ -181,11 +181,11 @@ export function PersonaDossier() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-1">
+                <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center sm:justify-between">
                   <button
                     type="button"
                     onClick={() => setRevealed(true)}
-                    className="flex min-h-11 cursor-pointer items-center gap-1.5 rounded-full px-3 font-label-lg text-label-lg font-semibold text-primary transition-colors duration-300 hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    className="flex min-h-11 items-center justify-center gap-1.5 rounded-full px-3 font-label-lg text-label-lg font-semibold text-primary transition-colors duration-300 hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:justify-start"
                   >
                     <span>{t("dossier.simulateAcceptance")}</span>
                     <Icon name="arrow_forward" className="text-xs" />
@@ -202,11 +202,11 @@ export function PersonaDossier() {
           <button
             type="button"
             className={cn(
-              "group flex w-full items-center justify-center gap-space-sm rounded-full bg-primary px-space-md py-3 font-label-lg text-label-lg font-semibold text-on-primary transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+              "group flex w-full items-center justify-center gap-space-sm rounded-full bg-primary px-space-md py-2.5 text-center font-label-lg text-label-lg leading-snug font-semibold text-balance text-on-primary transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
             )}
           >
             <Icon name="send" />
-            <span>{t("dossier.sendRequest", { name: DOSSIER.name })}</span>
+            <span>{t("dossier.sendRequest")}</span>
           </button>
         </div>
       </div>

@@ -27,17 +27,17 @@ export function ReceivedRequests() {
         className="space-y-space-md bezel-core p-space-lg"
         style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
       >
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-x-space-sm gap-y-1">
           <div className="flex items-center gap-space-xs">
             <span className="font-headline-sm text-headline-sm text-on-surface">
               {t("requests.title")}
             </span>
-            <span className="rounded-full bg-primary-container px-2 py-0.5 font-label-caps text-label-caps text-on-primary">
+            <span className="shrink-0 rounded-full bg-primary-container px-2 py-0.5 font-label-caps text-label-caps whitespace-nowrap text-on-primary">
               {t("requests.pending", { count: pendingCount })}
             </span>
           </div>
           {/* No "manage all requests" route exists yet, so this is text rather than a dead href="#". */}
-          <span className="font-label-md text-label-md text-primary">
+          <span className="ml-auto shrink-0 font-label-md text-label-md whitespace-nowrap text-primary">
             {t("requests.manageAll")}
           </span>
         </div>

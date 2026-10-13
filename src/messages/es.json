@@ -130,7 +130,7 @@
       "whatsapp": "WhatsApp / Signal:",
       "email": "Correo:",
       "unlockedNote": "Acuerdo mutuo registrado el 12 de mayo de 2024. Se aplican las normas de contacto respetuoso.",
-      "sendRequest": "Enviar Solicitud de Conexión a {name}"
+      "sendRequest": "Enviar Solicitud de Conexión"
     },
     "requests": {
       "title": "Solicitudes Recibidas",
@@ -554,6 +554,7 @@
     "signIn": "Iniciar Sesión",
     "join": "Únete a GlobalLinkup",
     "joinShort": "Únete",
+    "language": "Idioma",
     "toggleMenu": "Abrir menú de navegación"
   },
   "MarketingFooter": {
@@ -875,7 +876,7 @@
     "chatPlaceholder": "+34 612 345 678",
     "vaultNote": "Guardado con cifrado de clave soberana. Conservas la capacidad de revocar el acceso en cualquier momento.",
     "back": "Volver al Paso 1",
-    "submit": "Completar y Enviar Persona para Revisión"
+    "submit": "Enviar a Revisión"
   },
   "Landing": {
     "hero": {
@@ -924,7 +925,7 @@
       "title": "Mira la bóveda antes y después de una aprobación mutua",
       "body": "Alterna entre los dos estados para ver exactamente qué es visible en cada fase.",
       "lockedTab": "Antes de conectar",
-      "unlockedTab": "Tras la aprobación mutua",
+      "unlockedTab": "Tras la aprobación",
       "miniAlt": "Sofia Martínez",
       "miniName": "Sofia Martínez",
       "miniMeta": "Barcelona, ES y EN",

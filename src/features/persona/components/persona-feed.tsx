@@ -27,7 +27,7 @@ export function PersonaFeed() {
 
   return (
     <section className="space-y-space-md lg:col-span-7">
-      <div className="flex items-center justify-between gap-space-sm px-space-xs">
+      <div className="flex flex-col gap-1 px-space-xs sm:flex-row sm:items-center sm:justify-between sm:gap-space-sm">
         <h2 className="font-label-lg text-label-lg font-semibold text-on-surface">
           {t("feed.listTitle")}
         </h2>

@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { ADMIN_PRODUCTS, PRODUCT_CATEGORY_KEYS, type AdminProduct } from "../data";
 
 const ACTION_BASE =
-  "inline-flex min-h-10 items-center gap-1.5 rounded-full px-4 py-2 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px";
+  "inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 py-2 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px";
 
 export function AdminMarketplaceTab() {
   const t = useTranslations("Admin.marketplace");
@@ -51,8 +51,10 @@ export function AdminMarketplaceTab() {
         </button>
       </div>
 
+      {/* Table view — desktop only. Below `lg` an 820px table only ever shows a
+          column or two, so phones get the card list underneath instead. */}
       <div
-        className="bezel-tray"
+        className="hidden bezel-tray lg:block"
         style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
       >
         <div className="overflow-hidden bezel-core">
@@ -83,6 +85,13 @@ export function AdminMarketplaceTab() {
             </table>
           </div>
         </div>
+      </div>
+
+      {/* Card view — phones and tablets */}
+      <div className="flex flex-col gap-space-md lg:hidden">
+        {ADMIN_PRODUCTS.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
       </div>
 
       <div
@@ -269,6 +278,71 @@ function ProductRow({ product }: { product: AdminProduct }) {
   );
 }
 
+function ProductCard({ product }: { product: AdminProduct }) {
+  const t = useTranslations("Admin.marketplace");
+
+  return (
+    <div
+      className="bezel-tray"
+      style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
+    >
+      <article className="flex flex-col gap-space-md bezel-core p-space-md">
+        <div className="flex items-start gap-space-md">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            alt={product.imageAlt}
+            className="h-14 w-14 shrink-0 rounded-2xl border border-outline-variant object-cover"
+            src={product.image}
+            loading="lazy"
+          />
+          <div className="min-w-0 flex-1">
+            <h4 className="font-label-lg text-label-lg font-semibold text-on-surface">
+              {product.name}
+            </h4>
+            <p className="mt-0.5 font-body-sm text-body-sm text-secondary">{product.origin}</p>
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="font-label-lg text-label-lg font-semibold text-on-surface tabular-nums">
+            {product.price}
+          </span>
+          <span className="rounded-full border border-outline-variant bg-surface-container px-2.5 py-1 font-label-md text-label-md text-secondary">
+            {t(`categories.${product.categoryKey}`)}
+          </span>
+          {product.status === "live" ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-success-border bg-success-surface px-2.5 py-1 font-label-md text-label-md font-semibold text-success-text">
+              <span className="h-1.5 w-1.5 rounded-full bg-success-bright" />
+              {t("statusLive")}
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-admin-border bg-admin-surface px-2.5 py-1 font-label-md text-label-md text-admin-text-soft">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+              {t("statusReserved")}
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between gap-space-sm border-t border-outline-variant pt-space-sm">
+          <div className="min-w-0">
+            <span className="block font-label-md text-label-md font-semibold text-on-surface tabular-nums">
+              {t("inquiries", { count: product.inquiries })}
+            </span>
+            <span className="mt-0.5 block font-body-sm text-body-sm text-secondary">
+              {t(product.inquiriesMetaKey, { count: product.inquiriesMetaCount })}
+            </span>
+          </div>
+          <div className="flex shrink-0 items-center gap-space-xs">
+            <IconButton title={t("editListing")} icon="edit" />
+            <IconButton title={t("toggleVisibility")} icon="visibility" />
+            <IconButton title={t("deleteFromStore")} icon="delete" danger />
+          </div>
+        </div>
+      </article>
+    </div>
+  );
+}
+
 function IconButton({
   title,
   icon,
@@ -284,7 +358,7 @@ function IconButton({
       title={title}
       aria-label={title}
       className={cn(
-        "flex h-10 w-10 items-center justify-center rounded-full transition-colors duration-300 active:translate-y-px",
+        "flex h-11 w-11 items-center justify-center rounded-full transition-colors duration-300 active:translate-y-px",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
         danger
           ? "text-secondary hover:bg-danger-surface hover:text-danger focus-visible:outline-danger-border-strong"
