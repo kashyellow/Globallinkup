@@ -32,11 +32,11 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
   return (
     <div className="mx-auto w-full max-w-[820px] px-margin-mobile py-space-lg lg:px-margin lg:py-space-xl">
       <Link
-        href="/"
+        href="/register"
         className="inline-flex min-h-11 items-center gap-1.5 font-label-md text-label-md font-semibold text-secondary transition-colors hover:text-primary"
       >
         <Icon name="arrow_back" className="text-lg" />
-        {t("backHome")}
+        {t("backToRegister")}
       </Link>
 
       <header className="mt-space-md flex flex-col gap-space-xs">
