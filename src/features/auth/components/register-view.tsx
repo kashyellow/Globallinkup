@@ -311,12 +311,16 @@ export function RegisterView() {
                     htmlFor="reg-terms"
                   >
                     {t.rich("terms", {
-                      // No policy routes exist yet, so the emphasised spans are
-                      // styled text rather than dead `href="#"` anchors.
+                      // Terms now has a real route (`/[locale]/terms`); the
+                      // Privacy Policy does not exist yet, so that chunk stays
+                      // styled text rather than a dead `href="#"` anchor.
                       terms: (chunks) => (
-                        <span className="font-semibold text-on-surface underline decoration-primary/50 underline-offset-2">
+                        <Link
+                          href="/terms"
+                          className="font-semibold text-on-surface underline decoration-primary/50 underline-offset-2 transition-colors hover:text-primary"
+                        >
                           {chunks}
-                        </span>
+                        </Link>
                       ),
                       privacy: (chunks) => (
                         <span className="font-semibold text-on-surface underline decoration-primary/50 underline-offset-2">
