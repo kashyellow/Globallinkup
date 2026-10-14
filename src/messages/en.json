@@ -3,6 +3,15 @@
     "title": "GlobalLinkup — Bilingual Discovery",
     "description": "Discover verified personas across the globe, share posts, connect mutually, and browse the curated marketplace. Bilingual EN/ES."
   },
+  "Legal": {
+    "eyebrow": "Legal",
+    "lastUpdated": "Last updated: {date}",
+    "backHome": "Back to home",
+    "privacyPlaceholder": {
+      "label": "[INSERT PRIVACY POLICY LINK]",
+      "notice": "The Privacy Policy isn't published yet. It will be linked here once it is available."
+    }
+  },
   "Nav": {
     "discover": "Discover",
     "posts": "Posts",

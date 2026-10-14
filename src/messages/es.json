@@ -3,6 +3,15 @@
     "title": "GlobalLinkup — Descubrimiento Bilingüe",
     "description": "Descubre personas verificadas de todo el mundo, comparte publicaciones, conecta mutuamente y explora el mercado curado. Bilingüe EN/ES."
   },
+  "Legal": {
+    "eyebrow": "Legal",
+    "lastUpdated": "Última actualización: {date}",
+    "backHome": "Volver al inicio",
+    "privacyPlaceholder": {
+      "label": "[INSERTAR ENLACE A LA POLÍTICA DE PRIVACIDAD]",
+      "notice": "La Política de Privacidad aún no está publicada. Se enlazará aquí en cuanto esté disponible."
+    }
+  },
   "Nav": {
     "discover": "Descubrir",
     "posts": "Publicaciones",
