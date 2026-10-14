@@ -6,7 +6,7 @@
   "Legal": {
     "eyebrow": "Legal",
     "lastUpdated": "Última actualización: {date}",
-    "backHome": "Volver al inicio",
+    "backToRegister": "Volver al registro",
     "privacyPlaceholder": {
       "label": "[INSERTAR ENLACE A LA POLÍTICA DE PRIVACIDAD]",
       "notice": "La Política de Privacidad aún no está publicada. Se enlazará aquí en cuanto esté disponible."
