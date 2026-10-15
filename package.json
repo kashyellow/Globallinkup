@@ -26,7 +26,8 @@
     "db:push": "supabase db push",
     "db:types": "supabase gen types typescript --local > src/types/database.ts",
     "commitlint": "commitlint --edit",
-    "prepare": "husky"
+    "prepare": "husky",
+    "deploy": "./scripts/deploy.sh"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
