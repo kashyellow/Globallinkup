@@ -24,6 +24,7 @@ const config = {
         "config",
         "deps",
         "docs",
+        "cd",
         "ci",
       ],
     ],
