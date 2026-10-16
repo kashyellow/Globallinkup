@@ -27,7 +27,8 @@ Back to [README](./README.md).
 4. Clients: `src/lib/supabase/{client,server,proxy,admin}.ts`.
 5. Compose `updateSession` into `src/proxy.ts` **after** next-intl.
 6. `.env.example` (tracked) + `.env.local` (gitignored) from
-   `supabase status -o env`, plus `ADMIN_EMAIL`.
+   `supabase status -o env`, plus `ADMIN_EMAIL` (cloud bootstrap hook only — the
+   local seed hardcodes its own admin).
 7. package.json `db:*` scripts ([README §3](./README.md#3-packagejson-scripts)).
 8. `db:types` → `src/types/database.ts`.
 9. Smoke: a server-side client constructs and `auth.getUser()` → `null`.

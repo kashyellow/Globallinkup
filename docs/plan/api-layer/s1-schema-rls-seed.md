@@ -133,7 +133,7 @@ Runs on `db reset` / `db seed` only (never `db push`). Marked loudly.
 
 ## 6. Resolved decisions
 
-- **RLS tests:** pgTAP via `npm run db:test` (`supabase test db`) — 17 assertions
+- **RLS tests:** pgTAP via `npm run db:test` (`supabase test db`) — 32 assertions
   in `supabase/tests/rls.test.sql`, all green.
 - **Seed accounts:** `admin@globallinkup.test` + pending/approved/reset users,
   all pre-confirmed, password `Password123`.

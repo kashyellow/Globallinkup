@@ -48,7 +48,8 @@ implementation. Where this summary and the PRD disagree, the PRD wins.
   `.env.local` is created from `supabase status -o env`.
 - Hooks: `pre-commit` → lint-staged (ESLint `--fix` + Prettier); `commit-msg` →
   commitlint. CI (`.github/workflows/ci.yml`) runs commitlint on PRs plus
-  format:check, lint, typecheck, test, build, and e2e.
+  format:check, lint, typecheck, test, build, and e2e. `.github/workflows/db.yml`
+  runs the RLS pgTAP suite (`supabase test db`) when `supabase/**` changes.
 - Commits follow Conventional Commits, enforced by commitlint. See
   `docs/COMMITS.md`.
 

@@ -91,7 +91,37 @@ keamanan/seeder, jadi semua kolom "lahir" di sini.
 | SA-4  | Seed akun tetap (admin/pending/approved/reset); password `Password123` (menyesuaikan CFG-1)                           |
 
 Wujudnya di S1: `supabase/migrations/20261016000000_initial_schema.sql`,
-`supabase/seed.sql`, dan `supabase/tests/rls.test.sql` (17 tes pgTAP).
+`supabase/seed.sql`, dan `supabase/tests/rls.test.sql` (32 tes pgTAP), plus
+perbaikan audit di `20261016120000_s1_fixes.sql`.
+
+### 4b. Tindak lanjut audit S1 (locked 2026-10-16)
+
+Audit pasca-S1 menemukan lubang RLS di `connections` dan beberapa item lain;
+daftar lengkap + bukti ada di [`s1-audit-fixes.md`](./s1-audit-fixes.md).
+
+| ID   | Keputusan                                                                           |
+| ---- | ----------------------------------------------------------------------------------- |
+| CA-1 | `date_of_birth` pindah ke `public.profile_private`; umur via `public.profile_age()` |
+| CA-2 | CI menjalankan suite RLS (`supabase/**` + `package*.json` path filter)              |
+| CA-3 | `ADMIN_EMAIL` = hook bootstrap cloud; seed lokal tetap hardcode admin               |
+| CA-4 | Kolom baru (F-8), lihat tabel di bawah                                              |
+
+Kolom/field CA-4 yang dikunci (migrasi susulan `s1_fixes`):
+
+| Field UI                                        | Keputusan                                               |
+| ----------------------------------------------- | ------------------------------------------------------- |
+| marketplace `sku`                               | kolom `sku text` (unik, nullable)                       |
+| marketplace `summary`                           | kolom `summary text`                                    |
+| marketplace `originLabel`                       | kolom `origin_label text`                               |
+| marketplace `badge`                             | kolom `badge text`                                      |
+| marketplace `specs`                             | kolom `specs jsonb` (default `{}`)                      |
+| connections `intro`                             | kolom `intro text` (surat perkenalan, dibatasi panjang) |
+| connections `topic`                             | kolom `topic text`                                      |
+| profile `role` (jabatan)                        | kolom `profiles.headline text`                          |
+| profile `substack`                              | map ke `contact_details.other`                          |
+| `sentAgo`, `maskedPreview`                      | derive/format                                           |
+| `tier`, `PROTOCOL_RULES`                        | defer/drop                                              |
+| admin metrics/`flagged`/`inquiries`/`INCIDENTS` | derive/defer dari `reports`                             |
 
 ---
 
@@ -114,7 +144,7 @@ kota, "anchor", bahasa, bio, minat, Instagram, handle chat.
 - **(c)** Hapus umur dari UI. Skema paling sesuai PRD, tapi ada perubahan
   tampilan di 3 halaman.
 
-**Rekomendasi: (a).** **Jawaban: ____________**
+**Rekomendasi: (a).** **Jawaban: locked** (§4).
 
 ---
 
@@ -132,7 +162,7 @@ sama sekali.
 - **(c)** Hapus dari UI.
 
 **Rekomendasi: (a)** — tidak ada kebutuhan filter bahasa di PRD, jadi tidak
-perlu tabel penuh. **Jawaban: ____________**
+perlu tabel penuh. **Jawaban: locked** (§4).
 
 ---
 
@@ -149,9 +179,10 @@ hanya mengumpulkan **satu** bio (maks 160 karakter).
 - **(b)** Dua kolom `bio_en` + `bio_es`; form perlu dua kolom isian (satu EN,
   satu ES).
 
-**Rekomendasi: (a)** — form sudah satu bio, jadi (b) menambah kerja UI. Jika
-kamu merasa tampilan dua-bahasa itu penting untuk produk, pilih (b).
-**Jawaban: ____________**
+**Rekomendasi: (a)** — form sudah satu bio, jadi (b) menambah kerja UI.
+
+> **Keputusan final: (b)** (override "UI menang", §4): `bio_en` + `bio_es` supaya
+> tampilan dua bahasa tetap.
 
 ---
 
@@ -165,7 +196,7 @@ tidak ada di PRD.
 - **(a)** Tambah kolom `origin_flavor` (teks, boleh kosong) — UI tidak berubah.
 - **(b)** Hapus field dari form.
 
-**Rekomendasi: (a)** — satu kolom murah, UI tetap. **Jawaban: ____________**
+**Rekomendasi: (a)** — satu kolom murah, UI tetap. **Jawaban: locked** (§4).
 
 ---
 
@@ -184,7 +215,7 @@ Data koneksi (`connect/data.ts`) bahkan menyebut label `whatsapp` **atau**
   `{ "chat": "..." }`).
 
 **Rekomendasi: (c)** — jujur terhadap makna "chat handle" yang belum pasti.
-**Jawaban: ____________**
+**Jawaban: locked** (§4).
 
 ---
 
@@ -198,7 +229,10 @@ Komentar **di luar cakupan** (tidak ada chat/DM di produk).
 - **(a)** Hapus keduanya dari data + bersihkan `post-card.tsx`.
 - **(b)** Biarkan di UI sebagai elemen kosong permanen.
 
-**Rekomendasi: (a).** **Jawaban: ____________**
+**Rekomendasi: (a).**
+
+> **Keputusan final: (b)** (override "UI menang", §4): UI dibiarkan, tidak ada
+> kolom (dead UI sampai nanti).
 
 ---
 
@@ -215,7 +249,7 @@ inti.
   koneksi, sisanya format tampilan).
 - **(b)** Simpan sebagai kolom.
 
-**Rekomendasi: (a).** **Jawaban: ____________**
+**Rekomendasi: (a).** **Jawaban: locked** (§4).
 
 ---
 
@@ -230,7 +264,7 @@ inti.
 - **(b)** Buat tabel/kolom untuk menyimpannya.
 
 **Rekomendasi: (a)** — belum ada kebutuhan produk; server bisa menghitung angka
-nyata nanti kalau perlu. **Jawaban: ____________**
+nyata nanti kalau perlu. **Jawaban: locked** (§4).
 
 ---
 
@@ -250,7 +284,11 @@ nyata nanti kalau perlu. **Jawaban: ____________**
 
 **Rekomendasi: (a)** — kecuali kamu ingin mempertahankan tampilan
 `neighborhood` (butuh 1 kolom opsional di profil) dan `badge` (butuh kolom
-status). **Jawaban: ____________**
+status).
+
+> **Keputusan final: (b) versi ringan** (override "UI menang", §4): tambah
+> `profiles.neighborhood` + `profiles.badge`; `region`/`connectedSince`/`tags`
+> tetap diturunkan.
 
 ---
 
@@ -267,7 +305,7 @@ Ketersediaan menurut PRD: `in_stock | out_of_stock | made_to_order`.
 - **(b)** Semua jadi enum.
 
 **Rekomendasi: (a)** — kategori lebih mungkin berkembang daripada
-ketersediaan. **Jawaban: ____________**
+ketersediaan. **Jawaban: locked** (§4).
 
 ---
 
@@ -281,7 +319,7 @@ ketersediaan. **Jawaban: ____________**
 - **(a)** Simpan `price_cents`, mata uang tetap **USD** (satu mata uang).
 - **(b)** Dukung banyak mata uang penuh.
 
-**Rekomendasi: (a)** — belum ada kebutuhan multi-currency. **Jawaban: ____________**
+**Rekomendasi: (a)** — belum ada kebutuhan multi-currency. **Jawaban: locked** (§4).
 
 ---
 
@@ -296,7 +334,7 @@ mana pun.
   marketplace).
 - **(b)** Tunda fitur ini secara eksplisit.
 
-**Rekomendasi: (a)** — FR-9.5 berprioritas M (wajib MVP). **Jawaban: ____________**
+**Rekomendasi: (a)** — FR-9.5 berprioritas M (wajib MVP). **Jawaban: locked** (§4).
 
 ---
 
@@ -311,7 +349,7 @@ Artinya API bisa menerima password lebih lemah dari yang diizinkan form.
 **Usulan:** samakan menjadi `minimum_password_length = 8` dan
 `password_requirements = "lower_upper_letters_digits"`.
 
-**Rekomendasi: setuju.** **Jawaban: ____________**
+**Rekomendasi: setuju.** **Jawaban: locked** (§4).
 
 ---
 
@@ -321,7 +359,7 @@ Artinya API bisa menerima password lebih lemah dari yang diizinkan form.
 dapat sesi. Ini cocok dengan default PRD: satu-satunya gerbang adalah persetujuan
 admin. Keputusan ulang ditunda ke saat pindah ke cloud.
 
-**Rekomendasi: terima kondisi lokal sekarang.** **Jawaban: ____________**
+**Rekomendasi: terima kondisi lokal sekarang.** **Jawaban: locked** (§4).
 
 ---
 
@@ -338,7 +376,7 @@ daftar → pending → disetujui" tidak bisa diuji/ditutup end-to-end.
 - **(a)** Buat aksi `reviewPersonaAction` versi minimal di S2.
 - **(b)** Tunda ke S3; S2 mengandalkan akun seed yang sudah approved.
 
-**Rekomendasi: (a).** **Jawaban: ____________**
+**Rekomendasi: (a).** **Jawaban: locked** (§4).
 
 ---
 
@@ -351,7 +389,7 @@ daftar → pending → disetujui" tidak bisa diuji/ditutup end-to-end.
 **Opsi:** masukkan state **rejected** (edit + resubmit) dan **suspended** di S2
 sekarang, atau tunda.
 
-**Rekomendasi: masukkan sekarang.** **Jawaban: ____________**
+**Rekomendasi: masukkan sekarang.** **Jawaban: locked** (§4).
 
 ---
 
@@ -368,7 +406,7 @@ Supabase.
 - **(b)** Pertahankan e2e tanpa stack; auth hanya diuji lewat unit + pgTAP.
 
 **Rekomendasi: (a)** — tes tetap ada untuk dev lokal, CI tidak rusak.
-**Jawaban: ____________**
+**Jawaban: locked** (§4).
 
 ---
 
@@ -377,11 +415,11 @@ Supabase.
 **Fakta:** perlu akun tetap: 1 admin, 1 pending, 1 approved, 1 untuk alur reset.
 Semua "pre-confirmed" supaya tidak perlu email asli.
 
-**Usulan:** `admin@globallinkup.test` / `password123` (boleh diganti). Password
+**Usulan:** `admin@globallinkup.test` / `Password123` (boleh diganti). Password
 akun user seed mengikuti aturan CFG-1 (≥ 8, campuran).
 
 **Rekomendasi: pakai usulan, boleh ganti password.**
-**Jawaban: ____________**
+**Jawaban: locked** (§4).
 
 ---
 

@@ -19,8 +19,9 @@ Umbrella doc for building the backend against the existing mock-driven UI.
 Land one slice green before starting the next.
 
 > **S1 follow-ups:** an audit right after S1 found a **critical** RLS gap in
-> `connections` (self-accept → contact leak) plus a few smaller items. Tracked in
-> [`s1-audit-fixes.md`](./s1-audit-fixes.md); fix before wiring S2 auth.
+> `connections` (self-accept → contact leak) plus a few smaller items. All fixed
+> in `20261016120000_s1_fixes.sql` — see
+> [`s1-audit-fixes.md`](./s1-audit-fixes.md).
 
 > **Branch state:** S0 landed on **`dev` only** — `main` still has no backend
 > commits, because the foundation arrived after the UI work started. The UI
@@ -91,8 +92,9 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=<ANON_KEY>
 SUPABASE_SERVICE_ROLE_KEY=<SERVICE_ROLE_KEY>   # server-only, never NEXT_PUBLIC_
 ```
 
-`.env.example` (tracked, per PRD §9) mirrors this with blank values, plus
-`ADMIN_EMAIL` for the D6 admin bootstrap.
+`.env.example` (tracked, per PRD §9) mirrors this with blank values. It also
+carries `ADMIN_EMAIL`, which is the **cloud** bootstrap hook (D6) — the local
+`supabase/seed.sql` ignores it and always seeds `admin@globallinkup.test`.
 
 ---
 
