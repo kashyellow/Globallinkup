@@ -38,7 +38,9 @@ values
   ('55555555-5555-5555-5555-555555555555', 'lucas.varela@example.com',     'Lucas Varela',       'user',  'approved'),
   ('66666666-6666-6666-6666-666666666666', 'elena.ramos@example.com',      'Elena Ramos',        'user',  'approved'),
   ('77777777-7777-7777-7777-777777777777', 'pending.user@example.com',     'Pending Applicant',  'user',  'pending'),
-  ('88888888-8888-8888-8888-888888888888', 'reset.user@example.com',       'Reset Flow User',    'user',  'approved');
+  ('88888888-8888-8888-8888-888888888888', 'reset.user@example.com',       'Reset Flow User',    'user',  'approved'),
+  ('99999999-9999-9999-9999-999999999999', 'rejected.user@example.com',    'Rejected Applicant', 'user',  'rejected'),
+  ('abababab-abab-abab-abab-abababababab', 'suspended.user@example.com',   'Suspended Member',   'user',  'suspended');
 
 insert into auth.users (
   instance_id,
@@ -50,6 +52,10 @@ insert into auth.users (
   email_confirmed_at,
   raw_app_meta_data,
   raw_user_meta_data,
+  confirmation_token,
+  recovery_token,
+  email_change_token_new,
+  email_change,
   created_at,
   updated_at
 )
@@ -63,6 +69,10 @@ select
   now(),
   '{"provider":"email","providers":["email"]}'::jsonb,
   jsonb_build_object('display_name', u.display_name),
+  '',
+  '',
+  '',
+  '',
   now(),
   now()
 from seed_users u;
@@ -183,6 +193,26 @@ values
     '[{"code":"ES","level":"native"},{"code":"EN","level":"fluent"}]'::jsonb,
     array['literature'],
     null, 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
+  ),
+  (
+    '99999999-9999-9999-9999-999999999999', 'Rejected Applicant', 'PT', 'Lisbon', null,
+    null,
+    'Portrait photo did not meet the review guidelines; ready to resubmit.',
+    'La foto de perfil no cumplía las normas de revisión; listo para reenviar.',
+    null, 'Photographer',
+    '[{"code":"PT","level":"native"},{"code":"EN","level":"fluent"}]'::jsonb,
+    array['photography', 'literature'],
+    null, 'rejected', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
+  ),
+  (
+    'abababab-abab-abab-abab-abababababab', 'Suspended Member', 'MX', 'Guadalajara', null,
+    null,
+    'Account suspended following a community report; awaiting review.',
+    'Cuenta suspendida tras un reporte de la comunidad; en espera de revisión.',
+    null, 'Journalist',
+    '[{"code":"ES","level":"native"},{"code":"EN","level":"advanced"}]'::jsonb,
+    array['documentary'],
+    null, 'suspended', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   );
 
 -- ----------------------------------------------------------------------------
@@ -197,7 +227,9 @@ values
   ('55555555-5555-5555-5555-555555555555', '1994-11-30'),
   ('66666666-6666-6666-6666-666666666666', '1998-08-17'),
   ('77777777-7777-7777-7777-777777777777', '2000-03-03'),
-  ('88888888-8888-8888-8888-888888888888', '1996-05-05');
+  ('88888888-8888-8888-8888-888888888888', '1996-05-05'),
+  ('99999999-9999-9999-9999-999999999999', '1993-09-14'),
+  ('abababab-abab-abab-abab-abababababab', '1991-12-01');
 
 -- ----------------------------------------------------------------------------
 -- Protected contact details (RLS-gated)

@@ -9,7 +9,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(32);
+select plan(34);
 
 -- Fixed ids from the seed.
 --   admin   11111111-…  sofia 22222222-…  mateo 33333333-…
@@ -345,6 +345,26 @@ select isnt_empty(
   'approved user reads published product images'
 );
 reset role;
+
+-- 33. SB-1c: a rejected user can resubmit (rejected -> pending).
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"99999999-9999-9999-9999-999999999999","role":"authenticated"}';
+select lives_ok(
+  $$ update public.profiles set approval_status = 'pending', submitted_at = now()
+     where id = '99999999-9999-9999-9999-999999999999' $$,
+  'rejected user can resubmit'
+);
+
+-- 34. SB-1c: an approved user cannot move themselves back to pending.
+set local request.jwt.claims = '{"sub":"22222222-2222-2222-2222-222222222222","role":"authenticated"}';
+update public.profiles set approval_status = 'pending'
+  where id = '22222222-2222-2222-2222-222222222222';
+reset role;
+select is(
+  (select approval_status::text from public.profiles where id = '22222222-2222-2222-2222-222222222222'),
+  'approved',
+  'approved user cannot move back to pending'
+);
 
 select * from finish();
 
