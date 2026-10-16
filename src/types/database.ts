@@ -27,25 +27,31 @@ export type Database = {
         Row: {
           created_at: string;
           id: string;
+          intro: string | null;
           recipient_id: string;
           requester_id: string;
           status: Database["public"]["Enums"]["connection_status"];
+          topic: string | null;
           updated_at: string;
         };
         Insert: {
           created_at?: string;
           id?: string;
+          intro?: string | null;
           recipient_id: string;
           requester_id: string;
           status?: Database["public"]["Enums"]["connection_status"];
+          topic?: string | null;
           updated_at?: string;
         };
         Update: {
           created_at?: string;
           id?: string;
+          intro?: string | null;
           recipient_id?: string;
           requester_id?: string;
           status?: Database["public"]["Enums"]["connection_status"];
+          topic?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -132,6 +138,7 @@ export type Database = {
       marketplace_products: {
         Row: {
           availability: Database["public"]["Enums"]["product_availability"];
+          badge: string | null;
           category: string;
           contact_information: string | null;
           created_at: string;
@@ -141,11 +148,16 @@ export type Database = {
           id: string;
           is_published: boolean;
           name: string;
+          origin_label: string | null;
           price_cents: number;
+          sku: string | null;
+          specs: NonNullable<Json>;
+          summary: string | null;
           updated_at: string;
         };
         Insert: {
           availability?: Database["public"]["Enums"]["product_availability"];
+          badge?: string | null;
           category: string;
           contact_information?: string | null;
           created_at?: string;
@@ -155,11 +167,16 @@ export type Database = {
           id?: string;
           is_published?: boolean;
           name: string;
+          origin_label?: string | null;
           price_cents?: number;
+          sku?: string | null;
+          specs?: NonNullable<Json>;
+          summary?: string | null;
           updated_at?: string;
         };
         Update: {
           availability?: Database["public"]["Enums"]["product_availability"];
+          badge?: string | null;
           category?: string;
           contact_information?: string | null;
           created_at?: string;
@@ -169,7 +186,11 @@ export type Database = {
           id?: string;
           is_published?: boolean;
           name?: string;
+          origin_label?: string | null;
           price_cents?: number;
+          sku?: string | null;
+          specs?: NonNullable<Json>;
+          summary?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -284,6 +305,32 @@ export type Database = {
           },
         ];
       };
+      profile_private: {
+        Row: {
+          date_of_birth: string | null;
+          profile_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          date_of_birth?: string | null;
+          profile_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          date_of_birth?: string | null;
+          profile_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "profile_private_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: true;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       profiles: {
         Row: {
           approval_status: Database["public"]["Enums"]["approval_status"];
@@ -294,8 +341,8 @@ export type Database = {
           city: string | null;
           country_code: string | null;
           created_at: string;
-          date_of_birth: string | null;
           display_name: string;
+          headline: string | null;
           id: string;
           interests: string[];
           languages: NonNullable<Json>;
@@ -316,8 +363,8 @@ export type Database = {
           city?: string | null;
           country_code?: string | null;
           created_at?: string;
-          date_of_birth?: string | null;
           display_name: string;
+          headline?: string | null;
           id: string;
           interests?: string[];
           languages?: NonNullable<Json>;
@@ -338,8 +385,8 @@ export type Database = {
           city?: string | null;
           country_code?: string | null;
           created_at?: string;
-          date_of_birth?: string | null;
           display_name?: string;
+          headline?: string | null;
           id?: string;
           interests?: string[];
           languages?: NonNullable<Json>;
@@ -440,6 +487,7 @@ export type Database = {
       are_connected: { Args: { a: string; b: string }; Returns: boolean };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_approved: { Args: Record<PropertyKey, never>; Returns: boolean };
+      profile_age: { Args: { p_profile_id: string }; Returns: number };
     };
     Enums: {
       app_role: "user" | "admin";

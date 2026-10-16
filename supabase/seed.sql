@@ -90,14 +90,14 @@ from seed_users u;
 -- Profiles  (admin first: later rows reference it via reviewed_by)
 -- ----------------------------------------------------------------------------
 insert into public.profiles (
-  id, display_name, country_code, city, bio_en, date_of_birth, languages, interests,
+  id, display_name, country_code, city, bio_en, headline, languages, interests,
   approval_status, role, submitted_at, reviewed_at
 )
 values (
   '11111111-1111-1111-1111-111111111111',
   'GlobalLinkup Admin', 'ES', 'Madrid',
   'Platform steward for the GlobalLinkup community.',
-  '1990-01-01',
+  'Platform Steward',
   '[{"code":"ES","level":"native"},{"code":"EN","level":"fluent"}]'::jsonb,
   array[]::text[],
   'approved', 'admin', now(), now()
@@ -105,7 +105,7 @@ values (
 
 insert into public.profiles (
   id, display_name, country_code, city, neighborhood, avatar_url,
-  bio_en, bio_es, origin_flavor, date_of_birth, languages, interests, badge,
+  bio_en, bio_es, origin_flavor, headline, languages, interests, badge,
   approval_status, role, submitted_at, reviewed_at, reviewed_by
 )
 values
@@ -115,7 +115,7 @@ values
     'Architect and ceramicist based in El Born. Passionate about brutalist forms, analog rolls, and mezcal pairings.',
     'Arquitecta y ceramista afincada en El Born. Apasionada de las formas brutalistas, los carretes analógicos y las catas de mezcal.',
     'Gothic Quarter, Barcelona',
-    '1999-04-12',
+    'Architect & Cultural Documentary Filmmaker',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"fluent"}]'::jsonb,
     array['architecture', 'photography', 'espresso'],
     'ambassador', 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
@@ -126,7 +126,7 @@ values
     'Creative director working between CDMX studios and archaeological sites, drawn to street photography and gastronomy.',
     'Director creativo que trabaja entre estudios de la CDMX y sitios arqueológicos, atraído por la fotografía urbana y la gastronomía.',
     'Coyoacán courtyards',
-    '1997-02-08',
+    'Creative Director',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"conversational"}]'::jsonb,
     array['artDirection', 'gastronomy', 'cinema'],
     'ambassador', 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
@@ -137,7 +137,7 @@ values
     'Textile curator documenting hand-loom traditions in the Antioquian highlands.',
     'Curadora textil que documenta las tradiciones del telar en el altiplano antioqueño.',
     'Aburrá Valley',
-    '2001-06-21',
+    'Textile Curator',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"proficient"}]'::jsonb,
     array['textiles', 'hiking', 'botanicals'],
     'ambassador', 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
@@ -148,7 +148,7 @@ values
     'Sound designer and author collecting vinyl and oral histories in Buenos Aires.',
     'Diseñador de sonido y autor que colecciona vinilos e historias orales en Buenos Aires.',
     'Río de la Plata',
-    '1995-11-30',
+    'Sound Designer & Author',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"conversational"}]'::jsonb,
     array['soundArt', 'literature', 'vinyl'],
     'creator', 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
@@ -159,7 +159,7 @@ values
     'Documentary film producer living in Madrid, obsessed with ceramics and independent bookshops.',
     'Productora de documentales afincada en Madrid, obsesionada con la cerámica y las librerías independientes.',
     'Chamberí studios',
-    '1998-08-17',
+    'Documentary Film Producer',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"fluent"},{"code":"FR","level":"basic"}]'::jsonb,
     array['documentary', 'culinaryArts', 'ceramics'],
     'resident', 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
@@ -169,7 +169,7 @@ values
     null,
     'Just arrived and waiting for the review desk to wave me through.',
     'Recién llegado y esperando que la mesa de revisión me dé paso.',
-    null, '2000-03-03',
+    null, 'Photographer',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"basic"}]'::jsonb,
     array['hikingNature'],
     null, 'pending', 'user', now(), null, null
@@ -179,18 +179,32 @@ values
     'avatars/seed/reset.jpg',
     'Account dedicated to exercising the password-recovery flow.',
     'Cuenta dedicada a ejercitar el flujo de recuperación de contraseña.',
-    null, '1996-05-05',
+    null, 'Product Tester',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"fluent"}]'::jsonb,
     array['literature'],
     null, 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   );
 
 -- ----------------------------------------------------------------------------
+-- Private profile data (owner/admin only). Age is derived via profile_age().
+-- ----------------------------------------------------------------------------
+insert into public.profile_private (profile_id, date_of_birth)
+values
+  ('11111111-1111-1111-1111-111111111111', '1990-01-01'),
+  ('22222222-2222-2222-2222-222222222222', '1999-04-12'),
+  ('33333333-3333-3333-3333-333333333333', '1997-02-08'),
+  ('44444444-4444-4444-4444-444444444444', '2001-06-21'),
+  ('55555555-5555-5555-5555-555555555555', '1994-11-30'),
+  ('66666666-6666-6666-6666-666666666666', '1998-08-17'),
+  ('77777777-7777-7777-7777-777777777777', '2000-03-03'),
+  ('88888888-8888-8888-8888-888888888888', '1996-05-05');
+
+-- ----------------------------------------------------------------------------
 -- Protected contact details (RLS-gated)
 -- ----------------------------------------------------------------------------
 insert into public.contact_details (profile_id, whatsapp, instagram, email, other)
 values
-  ('22222222-2222-2222-2222-222222222222', '+34 612 849 201', '@sofia.mtz_bcn', 'sofia@bcncreative.es', '{"chat":"@sofia.bcn"}'::jsonb),
+  ('22222222-2222-2222-2222-222222222222', '+34 612 849 201', '@sofia.mtz_bcn', 'sofia@bcncreative.es', '{"chat":"@sofia.bcn","substack":"sofia.substack.com"}'::jsonb),
   ('33333333-3333-3333-3333-333333333333', '+52 55 4910 8823', '@mateo_silv', 'mateo@silvaestudio.mx', '{"chat":"@mateo.silv"}'::jsonb),
   ('44444444-4444-4444-4444-444444444444', '+57 312 849 2011', '@camila.textiles', 'camila@osorio.co', '{}'::jsonb),
   ('66666666-6666-6666-6666-666666666666', '+34 611 729 334', '@elena_curaduria', 'elena.ramos@curaduria.es', '{}'::jsonb);
@@ -198,11 +212,14 @@ values
 -- ----------------------------------------------------------------------------
 -- Connections — one accepted, one pending inbound, one declined (re-request path)
 -- ----------------------------------------------------------------------------
-insert into public.connections (id, requester_id, recipient_id, status, created_at, updated_at)
+insert into public.connections (id, requester_id, recipient_id, status, intro, topic, created_at, updated_at)
 values
-  ('c0000000-0000-0000-0000-000000000001', '22222222-2222-2222-2222-222222222222', '44444444-4444-4444-4444-444444444444', 'accepted',  now() - interval '40 days', now() - interval '39 days'),
-  ('c0000000-0000-0000-0000-000000000002', '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222', 'requested', now() - interval '2 days',  now() - interval '2 days'),
-  ('c0000000-0000-0000-0000-000000000003', '22222222-2222-2222-2222-222222222222', '55555555-5555-5555-5555-555555555555', 'declined',  now() - interval '30 days', now() - interval '20 days');
+  ('c0000000-0000-0000-0000-000000000001', '22222222-2222-2222-2222-222222222222', '44444444-4444-4444-4444-444444444444', 'accepted',
+   'Hola Camila, me encantaría intercambiar ideas sobre telares y arquitectura textil.', 'textiles', now() - interval '40 days', now() - interval '39 days'),
+  ('c0000000-0000-0000-0000-000000000002', '33333333-3333-3333-3333-333333333333', '22222222-2222-2222-2222-222222222222', 'requested',
+   'Hola Sofia! Loved your dispatch on Madrid brutalism. I lead historic urban walks in CDMX and would love to compare notes.', 'architecture', now() - interval '2 days', now() - interval '2 days'),
+  ('c0000000-0000-0000-0000-000000000003', '22222222-2222-2222-2222-222222222222', '55555555-5555-5555-5555-555555555555', 'declined',
+   'Hi Lucas, would love to talk analog sound and field recording.', 'soundArt', now() - interval '30 days', now() - interval '20 days');
 
 -- ----------------------------------------------------------------------------
 -- Posts + likes
@@ -225,27 +242,45 @@ values
 -- Marketplace catalog (admin-authored; price in minor units, SD-11)
 -- ----------------------------------------------------------------------------
 insert into public.marketplace_products (
-  id, name, price_cents, currency, category, description, availability,
-  contact_information, is_published, created_by
+  id, name, sku, price_cents, currency, category, summary, description,
+  origin_label, badge, specs, availability, contact_information, is_published, created_by
 )
 values
-  ('b0000000-0000-0000-0000-000000000001', 'Handmade Oaxacan Leather Travel Bag', 12000, 'USD', 'artisanCrafts',
+  ('b0000000-0000-0000-0000-000000000001', 'Handmade Oaxacan Leather Travel Bag', 'GL-OAX-882', 12000, 'USD', 'artisanCrafts',
+   'Full-grain vegetable-tanned leather carry-on crafted with a Oaxacan artisan guild.',
    'Full-grain vegetable-tanned leather crafted with the Velásquez artisan guild in Oaxaca.',
+   'Oaxaca, MX', 'artisanPartner',
+   '{"origin":"Oaxaca, Mexico","artisan":"Mateo Velásquez Guild","material":"100% full-grain bovine","dimensions":"52 x 28 x 25 cm (carry-on)","weight":"1.45 kg","fulfillment":"fulfillmentCourier"}'::jsonb,
    'in_stock', 'concierge@globallinkup.com', true, '11111111-1111-1111-1111-111111111111'),
-  ('b0000000-0000-0000-0000-000000000002', 'Artisanal Ceramic Espresso Set (Barcelona)', 6400, 'USD', 'homeLiving',
+  ('b0000000-0000-0000-0000-000000000002', 'Artisanal Ceramic Espresso Set (Barcelona)', 'GL-BCN-410', 6400, 'USD', 'homeLiving',
+   'Pair of matte-glazed terracotta espresso cups fired in Gràcia.',
    'Hand-thrown speckled stoneware fired twice in a Gràcia family atelier.',
+   'Barcelona, ES', 'adminCurated',
+   '{"origin":"Barcelona, Spain","artisan":"Taller Gràcia Ceramics","material":"Speckled stoneware, matte glaze","dimensions":"6 x 6 x 7 cm per cup (set of 2)","weight":"0.62 kg","fulfillment":"fulfillmentCourier"}'::jsonb,
    'in_stock', 'concierge@globallinkup.com', true, '11111111-1111-1111-1111-111111111111'),
-  ('b0000000-0000-0000-0000-000000000003', 'Bilingual Cultural Phrasebook & Journal (EN/ES)', 2400, 'USD', 'booksCulture',
+  ('b0000000-0000-0000-0000-000000000003', 'Bilingual Cultural Phrasebook & Journal (EN/ES)', 'GL-EDT-024', 2400, 'USD', 'booksCulture',
+   'Linen-bound bilingual journal with a copper pen, curated by linguists.',
    'Linen-bound official GlobalLinkup journal paired with a copper pen.',
+   'Official Edition', 'globalLinkupOriginal',
+   '{"origin":"Madrid, Spain","artisan":"GlobalLinkup Editorial Studio","material":"Linen-bound, 120gsm archival paper","dimensions":"21 x 14.8 x 2.1 cm (A5)","weight":"0.48 kg","fulfillment":"fulfillmentPostal"}'::jsonb,
    'in_stock', 'concierge@globallinkup.com', true, '11111111-1111-1111-1111-111111111111'),
-  ('b0000000-0000-0000-0000-000000000004', 'Handwoven Merino Wool Travel Throw', 8800, 'USD', 'artisanCrafts',
+  ('b0000000-0000-0000-0000-000000000004', 'Handwoven Merino Wool Travel Throw', 'GL-MDE-330', 8800, 'USD', 'artisanCrafts',
+   'Ultra-soft lightweight merino loomed in the Antioquian highlands.',
    'Extra-fine merino loomed on wooden looms in the Antioquian highlands.',
+   'Medellín, CO', 'adminVerified',
+   '{"origin":"Medellín, Colombia","artisan":"Tejedoras de Antioquia","material":"100% extra-fine merino wool","dimensions":"180 x 130 cm (rolled 30 cm)","weight":"0.85 kg","fulfillment":"fulfillmentCourier"}'::jsonb,
    'made_to_order', 'concierge@globallinkup.com', true, '11111111-1111-1111-1111-111111111111'),
-  ('b0000000-0000-0000-0000-000000000005', 'Specialty Roasted Chiapas Coffee Beans (500g)', 1900, 'USD', 'localGoods',
+  ('b0000000-0000-0000-0000-000000000005', 'Specialty Roasted Chiapas Coffee Beans (500g)', 'GL-CHP-500', 1900, 'USD', 'localGoods',
+   'Single-origin high-altitude beans with cacao, fig and orange blossom notes.',
    'Single-origin Typica and Bourbon grown at 1,600m by a smallholder collective.',
+   'Chiapas, MX', 'directTrade',
+   '{"origin":"Chiapas, Mexico","artisan":"Finca La Esperanza Collective","material":"Single-origin Typica & Bourbon","dimensions":"500 g valve-sealed kraft bag","weight":"0.52 kg","fulfillment":"fulfillmentCourier"}'::jsonb,
    'in_stock', 'concierge@globallinkup.com', true, '11111111-1111-1111-1111-111111111111'),
-  ('b0000000-0000-0000-0000-000000000006', 'Minimalist Passport & Document Wallet', 4500, 'USD', 'travelGear',
+  ('b0000000-0000-0000-0000-000000000006', 'Minimalist Passport & Document Wallet', 'GL-MAD-118', 4500, 'USD', 'travelGear',
+   'RFID-shielded leather passport wallet cut and stitched in Madrid.',
    'RFID-shielded vegetable-tanned leather wallet cut and stitched in Madrid.',
+   'Madrid, ES', 'adminCurated',
+   '{"origin":"Madrid, Spain","artisan":"Taller Piel Madrid","material":"Full-grain leather, RFID shielding","dimensions":"14 x 10 x 1.8 cm","weight":"0.18 kg","fulfillment":"fulfillmentPostal"}'::jsonb,
    'out_of_stock', 'concierge@globallinkup.com', true, '11111111-1111-1111-1111-111111111111');
 
 insert into public.marketplace_product_images (product_id, storage_path, sort)
