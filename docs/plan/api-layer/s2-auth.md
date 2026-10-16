@@ -2,8 +2,10 @@
 
 Put the real Supabase Auth behind the existing screens and add approval gating.
 
-Back to [README](./README.md). Depends on **S1** (and its §1 decisions — the
-persona write path depends on the final `profiles` shape).
+Back to [README](./README.md). Depends on **S1** — including the audit fixes in
+`20261016120000_s1_fixes.sql` (the profile privilege guard, the connection state
+machine, `profile_private` / `profile_age()`, and the extra columns). The persona
+write path depends on that final shape.
 
 - **Goal:** register / login / logout / password reset work against Supabase; the
   approval state drives what a signed-in user can reach.
@@ -11,12 +13,19 @@ persona write path depends on the final `profiles` shape).
 
 ## 1. Decisions (locked)
 
-| ID   | Question                                                                                                                             | Options                                                                                                                                                         | Status |
-| ---- | ------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
-| SA-1 | Admin review (**approve / reject / suspend**, FR-9.1) appears here only as an "optional" e2e line, and `(app)/admin` is still a mock | (a) include a minimal `reviewPersonaAction` in S2 so the approval gate is testable end-to-end; (b) defer to S3 and let S2 rely on the seed for an approved user | locked |
-| SA-2 | `verify-view.tsx` models three states (`pending`, `approved`, `action`) and lumps `rejected` into "action"                           | Include distinct **rejected** (edit + resubmit, FR-2.5) and **suspended** (FR-2.6 / OQ-14) states in S2, or later?                                              | locked |
-| SA-3 | Auth e2e needs a running, seeded stack, but `playwright.config.ts` boots only `npm run dev` and CI provisions no Supabase            | (a) require `db:start` + `db:reset` and skip auth specs when the stack is down; (b) keep e2e stack-free and cover auth in unit + pgTAP only                     | locked |
-| SA-4 | Repeatable local accounts for the auth e2e (admin / pending / approved / reset)                                                      | depends on the S1 seed credentials (§4 of S1)                                                                                                                   | locked |
+| ID   | Question                                                                                                                             | Options                                                                                                                                                         | Status      |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| SA-1 | Admin review (**approve / reject / suspend**, FR-9.1) appears here only as an "optional" e2e line, and `(app)/admin` is still a mock | (a) include a minimal `reviewPersonaAction` in S2 so the approval gate is testable end-to-end; (b) defer to S3 and let S2 rely on the seed for an approved user | locked      |
+| SA-2 | `verify-view.tsx` models three states (`pending`, `approved`, `action`) and lumps `rejected` into "action"                           | Include distinct **rejected** (edit + resubmit, FR-2.5) and **suspended** (FR-2.6 / OQ-14) states in S2, or later?                                              | locked      |
+| SA-3 | Auth e2e needs a running, seeded stack, but `playwright.config.ts` boots only `npm run dev` and CI provisions no Supabase            | (a) require `db:start` + `db:reset` and skip auth specs when the stack is down; (b) keep e2e stack-free and cover auth in unit + pgTAP only                     | locked      |
+| SA-4 | Repeatable local accounts for the auth e2e (admin / pending / approved / reset)                                                      | depends on the S1 seed credentials (§4 of S1)                                                                                                                   | locked      |
+| SB-1 | **Resubmit (FR-2.5)** is blocked by the profile privilege guard — a non-admin cannot change `approval_status` / `submitted_at`       | (a) service-role in the action; (b) a `security definer` RPC; (c) broaden the guard so the owner may go `rejected → pending` (and refresh `submitted_at`) only  | locked: (c) |
+| SB-2 | The persona form has no date-of-birth input, so `profile_age()` would be null and the discover cards lose the age they render        | (a) add an optional DOB field to the persona form now; (b) defer to S3 and show a blank age                                                                     | locked: (a) |
+| SB-3 | The form collects one bio, but the schema has `bio_en` + `bio_es`                                                                    | (a) write to the column for the active locale (fall back on read); (b) always `bio_en`; (c) write both                                                          | locked: (a) |
+| SB-4 | Auth e2e needs a seeded stack, and `.github/workflows/db.yml` now boots Supabase in CI                                               | (a) tag the auth specs `@auth`, skip when the stack is down, run them in the DB workflow; (b) keep them local-only                                              | locked: (a) |
+
+Locked choices recorded in
+[`api-layer-decisions.md`](./api-layer-decisions.md) §4c.
 
 ## 2. Server actions — `src/features/auth/actions.ts`
 
@@ -34,8 +43,9 @@ persona write path depends on the final `profiles` shape).
   `profiles` (status + role) with an RLS-scoped client to choose the destination:
   no profile → `/create-persona`; `approved` → `/discover`; anything else →
   `/verify`.
-- **`signOutAction` has no call site yet.** Today's `/profile` logout button and
-  the navbar's account control are inert; name the real target in this slice.
+- **`signOutAction` call sites:** the profile logout button
+  (`src/features/profile/components/dossier-header.tsx`, `logout()`) and the
+  navbar account control — both inert today; wire them in this slice.
 - Zod schemas live in `src/lib/validation/` (currently an empty `.gitkeep`), not
   inline, so they can be unit-tested and reused by the forms.
 
@@ -98,21 +108,33 @@ Two non-negotiables the original draft missed:
 - `create-persona-view` marks the photo as `required`, but the avatar upload is
   deferred to **S4**. Relax that copy/validation now; `createPersonaAction` must
   accept `avatar_url = null`.
+- Add an **optional date-of-birth** input (**SB-2**) so `profile_private` /
+  `profile_age()` can feed the age the cards render.
+- The single bio field writes to the **active locale's** column (**SB-3**):
+  `bio_en` for EN, `bio_es` for ES; the other stays null until a dual-bio editor
+  lands. Reads fall back to whichever column is populated (S3).
 
 ## 6. Close the loop
 
-A minimal `createPersonaAction` writes the `profiles` row with
-`approval_status = pending` + `submitted_at` (name, country, city, bio,
-interests). Avatar upload defers to **S4**.
+A minimal `createPersonaAction` requires a session (an anonymous POST must not
+create a row) and writes three rows in one Server Action:
 
-- **Resubmit (FR-2.5)** needs a second path: a `rejected` user edits and
-  resubmits → back to `pending` + new `submitted_at`. The create action always
-  writes `pending`, so resubmit is an update, not a create — decide whether it
-  shares the action or gets its own.
-- `contact_details` (Instagram / chat from the vault) is written alongside the
-  profile, per the **SD-5** decision in S1.
-- `createPersonaAction` must require a session (an anonymous POST must not create
-  a row).
+- `profiles` — `display_name`, `country_code`, `city`, `origin_flavor`,
+  `languages`, `interests`, bio (locale column, SB-3), `approval_status =
+pending`, `submitted_at`. (`headline` / `neighborhood` / `badge` stay null —
+  the form does not collect them yet.)
+- `profile_private` — `date_of_birth` (SB-2, optional).
+- `contact_details` — `instagram` + `other.chat` (SD-5).
+
+Avatar upload defers to **S4** (`avatar_url = null`).
+
+- **Resubmit (FR-2.5), SB-1(c):** broaden `protect_profile_privileges` in a small
+  S2 migration so the owner may move `rejected → pending` and set a fresh
+  `submitted_at` (every other status/role change stays admin-only). Then
+  `resubmitPersonaAction` is a plain RLS-client update — an update, not a create.
+- **`reviewPersonaAction` (SA-1)** runs as the **RLS client** — the
+  `profiles_update_admin` policy plus the guard's admin bypass cover
+  approve/reject/suspend; no service-role needed.
 
 > **SA-1 locked:** include the minimal `reviewPersonaAction` (approve / reject /
 > suspend) in S2, so the approval gate is testable end-to-end instead of
@@ -121,9 +143,10 @@ interests). Avatar upload defers to **S4**.
 
 ## 7. Tests
 
-- e2e: pending user → `/verify`; wrong password → banner; approved user → app;
-  (optional) admin approves a pending user. **Blocked by SA-3** — the suite needs
-  a seeded stack or must skip when it is down.
+- e2e (`@auth`, SB-4(a)): pending user → `/verify`; wrong password → banner;
+  approved user → app; admin approves a pending user; rejected → resubmit →
+  `/verify`. The specs skip when the stack is down, and
+  `.github/workflows/db.yml` runs them after `db:reset` so CI covers the flow.
 - Unit: the Zod schemas in `src/lib/validation/` (`*.test.ts`, beside the
   existing `src/lib/env.test.ts`).
 - RLS: the pgTAP suite already exists (`npm run db:test`, from S1) and covers the
@@ -137,5 +160,5 @@ interests). Avatar upload defers to **S4**.
 - **"Remember device"** — map to cookie `maxAge` (persistent session) or drop?
 - **Rate limiting** (FR-1.8) — rely on Supabase's built-in `[auth.rate_limit]`
   for now (already present in `config.toml`)?
-- Everything in **§1 (SA-1…SA-4)** is locked — see
-  [`api-layer-decisions.md`](./api-layer-decisions.md) §4.
+- Everything in **§1 (SA-1…SA-4, SB-1…SB-4)** is locked — see
+  [`api-layer-decisions.md`](./api-layer-decisions.md) §4/§4c.

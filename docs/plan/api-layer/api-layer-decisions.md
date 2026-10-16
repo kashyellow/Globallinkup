@@ -123,6 +123,17 @@ Kolom/field CA-4 yang dikunci (migrasi susulan `s1_fixes`):
 | `tier`, `PROTOCOL_RULES`                        | defer/drop                                              |
 | admin metrics/`flagged`/`inquiries`/`INCIDENTS` | derive/defer dari `reports`                             |
 
+### 4c. Keputusan S2 (locked 2026-10-16)
+
+Muncul setelah S1 + fix audit (lihat [`s2-auth.md`](./s2-auth.md) §1).
+
+| ID   | Keputusan                                                                                                                         |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------- |
+| SB-1 | **(c)** longgarkan `protect_profile_privileges`: owner boleh `rejected → pending` + `submitted_at` baru; sisanya tetap admin-only |
+| SB-2 | **(a)** tambah input DOB opsional di form persona → `profile_private` / `profile_age()`                                           |
+| SB-3 | **(a)** satu field bio ditulis ke kolom sesuai locale aktif (`bio_en`/`bio_es`), fallback saat baca                               |
+| SB-4 | **(a)** spec auth bertanda `@auth`, skip kalau stack mati, dijalankan di workflow DB                                              |
+
 ---
 
 ## 5. Keputusan S1 — field ↔ kolom database
