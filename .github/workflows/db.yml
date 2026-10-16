@@ -10,12 +10,16 @@ on:
     branches: [main]
     paths:
       - "supabase/**"
+      - "src/**"
+      - "tests/**"
       - "package.json"
       - "package-lock.json"
       - ".github/workflows/db.yml"
   pull_request:
     paths:
       - "supabase/**"
+      - "src/**"
+      - "tests/**"
       - "package.json"
       - "package-lock.json"
       - ".github/workflows/db.yml"
