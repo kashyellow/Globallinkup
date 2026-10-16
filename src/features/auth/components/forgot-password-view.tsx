@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import { Icon } from "@/components/ui/icon";
+import { requestPasswordResetAction } from "@/features/auth/actions";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { RecoveryShell } from "./recovery-shell";
@@ -24,16 +25,15 @@ export function ForgotPasswordView() {
   const emailValid = EMAIL_PATTERN.test(email);
   const showEmailError = submitted && !emailValid;
 
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault();
     setSubmitted(true);
-    if (!emailValid) return;
+    if (!emailValid || submitting) return;
 
     setSubmitting(true);
-    // No auth backend wired up yet — simulate the request and move to the
-    // confirmation step without ever putting the address in the URL.
-    // TODO(auth): supabase.auth.resetPasswordForEmail(email, { redirectTo })
-    setTimeout(() => router.push("/forgot-password/sent"), 900);
+    // Always lands on the confirmation step; the address never enters the URL.
+    const result = await requestPasswordResetAction({ email });
+    router.push(result.redirectTo);
   }
 
   return (

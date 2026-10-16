@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import type { CSSProperties } from "react";
 import { Icon } from "@/components/ui/icon";
+import { signUpAction, type AuthError } from "@/features/auth/actions";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -11,6 +12,14 @@ const PHOTO =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuCyc-MW9quqLnbgdJUAe2h5sHNm-RMIEthJJN7Ym4f3q1zfEVm1_DHttWU_m0EYbKkyuOOIlWtV1bi0fUA6FoBTcFQMURZJV-QwJ8WYDuxjj55Xdx5cp7T8RClqtbyxBQaosO00tgSAN2uIvO_3pMpUgidtUBYAQlbFWROZ1ZJ3ORJu_hkELvpUKhYJvKvzg-rT023jEzm7n9svQFqduY5wNIjziUoVDoOZ2dCcatpOvGn7xCNDG2LZGA";
 
 const EASE = "duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]";
+
+const ERROR_KEYS: Record<AuthError, string> = {
+  emailInUse: "errorEmailInUse",
+  weakPassword: "errorWeakPassword",
+  rateLimited: "errorRateLimited",
+  invalid: "errorGeneric",
+  unknown: "errorGeneric",
+};
 
 const FIELD_BASE =
   "w-full border bg-surface px-space-md font-body-md text-body-md text-on-surface transition-colors placeholder:text-placeholder focus-visible:outline-2 focus-visible:outline-offset-2";
@@ -26,6 +35,8 @@ export function RegisterView() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [serverError, setServerError] = useState<AuthError | null>(null);
 
   const rules = {
     length: password.length >= 8,
@@ -45,13 +56,22 @@ export function RegisterView() {
   const strengthKey =
     passed >= 3 ? "strengthStrong" : passed === 2 ? "strengthMedium" : "strengthWeak";
 
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault();
     setSubmitted(true);
+    setServerError(null);
 
-    if (!formValid) return;
-    // No auth backend yet — continue the onboarding flow.
-    router.push("/create-persona");
+    if (!formValid || submitting) return;
+
+    setSubmitting(true);
+    const result = await signUpAction({ email, password, confirm });
+    if (!result.ok) {
+      setServerError(result.error);
+      setSubmitting(false);
+      return;
+    }
+
+    router.push(result.redirectTo);
   }
 
   return (
@@ -94,6 +114,23 @@ export function RegisterView() {
                     </span>
                     <span className="font-body-sm text-body-sm leading-snug text-secondary">
                       {t("bannerBody")}
+                    </span>
+                  </div>
+                </div>
+              ) : null}
+
+              {serverError ? (
+                <div
+                  role="alert"
+                  className="flex items-start gap-space-sm rounded-2xl border border-danger-border bg-danger-surface p-space-md"
+                >
+                  <Icon name="error_outline" className="mt-0.5 shrink-0 text-lg text-danger-text" />
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-label-lg text-label-lg font-semibold text-danger-text">
+                      {t("bannerTitle")}
+                    </span>
+                    <span className="font-body-sm text-body-sm leading-snug text-secondary">
+                      {t(ERROR_KEYS[serverError])}
                     </span>
                   </div>
                 </div>
@@ -334,14 +371,24 @@ export function RegisterView() {
                 <div className="flex flex-col gap-space-sm pt-space-xs">
                   <button
                     type="submit"
+                    disabled={submitting}
                     className={cn(
                       "flex min-h-12 w-full items-center justify-center gap-space-xs rounded-full bg-primary px-space-md text-center font-label-lg text-label-lg font-semibold text-on-primary transition-colors hover:bg-primary-hover",
                       EASE,
-                      "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+                      "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:pointer-events-none disabled:opacity-70",
                     )}
                   >
-                    <span>{t("submit")}</span>
-                    <Icon name="arrow_forward" className="text-lg" />
+                    {submitting ? (
+                      <>
+                        <span className="h-5 w-5 animate-spin rounded-full border-2 border-on-primary/25 border-t-on-primary motion-reduce:animate-none" />
+                        <span>{t("submitting")}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>{t("submit")}</span>
+                        <Icon name="arrow_forward" className="text-lg" />
+                      </>
+                    )}
                   </button>
                   <div className="pt-space-xs text-center">
                     <p className="font-body-sm text-body-sm text-secondary">

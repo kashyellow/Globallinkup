@@ -661,7 +661,12 @@
       "terms": "Acepto los <terms>Términos del Servicio</terms> y la <privacy>Política de Privacidad</privacy> de GlobalLinkup. Entiendo que la verificación de identidad se completará tras la revisión de mi perfil.",
       "submit": "Crear Cuenta y Continuar",
       "haveAccount": "¿Ya tienes una cuenta registrada?",
-      "logIn": "Inicia sesión / Log in"
+      "logIn": "Inicia sesión / Log in",
+      "submitting": "Creando cuenta…",
+      "errorEmailInUse": "Ese correo ya está registrado. Prueba iniciar sesión.",
+      "errorWeakPassword": "Elige una contraseña más fuerte: 8+ caracteres con mayúscula, minúscula y número.",
+      "errorRateLimited": "Demasiados intentos. Espera un momento e inténtalo de nuevo.",
+      "errorGeneric": "No pudimos crear tu cuenta. Inténtalo de nuevo."
     },
     "verify": {
       "previewLabel": "Vista previa del estado de la cuenta",
@@ -733,7 +738,13 @@
       "metric2Body": "Tiempo medio de revisión",
       "metric3Label": "Contexto Dual",
       "metric3Value": "Bicultural",
-      "metric3Body": "Revisión humana en EN y ES"
+      "metric3Body": "Revisión humana en EN y ES",
+      "state_rejected": "3. Aclaración Necesaria",
+      "state_suspended": "4. Suspendido",
+      "suspendedTitle": "Cuenta Suspendida",
+      "suspendedBadge": "Acceso en pausa",
+      "suspendedBody": "Tu cuenta ha sido suspendida. Si crees que es un error, contacta a la mesa de revisión.",
+      "statusSuspended": "Estado: Cuenta Suspendida"
     },
     "forgotPassword": {
       "step1": "1. Request Link / Solicitar",
@@ -794,7 +805,10 @@
       "requestNewLink": "Solicitar un enlace nuevo",
       "submit": "Update Password / Actualizar Contraseña",
       "submitting": "Actualizando contraseña...",
-      "backToLogin": "Back to Log In / Volver a Iniciar Sesión"
+      "backToLogin": "Back to Log In / Volver a Iniciar Sesión",
+      "errorWeakPassword": "Elige una contraseña más fuerte: 8+ caracteres con mayúscula, minúscula y número.",
+      "errorRateLimited": "Demasiados intentos. Espera un momento e inténtalo de nuevo.",
+      "errorGeneric": "No pudimos actualizar tu contraseña. Solicita un enlace nuevo."
     }
   },
   "PersonaForm": {
@@ -881,7 +895,13 @@
     "chatPlaceholder": "+34 612 345 678",
     "vaultNote": "Guardado con cifrado de clave soberana. Conservas la capacidad de revocar el acceso en cualquier momento.",
     "back": "Volver al Paso 1",
-    "submit": "Enviar a Revisión"
+    "submit": "Enviar a Revisión",
+    "optional": "Opcional",
+    "dobLabel": "Fecha de nacimiento",
+    "dobMeta": "Opcional",
+    "submitting": "Enviando…",
+    "errorInvalid": "Revisa los campos marcados e inténtalo de nuevo.",
+    "errorUnknown": "No pudimos guardar tu perfil. Inténtalo de nuevo."
   },
   "Landing": {
     "hero": {

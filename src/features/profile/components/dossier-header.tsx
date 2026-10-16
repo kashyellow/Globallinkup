@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Reveal } from "@/components/ui/reveal";
 import { Icon } from "@/components/ui/icon";
+import { signOutAction } from "@/features/auth/actions";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { PROFILE_IDENTITY, PROFILE_METRICS, TRUST_SCORE } from "../data";
@@ -76,10 +77,10 @@ export function DossierHeader() {
     }
   }
 
-  function logout() {
-    // No auth backend yet — end the demo session and return to the landing page.
-    // `replace` so the back button cannot return into the signed-in area.
-    router.replace("/");
+  async function logout() {
+    // End the Supabase session; `replace` keeps the back button out of the app.
+    const result = await signOutAction();
+    router.replace(result.redirectTo);
   }
 
   return (

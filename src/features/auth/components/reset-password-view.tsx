@@ -3,28 +3,38 @@
 import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import { Icon } from "@/components/ui/icon";
+import { updatePasswordAction, type AuthError } from "@/features/auth/actions";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { RecoveryShell } from "./recovery-shell";
 
 type LinkState = "valid" | "invalid";
 
+const ERROR_KEYS: Record<AuthError, string> = {
+  emailInUse: "errorGeneric",
+  weakPassword: "errorWeakPassword",
+  rateLimited: "errorRateLimited",
+  invalid: "errorGeneric",
+  unknown: "errorGeneric",
+};
+
 const EASE = "duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]";
 
 const FIELD_BASE =
   "h-11 w-full rounded-full border bg-surface pr-12 pl-11 font-body-md text-body-md text-on-surface transition-colors placeholder:text-placeholder focus-visible:outline-2 focus-visible:outline-offset-2";
 
-export function ResetPasswordView() {
+export function ResetPasswordView({ hasRecoverySession }: { hasRecoverySession: boolean }) {
   const t = useTranslations("Auth.resetPassword");
   const router = useRouter();
 
-  const [linkState, setLinkState] = useState<LinkState>("valid");
+  const [linkState, setLinkState] = useState<LinkState>(hasRecoverySession ? "valid" : "invalid");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [serverError, setServerError] = useState<AuthError | null>(null);
 
   const rules = {
     length: password.length >= 8,
@@ -41,16 +51,21 @@ export function ResetPasswordView() {
   const strengthKey =
     passed >= 3 ? "strengthStrong" : passed === 2 ? "strengthMedium" : "strengthWeak";
 
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault();
     setSubmitted(true);
-    if (!formValid) return;
+    setServerError(null);
+    if (!formValid || submitting) return;
 
     setSubmitting(true);
-    // No auth backend wired up yet — simulate the update, then send the user
-    // back to sign in with their new password.
-    // TODO(auth): supabase.auth.updateUser({ password })
-    setTimeout(() => router.push("/login"), 1000);
+    const result = await updatePasswordAction({ password, confirm });
+    if (!result.ok) {
+      setServerError(result.error);
+      setSubmitting(false);
+      return;
+    }
+
+    router.push(result.redirectTo);
   }
 
   return (
@@ -262,6 +277,18 @@ export function ResetPasswordView() {
                   </span>
                 ) : null}
               </div>
+
+              {serverError ? (
+                <div
+                  role="alert"
+                  className="flex items-start gap-space-sm rounded-2xl border border-danger-border bg-danger-surface p-space-md"
+                >
+                  <Icon name="error_outline" className="mt-0.5 shrink-0 text-lg text-danger-text" />
+                  <span className="font-body-sm text-body-sm text-danger-text">
+                    {t(ERROR_KEYS[serverError])}
+                  </span>
+                </div>
+              ) : null}
 
               <button
                 type="submit"

@@ -2,13 +2,19 @@ import type { ReactNode } from "react";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
+import { requireApprovedUser } from "@/lib/auth";
 
 /**
  * Signed-in application shell: fixed navbar + footer, plus a mobile tab bar
  * below `lg`. The bottom bar overlays content, so `<main>` reserves ~5rem of
  * space for it on phones only — the same reserve the top pill needs via `pt-20`.
+ *
+ * Access is enforced here (server-side): no session → login, no profile →
+ * onboarding, not approved → /verify. The proxy stays optimistic only.
  */
-export default function AppLayout({ children }: { children: ReactNode }) {
+export default async function AppLayout({ children }: { children: ReactNode }) {
+  await requireApprovedUser();
+
   return (
     <>
       <Navbar />

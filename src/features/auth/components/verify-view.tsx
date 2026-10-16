@@ -7,7 +7,9 @@ import { Icon } from "@/components/ui/icon";
 import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
-type VerifyState = "pending" | "approved" | "action";
+export type VerifyState = "pending" | "approved" | "rejected" | "suspended";
+
+const VERIFY_STATES: VerifyState[] = ["pending", "approved", "rejected", "suspended"];
 
 const PORTRAIT =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuChgUiDvARrc_Bw8m37Od2StWpcgREYi9FgPC_NGDUO0m5K2HvD71pDpGV9areRHYo9sXfndYKiosc-UIzCwa09HUk5Wv_-HLhiY_vrHP81qLYhOU_V4N6LvTLlcuccLFPLAEacMrnV4iUaN-izqKRMoMNbRkMMcYKFvuNLizu2SyqeB_sMe1-uzLl5Ez_NpeqZUf16ky1nPh8QnRia9PZ9tUdN2TGF6V9PkS53kNwaoufEwFEJ5N0adA";
@@ -15,14 +17,14 @@ const PORTRAIT =
 const EASE = "duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]";
 
 /**
- * The step-3 medallion doubles as the page's "state preview" trigger in
- * development: the mockups ship three review states and there is no backend
- * yet, so the only way to exercise `approved` / `action` is to click it.
- * In production it is a plain, non-interactive status indicator.
+ * The review screen, driven by the real `approval_status` (S2). It keeps a
+ * dev-only preview strip (the mockups ship every state) but production renders
+ * exactly the state the server passed in.
  */
-export function VerifyView() {
+export function VerifyView({ status }: { status: VerifyState }) {
   const t = useTranslations("Auth.verify");
-  const [state, setState] = useState<VerifyState>("pending");
+  const [preview, setPreview] = useState<VerifyState>(status);
+  const state = preview;
 
   const isDev = process.env.NODE_ENV === "development";
 
@@ -31,13 +33,15 @@ export function VerifyView() {
   const step3 = {
     pending: { icon: "hourglass_top", danger: false },
     approved: { icon: "check", danger: false },
-    action: { icon: "priority_high", danger: true },
+    rejected: { icon: "priority_high", danger: true },
+    suspended: { icon: "block", danger: true },
   }[state];
 
   const statusKey = {
     pending: "statusPending",
     approved: "statusApproved",
-    action: "statusAction",
+    rejected: "statusAction",
+    suspended: "statusSuspended",
   }[state];
 
   const nextSteps = [
@@ -68,6 +72,31 @@ export function VerifyView() {
   return (
     <div className="flex w-full flex-col">
       <div className="mx-auto flex w-full max-w-[1100px] flex-col px-margin-mobile pt-space-md pb-page-mobile lg:px-margin lg:pt-space-xl lg:pb-page">
+        {isDev ? (
+          <div className="mb-space-lg flex w-full flex-wrap items-center gap-space-xs rounded-2xl border border-outline-variant bg-surface-low p-space-sm">
+            <span className="flex items-center gap-space-xs pr-space-xs text-secondary">
+              <Icon name="tune" filled className="text-lg text-primary" />
+              <span className="font-label-md text-label-md">{t("previewLabel")}</span>
+            </span>
+            {VERIFY_STATES.map((key) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setPreview(key)}
+                className={cn(
+                  "rounded-full px-space-sm py-1.5 font-label-md text-label-md transition-colors",
+                  EASE,
+                  state === key
+                    ? "bg-surface-container-high font-semibold text-on-surface"
+                    : "text-secondary hover:text-on-surface",
+                )}
+              >
+                {t(`state_${key}`)}
+              </button>
+            ))}
+          </div>
+        ) : null}
+
         {/* Progress milestone tracker */}
         <nav aria-label={t("progressLabel")} className="mb-space-lg w-full sm:mb-space-xl">
           <div className="relative flex items-start justify-between">
@@ -96,23 +125,7 @@ export function VerifyView() {
             ))}
 
             <div className="relative z-10 flex flex-1 flex-col items-center px-1">
-              {isDev ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => setState(state === "approved" ? "pending" : "approved")}
-                    aria-pressed={state === "approved"}
-                    aria-label={t("previewLabel")}
-                    className="rounded-full transition-transform focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary active:translate-y-px motion-reduce:transform-none"
-                  >
-                    {step3Medallion}
-                  </button>
-                  <span className="sr-only">{t("state_pending")}</span>
-                  <span className="sr-only">{t("state_approved")}</span>
-                </>
-              ) : (
-                step3Medallion
-              )}
+              {step3Medallion}
               <span
                 className={cn(
                   "mt-2 text-center font-label-md text-label-md font-semibold",
@@ -164,8 +177,8 @@ export function VerifyView() {
           </div>
         ) : null}
 
-        {/* Action required banner */}
-        {state === "action" ? (
+        {/* Rejected — clarification / resubmit banner */}
+        {state === "rejected" ? (
           <div className="mb-space-lg w-full bezel-tray">
             <div
               className="flex flex-col items-start justify-between gap-space-md bezel-core p-space-lg md:flex-row md:items-center"
@@ -187,13 +200,42 @@ export function VerifyView() {
                   <p className="mt-1 font-body-md text-body-md text-secondary">{t("actionBody")}</p>
                 </div>
               </div>
-              <button
-                type="button"
+              <Link
+                href="/create-persona"
                 className="inline-flex min-h-12 shrink-0 items-center gap-2 rounded-full bg-primary px-space-lg font-label-lg text-label-lg text-on-primary transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
               >
-                <Icon name="add_a_photo" className="text-lg" />
+                <Icon name="edit_note" className="text-lg" />
                 <span>{t("actionCta")}</span>
-              </button>
+              </Link>
+            </div>
+          </div>
+        ) : null}
+
+        {/* Suspended notice */}
+        {state === "suspended" ? (
+          <div className="mb-space-lg w-full bezel-tray">
+            <div
+              className="flex flex-col items-start gap-space-md bezel-core p-space-lg md:flex-row md:items-center"
+              style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
+            >
+              <div className="flex items-start gap-space-md">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-danger-border bg-danger-surface text-danger-text">
+                  <Icon name="block" className="text-2xl" />
+                </div>
+                <div className="flex flex-col">
+                  <div className="flex flex-wrap items-center gap-space-xs">
+                    <span className="font-headline-sm text-headline-sm font-semibold text-danger-text">
+                      {t("suspendedTitle")}
+                    </span>
+                    <span className="rounded-full border border-danger-border-strong px-space-sm py-0.5 font-label-md text-label-md text-danger-text">
+                      {t("suspendedBadge")}
+                    </span>
+                  </div>
+                  <p className="mt-1 font-body-md text-body-md text-secondary">
+                    {t("suspendedBody")}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         ) : null}

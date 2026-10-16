@@ -661,7 +661,12 @@
       "terms": "I accept GlobalLinkup's <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>. I understand that identity verification completes after my profile is reviewed.",
       "submit": "Create Account & Continue",
       "haveAccount": "Already have an account?",
-      "logIn": "Log in / Inicia sesión"
+      "logIn": "Log in / Inicia sesión",
+      "submitting": "Creating account…",
+      "errorEmailInUse": "That email is already registered. Try signing in instead.",
+      "errorWeakPassword": "Choose a stronger password: 8+ characters with upper, lower and a number.",
+      "errorRateLimited": "Too many attempts. Please wait a moment and try again.",
+      "errorGeneric": "We could not create your account. Please try again."
     },
     "verify": {
       "previewLabel": "Preview Account State",
@@ -733,7 +738,13 @@
       "metric2Body": "Median time to review badge",
       "metric3Label": "Dual Context",
       "metric3Value": "Bicultural",
-      "metric3Body": "Human reviews in both EN & ES"
+      "metric3Body": "Human reviews in both EN & ES",
+      "state_rejected": "3. Clarification Needed",
+      "state_suspended": "4. Suspended",
+      "suspendedTitle": "Account Suspended",
+      "suspendedBadge": "Access paused",
+      "suspendedBody": "Your account has been suspended. If you believe this is a mistake, contact the review desk.",
+      "statusSuspended": "Status: Account Suspended"
     },
     "forgotPassword": {
       "step1": "1. Request Link / Solicitar",
@@ -794,7 +805,10 @@
       "requestNewLink": "Request a new link",
       "submit": "Update Password / Actualizar Contraseña",
       "submitting": "Updating password...",
-      "backToLogin": "Back to Log In / Volver a Iniciar Sesión"
+      "backToLogin": "Back to Log In / Volver a Iniciar Sesión",
+      "errorWeakPassword": "Choose a stronger password: 8+ characters with upper, lower and a number.",
+      "errorRateLimited": "Too many attempts. Please wait a moment and try again.",
+      "errorGeneric": "We could not update your password. Please request a new link."
     }
   },
   "PersonaForm": {
@@ -881,7 +895,13 @@
     "chatPlaceholder": "+34 612 345 678",
     "vaultNote": "Stored with sovereign key encryption. You retain the ability to revoke access at any time.",
     "back": "Back to Step 1",
-    "submit": "Submit Persona for Review"
+    "submit": "Submit Persona for Review",
+    "optional": "Optional",
+    "dobLabel": "Date of birth",
+    "dobMeta": "Optional",
+    "submitting": "Submitting…",
+    "errorInvalid": "Please check the highlighted fields and try again.",
+    "errorUnknown": "We could not save your persona. Please try again."
   },
   "Landing": {
     "hero": {

@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import type { CSSProperties } from "react";
 import { Icon } from "@/components/ui/icon";
+import { signInAction } from "@/features/auth/actions";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -21,22 +22,27 @@ export function LoginView() {
   const t = useTranslations("Auth.login");
   const router = useRouter();
   const [state, setState] = useState<LoginState>("ready");
-  const [email, setEmail] = useState("sofia.martinez@example.com");
-  const [password, setPassword] = useState("CuratedTrust2024");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(true);
 
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault();
 
-    if (!email.includes("@") || password.length < 8) {
+    if (!email.includes("@") || password.length < 1) {
       setState("invalid");
       return;
     }
 
     setState("loading");
-    // No auth backend wired up yet — simulate a successful sign-in and enter the app.
-    setTimeout(() => router.push("/discover"), 1200);
+    const result = await signInAction({ email, password });
+    if (!result.ok) {
+      setState("invalid");
+      return;
+    }
+
+    router.push(result.redirectTo);
   }
 
   const isInvalid = state === "invalid";

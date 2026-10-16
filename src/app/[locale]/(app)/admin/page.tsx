@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { AdminView } from "@/features/admin/components/admin-view";
+import { requireAdmin } from "@/lib/auth";
 
 export async function generateMetadata({
   params,
@@ -12,6 +13,8 @@ export async function generateMetadata({
   return { title: t("title") };
 }
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  await requireAdmin();
+
   return <AdminView />;
 }

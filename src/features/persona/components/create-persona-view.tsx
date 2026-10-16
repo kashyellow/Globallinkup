@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import { Icon } from "@/components/ui/icon";
+import { savePersonaAction, type PersonaError } from "@/features/persona/actions";
 import { useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -33,19 +34,42 @@ const INTERESTS = [
 
 const BIO_MAX = 160;
 
-export function CreatePersonaView() {
+export type PersonaInitial = {
+  fullName: string;
+  country: string;
+  city: string;
+  originFlavor: string;
+  dateOfBirth: string;
+  languages: string[];
+  interests: string[];
+  bio: string;
+  instagram: string;
+  chat: string;
+};
+
+export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
   const t = useTranslations("PersonaForm");
   const router = useRouter();
 
   const [languages, setLanguages] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(LANGUAGES.map((language) => [language.code, language.initial])),
+    Object.fromEntries(
+      LANGUAGES.map((language) => [
+        language.code,
+        initial ? initial.languages.includes(language.code) : language.initial,
+      ]),
+    ),
   );
   const [interests, setInterests] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(INTERESTS.map((interest) => [interest.key, interest.initial])),
+    Object.fromEntries(
+      INTERESTS.map((interest) => [
+        interest.key,
+        initial ? initial.interests.includes(interest.key) : interest.initial,
+      ]),
+    ),
   );
-  const [bio, setBio] = useState(
-    "Architect and ceramicist based in El Born. Passionate about brutalist forms, analog rolls, and mezcal pairings.",
-  );
+  const [bio, setBio] = useState(initial?.bio ?? "");
+  const [error, setError] = useState<PersonaError | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const selectedInterests = Object.values(interests).filter(Boolean).length;
   const canSubmit = selectedInterests >= 3;
@@ -58,11 +82,41 @@ export function CreatePersonaView() {
     setInterests((prev) => ({ ...prev, [key]: !prev[key] }));
   }
 
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!canSubmit) return;
-    // No persona backend yet — continue the onboarding flow.
-    router.push("/verify");
+    if (!canSubmit || submitting) return;
+
+    const formData = new FormData(event.currentTarget);
+    const text = (name: string) => String(formData.get(name) ?? "");
+
+    setError(null);
+    setSubmitting(true);
+
+    const result = await savePersonaAction({
+      fullName: text("fullname"),
+      country: text("country"),
+      city: text("city"),
+      originFlavor: text("origin-flavor"),
+      dateOfBirth: text("date-of-birth"),
+      languages: LANGUAGES.filter((language) => languages[language.code]).map((language) => ({
+        code: language.code,
+        level: language.level,
+      })),
+      interests: INTERESTS.filter((interest) => interests[interest.key]).map(
+        (interest) => interest.key,
+      ),
+      bio,
+      instagram: text("instagram"),
+      chat: text("chat"),
+    });
+
+    // A successful save redirects; only errors return here.
+    if (!result.ok) {
+      setError(result.error);
+      setSubmitting(false);
+      return;
+    }
+    router.push(result.redirectTo);
   }
 
   return (
@@ -190,6 +244,17 @@ export function CreatePersonaView() {
         {/* Form column — leads on mobile */}
         <div className="order-1 flex flex-col gap-space-lg rounded-xl border border-outline-variant bg-surface-container p-space-lg shadow-sm md:gap-space-xl md:p-space-xl lg:order-2 lg:col-span-7">
           <form className="flex flex-col gap-space-lg md:gap-space-xl" onSubmit={submit}>
+            {error ? (
+              <div
+                role="alert"
+                className="flex items-start gap-space-sm rounded-2xl border border-danger-border bg-danger-surface p-space-md"
+              >
+                <Icon name="error_outline" className="mt-0.5 shrink-0 text-lg text-danger-text" />
+                <span className="font-body-sm text-body-sm text-danger-text">
+                  {t(error === "invalid" ? "errorInvalid" : "errorUnknown")}
+                </span>
+              </div>
+            ) : null}
             {/* 1. Profile photo */}
             <section className="flex flex-col gap-space-md">
               <div className="flex items-center justify-between">
@@ -199,8 +264,8 @@ export function CreatePersonaView() {
                   </span>
                   <p className="font-body-sm text-body-sm text-secondary">{t("photoHint")}</p>
                 </div>
-                <span className="rounded-lg border border-admin-border bg-admin-surface px-2 py-0.5 font-label-caps text-label-caps font-bold text-primary uppercase">
-                  {t("required")}
+                <span className="rounded-lg border border-outline-variant bg-surface-variant px-2 py-0.5 font-label-caps text-label-caps font-bold text-secondary uppercase">
+                  {t("optional")}
                 </span>
               </div>
 
@@ -253,7 +318,7 @@ export function CreatePersonaView() {
                     id="persona-fullname"
                     name="fullname"
                     type="text"
-                    defaultValue="Sofia Martínez"
+                    defaultValue={initial?.fullName ?? ""}
                     placeholder={t("fullNamePlaceholder")}
                     className={inputClass}
                   />
@@ -269,7 +334,7 @@ export function CreatePersonaView() {
                   <select
                     id="persona-country"
                     name="country"
-                    defaultValue="ES"
+                    defaultValue={initial?.country ?? "ES"}
                     className={cn(inputClass, "cursor-pointer appearance-none pr-10")}
                   >
                     {COUNTRIES.map((code) => (
@@ -291,7 +356,7 @@ export function CreatePersonaView() {
                     id="persona-city"
                     name="city"
                     type="text"
-                    defaultValue="Barcelona"
+                    defaultValue={initial?.city ?? ""}
                     placeholder={t("cityPlaceholder")}
                     className={inputClass}
                   />
@@ -307,8 +372,19 @@ export function CreatePersonaView() {
                   id="persona-anchor"
                   name="origin-flavor"
                   type="text"
+                  defaultValue={initial?.originFlavor ?? ""}
                   placeholder={t("anchorPlaceholder")}
                   className={inputClass}
+                />
+              </Field>
+
+              <Field label={t("dobLabel")} meta={t("dobMeta")} htmlFor="persona-dob">
+                <input
+                  id="persona-dob"
+                  name="date-of-birth"
+                  type="date"
+                  defaultValue={initial?.dateOfBirth ?? ""}
+                  className={cn(inputClass, "cursor-pointer")}
                 />
               </Field>
             </section>
@@ -452,6 +528,7 @@ export function CreatePersonaView() {
                       id="persona-instagram"
                       name="instagram"
                       type="text"
+                      defaultValue={initial?.instagram ?? ""}
                       placeholder={t("instagramPlaceholder")}
                       className={cn(inputClass, "pl-8")}
                     />
@@ -471,6 +548,7 @@ export function CreatePersonaView() {
                       id="persona-chat"
                       name="chat"
                       type="text"
+                      defaultValue={initial?.chat ?? ""}
                       placeholder={t("chatPlaceholder")}
                       className={cn(inputClass, "pr-10")}
                     />
@@ -499,15 +577,15 @@ export function CreatePersonaView() {
               </button>
               <button
                 type="submit"
-                disabled={!canSubmit}
+                disabled={!canSubmit || submitting}
                 className={cn(
                   "group flex w-full items-center justify-center gap-space-xs rounded-lg px-space-md py-3 text-center font-label-lg text-label-lg font-semibold shadow-md transition-colors sm:w-auto sm:px-space-xl",
-                  canSubmit
+                  canSubmit && !submitting
                     ? "bg-primary-container text-white hover:bg-primary-hover"
                     : "cursor-not-allowed bg-surface-variant text-secondary",
                 )}
               >
-                <span>{t("submit")}</span>
+                <span>{submitting ? t("submitting") : t("submit")}</span>
                 <Icon
                   name="arrow_forward"
                   className="text-[18px] transition-transform duration-200 group-hover:translate-x-1"
