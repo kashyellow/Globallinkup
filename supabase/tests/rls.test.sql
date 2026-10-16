@@ -9,7 +9,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(34);
+select plan(37);
 
 -- Fixed ids from the seed.
 --   admin   11111111-…  sofia 22222222-…  mateo 33333333-…
@@ -83,9 +83,9 @@ reset role;
 -- 8. admin reads every contact_details row (4 seeded).
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated"}';
-select results_eq(
-  $$ select count(*) from public.contact_details $$,
-  $$ values (4::bigint) $$,
+-- Relative so a database mutated by the app (e2e onboarding) does not break it.
+select ok(
+  (select count(*) from public.contact_details) >= 4,
   'admin reads all contact_details'
 );
 reset role;
@@ -365,6 +365,42 @@ select is(
   'approved',
   'approved user cannot move back to pending'
 );
+
+-- 35. F-S2-5: save_persona rejects an unauthenticated caller.
+set local role anon;
+set local request.jwt.claims = '{}';
+select throws_ok(
+  $$ select public.save_persona('X','ES','X',null,'bio text','en','[]'::jsonb,
+       array['architecture','literature','hikingNature'], null, null, null) $$,
+  42501,
+  null,
+  'save_persona rejects anonymous callers'
+);
+reset role;
+
+-- 36. F-S2-5: save_persona resubmits a rejected profile atomically -> pending.
+update public.profiles set approval_status = 'rejected'
+  where id = '99999999-9999-9999-9999-999999999999';
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"99999999-9999-9999-9999-999999999999","role":"authenticated"}';
+select results_eq(
+  $$ select public.save_persona('Rejected Applicant','PT','Lisbon','Alfama','New bio text.','en',
+       '[]'::jsonb, array['architecture','literature','hikingNature'], '1993-09-14', '@x', '@chat')::text $$,
+  $$ values ('pending') $$,
+  'save_persona resubmits a rejected profile to pending'
+);
+reset role;
+
+-- 37. F-S2-5: save_persona keeps an approved profile approved.
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"22222222-2222-2222-2222-222222222222","role":"authenticated"}';
+select results_eq(
+  $$ select public.save_persona('Sofia Martinez','ES','Barcelona','El Born','Updated bio.','en',
+       '[]'::jsonb, array['architecture','literature','hikingNature'], null, '@s', '@c')::text $$,
+  $$ values ('approved') $$,
+  'save_persona keeps an approved profile approved'
+);
+reset role;
 
 select * from finish();
 

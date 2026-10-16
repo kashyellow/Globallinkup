@@ -488,6 +488,22 @@ export type Database = {
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_approved: { Args: Record<PropertyKey, never>; Returns: boolean };
       profile_age: { Args: { p_profile_id: string }; Returns: number };
+      save_persona: {
+        Args: {
+          p_bio?: string;
+          p_bio_locale?: string;
+          p_chat?: string;
+          p_city: string;
+          p_country_code: string;
+          p_date_of_birth?: string;
+          p_display_name: string;
+          p_instagram?: string;
+          p_interests?: string[];
+          p_languages?: Json;
+          p_origin_flavor?: string;
+        };
+        Returns: Database["public"]["Enums"]["approval_status"];
+      };
     };
     Enums: {
       app_role: "user" | "admin";

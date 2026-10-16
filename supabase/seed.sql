@@ -127,7 +127,7 @@ values
     'Gothic Quarter, Barcelona',
     'Architect & Cultural Documentary Filmmaker',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"fluent"}]'::jsonb,
-    array['architecture', 'photography', 'espresso'],
+    array['architecture', 'analogPhotography', 'ceramicsCraft'],
     'ambassador', 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -138,7 +138,7 @@ values
     'Coyoacán courtyards',
     'Creative Director',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"conversational"}]'::jsonb,
-    array['artDirection', 'gastronomy', 'cinema'],
+    array['culinaryHeritage', 'independentCinema', 'architecture'],
     'ambassador', 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -149,7 +149,7 @@ values
     'Aburrá Valley',
     'Textile Curator',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"proficient"}]'::jsonb,
-    array['textiles', 'hiking', 'botanicals'],
+    array['ceramicsCraft', 'hikingNature', 'analogPhotography'],
     'ambassador', 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -160,7 +160,7 @@ values
     'Río de la Plata',
     'Sound Designer & Author',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"conversational"}]'::jsonb,
-    array['soundArt', 'literature', 'vinyl'],
+    array['literature', 'independentCinema', 'analogPhotography'],
     'creator', 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -171,7 +171,7 @@ values
     'Chamberí studios',
     'Documentary Film Producer',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"fluent"},{"code":"FR","level":"basic"}]'::jsonb,
-    array['documentary', 'culinaryArts', 'ceramics'],
+    array['independentCinema', 'culinaryHeritage', 'ceramicsCraft'],
     'resident', 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -181,7 +181,7 @@ values
     'Recién llegado y esperando que la mesa de revisión me dé paso.',
     null, 'Photographer',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"basic"}]'::jsonb,
-    array['hikingNature'],
+    array['hikingNature', 'literature', 'architecture'],
     null, 'pending', 'user', now(), null, null
   ),
   (
@@ -191,7 +191,7 @@ values
     'Cuenta dedicada a ejercitar el flujo de recuperación de contraseña.',
     null, 'Product Tester',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"fluent"}]'::jsonb,
-    array['literature'],
+    array['literature', 'architecture', 'hikingNature'],
     null, 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -201,7 +201,7 @@ values
     'La foto de perfil no cumplía las normas de revisión; listo para reenviar.',
     null, 'Photographer',
     '[{"code":"PT","level":"native"},{"code":"EN","level":"fluent"}]'::jsonb,
-    array['photography', 'literature'],
+    array['analogPhotography', 'literature', 'ceramicsCraft'],
     null, 'rejected', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -211,7 +211,7 @@ values
     'Cuenta suspendida tras un reporte de la comunidad; en espera de revisión.',
     null, 'Journalist',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"advanced"}]'::jsonb,
-    array['documentary'],
+    array['literature', 'independentCinema', 'architecture'],
     null, 'suspended', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   );
 
