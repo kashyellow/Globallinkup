@@ -28,6 +28,8 @@ export const savePersonaSchema = z.object({
   bio: z.string().trim().min(1, "bioRequired").max(160),
   instagram: optionalText(60),
   chat: optionalText(120),
+  /** The active locale, sent by the client (Server Actions have no route). */
+  locale: z.enum(["en", "es"]),
 });
 
 export type SavePersonaInput = z.infer<typeof savePersonaSchema>;

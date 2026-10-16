@@ -1,8 +1,8 @@
 "use server";
 
 import { headers } from "next/headers";
-import { getLocale } from "next-intl/server";
 
+import { getPublicEnv } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import {
   forgotPasswordSchema,
@@ -16,6 +16,9 @@ import {
  * Supabase through the SSR server client (so PKCE verifiers land in cookies).
  * They return a locale-less `redirectTo`; the client pushes it through the
  * locale-aware router. Failures return an error code the view maps to a banner.
+ *
+ * Note: never call next-intl's `getLocale()` here — locale is resolved from
+ * `next/root-params`, which is not available inside a Server Action.
  */
 
 export type AuthError = "invalid" | "emailInUse" | "weakPassword" | "rateLimited" | "unknown";
@@ -45,7 +48,15 @@ function mapAuthError(error: { code?: string; status?: number; message?: string 
   return "unknown";
 }
 
+/**
+ * The canonical origin for absolute links. Prefers the configured
+ * `NEXT_PUBLIC_SITE_URL`; only falls back to request headers in local dev, so a
+ * spoofed host cannot redirect a recovery link off-site (F-S2-10).
+ */
 async function getRequestOrigin() {
+  const siteUrl = getPublicEnv().NEXT_PUBLIC_SITE_URL;
+  if (siteUrl) return siteUrl.replace(/\/+$/, "");
+
   const requestHeaders = await headers();
   const host =
     requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
@@ -105,10 +116,10 @@ export async function requestPasswordResetAction(
   // address exists, and never put it in the URL (PR-6).
   if (parsed.success) {
     try {
-      const locale = await getLocale();
+      const { email, locale } = parsed.data;
       const origin = await getRequestOrigin();
       const supabase = await createClient();
-      await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+      await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${origin}/${locale}/auth/callback?next=/${locale}/reset-password`,
       });
     } catch {
@@ -127,5 +138,7 @@ export async function updatePasswordAction(input: unknown): Promise<AuthResult> 
   const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
   if (error) return { ok: false, error: mapAuthError(error) };
 
+  // End the recovery session so the user signs in fresh with the new password.
+  await supabase.auth.signOut();
   return { ok: true, redirectTo: "/login" };
 }

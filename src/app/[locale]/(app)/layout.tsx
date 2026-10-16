@@ -13,11 +13,11 @@ import { requireApprovedUser } from "@/lib/auth";
  * onboarding, not approved → /verify. The proxy stays optimistic only.
  */
 export default async function AppLayout({ children }: { children: ReactNode }) {
-  await requireApprovedUser();
+  const { profile } = await requireApprovedUser();
 
   return (
     <>
-      <Navbar />
+      <Navbar isAdmin={profile.role === "admin"} />
       <main className="min-h-[100dvh] w-full flex-1 bg-background pt-20">{children}</main>
       {/*
        * The fixed mobile tab bar overlays whatever sits at the very bottom of

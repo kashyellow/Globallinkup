@@ -18,7 +18,7 @@ const NAV_ITEMS = [
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
-export function Navbar() {
+export function Navbar({ isAdmin = false }: { isAdmin?: boolean }) {
   const t = useTranslations("Nav");
   const pathname = usePathname();
   const router = useRouter();
@@ -115,12 +115,14 @@ export function Navbar() {
             ))}
           </div>
 
-          <Link
-            href="/admin"
-            className="hidden min-h-9 items-center rounded-full px-3 font-label-lg text-label-lg font-medium text-secondary transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:inline-flex"
-          >
-            {t("adminPortal")}
-          </Link>
+          {isAdmin ? (
+            <Link
+              href="/admin"
+              className="hidden min-h-9 items-center rounded-full px-3 font-label-lg text-label-lg font-medium text-secondary transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:inline-flex"
+            >
+              {t("adminPortal")}
+            </Link>
+          ) : null}
 
           <Link
             href="/profile"
@@ -199,14 +201,16 @@ export function Navbar() {
               src={CURRENT_USER.avatarUrl}
             />
           </Link>
-          <Link
-            href="/admin"
-            onClick={() => setMenuOpen(false)}
-            tabIndex={menuOpen ? undefined : -1}
-            className="flex min-h-12 items-center justify-between rounded-[0.75rem] px-3 py-2.5 font-label-lg text-label-lg text-secondary transition-colors duration-200 hover:bg-surface-container hover:text-on-surface"
-          >
-            {t("adminPortal")}
-          </Link>
+          {isAdmin ? (
+            <Link
+              href="/admin"
+              onClick={() => setMenuOpen(false)}
+              tabIndex={menuOpen ? undefined : -1}
+              className="flex min-h-12 items-center justify-between rounded-[0.75rem] px-3 py-2.5 font-label-lg text-label-lg text-secondary transition-colors duration-200 hover:bg-surface-container hover:text-on-surface"
+            >
+              {t("adminPortal")}
+            </Link>
+          ) : null}
           <div className="my-1 h-px bg-outline-variant" />
 
           {/*

@@ -64,14 +64,19 @@ export function RegisterView() {
     if (!formValid || submitting) return;
 
     setSubmitting(true);
-    const result = await signUpAction({ email, password, confirm });
-    if (!result.ok) {
-      setServerError(result.error);
-      setSubmitting(false);
-      return;
-    }
+    try {
+      const result = await signUpAction({ email, password, confirm });
+      if (!result.ok) {
+        setServerError(result.error);
+        setSubmitting(false);
+        return;
+      }
 
-    router.push(result.redirectTo);
+      router.push(result.redirectTo);
+    } catch {
+      setServerError("unknown");
+      setSubmitting(false);
+    }
   }
 
   return (

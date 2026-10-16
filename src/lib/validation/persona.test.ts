@@ -13,6 +13,7 @@ const valid = {
   bio: "Architect and ceramicist based in El Born.",
   instagram: "@sofia.mtz_bcn",
   chat: "@sofia.bcn",
+  locale: "en",
 };
 
 describe("savePersonaSchema", () => {

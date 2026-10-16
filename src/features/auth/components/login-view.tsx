@@ -36,13 +36,17 @@ export function LoginView() {
     }
 
     setState("loading");
-    const result = await signInAction({ email, password });
-    if (!result.ok) {
-      setState("invalid");
-      return;
-    }
+    try {
+      const result = await signInAction({ email, password });
+      if (!result.ok) {
+        setState("invalid");
+        return;
+      }
 
-    router.push(result.redirectTo);
+      router.push(result.redirectTo);
+    } catch {
+      setState("invalid");
+    }
   }
 
   const isInvalid = state === "invalid";

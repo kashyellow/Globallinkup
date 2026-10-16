@@ -22,5 +22,22 @@ export default async function VerifyPage() {
   const profile = await getCurrentProfile();
   const status: VerifyState = profile?.approval_status ?? "pending";
 
-  return <VerifyView status={status} />;
+  const languages = Array.isArray(profile?.languages)
+    ? (profile?.languages as { code?: string }[])
+        .map((entry) => entry?.code ?? "")
+        .filter((code) => code.length > 0)
+    : [];
+  const location = [profile?.city, profile?.country_code].filter(Boolean).join(", ");
+
+  return (
+    <VerifyView
+      status={status}
+      persona={{
+        displayName: profile?.display_name ?? "",
+        location,
+        languages,
+        interests: profile?.interests ?? [],
+      }}
+    />
+  );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import { Icon } from "@/components/ui/icon";
 import { savePersonaAction, type PersonaError } from "@/features/persona/actions";
@@ -12,7 +12,7 @@ const PLATE =
 const AVATAR =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuCMXczYpS-catSoQN-hNs5jsU_y4sLr8O0tGkXJgT9UiAWX23iVLug4IYUcxCAUkV8jYSVpk3iOteWmSMHrhPcibIMXftgyJOAMaDmuZ91OR7EWgfv4s5qe46dBfK8flssnEhfYi6y9jeomecYsYsw4FU7wssoHt6hl4sIkBjyWbxiUXgRSU_LB4D1OF9ir9cpmunNHI9Zp552qpDollKo_1_zkU45r_9ZhutGTnBHUeyL87hJwL9dONw";
 
-const COUNTRIES = ["ES", "MX", "CO", "AR", "US", "CR", "CL", "PE"] as const;
+const COUNTRIES = ["ES", "MX", "CO", "AR", "US", "CR", "CL", "PE", "PT"] as const;
 
 const LANGUAGES = [
   { code: "ES", level: "native", initial: true },
@@ -49,6 +49,7 @@ export type PersonaInitial = {
 
 export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
   const t = useTranslations("PersonaForm");
+  const locale = useLocale();
   const router = useRouter();
 
   const [languages, setLanguages] = useState<Record<string, boolean>>(() =>
@@ -92,31 +93,38 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
     setError(null);
     setSubmitting(true);
 
-    const result = await savePersonaAction({
-      fullName: text("fullname"),
-      country: text("country"),
-      city: text("city"),
-      originFlavor: text("origin-flavor"),
-      dateOfBirth: text("date-of-birth"),
-      languages: LANGUAGES.filter((language) => languages[language.code]).map((language) => ({
-        code: language.code,
-        level: language.level,
-      })),
-      interests: INTERESTS.filter((interest) => interests[interest.key]).map(
-        (interest) => interest.key,
-      ),
-      bio,
-      instagram: text("instagram"),
-      chat: text("chat"),
-    });
+    try {
+      const result = await savePersonaAction({
+        fullName: text("fullname"),
+        country: text("country"),
+        city: text("city"),
+        originFlavor: text("origin-flavor"),
+        dateOfBirth: text("date-of-birth"),
+        languages: LANGUAGES.filter((language) => languages[language.code]).map((language) => ({
+          code: language.code,
+          level: language.level,
+        })),
+        interests: INTERESTS.filter((interest) => interests[interest.key]).map(
+          (interest) => interest.key,
+        ),
+        bio,
+        instagram: text("instagram"),
+        chat: text("chat"),
+        locale,
+      });
 
-    // A successful save redirects; only errors return here.
-    if (!result.ok) {
-      setError(result.error);
+      // A successful save redirects; only errors return here.
+      if (!result.ok) {
+        setError(result.error);
+        setSubmitting(false);
+        return;
+      }
+      router.push(result.redirectTo);
+    } catch {
+      // A failed Server Action must not leave the form stuck.
+      setError("unknown");
       setSubmitting(false);
-      return;
     }
-    router.push(result.redirectTo);
   }
 
   return (

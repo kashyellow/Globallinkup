@@ -33,6 +33,8 @@ export const signInSchema = z.object({
 
 export const forgotPasswordSchema = z.object({
   email: emailSchema,
+  /** The active locale, sent by the client (Server Actions have no route). */
+  locale: z.enum(["en", "es"]),
 });
 
 export const resetPasswordSchema = z

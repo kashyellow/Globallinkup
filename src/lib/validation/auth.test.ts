@@ -37,8 +37,8 @@ describe("signInSchema", () => {
 
 describe("forgotPasswordSchema", () => {
   it("validates the email shape", () => {
-    expect(forgotPasswordSchema.safeParse({ email: "a@b.co" }).success).toBe(true);
-    expect(forgotPasswordSchema.safeParse({ email: "nope" }).success).toBe(false);
+    expect(forgotPasswordSchema.safeParse({ email: "a@b.co", locale: "en" }).success).toBe(true);
+    expect(forgotPasswordSchema.safeParse({ email: "nope", locale: "en" }).success).toBe(false);
   });
 });
 

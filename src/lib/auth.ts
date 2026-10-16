@@ -12,6 +12,11 @@ import type { Database } from "@/types/database";
  * if Supabase is unconfigured or unreachable (CI, a dev without `.env.local`),
  * it is treated as "no session" and the caller is redirected to login — never a
  * 500. `cache()` dedupes the work across a layout and the page beneath it.
+ *
+ * IMPORTANT: `requireApprovedUser` / `requireAdmin` call next-intl's
+ * `getLocale()`, which resolves through `next/root-params` — available in routes
+ * only. **Never call these from a Server Action**; check the profile directly
+ * there instead (see `reviewPersonaAction`).
  */
 
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];

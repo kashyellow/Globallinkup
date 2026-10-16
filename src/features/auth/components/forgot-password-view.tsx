@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import { Icon } from "@/components/ui/icon";
 import { requestPasswordResetAction } from "@/features/auth/actions";
@@ -17,6 +17,7 @@ const FIELD_BASE =
 
 export function ForgotPasswordView() {
   const t = useTranslations("Auth.forgotPassword");
+  const locale = useLocale();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -31,9 +32,13 @@ export function ForgotPasswordView() {
     if (!emailValid || submitting) return;
 
     setSubmitting(true);
-    // Always lands on the confirmation step; the address never enters the URL.
-    const result = await requestPasswordResetAction({ email });
-    router.push(result.redirectTo);
+    try {
+      // Always lands on the confirmation step; the address never enters the URL.
+      const result = await requestPasswordResetAction({ email, locale });
+      router.push(result.redirectTo);
+    } catch {
+      setSubmitting(false);
+    }
   }
 
   return (

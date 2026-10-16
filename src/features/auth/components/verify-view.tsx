@@ -21,8 +21,16 @@ const EASE = "duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]";
  * dev-only preview strip (the mockups ship every state) but production renders
  * exactly the state the server passed in.
  */
-export function VerifyView({ status }: { status: VerifyState }) {
+export type VerifyPersona = {
+  displayName: string;
+  location: string;
+  languages: string[];
+  interests: string[];
+};
+
+export function VerifyView({ status, persona }: { status: VerifyState; persona: VerifyPersona }) {
   const t = useTranslations("Auth.verify");
+  const tPersona = useTranslations("PersonaForm");
   const [preview, setPreview] = useState<VerifyState>(status);
   const state = preview;
 
@@ -407,27 +415,29 @@ export function VerifyView({ status }: { status: VerifyState }) {
                     <div>
                       <div className="flex flex-wrap items-center gap-space-xs">
                         <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
-                          {t("name")}
+                          {persona.displayName}
                         </h2>
                         <span className="font-label-md text-label-md text-secondary">
-                          {t("location")}
+                          {persona.location}
                         </span>
                       </div>
                       <div className="mt-1 flex flex-wrap items-center gap-2">
-                        <span className="rounded-full border border-outline-variant bg-surface-container-high px-space-sm py-0.5 font-label-md text-label-md font-semibold text-on-surface">
-                          {t("langEs")}
-                        </span>
-                        <span className="rounded-full border border-outline-variant bg-surface-container-high px-space-sm py-0.5 font-label-md text-label-md text-secondary">
-                          {t("langEn")}
-                        </span>
+                        {persona.languages.slice(0, 3).map((code) => (
+                          <span
+                            key={code}
+                            className="rounded-full border border-outline-variant bg-surface-container-high px-space-sm py-0.5 font-label-md text-label-md font-semibold text-on-surface"
+                          >
+                            {code}
+                          </span>
+                        ))}
                       </div>
                       <div className="mt-space-sm flex flex-wrap gap-1.5">
-                        {[1, 2, 3].map((n) => (
+                        {persona.interests.slice(0, 4).map((key) => (
                           <span
-                            key={n}
+                            key={key}
                             className="rounded-full border border-outline-variant bg-surface-container-high px-space-sm py-1 font-label-md text-label-md text-secondary"
                           >
-                            {t(`interest${n}`)}
+                            {tPersona.has(`interests.${key}`) ? tPersona(`interests.${key}`) : key}
                           </span>
                         ))}
                       </div>
@@ -506,13 +516,15 @@ export function VerifyView({ status }: { status: VerifyState }) {
 
               {/* Action bar */}
               <div className="flex w-full flex-col items-center justify-center gap-space-md sm:flex-row">
-                <Link
-                  href="/discover"
-                  className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-primary px-space-lg font-label-lg text-label-lg text-on-primary transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px sm:w-auto"
-                >
-                  <span>{t("exploreStories")}</span>
-                  <Icon name="auto_stories" className="text-lg" />
-                </Link>
+                {state === "approved" ? (
+                  <Link
+                    href="/discover"
+                    className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-primary px-space-lg font-label-lg text-label-lg text-on-primary transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px sm:w-auto"
+                  >
+                    <span>{t("exploreStories")}</span>
+                    <Icon name="auto_stories" className="text-lg" />
+                  </Link>
+                ) : null}
                 <Link
                   href="/create-persona"
                   className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-outline-variant bg-surface-container px-space-lg font-label-lg text-label-lg text-on-surface transition-colors hover:border-outline-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px sm:w-auto"
