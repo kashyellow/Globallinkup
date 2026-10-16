@@ -1,0 +1,41 @@
+name: DB (RLS)
+
+# The pgTAP suite in supabase/tests is the security backstop for the RLS rules,
+# so it has to run in CI — a local-only suite is how a contact-leaking policy
+# shipped in S1. Kept in its own workflow with a path filter so unrelated PRs
+# don't pay for booting Supabase.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "supabase/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/db.yml"
+  pull_request:
+    paths:
+      - "supabase/**"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/db.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rls:
+    name: RLS (pgTAP)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.119.0
+      - name: Start Supabase
+        run: supabase start
+      - name: Apply migrations and seed
+        run: supabase db reset
+      - name: Run the RLS suite
+        run: supabase test db
