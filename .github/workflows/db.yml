@@ -39,3 +39,12 @@ jobs:
         run: supabase db reset
       - name: Run the RLS suite
         run: supabase test db
+      - name: Write .env.local for the app
+        run: |
+          eval "$(supabase status -o env | sed 's/^/export /')"
+          printf 'NEXT_PUBLIC_SUPABASE_URL=%s\nNEXT_PUBLIC_SUPABASE_ANON_KEY=%s\nSUPABASE_SERVICE_ROLE_KEY=%s\n' \
+            "$API_URL" "$ANON_KEY" "$SERVICE_ROLE_KEY" > .env.local
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Auth e2e (@auth)
+        run: AUTH_E2E=1 npx playwright test tests/e2e/auth.spec.ts
