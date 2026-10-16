@@ -43,7 +43,8 @@ npm run db:start     # local Supabase (545xx; see docs/plan/api-layer/README.md)
 npm run db:stop
 npm run db:status    # add `-- -o env` for the local URL + keys
 npm run db:reset     # re-apply migrations + seed
-npm run db:types     # regenerate src/types/database.ts
+npm run db:test      # RLS suite (pgTAP, supabase/tests/)
+npm run db:types     # regenerate src/types/database.ts (then Prettier)
 ```
 
 Prefer the local tooling; the repo uses npm, not pnpm.

@@ -1,12 +1,13 @@
 # GlobalLinkup — Daftar keputusan API layer (S1 & S2)
 
 Dokumen ini dibuat supaya **orang lain bisa ikut membantu menjawab**. Tidak perlu
-paham seluruh kode; cukup baca konteks singkat + glosarium di bawah, lalu isi
-kolom **Jawaban** pada tiap item.
+paham seluruh kode; cukup baca konteks singkat + glosarium di bawah.
 
-Status: **belum ada yang diputuskan.** Tandai pilihanmu (mis. `1-a`, `3-c`,
-`10-terima rekomendasi`) dan kirim balik. Kalau bingung, lihat kolom
-**Rekomendasi** — sah untuk sekadar bilang "semua ikut rekomendasi, kecuali …".
+Status: **TERKUNCI (2026-10-16).** Semua item mengikuti **Rekomendasi**, kecuali
+**SD-3, SD-6, SD-9** yang dioverride dengan prinsip "**UI menang**": elemen UI
+yang sudah disukai klien tidak diubah, skema yang menyesuaikan (walau di luar
+PRD). Pilihan final ada di tabel §4; kolom **Jawaban** pada tiap item tidak perlu
+diisi lagi.
 
 ---
 
@@ -66,27 +67,31 @@ keamanan/seeder, jadi semua kolom "lahir" di sini.
 
 ---
 
-## 4. Ringkasan cepat (untuk yang mau jawab cepat)
+## 4. Keputusan final (locked)
 
-| ID    | Singkat                                             | Rekomendasi                   |
-| ----- | --------------------------------------------------- | ----------------------------- |
-| SD-1  | Field `age` — dari mana?                            | (a) date_of_birth + derive    |
-| SD-2  | Daftar bahasa per orang                             | (a) kolom `languages jsonb`   |
-| SD-3  | Bio dua bahasa vs satu bio                          | (a) satu `bio`                |
-| SD-4  | Field "anchor / origin flavour"                     | (a) kolom `origin_flavor`     |
-| SD-5  | Handle chat di contact vault                        | (c) instagram + `other` json  |
-| SD-6  | `notes` + jumlah komentar di post                   | (a) hapus (komentar OOS)      |
-| SD-7  | Badge/role/state di post                            | (a) tanpa kolom, derive       |
-| SD-8  | Chrome dossier (ID, trust score, metrik)            | (a) mock saja, tidak disimpan |
-| SD-9  | Extra di kartu koneksi (neighborhood, badge, dll)   | (a) derive/format             |
-| SD-10 | Kategori + ketersediaan produk                      | enum + check constraint       |
-| SD-11 | Harga & mata uang                                   | (a) `price_cents`, USD tetap  |
-| SD-12 | Halaman Admin → Settings                            | (a) tabel `platform_settings` |
-| CFG   | Aturan panjang password di Supabase vs di form      | selaraskan ke 8 + campuran    |
-| SA-1  | Aksi admin approve/reject/suspend dimasukkan di S2? | (a) ya, versi minimal         |
-| SA-2  | State akun "rejected" & "suspended" di S2?          | ya, sekarang                  |
-| SA-3  | Strategi tes auth (butuh DB jalan)                  | skip kalau stack mati         |
-| SA-4  | Akun contoh untuk tes                               | pakai daftar usulan           |
+| ID    | Keputusan final                                                                                                       |
+| ----- | --------------------------------------------------------------------------------------------------------------------- |
+| SD-1  | `profiles.date_of_birth date`; umur diturunkan. Input tanggal di form persona menyusul (S3).                          |
+| SD-2  | `profiles.languages jsonb` `[{code, level}]`                                                                          |
+| SD-3  | **(override UI-first)** `bio_en` + `bio_es` — tampilan bio dua bahasa tetap                                           |
+| SD-4  | `profiles.origin_flavor text`                                                                                         |
+| SD-5  | `contact_details.instagram` + `other jsonb` `{chat}`                                                                  |
+| SD-6  | **(override UI-first)** UI `notes`/`hasComment` dibiarkan apa adanya; tidak ada kolom (dead UI sampai nanti)          |
+| SD-7  | Tanpa kolom; `state` diturunkan, `badgeIcon`/`roleText` format-only                                                   |
+| SD-8  | Mock-only; tidak dipersist                                                                                            |
+| SD-9  | **(override UI-first)** `profiles.neighborhood` + `profiles.badge`; `region`/`connectedSince`/`tags` tetap diturunkan |
+| SD-10 | `availability` enum (`in_stock\|out_of_stock\|made_to_order`); `category` text + check 5 nilai                        |
+| SD-11 | `price_cents int` + `currency` tetap `USD`                                                                            |
+| SD-12 | Tabel `platform_settings`                                                                                             |
+| CFG-1 | `minimum_password_length = 8` + `password_requirements = "lower_upper_letters_digits"`                                |
+| CFG-2 | `enable_confirmations = false` diterima untuk lokal                                                                   |
+| SA-1  | `reviewPersonaAction` minimal masuk S2                                                                                |
+| SA-2  | State `rejected` + `suspended` masuk S2                                                                               |
+| SA-3  | e2e butuh `db:start` + `db:reset`; spec auth di-skip kalau stack mati; CI tetap stack-free                            |
+| SA-4  | Seed akun tetap (admin/pending/approved/reset); password `Password123` (menyesuaikan CFG-1)                           |
+
+Wujudnya di S1: `supabase/migrations/20261016000000_initial_schema.sql`,
+`supabase/seed.sql`, dan `supabase/tests/rls.test.sql` (17 tes pgTAP).
 
 ---
 

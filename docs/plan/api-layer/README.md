@@ -11,12 +11,17 @@ Umbrella doc for building the backend against the existing mock-driven UI.
 | Slice | What                                                                 | Status                 | Doc                                              |
 | ----- | -------------------------------------------------------------------- | ---------------------- | ------------------------------------------------ |
 | S0    | Foundation: config, clients, env, proxy, types                       | ✅ complete 2026-10-13 | [s0-foundation.md](./s0-foundation.md)           |
-| S1    | Schema, RLS & seed                                                   | planned                | [s1-schema-rls-seed.md](./s1-schema-rls-seed.md) |
+| S1    | Schema, RLS & seed                                                   | ✅ complete 2026-10-16 | [s1-schema-rls-seed.md](./s1-schema-rls-seed.md) |
 | S2    | Auth wired end-to-end                                                | planned                | [s2-auth.md](./s2-auth.md)                       |
 | S3+   | Per pillar: discover/persona → connect → posts → marketplace → admin | deferred               | —                                                |
 | S4    | Storage: buckets + upload Server Action                              | deferred               | —                                                |
 
 Land one slice green before starting the next.
+
+> **Branch state:** S0 landed on **`dev` only** — `main` still has no backend
+> commits, because the foundation arrived after the UI work started. The UI
+> commits are content-identical on both branches, so moving the API layer to
+> `main` adds only the backend files.
 
 ---
 
@@ -65,7 +70,9 @@ Optional resource trims (safe — we use neither): `[edge_runtime] enabled = fal
 "db:reset":  "supabase db reset",          // re-apply migrations + seed
 "db:diff":   "supabase db diff",
 "db:push":   "supabase db push",           // cloud
+"db:test":   "supabase test db",           // RLS suite (pgTAP, supabase/tests)
 "db:types":  "supabase gen types typescript --local > src/types/database.ts"
+             // then Prettier formats the generated file
 ```
 
 ---
@@ -150,4 +157,20 @@ function while the UI stays green on fixtures.
 
 - ✅ `docs/CONTEXT.md` — `db:*` scripts + 545xx port note.
 - ✅ `AGENTS.md` — `db:*` commands.
+- ✅ `api-layer-decisions.md` — the S1/S2 decision record (locked 2026-10-16).
 - ⬜ `docs/adr/` — ADR for the RSC + Server Actions + RLS seam (D2 in practice).
+
+---
+
+## 8. Decisions queue — resolved (2026-10-16)
+
+The UI ran ahead of the plan: it renders/collects fields with no schema home
+(S1), and two auth flows had no server-side owner (S2). All of it is now decided
+— every item follows the plan doc's **Rekomendasi**, except **SD-3, SD-6, SD-9**
+which were overridden to keep the existing UI unchanged ("UI menang") and bend
+the schema instead (may go beyond the PRD).
+
+- `api-layer-decisions.md` §4 — the locked SD-1 … SD-12, CFG-1/2 and SA-1 … SA-4.
+- `s1-schema-rls-seed.md` §1/§2 — field ↔ column choices, now implemented in
+  `supabase/migrations/20261016000000_initial_schema.sql`.
+- `s2-auth.md` §1 — SA-1 … SA-4 locked for the next slice.
