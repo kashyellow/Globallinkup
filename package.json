@@ -24,7 +24,8 @@
     "db:reset": "supabase db reset",
     "db:diff": "supabase db diff",
     "db:push": "supabase db push",
-    "db:types": "supabase gen types typescript --local > src/types/database.ts",
+    "db:test": "supabase test db",
+    "db:types": "supabase gen types typescript --local > src/types/database.ts && prettier --write src/types/database.ts",
     "commitlint": "commitlint --edit",
     "prepare": "husky",
     "deploy": "./scripts/deploy.sh"
