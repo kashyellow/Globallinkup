@@ -7,6 +7,8 @@ Back to [README](./README.md). Depends on **S1** — including the audit fixes i
 machine, `profile_private` / `profile_age()`, and the extra columns). The persona
 write path depends on that final shape.
 
+- **Status:** ✅ complete 2026-10-16 — auth wired end-to-end, `@auth` e2e green.
+
 - **Goal:** register / login / logout / password reset work against Supabase; the
   approval state drives what a signed-in user can reach.
 - **Gate:** e2e covers the flows; access gating is enforced server-side + RLS.
@@ -143,10 +145,11 @@ Avatar upload defers to **S4** (`avatar_url = null`).
 
 ## 7. Tests
 
-- e2e (`@auth`, SB-4(a)): pending user → `/verify`; wrong password → banner;
-  approved user → app; admin approves a pending user; rejected → resubmit →
-  `/verify`. The specs skip when the stack is down, and
-  `.github/workflows/db.yml` runs them after `db:reset` so CI covers the flow.
+- e2e (`@auth`, SB-4(a)): approved → app; pending → `/verify`; rejected → help
+  screen with a resubmit link; suspended → notice; wrong password → banner;
+  anonymous → bounced from the app; admin → portal. The specs skip when the
+  stack is down (`AUTH_E2E=1`), and `.github/workflows/db.yml` runs them after
+  `db:reset` so CI covers the flow.
 - Unit: the Zod schemas in `src/lib/validation/` (`*.test.ts`, beside the
   existing `src/lib/env.test.ts`).
 - RLS: the pgTAP suite already exists (`npm run db:test`, from S1) and covers the
@@ -162,3 +165,22 @@ Avatar upload defers to **S4** (`avatar_url = null`).
   for now (already present in `config.toml`)?
 - Everything in **§1 (SA-1…SA-4, SB-1…SB-4)** is locked — see
   [`api-layer-decisions.md`](./api-layer-decisions.md) §4/§4c.
+
+## 9. Outcome (2026-10-16)
+
+- **Auth wired:** Zod schemas in `src/lib/validation/{auth,persona}.ts`; five auth
+  Server Actions in `src/features/auth/actions.ts`; the recovery route handler
+  `src/app/[locale]/auth/callback/route.ts`; and the DAL `src/lib/auth.ts`
+  (`requireApprovedUser` / `requireAdmin`) enforced in `(app)/layout.tsx` and the
+  admin page. Views are wired and the demo credentials are gone.
+- **Persona write:** one `savePersonaAction` covers onboarding **and** the rejected
+  resubmit; it writes `profiles` + `profile_private` + `contact_details`, with the
+  single bio going to the active locale's column (SB-3).
+- **Reviews:** `reviewPersonaAction` (RLS client) exists, but the **admin UI
+  wiring is deferred to S3** — the approval path is exercised by pgTAP and the
+  seeded `@auth` logins rather than an admin click for now.
+- **DB:** `20261016130000_s2_resubmit_guard.sql` broadens the privilege guard
+  (SB-1c); the seed gains rejected/suspended accounts **and** the `auth.users`
+  token columns GoTrue needs (they defaulted to NULL and broke password sign-in).
+- **Tests:** Zod unit tests; `@auth` e2e (7 specs, `AUTH_E2E=1`); pgTAP 34/34.
+- **Deferred:** "remember device", rate-limit tuning, and the cloud cutover.
