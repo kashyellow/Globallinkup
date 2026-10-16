@@ -18,6 +18,10 @@ Umbrella doc for building the backend against the existing mock-driven UI.
 
 Land one slice green before starting the next.
 
+> **S1 follow-ups:** an audit right after S1 found a **critical** RLS gap in
+> `connections` (self-accept → contact leak) plus a few smaller items. Tracked in
+> [`s1-audit-fixes.md`](./s1-audit-fixes.md); fix before wiring S2 auth.
+
 > **Branch state:** S0 landed on **`dev` only** — `main` still has no backend
 > commits, because the foundation arrived after the UI work started. The UI
 > commits are content-identical on both branches, so moving the API layer to
