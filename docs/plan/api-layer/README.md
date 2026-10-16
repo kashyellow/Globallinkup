@@ -25,7 +25,8 @@ Land one slice green before starting the next.
 
 > **S2 follow-ups:** the post-S2 audit found a **critical** bug — `getLocale()`
 > inside a Server Action throws, breaking persona submit, admin review and the
-> reset email. Open list in [`s2-audit-fixes.md`](./s2-audit-fixes.md).
+> reset email. All fixed; details in
+> [`s2-audit-fixes.md`](./s2-audit-fixes.md).
 
 > **Branch state:** S0 landed on **`dev` only** — `main` still has no backend
 > commits, because the foundation arrived after the UI work started. The UI
