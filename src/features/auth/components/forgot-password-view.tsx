@@ -46,16 +46,12 @@ export function ForgotPasswordView() {
       <div className="flex flex-col gap-space-lg">
         <div className="flex flex-col gap-space-xs">
           <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
-            {t("title")}{" "}
-            <span className="font-headline-md text-headline-md font-normal text-secondary">
-              {t("titleAlt")}
-            </span>
+            {t("title")}
           </h1>
         </div>
 
         <div className="flex flex-col gap-space-sm rounded-2xl border border-outline-variant bg-surface-container p-space-md">
-          <p className="font-body-md text-body-md text-on-surface">{t("bodyEn")}</p>
-          <p className="font-body-sm text-body-sm text-secondary">{t("bodyEs")}</p>
+          <p className="font-body-md text-body-md text-on-surface">{t("body")}</p>
         </div>
 
         <form className="flex flex-col gap-space-md" onSubmit={submit} noValidate>

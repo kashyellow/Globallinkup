@@ -34,7 +34,7 @@ export const PROFILE_METRICS = [
   { id: "unlockRate", value: "100%", accent: true },
 ] as const;
 
-/** Bilingual bio — both editions are shown side by side in the dossier. */
+/** Bio in both languages; the dossier renders only the active locale's edition. */
 export const PROFILE_BIO = {
   en: "Curious about brutalist restoration, sunlit terraces, and analog film walks through the Gothic Quarter. Seeking genuine cultural exchanges and design dialogue.",
   es: "Fascinada por la restauración brutalista, terrazas bañadas de sol y paseos con película analógica por el Gòtic. Buscando intercambios culturales honestos y diálogo arquitectónico.",

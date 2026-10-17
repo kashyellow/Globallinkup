@@ -85,10 +85,6 @@ export function LandingView() {
               <span className="text-primary">{t("hero.titleLine2")}</span>
             </h1>
 
-            <p className="mt-space-sm font-headline-sm text-headline-sm font-medium text-text-muted italic">
-              {t("hero.titleAlt")}
-            </p>
-
             <p className="mt-space-md max-w-[52ch] font-body-lg text-body-lg text-pretty text-on-surface-variant">
               {t("hero.body")}
             </p>
@@ -492,9 +488,6 @@ export function LandingView() {
                 <p className="max-w-[62ch] font-body-md text-body-md text-pretty text-on-surface-variant">
                   {t("snapshot.postBody")}
                 </p>
-                <p className="max-w-[62ch] font-body-sm text-body-sm text-pretty text-text-muted italic">
-                  {t("snapshot.postBodyAlt")}
-                </p>
               </div>
             </div>
           </Tray>
@@ -514,9 +507,6 @@ export function LandingView() {
               <h2 className="font-display-md text-display-md-mobile font-bold text-balance text-on-surface md:text-display-md">
                 {t("cta.title")}
               </h2>
-              <p className="mt-space-xs font-headline-sm text-headline-sm font-medium text-text-muted italic">
-                {t("cta.titleAlt")}
-              </p>
               <p className="mx-auto mt-space-md max-w-[56ch] font-body-lg text-body-lg text-pretty text-on-surface-variant">
                 {t("cta.body")}
               </p>

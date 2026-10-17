@@ -128,10 +128,7 @@ export function ResetPasswordView({ hasRecoverySession }: { hasRecoverySession: 
           <div className="flex flex-col gap-space-lg">
             <div className="flex flex-col gap-space-xs">
               <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
-                {t("title")}{" "}
-                <span className="font-headline-md text-headline-md font-normal text-secondary">
-                  {t("titleAlt")}
-                </span>
+                {t("title")}
               </h1>
               <p className="font-body-md text-body-md text-secondary">{t("subtitle")}</p>
             </div>

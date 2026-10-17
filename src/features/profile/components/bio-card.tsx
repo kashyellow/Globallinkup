@@ -1,7 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import { Icon } from "@/components/ui/icon";
+import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import { CULTURAL_TAGS, PROFILE_BIO } from "../data";
 import { SectionHead } from "./section-head";
@@ -18,39 +17,20 @@ const TAG_CHIP = cn(
   EASE,
 );
 
-/** 03 — Bilingual bio: two editions stacked, then the cultural register. */
+/** 03 — Bio in the active locale, then the cultural register. */
 export function BioCard() {
   const t = useTranslations("Profile.bio");
+  const locale = useLocale();
   const tTags = useTranslations("Profile.tags");
 
   return (
     <section>
-      <SectionHead index="03" title={t("title")}>
-        <span
-          className={cn(
-            "flex items-center gap-1.5 border border-success-border px-2 py-0.5 text-success-text",
-            CAPS_MD,
-          )}
-        >
-          <Icon name="translate" className="text-sm" />
-          {t("autoMirrored")}
-        </span>
-      </SectionHead>
+      <SectionHead index="03" title={t("title")} />
 
       <div className="mt-space-md space-y-space-md">
-        <div className="space-y-1">
-          <span className={cn("text-primary", CAPS_MD)}>{t("english")}</span>
-          <p className="max-w-[62ch] font-body-md text-body-md leading-relaxed text-on-surface">
-            {PROFILE_BIO.en}
-          </p>
-        </div>
-
-        <div className="space-y-1 border-t border-outline-variant pt-space-sm">
-          <span className={cn("text-secondary", CAPS_MD)}>{t("spanish")}</span>
-          <p className="max-w-[62ch] font-body-sm text-body-sm leading-relaxed text-text-muted italic">
-            {PROFILE_BIO.es}
-          </p>
-        </div>
+        <p className="max-w-[62ch] font-body-md text-body-md leading-relaxed text-on-surface">
+          {PROFILE_BIO[locale === "es" ? "es" : "en"]}
+        </p>
 
         <div className="space-y-space-xs border-t border-outline-variant pt-space-sm">
           <span className={cn("block text-text-muted", CAPS_MD)}>{t("culturalFocus")}</span>

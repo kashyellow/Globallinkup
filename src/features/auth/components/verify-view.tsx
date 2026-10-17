@@ -312,9 +312,6 @@ export function VerifyView({ status, persona }: { status: VerifyState; persona: 
               <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
                 {t("title")}
               </h1>
-              <p className="mt-1 font-headline-sm text-headline-sm text-secondary italic">
-                {t("titleAlt")}
-              </p>
 
               <div
                 className={cn(

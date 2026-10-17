@@ -74,12 +74,6 @@ export function LoginView() {
             </div>
 
             <div className="relative z-10 flex flex-col gap-space-md pt-space-xl text-on-surface">
-              <div className="inline-flex flex-wrap items-baseline gap-x-space-xs">
-                <span className="font-headline-sm text-headline-sm font-semibold text-admin-text">
-                  {t("welcomeEs")}
-                </span>
-                <span className="font-body-sm text-body-sm text-secondary">{t("welcomeEn")}</span>
-              </div>
               <blockquote className="font-headline-md text-headline-md leading-relaxed font-medium text-on-surface">
                 {t("quote")}
               </blockquote>
@@ -276,15 +270,6 @@ export function LoginView() {
                     className="inline-flex min-h-11 items-center font-semibold whitespace-nowrap text-primary transition-colors hover:underline"
                   >
                     {t("createAccount")}
-                  </Link>
-                </p>
-                <p className="font-body-sm text-body-sm text-text-muted">
-                  {t("noAccountEs")}{" "}
-                  <Link
-                    href="/register"
-                    className="inline-flex min-h-11 items-center font-medium whitespace-nowrap text-secondary transition-colors hover:text-primary"
-                  >
-                    {t("registerFree")}
                   </Link>
                 </p>
               </div>

@@ -19,10 +19,7 @@ export function ResetLinkSentView() {
         </span>
 
         <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
-          {t("title")}{" "}
-          <span className="font-headline-md text-headline-md font-normal text-secondary">
-            {t("titleAlt")}
-          </span>
+          {t("title")}
         </h1>
 
         <p className="max-w-md font-body-md text-body-md text-secondary">{t("body")}</p>

@@ -144,9 +144,6 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
           <h1 className="font-display-md text-display-md-mobile text-balance text-on-surface md:text-display-md">
             {t("title")}
           </h1>
-          <p className="font-headline-sm text-headline-sm font-normal text-secondary italic">
-            {t("titleAlt")}
-          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-space-sm rounded-xl border border-outline-variant bg-surface-low px-space-md py-space-sm">
