@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { Pagination } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
-import { NETWORK_MEMBERS, POSTS, POST_FILTERS, type Post, type PostFilter } from "../data";
+import { POSTS, POST_FILTERS, type Post, type PostFilter } from "../data";
 import { PostCard } from "./post-card";
 import { PostComposer } from "./post-composer";
 import { usePagination } from "@/features/shared/use-pagination";
@@ -160,64 +160,6 @@ export function PostsView() {
               <div className="flex items-center gap-2 pt-space-xs font-label-lg text-label-lg font-semibold text-primary">
                 <Icon name="verified" className="text-base" />
                 <span>{t("sidebar.humanCurated")}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Active network */}
-          <div className="bezel-tray">
-            <div
-              className="flex flex-col gap-space-md bezel-core p-space-lg"
-              style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
-            >
-              <div className="flex items-center justify-between gap-space-sm">
-                <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
-                  {t("sidebar.networkTitle")}
-                </h2>
-                <span className="shrink-0 font-label-lg text-label-lg font-semibold whitespace-nowrap text-text-muted">
-                  {t("sidebar.viewAll")}
-                </span>
-              </div>
-              <div className="flex flex-col gap-1">
-                {NETWORK_MEMBERS.map((member) => (
-                  <div
-                    key={member.name}
-                    className="flex items-center justify-between gap-space-sm rounded-[0.75rem] p-2 transition-colors duration-300 hover:bg-surface-container"
-                  >
-                    <div className="flex min-w-0 items-center gap-3">
-                      <div className="relative shrink-0">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          alt={member.avatarAlt}
-                          className="h-10 w-10 rounded-full object-cover ring-1 ring-outline-variant"
-                          src={member.avatar}
-                          loading="lazy"
-                        />
-                        <span
-                          className={cn(
-                            "absolute right-0 bottom-0 h-2.5 w-2.5 rounded-full ring-2 ring-surface-low",
-                            member.online ? "bg-tertiary" : "bg-border-dark",
-                          )}
-                        />
-                      </div>
-                      <div className="flex min-w-0 flex-col">
-                        <span className="truncate font-label-lg text-label-lg font-semibold text-on-surface">
-                          {member.name}
-                        </span>
-                        <span className="truncate font-body-sm text-body-sm text-secondary">
-                          {member.location}
-                        </span>
-                      </div>
-                    </div>
-                    <span
-                      title={t("sidebar.sendNote")}
-                      aria-hidden
-                      className="shrink-0 p-1 text-text-muted"
-                    >
-                      <Icon name="mail" className="text-lg" />
-                    </span>
-                  </div>
-                ))}
               </div>
             </div>
           </div>
