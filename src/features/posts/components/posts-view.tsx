@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { POSTS, POST_FILTERS, type Post, type PostFilter } from "../data";
 import { PostCard } from "./post-card";
 import { PostComposer } from "./post-composer";
+import { PostsMap } from "./posts-map";
 import { usePagination } from "@/features/shared/use-pagination";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
@@ -28,7 +29,10 @@ function matchesFilter(post: Post, filter: PostFilter) {
 export function PostsView() {
   const t = useTranslations("Posts");
   const [filter, setFilter] = useState<PostFilter>("all");
-  const visiblePosts = POSTS.filter((post) => matchesFilter(post, filter));
+  const [place, setPlace] = useState<string | null>(null);
+  const visiblePosts = POSTS.filter(
+    (post) => (place === null || post.location === place) && matchesFilter(post, filter),
+  );
   const { page, totalPages, pageItems, setPage, resetPage } = usePagination(
     visiblePosts,
     PAGE_SIZE,
@@ -38,6 +42,17 @@ export function PostsView() {
   // meaningless. Reset in the handler rather than an effect.
   function changeFilter(next: PostFilter) {
     setFilter(next);
+    resetPage();
+  }
+
+  function selectPlace(next: string | null) {
+    setPlace(next);
+    resetPage();
+  }
+
+  function resetFilters() {
+    setFilter("all");
+    setPlace(null);
     resetPage();
   }
 
@@ -88,6 +103,10 @@ export function PostsView() {
         </div>
       </div>
 
+      <div className="mt-block-mobile md:mt-block">
+        <PostsMap selected={place} onSelect={selectPlace} />
+      </div>
+
       {/* Feed */}
       <div className="mx-auto mt-block-mobile flex w-full max-w-[700px] flex-col gap-space-lg md:mt-block">
         <PostComposer />
@@ -111,7 +130,7 @@ export function PostsView() {
               </p>
               <button
                 type="button"
-                onClick={() => changeFilter("all")}
+                onClick={resetFilters}
                 className="mt-space-xs inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-outline-variant bg-surface-container px-space-md py-2 font-label-lg text-label-lg font-semibold text-on-surface transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-outline-hover hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
               >
                 {t("filters.showAll")}

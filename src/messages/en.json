@@ -144,6 +144,12 @@
     "eyebrowPrimary": "Visual Chronology",
     "title": "Community Posts",
     "intro": "Moments, travels, and glimpses into daily life across borders. Pure photography without algorithmic noise.",
+    "map": {
+      "title": "Where members are posting",
+      "hint": "Select a place to narrow the feed.",
+      "all": "All places",
+      "posts": "{count, plural, one {# post} other {# posts}}"
+    },
     "filters": {
       "all": "All Dispatches",
       "connectionsOnly": "Connections Only",

@@ -144,6 +144,12 @@
     "eyebrowPrimary": "Cronología Visual",
     "title": "Publicaciones de la Comunidad",
     "intro": "Momentos, viajes y destellos de la vida cotidiana más allá de las fronteras. Fotografía pura sin ruido algorítmico.",
+    "map": {
+      "title": "Dónde publican los miembros",
+      "hint": "Elige un lugar para acotar el feed.",
+      "all": "Todos los lugares",
+      "posts": "{count, plural, one {# publicación} other {# publicaciones}}"
+    },
     "filters": {
       "all": "Todas las Publicaciones",
       "connectionsOnly": "Solo Conexiones",

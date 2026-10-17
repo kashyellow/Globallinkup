@@ -10,6 +10,8 @@ export type Post = {
   /** Inline text badge shown beside the name (e.g. "CDMX"). */
   roleText?: string;
   location: string;
+  /** Where the post was filed from; drives its pin on the posts map. */
+  coords: { lat: number; lng: number };
   time: PostTime;
   avatar: string;
   avatarAlt: string;
@@ -27,6 +29,7 @@ export const POSTS: Post[] = [
     id: "sofia",
     author: "Sofia Martinez",
     location: "Barcelona, Spain",
+    coords: { lat: 41.39, lng: 2.17 },
     time: { kind: "hoursAgo", value: 2 },
     avatar: `${CDN}AB6AXuBXTn0THA4HVMeGABbs8wWwBCx2WjYfMbZpMDVXOSIcx9p2HQMpHnA5WkIkfN4DMN5XNYwJe-cnEV6FfOnqfP2SVoTocMYb9zibNwP85pNRW89c7DIWpZsZOONw0u5UGlPFVzpMCypE9ENwvtLboWZNX4HNMSHD5d5-vE51LZ0FcBCXUxb3yg_JskNNiQDc-_BvaSTm4JChDR8iDeVNYN04QBJW6xhaE0cMseP1bLdmt_2E_syklbGIvw`,
     avatarAlt: "Sofia Martinez portrait",
@@ -44,6 +47,7 @@ export const POSTS: Post[] = [
     author: "Mateo Delgado",
     roleText: "CDMX",
     location: "Coyoacán, Mexico City",
+    coords: { lat: 19.35, lng: -99.16 },
     time: { kind: "hoursAgo", value: 5 },
     avatar: `${CDN}AB6AXuCvlas-jIu17DKUJNG8fIh528AfhwyUZqZmuEyue8BcXQqlFgubygsf97f1ThWMH5zA2jaBW7oHKyydrlypWaY3N0WM69mA6N3d5nkGXATE2n98RC-Oipq26jVaQSsIFhz8YU7zeD4VwKBkHii55xImc8lirnjhOEg-u4gDg7EG-CBemsONI0cSVXQGTNxHBqGRhJ73-YnnCmE5oiclV05d43hK6oWaLzpSHVzrxpfXIaksecx-Bh_r5Q`,
     avatarAlt: "Editorial close portrait of Mateo Delgado.",
@@ -60,6 +64,7 @@ export const POSTS: Post[] = [
     id: "elena",
     author: "Elena Vance",
     location: "Madrid, Spain",
+    coords: { lat: 40.42, lng: -3.7 },
     time: { kind: "yesterday" },
     avatar: `${CDN}AB6AXuCNSydODYoo_WqZzZtxK7s_NJ6bcjgidDQky4-mL6ln0IR8ECaLD4Br4c4dvQS-ZEI52bH406IMy1kh08swQ4cHy9AGHehnJqsjMIWKubcjh-eV0JetwQTQcFSRAr1XzavD75ZWlnomEZz9prfWTgYpnp_SnK3uColUQzGaaR5MoKY_rqkiYEkLcYMbztflLDJblf3Y6sEQt_GpGCxU4fZsarULTLr9SSWjloqZG_JvHspc9UnnjIYTYA`,
     avatarAlt: "Modern close-up portrait of Elena Vance.",
