@@ -7,11 +7,18 @@ import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import type { Post } from "../data";
 
-export function PostCard({ post }: { post: Post }) {
+export function PostCard({
+  post,
+  requested,
+  onConnect,
+}: {
+  post: Post;
+  requested: boolean;
+  onConnect: () => void;
+}) {
   const t = useTranslations("Posts");
   const tCommon = useTranslations("Common");
   const [liked, setLiked] = useState(false);
-  const [requested, setRequested] = useState(false);
 
   const likeCount = post.likes + (liked ? 1 : 0);
   const timeLabel =
@@ -80,7 +87,7 @@ export function PostCard({ post }: { post: Post }) {
           ) : (
             <button
               type="button"
-              onClick={() => setRequested(true)}
+              onClick={onConnect}
               disabled={requested}
               className={cn(
                 "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-label-md text-label-md transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px sm:h-auto sm:w-auto sm:gap-1.5 sm:px-3.5 sm:py-2",

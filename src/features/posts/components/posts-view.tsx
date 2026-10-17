@@ -2,7 +2,7 @@
 
 import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { Pagination } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
@@ -10,6 +10,7 @@ import { POSTS, POST_FILTERS, type Post, type PostFilter } from "../data";
 import { PostCard } from "./post-card";
 import { PostComposer } from "./post-composer";
 import { usePagination } from "@/features/shared/use-pagination";
+import { ConnectDialog, type ConnectTarget } from "@/features/shared/connect-dialog";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
@@ -28,11 +29,21 @@ function matchesFilter(post: Post, filter: PostFilter) {
 export function PostsView() {
   const t = useTranslations("Posts");
   const [filter, setFilter] = useState<PostFilter>("all");
+  const [requested, setRequested] = useState<Record<string, boolean>>({});
+  const [target, setTarget] = useState<ConnectTarget | null>(null);
   const visiblePosts = POSTS.filter((post) => matchesFilter(post, filter));
   const { page, totalPages, pageItems, setPage, resetPage } = usePagination(
     visiblePosts,
     PAGE_SIZE,
   );
+
+  const closeDialog = useCallback(() => setTarget(null), []);
+
+  const sendRequest = useCallback(() => {
+    if (!target) return;
+    setRequested((prev) => ({ ...prev, [target.id]: true }));
+    setTarget(null);
+  }, [target]);
 
   // Changing the filter changes the result set, so the old page index is
   // meaningless. Reset in the handler rather than an effect.
@@ -94,7 +105,20 @@ export function PostsView() {
           <PostComposer />
 
           {pageItems.map((post, index) => (
-            <PostCard key={`${post.id}-${page}-${index}`} post={post} />
+            <PostCard
+              key={`${post.id}-${page}-${index}`}
+              post={post}
+              requested={requested[post.id] ?? false}
+              onConnect={() =>
+                setTarget({
+                  id: post.id,
+                  name: post.author,
+                  location: post.location,
+                  image: post.avatar,
+                  imageAlt: post.avatarAlt,
+                })
+              }
+            />
           ))}
 
           {visiblePosts.length === 0 ? (
@@ -198,6 +222,13 @@ export function PostsView() {
           </div>
         </aside>
       </div>
+
+      <ConnectDialog
+        target={target}
+        open={target !== null}
+        onClose={closeDialog}
+        onSend={sendRequest}
+      />
     </div>
   );
 }

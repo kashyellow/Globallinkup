@@ -142,13 +142,6 @@ export const ADMIN_PRODUCTS: AdminProduct[] = [
   },
 ];
 
-export const PRODUCT_CATEGORY_KEYS: AdminProductCategory[] = [
-  "artisanCrafts",
-  "homeLiving",
-  "textiles",
-  "travelGear",
-];
-
 export type Incident = {
   id: "spam" | "impersonation";
   tone: "danger" | "warn";

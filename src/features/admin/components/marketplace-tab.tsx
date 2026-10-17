@@ -1,11 +1,11 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useRef, useState } from "react";
-import type { CSSProperties } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { ChangeEvent, CSSProperties } from "react";
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
-import { ADMIN_PRODUCTS, PRODUCT_CATEGORY_KEYS, type AdminProduct } from "../data";
+import { ADMIN_PRODUCTS, type AdminProduct } from "../data";
 
 const ACTION_BASE =
   "inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 py-2 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px";
@@ -14,6 +14,18 @@ export function AdminMarketplaceTab() {
   const t = useTranslations("Admin.marketplace");
   const drawerRef = useRef<HTMLDivElement>(null);
   const [highlight, setHighlight] = useState(false);
+  const [image, setImage] = useState<{ url: string; name: string } | null>(null);
+
+  useEffect(() => {
+    if (!image) return;
+    return () => URL.revokeObjectURL(image.url);
+  }, [image]);
+
+  function selectImage(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setImage({ url: URL.createObjectURL(file), name: file.name });
+  }
 
   function focusDrawer() {
     drawerRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -133,28 +145,54 @@ export function AdminMarketplaceTab() {
               />
             </Field>
 
-            <Field label={t("form.category")}>
-              <select className={inputClass} defaultValue="artisanCrafts">
-                {PRODUCT_CATEGORY_KEYS.map((key) => (
-                  <option key={key} value={key}>
-                    {t(`categories.${key}`)}
-                  </option>
-                ))}
-              </select>
-            </Field>
-
             <Field label={t("form.price")}>
               <input type="number" step="0.01" defaultValue="120.00" className={inputClass} />
             </Field>
 
-            <Field label={t("form.origin")}>
-              <input
-                type="text"
-                defaultValue={t("form.defaultOrigin")}
-                placeholder={t("form.originPlaceholder")}
-                className={inputClass}
-              />
-            </Field>
+            <div className="flex flex-col gap-1.5 md:col-span-2">
+              <span className="font-label-md text-label-md font-semibold text-on-surface">
+                {t("form.image")}
+              </span>
+              <label
+                className={cn(
+                  "flex cursor-pointer items-center gap-space-md rounded-2xl border border-dashed border-outline-variant bg-surface-dim p-space-md transition-colors duration-300",
+                  "hover:border-outline-hover hover:bg-surface-container",
+                  "focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary",
+                )}
+              >
+                {image ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    alt=""
+                    src={image.url}
+                    className="h-16 w-16 shrink-0 rounded-xl border border-outline-variant object-cover"
+                  />
+                ) : (
+                  <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-outline-variant bg-surface-container text-secondary">
+                    <Icon name="add_photo_alternate" className="text-2xl" />
+                  </span>
+                )}
+                <span className="min-w-0 flex-1">
+                  <span className="block font-label-lg text-label-lg font-semibold text-on-surface">
+                    {image ? t("form.imageReplace") : t("form.imageUpload")}
+                  </span>
+                  <span
+                    className={cn(
+                      "mt-0.5 block font-body-sm text-body-sm text-secondary",
+                      image && "truncate",
+                    )}
+                  >
+                    {image ? image.name : t("form.imageHint")}
+                  </span>
+                </span>
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  onChange={selectImage}
+                  className="sr-only"
+                />
+              </label>
+            </div>
 
             <div className="flex flex-col gap-1.5 md:col-span-2">
               <label className="font-label-md text-label-md font-semibold text-on-surface">

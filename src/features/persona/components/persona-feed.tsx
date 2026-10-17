@@ -1,12 +1,13 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { Pagination } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 import { PERSONAS, type ConnectState, type Persona } from "../data";
 import { usePagination } from "@/features/shared/use-pagination";
+import { ConnectDialog } from "@/features/shared/connect-dialog";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
@@ -18,11 +19,16 @@ export function PersonaFeed() {
   const [states, setStates] = useState<Record<string, ConnectState>>(() =>
     Object.fromEntries(PERSONAS.map((persona) => [persona.id, persona.state])),
   );
+  const [target, setTarget] = useState<Persona | null>(null);
   const { page, totalPages, pageItems, setPage } = usePagination(PERSONAS, PAGE_SIZE);
 
-  function sendRequest(id: string) {
-    setStates((prev) => ({ ...prev, [id]: "requested" }));
-  }
+  const closeDialog = useCallback(() => setTarget(null), []);
+
+  const sendRequest = useCallback(() => {
+    if (!target) return;
+    setStates((prev) => ({ ...prev, [target.id]: "requested" }));
+    setTarget(null);
+  }, [target]);
 
   return (
     <section className="space-y-space-md lg:col-span-7">
@@ -42,12 +48,19 @@ export function PersonaFeed() {
             persona={persona}
             state={states[persona.id]}
             selected={persona.id === "sofia"}
-            onConnect={() => sendRequest(persona.id)}
+            onConnect={() => setTarget(persona)}
           />
         ))}
       </div>
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+
+      <ConnectDialog
+        target={target}
+        open={target !== null}
+        onClose={closeDialog}
+        onSend={sendRequest}
+      />
     </section>
   );
 }
