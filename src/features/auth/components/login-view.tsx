@@ -8,7 +8,7 @@ import { signInAction } from "@/features/auth/actions";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
-type LoginState = "ready" | "invalid" | "pending" | "loading";
+type LoginState = "ready" | "invalid" | "loading";
 
 const BACKDROP =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuDGFyRgMDJc7aMfkwNEAgsrQK8vHotU1xDnVagJ6BFOfsajrn2yfQNXQrZwKTdQZ9zPIbmYz5FX7p8umTc5IcBOl3dVLtcBSpM3w0PDKhrmdcJJBQBy7K3tv0WEvSEXQ_dBAQFg_MIY1Q0cAvgnm9LPSEnWBmF_HrZAKLMoKm6kilYIe89uUloN94Fv9ISOufwUw0geNbllEDbKn2F1dHRewxCS-48cqTadhQHAITrepAtvznXLQaG2-g";
@@ -53,38 +53,11 @@ export function LoginView() {
 
   return (
     <section className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-space-md pb-page-mobile lg:px-margin lg:pt-space-xl lg:pb-page">
-      {process.env.NODE_ENV === "development" ? (
-        <div className="mb-space-lg flex w-full flex-col items-start justify-between gap-space-sm rounded-2xl border border-outline-variant bg-surface-low p-space-sm md:flex-row md:items-center">
-          <div className="flex items-center gap-space-xs text-secondary">
-            <Icon name="tune" className="text-lg text-primary" />
-            <span className="font-label-md text-label-md">{t("previewLabel")}</span>
-          </div>
-          <div className="flex flex-wrap items-center gap-space-xs">
-            {(["ready", "invalid", "pending", "loading"] as const).map((key) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setState(key)}
-                className={cn(
-                  "rounded-full px-space-sm py-1.5 font-label-md text-label-md transition-colors",
-                  EASE,
-                  state === key
-                    ? "bg-surface-container-high font-semibold text-on-surface"
-                    : "text-secondary hover:text-on-surface",
-                )}
-              >
-                {t(`state_${key}`)}
-              </button>
-            ))}
-          </div>
-        </div>
-      ) : null}
-
       <div className="grid grid-cols-1 items-stretch gap-gutter lg:grid-cols-12">
         {/* Editorial brand panel — below the form on mobile */}
         <div className="order-2 bezel-tray lg:order-1 lg:col-span-6">
           <div
-            className="relative flex min-h-[520px] flex-col justify-between overflow-hidden bezel-core p-space-lg lg:min-h-[640px] lg:p-space-xl"
+            className="relative flex min-h-[520px] flex-col justify-end overflow-hidden bezel-core p-space-lg lg:min-h-[640px] lg:p-space-xl"
             style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
           >
             <div className="absolute inset-0 z-0">
@@ -98,18 +71,6 @@ export function LoginView() {
                   bottom of the panel — `via-background/60` let the photo
                   through and muddied the type. */}
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/85 to-transparent" />
-            </div>
-
-            <div className="relative z-10 flex items-center justify-between">
-              <div className="inline-flex items-center gap-space-xs rounded-full border border-outline-variant bg-surface-low/85 px-space-sm py-1">
-                <span className="h-2 w-2 rounded-full bg-success-ring" />
-                <span className="font-label-md text-label-md text-on-surface">
-                  {t("badgeEdition")}
-                </span>
-              </div>
-              <span className="hidden font-label-md text-label-md text-secondary sm:inline-block">
-                {t("badgeMeta")}
-              </span>
             </div>
 
             <div className="relative z-10 flex flex-col gap-space-md pt-space-xl text-on-surface">
@@ -171,28 +132,6 @@ export function LoginView() {
                         {t("resetPassword")}
                       </Link>
                       .
-                    </p>
-                  </div>
-                </div>
-              ) : null}
-
-              {/* Pending review */}
-              {state === "pending" ? (
-                <div className="flex items-start gap-space-sm rounded-2xl border border-outline-variant bg-surface-container p-space-md">
-                  <Icon name="pending_actions" className="mt-0.5 shrink-0 text-lg text-secondary" />
-                  <div className="flex flex-col">
-                    <span className="font-label-lg text-label-lg font-semibold text-on-surface">
-                      {t("pendingTitle")}
-                    </span>
-                    <p className="mt-0.5 font-body-sm text-body-sm text-secondary">
-                      {t("pendingBody")}{" "}
-                      <Link
-                        href="/verify"
-                        className="inline-flex items-center gap-0.5 font-medium text-primary underline transition-colors hover:text-primary-hover"
-                      >
-                        {t("viewStatus")}
-                        <Icon name="arrow_forward" className="text-sm" />
-                      </Link>
                     </p>
                   </div>
                 </div>

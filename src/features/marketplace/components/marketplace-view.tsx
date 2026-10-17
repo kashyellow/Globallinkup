@@ -10,20 +10,11 @@ import {
   MARKETPLACE_CONTACT,
   MARKETPLACE_FILTERS,
   PRODUCTS,
-  type MarketplaceBadge,
   type MarketplaceFilter,
   type Product,
 } from "../data";
 import { ProductDrawer } from "./product-drawer";
 import { usePagination } from "@/features/shared/use-pagination";
-
-const BADGE_ICONS: Record<MarketplaceBadge, string> = {
-  artisanPartner: "handyman",
-  adminCurated: "verified",
-  globalLinkupOriginal: "stars",
-  adminVerified: "verified",
-  directTrade: "handshake",
-};
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
@@ -251,7 +242,6 @@ function ProductCard({
   onOpen: () => void;
 }) {
   const t = useTranslations("Marketplace");
-  const isOriginal = product.badge === "globalLinkupOriginal";
 
   return (
     <article
@@ -290,23 +280,6 @@ function ProductCard({
               />
             </span>
 
-            {/*
-             * Solid tinted surfaces rather than `backdrop-blur`: these sit in
-             * normal flow over a photo, and blur is reserved for fixed/sticky
-             * chrome.
-             */}
-            <span
-              className={cn(
-                "absolute top-3 left-3 flex items-center gap-1.5 rounded-full px-2.5 py-1 font-label-md text-label-md shadow-lift-sm",
-                isOriginal
-                  ? "bg-primary text-on-primary"
-                  : "border border-success-border bg-success-surface text-success-text",
-              )}
-            >
-              <Icon name={BADGE_ICONS[product.badge]} className="text-sm" />
-              {t(`badges.${product.badge}`)}
-            </span>
-
             <span className="absolute top-3 right-3 rounded-full border border-outline-variant bg-surface-low/95 px-2.5 py-1 font-label-md text-label-md text-on-surface shadow-lift-sm">
               {product.originLabel}
             </span>
@@ -314,9 +287,6 @@ function ProductCard({
 
           <div className="flex flex-1 flex-col justify-between gap-space-sm p-space-md">
             <div className="flex flex-col gap-1">
-              <span className="font-label-md text-label-md font-semibold text-primary">
-                {t(`categories.${product.category}`)}
-              </span>
               <h2
                 className={cn(
                   "font-semibold text-balance text-on-surface transition-colors duration-300 group-hover:text-primary",
