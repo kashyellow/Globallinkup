@@ -195,19 +195,6 @@
     "end": {
       "caughtUp": "Estás al día con los momentos recientes de la comunidad",
       "checkBack": "Vuelve más tarde o publica tu propio mensaje arriba"
-    },
-    "sidebar": {
-      "aboutTitle": "Acerca de las Publicaciones de GlobalLinkup",
-      "aboutBody": "Sin algoritmos, sin historias, sin reels efímeros. Solo fotografía auténtica y novedades culturales compartidas cronológicamente por miembros internacionales más allá de las fronteras.",
-      "humanCurated": "Comunidad curada por humanos",
-      "networkTitle": "Activos en tu Red",
-      "viewAll": "Ver Todos",
-      "sendNote": "Enviar Nota Directa",
-      "etiquetteTitle": "Etiqueta Comunitaria",
-      "etiquetteBody": "Respetuosos, intencionales y culturalmente curiosos. Celebramos la fotografía que captura el contexto local, reflexiones reales de viaje y amistad intercultural.",
-      "readGuidelines": "Leer las Normas de la Comunidad →",
-      "feedLanguage": "IDIOMA DEL FEED: ESPAÑOL",
-      "change": "Cambiar"
     }
   },
   "Marketplace": {

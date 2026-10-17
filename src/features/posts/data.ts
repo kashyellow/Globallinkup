@@ -73,37 +73,5 @@ export const POSTS: Post[] = [
   },
 ];
 
-export type NetworkMember = {
-  name: string;
-  location: string;
-  avatar: string;
-  avatarAlt: string;
-  online: boolean;
-};
-
-export const NETWORK_MEMBERS: NetworkMember[] = [
-  {
-    name: "Alejandro Cruz",
-    location: "Seville, Spain",
-    avatar: `${CDN}AB6AXuBbxFarqkfFcz_973p35rpYPZD8iCauuWkVNx2A9Ywr9XREEJAMjt3gtyNlXefwO2JwOqQKT0_xUAENm2PpmF-uhH6yM9bQa2cKA6tn424z7fEJwE5EG3fCLgFWEmMj5XYaljCtvQcE5Iwai6q44JRPCw_UMD19P9aeBF9KR-PM2OZ788HN74zw58zNvUL9unYCKFFXwva1BiwDxMj_IUcJ2GUUv56ZbD7XJDbjkRscKRnqyopKiC6_NQ`,
-    avatarAlt: "Editorial profile avatar of Alejandro Cruz.",
-    online: true,
-  },
-  {
-    name: "Valentina Rios",
-    location: "Bogotá, Colombia",
-    avatar: `${CDN}AB6AXuD2d07gYl116hi79P5xzR-tP0wCMg6L_2YxepU4SvVdoRiXriEKYsE-mrSlU3UNRpUabrE8vQqL8bG7PmFHBPEQgrNkFxi35vMU4DvWgc16eCBfZ1ysEXEbk2G6JeD-xZUNOGwm5OMCP9PwV38dBciIqc55c5e-6U6DbK68qtj39WasBcDmWTAMIbxEvo3OaEywdtvpW3nySqSu_uImVVg9JswrRUIpfNXUwcB7K_kdl5JeMn6YhQ98sQ`,
-    avatarAlt: "Warm natural portrait of Valentina Rios.",
-    online: true,
-  },
-  {
-    name: "Julian Rossi",
-    location: "Valencia, Spain",
-    avatar: `${CDN}AB6AXuBjjhPFrGTj3cLNCNLvsMiSWi3xBopBGwU0fQ_n1J2jwcMibr01k2yn8BIA8NyPRy_8ZRqxHAHcYNtkEE9YOu40rsrrjkIK9KB--hnd2IrPQzIFaPUP9xENcwAwf2kbUf3koLXGHm0tSXeSKvqzbvAzBnq8uJb6lJuxWq3yp31mfKd9pUhhILHgE1JZvFI300gEqVH9_m3U4FUIGdLdbt656WkBipMVThWJcspGrARB_kyaGKrmOHmL1Q`,
-    avatarAlt: "Portrait photo of Julian Rossi.",
-    online: false,
-  },
-];
-
 export const POST_FILTERS = ["all", "connectionsOnly", "spainLatam"] as const;
 export type PostFilter = (typeof POST_FILTERS)[number];
