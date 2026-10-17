@@ -71,9 +71,9 @@ export function PostCard({ post }: { post: Post }) {
             up and stays screen-reader visible at every width.
           */}
           {post.state === "connected" ? (
-            <div className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-success-border bg-success-surface text-success-text sm:h-auto sm:w-auto sm:gap-1 sm:px-3 sm:py-1 xl:h-11 xl:w-11 xl:gap-0 xl:px-0 xl:py-0">
+            <div className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-success-border bg-success-surface text-success-text sm:h-auto sm:w-auto sm:gap-1 sm:px-3 sm:py-1">
               <Icon name="check_circle" className="text-sm text-tertiary" />
-              <span className="sr-only font-medium text-tertiary sm:not-sr-only xl:sr-only">
+              <span className="sr-only font-medium text-tertiary sm:not-sr-only">
                 {tCommon("connected")}
               </span>
             </div>
@@ -83,7 +83,7 @@ export function PostCard({ post }: { post: Post }) {
               onClick={() => setRequested(true)}
               disabled={requested}
               className={cn(
-                "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-label-md text-label-md transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px sm:h-auto sm:w-auto sm:gap-1.5 sm:px-3.5 sm:py-2 xl:h-11 xl:w-11 xl:gap-0 xl:px-0 xl:py-0",
+                "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-label-md text-label-md transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px sm:h-auto sm:w-auto sm:gap-1.5 sm:px-3.5 sm:py-2",
                 requested
                   ? "border border-success-border bg-success-surface text-success-text"
                   : "border border-outline-variant bg-surface-container text-on-surface-strong hover:bg-surface-variant hover:text-on-surface",
@@ -93,7 +93,7 @@ export function PostCard({ post }: { post: Post }) {
                 name={requested ? "check" : "person_add"}
                 className={cn("text-base", requested ? "text-sm text-tertiary" : "text-primary")}
               />
-              <span className="sr-only sm:not-sr-only xl:sr-only">
+              <span className="sr-only sm:not-sr-only">
                 {requested ? t("postMeta.requested") : tCommon("connect")}
               </span>
             </button>
