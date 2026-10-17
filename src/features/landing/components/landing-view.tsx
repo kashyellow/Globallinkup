@@ -46,7 +46,7 @@ const STEPS = [
 
 /** Shared primary/secondary CTA treatment, so the same intent looks identical everywhere. */
 const CTA_PRIMARY =
-  "group inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-6 font-label-lg text-label-lg whitespace-nowrap text-on-primary transition-[background-color,transform,box-shadow] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-primary-hover hover:shadow-lift-md active:translate-y-px active:scale-[0.985] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+  "group inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full brand-gradient px-6 font-label-lg text-label-lg whitespace-nowrap text-on-primary transition-[filter,transform,box-shadow] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:brightness-110 hover:shadow-lift-md active:translate-y-px active:scale-[0.985] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 const CTA_SECONDARY =
   "group inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full border border-outline bg-marketing-core/70 px-6 font-label-lg text-label-lg whitespace-nowrap text-on-surface transition-[background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:border-outline-hover hover:bg-marketing-raised active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
@@ -82,7 +82,7 @@ export function LandingView() {
             <h1 className="mt-space-md font-display-lg text-display-lg-mobile font-bold text-balance text-on-surface md:text-display-lg lg:text-display-xl">
               {t("hero.titleLine1")}
               <br />
-              <span className="text-primary">{t("hero.titleLine2")}</span>
+              <span className="brand-gradient-text">{t("hero.titleLine2")}</span>
             </h1>
 
             <p className="mt-space-md max-w-[52ch] font-body-lg text-body-lg text-pretty text-on-surface-variant">

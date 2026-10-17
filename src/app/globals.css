@@ -13,49 +13,49 @@
 
 @theme {
   /* ── Brand ─────────────────────────────────────────────────────────── */
-  --color-primary: #e86a5b;
-  --color-primary-container: #e86a5b;
-  --color-primary-hover: #d85e50;
-  --color-inverse-primary: #a6392e;
+  --color-primary: #f2695c;
+  --color-primary-container: #f2695c;
+  --color-primary-hover: #e0574b;
+  --color-inverse-primary: #b03a30;
   --color-on-primary: #ffffff;
   --color-on-primary-container: #ffffff;
 
   /* ── Backgrounds & surfaces (dark) ─────────────────────────────────── */
-  --color-background: #0b0a09;
-  --color-background-cream: #0b0a09;
-  --color-surface: #121110;
-  --color-surface-dark: #121110;
-  --color-surface-dim: #141311;
-  --color-surface-lowest: #0e0d0c;
-  --color-surface-low: #181715;
-  --color-surface-card: #181715;
-  --color-surface-container: #1e1c1a;
-  --color-surface-container-high: #262320;
-  --color-surface-container-highest: #2b2824;
-  --color-surface-bright: #262320;
-  --color-surface-variant: #242220;
-  --color-inverse-surface: #f6f3ee;
-  --color-inverse-on-surface: #121110;
+  --color-background: #060a14;
+  --color-background-cream: #060a14;
+  --color-surface: #0a0f1e;
+  --color-surface-dark: #0a0f1e;
+  --color-surface-dim: #0b1122;
+  --color-surface-lowest: #04070f;
+  --color-surface-low: #0d1426;
+  --color-surface-card: #0d1426;
+  --color-surface-container: #121a2e;
+  --color-surface-container-high: #18223c;
+  --color-surface-container-highest: #1e2947;
+  --color-surface-bright: #18223c;
+  --color-surface-variant: #151d33;
+  --color-inverse-surface: #f2efe8;
+  --color-inverse-on-surface: #0a0f1e;
 
   /* ── Foreground / text ─────────────────────────────────────────────── */
-  --color-on-background: #f6f3ee;
-  --color-on-surface: #f6f3ee;
-  --color-text-ivory: #f6f3ee;
-  --color-on-surface-variant: #b0aaa2;
-  --color-on-surface-strong: #ede9e3;
-  --color-on-surface-muted: #c8c3bd;
-  --color-text-muted: #878179;
-  --color-text-muted-dark: #9e9992;
-  --color-placeholder: #5c564f;
+  --color-on-background: #f5f2ec;
+  --color-on-surface: #f5f2ec;
+  --color-text-ivory: #f5f2ec;
+  --color-on-surface-variant: #b6b2c2;
+  --color-on-surface-strong: #ece8e1;
+  --color-on-surface-muted: #c6c2cf;
+  --color-text-muted: #807b8d;
+  --color-text-muted-dark: #9792a1;
+  --color-placeholder: #565068;
 
   /* ── Secondary (warm grey) ─────────────────────────────────────────── */
-  --color-secondary: #9e9992;
+  --color-secondary: #9d99a8;
   --color-on-secondary: #ffffff;
-  --color-secondary-container: #2b2320;
-  --color-secondary-container-alt: #26201d;
-  --color-secondary-fixed: #2b2220;
-  --color-secondary-fixed-dim: #362e2b;
-  --color-on-secondary-container: #ede9e3;
+  --color-secondary-container: #1c1830;
+  --color-secondary-container-alt: #191527;
+  --color-secondary-fixed: #1f1a35;
+  --color-secondary-fixed-dim: #2a2445;
+  --color-on-secondary-container: #ece8e1;
 
   /* ── Tertiary / success (green) ────────────────────────────────────── */
   --color-tertiary: #2e9b68;
@@ -88,20 +88,20 @@
   --color-danger-text: #fca5a5;
 
   /* ── Admin accent (coral-tinted) ───────────────────────────────────── */
-  --color-admin-surface: #2e201e;
-  --color-admin-border: #482823;
+  --color-admin-surface: #2a1a24;
+  --color-admin-border: #4a2733;
   --color-admin-text: #ffb4a9;
   --color-admin-text-soft: #ffdad5;
 
   /* ── Lines ─────────────────────────────────────────────────────────── */
-  --color-outline: #3d3833;
-  --color-outline-variant: #2e2b27;
-  --color-border-subtle: #2e2b27;
-  --color-border-dark: #383430;
-  --color-border-strong: #3e3430;
-  --color-outline-strong: #524d47;
-  --color-outline-hover: #48433d;
-  --color-surface-tint: #e86a5b;
+  --color-outline: #2b3752;
+  --color-outline-variant: #1f2942;
+  --color-border-subtle: #1f2942;
+  --color-border-dark: #27314b;
+  --color-border-strong: #2e3852;
+  --color-outline-strong: #44506e;
+  --color-outline-hover: #3a4664;
+  --color-surface-tint: #f2695c;
 
   /* ── Spacing (named, mirrors the reference config) ─────────────────── */
   --spacing-space-xs: 0.25rem;
@@ -240,15 +240,15 @@
    * flattens every panel into the same value. These add the intermediate
    * steps the redesign needs for nested (double-bezel) surfaces.
    */
-  --color-marketing-base: #100e0d;
-  --color-marketing-shell: #171513;
-  --color-marketing-core: #1c1917;
-  --color-marketing-raised: #23201d;
-  --color-marketing-high: #2b2724;
+  --color-marketing-base: #060a15;
+  --color-marketing-shell: #0a1020;
+  --color-marketing-core: #0d1527;
+  --color-marketing-raised: #121c33;
+  --color-marketing-high: #18223d;
 
   /*
    * ── Marketing accent: muted jade ────────────────────────────────────
-   * The coral (#e86a5b) stays the product accent and the single locked
+   * The coral (#f2695c) stays the product accent and the single locked
    * landing accent. Jade is used for a small number of genuinely
    * privacy-related signals so green always reads as "protected".
    */
@@ -259,14 +259,27 @@
   --color-jade-border: #234332;
 
   /*
+   * ── Brand gradient: violet → plum → coral → amber ───────────────────
+   * The accent is a sunset rather than a single hue. Reserved for surfaces
+   * that should glow (hero CTA, the ambient page wash) and for one line of
+   * display type; ordinary controls stay on the flat coral `--color-primary`
+   * so hover states remain predictable.
+   */
+  --color-brand-violet: #7c5cf5;
+  --color-brand-violet-dim: #4a3aa8;
+  --color-brand-plum: #9b5fd6;
+  --color-brand-amber: #ffa45c;
+  --gradient-brand: linear-gradient(112deg, #7c5cf5 0%, #9b5fd6 26%, #f2695c 66%, #ffa45c 100%);
+
+  /*
    * ── Warm-tinted shadows ─────────────────────────────────────────────
    * Pure-black shadows on a warm off-black page read as grey smudges.
    * These carry the page hue and a single implied light source.
    */
-  --shadow-lift-sm: 0 1px 2px rgb(6 5 4 / 0.4), 0 2px 8px -2px rgb(6 5 4 / 0.5);
-  --shadow-lift-md: 0 2px 4px rgb(6 5 4 / 0.35), 0 12px 28px -8px rgb(6 5 4 / 0.6);
-  --shadow-lift-lg: 0 4px 8px rgb(6 5 4 / 0.3), 0 28px 60px -16px rgb(6 5 4 / 0.7);
-  --shadow-bevel: inset 0 1px 0 rgb(255 246 238 / 0.07);
+  --shadow-lift-sm: 0 1px 2px rgb(2 5 12 / 0.5), 0 2px 8px -2px rgb(2 5 12 / 0.55);
+  --shadow-lift-md: 0 2px 4px rgb(2 5 12 / 0.4), 0 12px 28px -8px rgb(2 5 12 / 0.65);
+  --shadow-lift-lg: 0 4px 8px rgb(2 5 12 / 0.35), 0 28px 60px -16px rgb(2 5 12 / 0.75);
+  --shadow-bevel: inset 0 1px 0 rgb(214 224 255 / 0.06);
 }
 
 /*
@@ -376,16 +389,21 @@
     pointer-events: none;
     background:
       radial-gradient(
-        78rem 52rem at 12% -8%,
-        color-mix(in oklab, var(--color-primary) 13%, transparent),
+        78rem 52rem at 8% -10%,
+        color-mix(in oklab, var(--color-brand-violet) 26%, transparent),
+        transparent 64%
+      ),
+      radial-gradient(
+        64rem 46rem at 92% 2%,
+        color-mix(in oklab, var(--color-brand-amber) 15%, transparent),
         transparent 62%
       ),
       radial-gradient(
-        64rem 46rem at 88% 6%,
-        color-mix(in oklab, var(--color-jade) 9%, transparent),
-        transparent 60%
+        54rem 40rem at 52% 108%,
+        color-mix(in oklab, var(--color-primary) 12%, transparent),
+        transparent 66%
       ),
-      linear-gradient(180deg, #14110f 0%, var(--color-marketing-base) 38%);
+      linear-gradient(180deg, #0b1226 0%, var(--color-marketing-base) 42%);
   }
 
   &::after {
@@ -422,14 +440,14 @@
     pointer-events: none;
     background:
       radial-gradient(
-        70rem 38rem at 6% -10%,
-        color-mix(in oklab, var(--color-primary) 7%, transparent),
+        70rem 38rem at 4% -12%,
+        color-mix(in oklab, var(--color-brand-violet) 13%, transparent),
         transparent 70%
       ),
       radial-gradient(
-        56rem 30rem at 96% 0%,
-        color-mix(in oklab, var(--color-jade) 5%, transparent),
-        transparent 66%
+        56rem 32rem at 98% -4%,
+        color-mix(in oklab, var(--color-brand-amber) 8%, transparent),
+        transparent 68%
       );
   }
 
@@ -442,6 +460,60 @@
     opacity: 0.05;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
   }
+}
+
+/*
+ * Signed-in shell backdrop.
+ *
+ * A flat navy fill reads as a void behind the feed, so the app gets the same
+ * light as the marketing pages at a third of the strength: violet in the
+ * top-left, amber in the bottom-right, both fixed so scrolling never repaints
+ * them. `z-index: -1` inside an isolated stacking context paints the wash over
+ * the element's own background but under its children.
+ */
+@utility app-backdrop {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        64rem 42rem at 6% -14%,
+        color-mix(in oklab, var(--color-brand-violet) 15%, transparent),
+        transparent 66%
+      ),
+      radial-gradient(
+        54rem 36rem at 96% 4%,
+        color-mix(in oklab, var(--color-primary) 9%, transparent),
+        transparent 64%
+      ),
+      radial-gradient(
+        70rem 40rem at 54% 118%,
+        color-mix(in oklab, var(--color-brand-amber) 7%, transparent),
+        transparent 70%
+      );
+  }
+}
+
+/*
+ * Brand gradient fills. `brand-gradient` paints the sunset ramp behind text
+ * that is already `text-on-primary`; `brand-gradient-text` clips the ramp to
+ * the glyphs, so it sets the transparent colour itself.
+ */
+@utility brand-gradient {
+  background-image: var(--gradient-brand);
+}
+
+@utility brand-gradient-text {
+  background-image: var(--gradient-brand);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
 }
 
 /*
