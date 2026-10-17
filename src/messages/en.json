@@ -144,12 +144,6 @@
     "eyebrowPrimary": "Visual Chronology",
     "title": "Community Posts",
     "intro": "Moments, travels, and glimpses into daily life across borders. Pure photography without algorithmic noise.",
-    "map": {
-      "title": "Where members are posting",
-      "hint": "Select a place to narrow the feed.",
-      "all": "All places",
-      "posts": "{count, plural, one {# post} other {# posts}}"
-    },
     "filters": {
       "all": "All Dispatches",
       "connectionsOnly": "Connections Only",
@@ -201,6 +195,19 @@
     "end": {
       "caughtUp": "You are caught up with recent community moments",
       "checkBack": "Check back later or post your own dispatch above"
+    },
+    "sidebar": {
+      "aboutTitle": "About GlobalLinkup Posts",
+      "aboutBody": "No algorithms, no stories, no ephemeral reels. Just genuine photography and cultural updates shared chronologically by international members across borders.",
+      "humanCurated": "Human-curated community",
+      "networkTitle": "Active in Your Network",
+      "viewAll": "View All",
+      "sendNote": "Send Direct Note",
+      "etiquetteTitle": "Community Etiquette",
+      "etiquetteBody": "Respectful, intentional, and culturally curious. We celebrate photography that captures local context, real travel reflections, and cross-cultural friendship.",
+      "readGuidelines": "Read Community Guidelines →",
+      "feedLanguage": "FEED LANGUAGE: ENGLISH",
+      "change": "Change"
     }
   },
   "Marketplace": {
