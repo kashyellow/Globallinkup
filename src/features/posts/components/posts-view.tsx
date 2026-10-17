@@ -14,8 +14,8 @@ import { usePagination } from "@/features/shared/use-pagination";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
-/** Posts per page — the feed is a tall single column, so two is a full viewport. */
-const PAGE_SIZE = 2;
+/** Posts per page — one full row of three on wide screens. */
+const PAGE_SIZE = 6;
 
 /** Iberian + LatAm locations, matched against the post's free-text `location`. */
 const SPAIN_LATAM = /Spain|España|Mexico|México|Colombia|Argentina|Chile|Peru|Perú/i;
@@ -108,15 +108,17 @@ export function PostsView() {
       </div>
 
       {/* Feed */}
-      <div className="mx-auto mt-block-mobile flex w-full max-w-[700px] flex-col gap-space-lg md:mt-block">
-        <PostComposer />
+      <div className="mt-block-mobile grid grid-cols-1 items-start gap-space-lg md:mt-block md:grid-cols-2 xl:grid-cols-3">
+        <div className="md:col-span-2 xl:col-span-3">
+          <PostComposer />
+        </div>
 
         {pageItems.map((post, index) => (
           <PostCard key={`${post.id}-${page}-${index}`} post={post} />
         ))}
 
         {visiblePosts.length === 0 ? (
-          <div className="bezel-tray">
+          <div className="bezel-tray md:col-span-2 xl:col-span-3">
             <div
               className="flex flex-col items-center gap-space-sm bezel-core p-space-xl text-center"
               style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
@@ -143,13 +145,13 @@ export function PostsView() {
           page={page}
           totalPages={totalPages}
           onPageChange={setPage}
-          className="mt-space-xs"
+          className="mt-space-xs md:col-span-2 xl:col-span-3"
         />
 
         {/* The end cap belongs to the end of the list, so it only renders on
             the final page — otherwise it reads as "no more posts" mid-feed. */}
         {page === totalPages ? (
-          <div className="flex flex-col items-center justify-center gap-2 py-space-md text-center">
+          <div className="flex flex-col items-center justify-center gap-2 py-space-md text-center md:col-span-2 xl:col-span-3">
             <div className="h-1 w-8 rounded-full bg-outline-variant" />
             <p className="font-label-lg text-label-lg font-semibold text-on-surface">
               {t("end.caughtUp")}
