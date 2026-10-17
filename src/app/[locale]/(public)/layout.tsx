@@ -7,7 +7,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <PublicHeader />
-      <main className="app-backdrop w-full grow bg-background pt-20">{children}</main>
+      <main className="w-full grow bg-background pt-20">{children}</main>
       <PublicFooter />
     </>
   );

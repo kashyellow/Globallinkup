@@ -18,9 +18,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <Navbar isAdmin={profile.role === "admin"} />
-      <main className="app-backdrop min-h-[100dvh] w-full flex-1 bg-background pt-20">
-        {children}
-      </main>
+      <main className="min-h-[100dvh] w-full flex-1 bg-background pt-20">{children}</main>
       {/*
        * The fixed mobile tab bar overlays whatever sits at the very bottom of
        * the page, so the reserve lives on the footer instead of `<main>` —

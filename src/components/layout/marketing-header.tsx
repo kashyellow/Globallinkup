@@ -130,7 +130,7 @@ export function MarketingHeader() {
 
           <Link
             href="/register"
-            className="group inline-flex h-11 items-center gap-1.5 rounded-full brand-gradient pr-1.5 pl-4 font-label-lg text-label-lg whitespace-nowrap text-on-primary transition-[filter] duration-300 hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:h-9"
+            className="group inline-flex h-11 items-center gap-1.5 rounded-full bg-primary pr-1.5 pl-4 font-label-lg text-label-lg whitespace-nowrap text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:h-9"
           >
             <span className="hidden sm:inline">{t("join")}</span>
             <span className="sm:hidden">{t("joinShort")}</span>
