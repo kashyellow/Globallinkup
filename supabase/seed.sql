@@ -236,8 +236,8 @@ values
 -- ----------------------------------------------------------------------------
 insert into public.contact_details (profile_id, whatsapp, instagram, email, other)
 values
-  ('22222222-2222-2222-2222-222222222222', '+34 612 849 201', '@sofia.mtz_bcn', 'sofia@bcncreative.es', '{"chat":"@sofia.bcn","substack":"sofia.substack.com"}'::jsonb),
-  ('33333333-3333-3333-3333-333333333333', '+52 55 4910 8823', '@mateo_silv', 'mateo@silvaestudio.mx', '{"chat":"@mateo.silv"}'::jsonb),
+  ('22222222-2222-2222-2222-222222222222', '+34 612 849 201', '@sofia.mtz_bcn', 'sofia@bcncreative.es', '{"telegram":"@sofia.bcn","substack":"sofia.substack.com"}'::jsonb),
+  ('33333333-3333-3333-3333-333333333333', '+52 55 4910 8823', '@mateo_silv', 'mateo@silvaestudio.mx', '{"telegram":"@mateo.silv"}'::jsonb),
   ('44444444-4444-4444-4444-444444444444', '+57 312 849 2011', '@camila.textiles', 'camila@osorio.co', '{}'::jsonb),
   ('66666666-6666-6666-6666-666666666666', '+34 611 729 334', '@elena_curaduria', 'elena.ramos@curaduria.es', '{}'::jsonb);
 

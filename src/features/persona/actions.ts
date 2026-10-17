@@ -32,14 +32,17 @@ export async function savePersonaAction(input: unknown): Promise<PersonaResult> 
     p_display_name: data.fullName,
     p_country_code: data.country,
     p_city: data.city,
-    p_origin_flavor: nonEmpty(data.originFlavor) ?? undefined,
     p_bio: data.bio,
     p_bio_locale: data.locale,
     p_languages: data.languages,
     p_interests: data.interests,
     p_date_of_birth: nonEmpty(data.dateOfBirth) ?? undefined,
+    p_whatsapp: nonEmpty(data.whatsapp) ?? undefined,
+    p_telegram: nonEmpty(data.telegram) ?? undefined,
     p_instagram: nonEmpty(data.instagram) ?? undefined,
-    p_chat: nonEmpty(data.chat) ?? undefined,
+    p_facebook: nonEmpty(data.facebook) ?? undefined,
+    p_tiktok: nonEmpty(data.tiktok) ?? undefined,
+    p_x: nonEmpty(data.x) ?? undefined,
   });
   if (error) return { ok: false, error: "unknown" };
 

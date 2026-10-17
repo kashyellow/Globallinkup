@@ -54,14 +54,8 @@ export function VerifyView({ status, persona }: { status: VerifyState; persona: 
 
   const nextSteps = [
     { n: 1, icon: "id_card", tone: "primary" as const },
-    { n: 2, icon: "mail_read", tone: "muted" as const },
+    { n: 2, icon: "notifications_active", tone: "muted" as const },
     { n: 3, icon: "lock_open", tone: "tertiary" as const },
-  ];
-
-  const metrics = [
-    { n: 1, icon: "encrypted", tone: "text-primary" },
-    { n: 2, icon: "timer", tone: "text-tertiary" },
-    { n: 3, icon: "translate", tone: "text-secondary" },
   ];
 
   const step3Medallion = (
@@ -530,52 +524,9 @@ export function VerifyView({ status, persona }: { status: VerifyState; persona: 
                   <span>{t("editPersona")}</span>
                 </Link>
               </div>
-
-              <div className="mt-space-xl flex flex-col items-center justify-center gap-space-xs text-center text-secondary sm:flex-row">
-                <div className="flex items-center gap-1">
-                  <Icon name="verified_user" className="text-base text-tertiary" />
-                  <span className="font-body-sm text-body-sm font-medium">{t("trustDesk")}</span>
-                </div>
-                <span aria-hidden="true" className="hidden sm:inline">
-                  &bull;
-                </span>
-                <span className="font-body-sm text-body-sm text-text-muted">
-                  {t("trustManifesto")}
-                </span>
-              </div>
             </div>
           </article>
         </div>
-
-        {/* Trust metrics ribbon */}
-        <ul className="mx-auto mt-space-lg grid w-full grid-cols-1 gap-space-md sm:grid-cols-2 lg:grid-cols-3">
-          {metrics.map((metric) => (
-            <li
-              key={metric.n}
-              className="flex items-center gap-space-md rounded-2xl border border-outline-variant bg-surface-low p-space-md"
-            >
-              <div
-                className={cn(
-                  "flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-outline-variant bg-surface-container",
-                  metric.tone,
-                )}
-              >
-                <Icon name={metric.icon} className="text-2xl" />
-              </div>
-              <div className="flex min-w-0 flex-col">
-                <span className="font-label-md text-label-md text-secondary">
-                  {t(`metric${metric.n}Label`)}
-                </span>
-                <span className="font-headline-sm text-headline-sm font-semibold text-on-surface">
-                  {t(`metric${metric.n}Value`)}
-                </span>
-                <span className="font-body-sm text-body-sm text-secondary">
-                  {t(`metric${metric.n}Body`)}
-                </span>
-              </div>
-            </li>
-          ))}
-        </ul>
       </div>
     </div>
   );

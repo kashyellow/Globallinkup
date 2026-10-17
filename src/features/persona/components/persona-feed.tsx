@@ -1,6 +1,5 @@
 "use client";
 
-import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
@@ -46,32 +45,6 @@ export function PersonaFeed() {
             onConnect={() => sendRequest(persona.id)}
           />
         ))}
-
-        <article className="bezel-tray">
-          <div
-            className="flex h-full flex-col justify-between gap-space-lg bezel-core p-space-lg"
-            style={{ "--bezel-core-bg": "var(--color-surface-container)" } as CSSProperties}
-          >
-            <div className="space-y-space-xs">
-              <Icon name="diversity_1" className="text-3xl text-primary" />
-              <h3 className="font-headline-sm text-headline-sm text-on-surface">
-                {t("feed.ctaTitle")}
-              </h3>
-              <p className="font-body-sm text-body-sm text-pretty text-secondary">
-                {t("feed.ctaBody")}
-              </p>
-            </div>
-            <button
-              type="button"
-              className={cn(
-                "w-full rounded-full border border-outline-variant bg-surface-low px-space-md py-2.5 font-label-lg text-label-lg font-medium text-on-surface transition-colors duration-300 hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
-                EASE,
-              )}
-            >
-              {t("feed.ctaButton")}
-            </button>
-          </div>
-        </article>
       </div>
 
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />

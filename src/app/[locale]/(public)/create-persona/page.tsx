@@ -22,19 +22,29 @@ async function loadInitial(): Promise<PersonaInitial | undefined> {
   if (!profile) return undefined;
 
   const supabase = await getServerClient();
-  let instagram = "";
-  let chat = "";
+  const contacts = {
+    whatsapp: "",
+    telegram: "",
+    instagram: "",
+    facebook: "",
+    tiktok: "",
+    x: "",
+  };
   let dateOfBirth = "";
 
   if (supabase) {
     const { data: contact } = await supabase
       .from("contact_details")
-      .select("instagram, other")
+      .select("whatsapp, instagram, other")
       .eq("profile_id", profile.id)
       .maybeSingle();
-    instagram = contact?.instagram ?? "";
-    const other = (contact?.other ?? null) as { chat?: string } | null;
-    chat = other?.chat ?? "";
+    const other = (contact?.other ?? null) as Record<string, string> | null;
+    contacts.whatsapp = contact?.whatsapp ?? "";
+    contacts.instagram = contact?.instagram ?? "";
+    contacts.telegram = other?.telegram ?? "";
+    contacts.facebook = other?.facebook ?? "";
+    contacts.tiktok = other?.tiktok ?? "";
+    contacts.x = other?.x ?? "";
 
     const { data: privateRow } = await supabase
       .from("profile_private")
@@ -45,22 +55,20 @@ async function loadInitial(): Promise<PersonaInitial | undefined> {
   }
 
   const languages = Array.isArray(profile.languages)
-    ? (profile.languages as { code?: string }[])
-        .map((entry) => entry?.code ?? "")
-        .filter((code) => code.length > 0)
+    ? (profile.languages as { code?: string; level?: string }[])
+        .filter((entry) => typeof entry?.code === "string" && entry.code.length > 0)
+        .map((entry) => ({ code: entry.code as string, level: entry.level ?? "fluent" }))
     : [];
 
   return {
     fullName: profile.display_name,
     country: profile.country_code ?? "ES",
     city: profile.city ?? "",
-    originFlavor: profile.origin_flavor ?? "",
     dateOfBirth,
     languages,
     interests: profile.interests ?? [],
     bio: profile.bio_en ?? profile.bio_es ?? "",
-    instagram,
-    chat,
+    ...contacts,
   };
 }
 

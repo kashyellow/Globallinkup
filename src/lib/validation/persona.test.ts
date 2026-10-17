@@ -6,13 +6,12 @@ const valid = {
   fullName: "Sofia Martinez",
   country: "ES",
   city: "Barcelona",
-  originFlavor: "El Born",
   dateOfBirth: "1999-04-12",
   languages: [{ code: "ES", level: "native" }],
   interests: ["architecture", "photography", "espresso"],
   bio: "Architect and ceramicist based in El Born.",
+  whatsapp: "+34 612 345 678",
   instagram: "@sofia.mtz_bcn",
-  chat: "@sofia.bcn",
   locale: "en",
 };
 
@@ -21,22 +20,36 @@ describe("savePersonaSchema", () => {
     expect(savePersonaSchema.safeParse(valid).success).toBe(true);
   });
 
-  it("allows the optional fields to be empty or omitted", () => {
-    const { originFlavor, dateOfBirth, instagram, chat, ...rest } = valid;
-    void originFlavor;
+  it("allows the unused channels and the date of birth to be empty or omitted", () => {
+    const { dateOfBirth, instagram, ...rest } = valid;
     void dateOfBirth;
     void instagram;
-    void chat;
     expect(savePersonaSchema.safeParse(rest).success).toBe(true);
     expect(
       savePersonaSchema.safeParse({
         ...rest,
-        originFlavor: "",
         dateOfBirth: "",
         instagram: "",
-        chat: "",
+        telegram: "",
+        facebook: "",
+        tiktok: "",
+        x: "",
       }).success,
     ).toBe(true);
+  });
+
+  it("requires at least one contact channel", () => {
+    expect(
+      savePersonaSchema.safeParse({
+        ...valid,
+        whatsapp: "",
+        telegram: "",
+        instagram: "",
+        facebook: "",
+        tiktok: "",
+        x: "",
+      }).success,
+    ).toBe(false);
   });
 
   it("requires at least three interests", () => {

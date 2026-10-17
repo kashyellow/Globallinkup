@@ -370,8 +370,8 @@ select is(
 set local role anon;
 set local request.jwt.claims = '{}';
 select throws_ok(
-  $$ select public.save_persona('X','ES','X',null,'bio text','en','[]'::jsonb,
-       array['architecture','literature','hikingNature'], null, null, null) $$,
+  $$ select public.save_persona('X','ES','X','bio text','en','[]'::jsonb,
+       array['architecture','literature','hikingNature'], null, null, null, null, null, null, null) $$,
   42501,
   null,
   'save_persona rejects anonymous callers'
@@ -384,8 +384,9 @@ update public.profiles set approval_status = 'rejected'
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"99999999-9999-9999-9999-999999999999","role":"authenticated"}';
 select results_eq(
-  $$ select public.save_persona('Rejected Applicant','PT','Lisbon','Alfama','New bio text.','en',
-       '[]'::jsonb, array['architecture','literature','hikingNature'], '1993-09-14', '@x', '@chat')::text $$,
+  $$ select public.save_persona('Rejected Applicant','PT','Lisbon','New bio text.','en',
+       '[]'::jsonb, array['architecture','literature','hikingNature'], '1993-09-14',
+       '+351 912 000 000', '@tg', '@x', null, null, null)::text $$,
   $$ values ('pending') $$,
   'save_persona resubmits a rejected profile to pending'
 );
@@ -395,8 +396,9 @@ reset role;
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"22222222-2222-2222-2222-222222222222","role":"authenticated"}';
 select results_eq(
-  $$ select public.save_persona('Sofia Martinez','ES','Barcelona','El Born','Updated bio.','en',
-       '[]'::jsonb, array['architecture','literature','hikingNature'], null, '@s', '@c')::text $$,
+  $$ select public.save_persona('Sofia Martinez','ES','Barcelona','Updated bio.','en',
+       '[]'::jsonb, array['architecture','literature','hikingNature'], null,
+       null, null, '@s', null, null, null)::text $$,
   $$ values ('approved') $$,
   'save_persona keeps an approved profile approved'
 );

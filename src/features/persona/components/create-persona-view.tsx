@@ -1,25 +1,39 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, useRef, type FormEvent } from "react";
 import { Icon } from "@/components/ui/icon";
 import { savePersonaAction, type PersonaError } from "@/features/persona/actions";
 import { useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
-const PLATE =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuADliJdt0rmbdwabBjgct3MroNhyQGQEpEC04Vx2tdDaLu_Nyalx2vdJwT8nQa-xxiAPl5RzZQjU0HP0f5rqVa3QHq9W9iKw8lBlBXx72GNW8wEGXNiW_QnM3N40HLTY-Yrw3IQybTm93jx5MI7BwCagcgMO1JGmF5_ZQz7XF5bHx-yTKYryVgB7wV5pWu3K_REoY2TghfH75ciuZSJAVzxBHJhI4uV_0BZgrtReC3Y-Bt9CaS0LaYjqA";
 const AVATAR =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuCMXczYpS-catSoQN-hNs5jsU_y4sLr8O0tGkXJgT9UiAWX23iVLug4IYUcxCAUkV8jYSVpk3iOteWmSMHrhPcibIMXftgyJOAMaDmuZ91OR7EWgfv4s5qe46dBfK8flssnEhfYi6y9jeomecYsYsw4FU7wssoHt6hl4sIkBjyWbxiUXgRSU_LB4D1OF9ir9cpmunNHI9Zp552qpDollKo_1_zkU45r_9ZhutGTnBHUeyL87hJwL9dONw";
 
 const COUNTRIES = ["ES", "MX", "CO", "AR", "US", "CR", "CL", "PE", "PT"] as const;
 
 const LANGUAGES = [
-  { code: "ES", level: "native", initial: true },
-  { code: "EN", level: "fluent", initial: true },
-  { code: "FR", level: "learning", initial: false },
-  { code: "PT", level: "basic", initial: false },
+  { code: "ES", defaultLevel: "native" },
+  { code: "EN", defaultLevel: "fluent" },
 ] as const;
+
+const LEVELS = ["native", "fluent", "learning", "basic"] as const;
+
+/**
+ * Contact channels, in the order they render. At least one must be filled —
+ * enforced here for the button state and again in Zod + the `save_persona` RPC.
+ */
+const CHANNELS = [
+  { key: "whatsapp", icon: "call", prefix: "", placeholderKey: "whatsappPlaceholder" },
+  { key: "telegram", icon: "send", prefix: "@", placeholderKey: "telegramPlaceholder" },
+  { key: "instagram", icon: "photo_camera", prefix: "@", placeholderKey: "instagramPlaceholder" },
+  { key: "facebook", icon: "public", prefix: "", placeholderKey: "facebookPlaceholder" },
+  { key: "tiktok", icon: "music_note", prefix: "@", placeholderKey: "tiktokPlaceholder" },
+  { key: "x", icon: "tag", prefix: "@", placeholderKey: "xPlaceholder" },
+] as const;
+
+type ChannelKey = (typeof CHANNELS)[number]["key"];
+type LanguageState = Record<string, { active: boolean; level: string }>;
 
 const INTERESTS = [
   { key: "architecture", icon: "domain", initial: true },
@@ -38,26 +52,26 @@ export type PersonaInitial = {
   fullName: string;
   country: string;
   city: string;
-  originFlavor: string;
   dateOfBirth: string;
-  languages: string[];
+  languages: { code: string; level: string }[];
   interests: string[];
   bio: string;
-  instagram: string;
-  chat: string;
-};
+} & Record<ChannelKey, string>;
 
 export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
   const t = useTranslations("PersonaForm");
   const locale = useLocale();
   const router = useRouter();
 
-  const [languages, setLanguages] = useState<Record<string, boolean>>(() =>
+  const [languages, setLanguages] = useState<LanguageState>(() =>
     Object.fromEntries(
-      LANGUAGES.map((language) => [
-        language.code,
-        initial ? initial.languages.includes(language.code) : language.initial,
-      ]),
+      LANGUAGES.map((language) => {
+        const saved = initial?.languages.find((entry) => entry.code === language.code);
+        return [
+          language.code,
+          { active: Boolean(saved) || !initial, level: saved?.level ?? language.defaultLevel },
+        ];
+      }),
     ),
   );
   const [interests, setInterests] = useState<Record<string, boolean>>(() =>
@@ -69,14 +83,48 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
     ),
   );
   const [bio, setBio] = useState(initial?.bio ?? "");
+  const [contacts, setContacts] = useState<Record<ChannelKey, string>>(() => ({
+    whatsapp: initial?.whatsapp ?? "",
+    telegram: initial?.telegram ?? "",
+    instagram: initial?.instagram ?? "",
+    facebook: initial?.facebook ?? "",
+    tiktok: initial?.tiktok ?? "",
+    x: initial?.x ?? "",
+  }));
   const [error, setError] = useState<PersonaError | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  /*
+   * Local-only photo preview: the file never leaves the browser. Storage
+   * buckets and the upload Server Action are still deferred (slice S4), so
+   * this is a picker + preview, not a persisted avatar.
+   */
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (photoPreview) URL.revokeObjectURL(photoPreview);
+    };
+  }, [photoPreview]);
+
+  function previewFile(file?: File) {
+    if (!file) return;
+    setPhotoPreview(URL.createObjectURL(file));
+  }
+
   const selectedInterests = Object.values(interests).filter(Boolean).length;
-  const canSubmit = selectedInterests >= 3;
+  const selectedLanguages = Object.values(languages).filter((entry) => entry.active).length;
+  const hasContact = Object.values(contacts).some((value) => value.trim().length > 0);
+  const canSubmit = selectedInterests >= 3 && hasContact && selectedLanguages >= 1;
 
   function toggleLanguage(code: string) {
-    setLanguages((prev) => ({ ...prev, [code]: !prev[code] }));
+    setLanguages((prev) => ({ ...prev, [code]: { ...prev[code], active: !prev[code].active } }));
+  }
+
+  function setLanguageLevel(code: string, level: string) {
+    setLanguages((prev) => ({ ...prev, [code]: { ...prev[code], level } }));
   }
 
   function toggleInterest(key: string) {
@@ -98,18 +146,23 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
         fullName: text("fullname"),
         country: text("country"),
         city: text("city"),
-        originFlavor: text("origin-flavor"),
         dateOfBirth: text("date-of-birth"),
-        languages: LANGUAGES.filter((language) => languages[language.code]).map((language) => ({
-          code: language.code,
-          level: language.level,
-        })),
+        languages: LANGUAGES.filter((language) => languages[language.code].active).map(
+          (language) => ({
+            code: language.code,
+            level: languages[language.code].level,
+          }),
+        ),
         interests: INTERESTS.filter((interest) => interests[interest.key]).map(
           (interest) => interest.key,
         ),
         bio,
-        instagram: text("instagram"),
-        chat: text("chat"),
+        whatsapp: contacts.whatsapp,
+        telegram: contacts.telegram,
+        instagram: contacts.instagram,
+        facebook: contacts.facebook,
+        tiktok: contacts.tiktok,
+        x: contacts.x,
         locale,
       });
 
@@ -166,88 +219,8 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 items-start gap-space-lg lg:grid-cols-12 lg:gap-space-xl">
-        {/* Guidance column — kept after the form on mobile so the task leads. */}
-        <aside className="order-2 flex flex-col gap-space-lg lg:sticky lg:top-28 lg:order-1 lg:col-span-5">
-          <div className="group relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-outline-variant bg-surface-low shadow-sm">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              alt={t("plateAlt")}
-              className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-              src={PLATE}
-              loading="lazy"
-            />
-            <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-[#0B0A09]/90 via-[#0B0A09]/40 to-transparent p-space-lg">
-              <span className="mb-1 font-label-caps text-label-caps tracking-widest text-primary uppercase">
-                {t("plateBadge")}
-              </span>
-              <p className="font-headline-sm text-headline-sm leading-snug font-medium text-on-surface">
-                {t("plateQuote")}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-space-sm rounded-xl border border-outline-variant bg-surface-low p-space-lg shadow-sm">
-            <div className="flex items-center gap-space-xs text-secondary">
-              <Icon name="auto_stories" className="text-[20px] text-primary" />
-              <h3 className="font-headline-sm text-headline-sm text-on-surface">
-                {t("guideTitle")}
-              </h3>
-            </div>
-            <p className="font-body-md text-body-md leading-relaxed text-secondary">
-              {t("guideBody")}
-            </p>
-            <div className="flex flex-wrap items-center gap-x-space-md gap-y-1 pt-space-xs">
-              <div className="flex items-center gap-1.5 text-primary">
-                <Icon name="verified" className="text-[16px]" />
-                <span className="font-label-caps text-label-caps whitespace-nowrap uppercase">
-                  {t("guideVetted")}
-                </span>
-              </div>
-              <div className="flex items-center gap-1.5 text-secondary">
-                <Icon name="translate" className="text-[16px]" />
-                <span className="font-label-caps text-label-caps whitespace-nowrap uppercase">
-                  {t("guideBilingual")}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-space-md rounded-xl border border-outline-variant bg-surface-low p-space-lg">
-            <div className="flex items-start gap-space-md">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-outline-variant bg-surface-variant text-primary shadow-sm">
-                <Icon name="lock" className="text-[22px]" />
-              </div>
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <h4 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
-                    {t("privacyTitle")}
-                  </h4>
-                  <span className="shrink-0 rounded-lg border border-outline-variant bg-surface-variant px-2 py-0.5 font-label-caps text-label-caps whitespace-nowrap text-secondary shadow-sm">
-                    {t("privacyBadge")}
-                  </span>
-                </div>
-                <p className="font-body-sm text-body-sm leading-relaxed text-secondary">
-                  {t("privacyBody")}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center justify-between gap-space-sm rounded-lg border border-outline-variant bg-surface-container p-space-md shadow-sm">
-              <div className="flex items-center gap-space-xs">
-                <Icon name="shield" filled className="text-[18px] text-tertiary" />
-                <span className="font-label-md text-label-md font-medium text-on-surface">
-                  {t("privacyNote")}
-                </span>
-              </div>
-              <span className="shrink-0 font-label-caps text-label-caps font-bold tracking-wider whitespace-nowrap text-tertiary uppercase">
-                {t("privacyZero")}
-              </span>
-            </div>
-          </div>
-        </aside>
-
-        {/* Form column — leads on mobile */}
-        <div className="order-1 flex flex-col gap-space-lg rounded-xl border border-outline-variant bg-surface-container p-space-lg shadow-sm md:gap-space-xl md:p-space-xl lg:order-2 lg:col-span-7">
+      <div className="mx-auto w-full max-w-3xl">
+        <div className="flex flex-col gap-space-lg rounded-xl border border-outline-variant bg-surface-container p-space-lg shadow-sm md:gap-space-xl md:p-space-xl">
           <form className="flex flex-col gap-space-lg md:gap-space-xl" onSubmit={submit}>
             {error ? (
               <div
@@ -276,17 +249,26 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
 
               <div className="flex flex-col items-center gap-space-lg rounded-xl border border-outline-variant bg-surface-low p-space-lg sm:flex-row">
                 <div className="group relative shrink-0 cursor-pointer">
-                  <div className="relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-2 border-outline-variant bg-surface-variant shadow-inner transition-transform duration-300 group-hover:scale-105">
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    aria-label={t("change")}
+                    className="relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-2 border-outline-variant bg-surface-variant shadow-inner transition-transform duration-300 group-hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img alt={t("avatarAlt")} className="h-full w-full object-cover" src={AVATAR} />
+                    <img
+                      alt={t("avatarAlt")}
+                      className="h-full w-full object-cover"
+                      src={photoPreview ?? AVATAR}
+                    />
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-background/60 text-on-surface opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                       <Icon name="photo_camera" className="text-[24px]" />
                       <span className="font-label-caps text-label-caps uppercase">
                         {t("change")}
                       </span>
                     </div>
-                  </div>
-                  <div className="absolute -right-1 -bottom-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary-container text-white shadow-md">
+                  </button>
+                  <div className="pointer-events-none absolute -right-1 -bottom-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary-container text-white shadow-md">
                     <Icon name="add" className="text-[16px]" />
                   </div>
                 </div>
@@ -295,6 +277,7 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
                   <div className="flex flex-wrap items-center gap-space-xs">
                     <button
                       type="button"
+                      onClick={() => fileInputRef.current?.click()}
                       className="flex min-h-11 items-center gap-space-xs rounded-lg border border-outline-variant bg-surface-variant px-space-md py-2 font-label-lg text-label-lg text-on-surface shadow-sm transition-colors hover:bg-surface-container-high"
                     >
                       <Icon name="upload_file" className="text-[18px] text-primary" />
@@ -302,12 +285,34 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
                     </button>
                     <button
                       type="button"
+                      onClick={() => cameraInputRef.current?.click()}
                       className="flex min-h-11 items-center gap-space-xs rounded-lg border border-outline-variant bg-surface-variant px-space-md py-2 font-label-lg text-label-lg text-on-surface shadow-sm transition-colors hover:bg-surface-container-high"
                     >
                       <Icon name="videocam" className="text-[18px] text-secondary" />
                       <span>{t("useCamera")}</span>
                     </button>
                   </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="sr-only"
+                    onChange={(event) => {
+                      previewFile(event.target.files?.[0]);
+                      event.target.value = "";
+                    }}
+                  />
+                  <input
+                    ref={cameraInputRef}
+                    type="file"
+                    accept="image/*"
+                    capture="user"
+                    className="sr-only"
+                    onChange={(event) => {
+                      previewFile(event.target.files?.[0]);
+                      event.target.value = "";
+                    }}
+                  />
                   <p className="mt-1 font-body-sm text-body-sm text-secondary">
                     {t("photoFormats")}
                   </p>
@@ -372,17 +377,6 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
                 </div>
               </Field>
 
-              <Field label={t("anchor")} meta={t("anchorMeta")} htmlFor="persona-anchor">
-                <input
-                  id="persona-anchor"
-                  name="origin-flavor"
-                  type="text"
-                  defaultValue={initial?.originFlavor ?? ""}
-                  placeholder={t("anchorPlaceholder")}
-                  className={inputClass}
-                />
-              </Field>
-
               <Field label={t("dobLabel")} meta={t("dobMeta")} htmlFor="persona-dob">
                 <input
                   id="persona-dob"
@@ -402,30 +396,64 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
                 </span>
                 <p className="font-body-sm text-body-sm text-secondary">{t("languagesHint")}</p>
               </div>
-              <div className="mt-1 grid grid-cols-2 gap-space-xs sm:grid-cols-4">
+              <div className="mt-1 grid grid-cols-1 gap-space-xs sm:grid-cols-2">
                 {LANGUAGES.map((language) => {
-                  const active = languages[language.code];
+                  const state = languages[language.code];
                   return (
-                    <button
+                    <div
                       key={language.code}
-                      type="button"
-                      aria-pressed={active}
-                      onClick={() => toggleLanguage(language.code)}
                       className={cn(
-                        "flex min-h-11 items-center justify-between rounded-lg p-space-sm font-label-md text-label-md shadow-sm transition-all",
-                        active
-                          ? "border border-primary/40 bg-admin-surface font-semibold text-on-surface"
-                          : "border border-outline-variant bg-surface-low text-secondary hover:bg-surface-variant hover:text-on-surface",
+                        "flex min-h-11 items-center justify-between gap-space-sm rounded-lg p-space-sm shadow-sm transition-all",
+                        state.active
+                          ? "border border-primary/40 bg-admin-surface"
+                          : "border border-outline-variant bg-surface-low",
                       )}
                     >
-                      <span>
-                        {language.code} • {t(`levels.${language.level}`)}
-                      </span>
-                      <Icon
-                        name="check"
-                        className={cn("text-[16px] text-primary", !active && "opacity-0")}
-                      />
-                    </button>
+                      <button
+                        type="button"
+                        aria-pressed={state.active}
+                        onClick={() => toggleLanguage(language.code)}
+                        className={cn(
+                          "flex min-h-9 items-center gap-space-xs font-label-md text-label-md transition-colors",
+                          state.active
+                            ? "font-semibold text-on-surface"
+                            : "text-secondary hover:text-on-surface",
+                        )}
+                      >
+                        <Icon
+                          name={state.active ? "check_circle" : "circle"}
+                          className={cn(
+                            "text-[18px]",
+                            state.active ? "text-primary" : "text-outline-variant",
+                          )}
+                        />
+                        <span>{language.code}</span>
+                      </button>
+
+                      <div className="relative">
+                        <select
+                          aria-label={`${language.code} ${t("languagesLabel")}`}
+                          value={state.level}
+                          disabled={!state.active}
+                          onChange={(event) => setLanguageLevel(language.code, event.target.value)}
+                          className={cn(
+                            "h-9 cursor-pointer appearance-none rounded-md border border-outline-variant bg-surface-low pr-8 pl-3 font-label-md text-label-md text-on-surface transition-colors",
+                            "hover:border-outline-hover focus:border-primary/50 focus:outline-none",
+                            !state.active && "cursor-not-allowed opacity-50",
+                          )}
+                        >
+                          {LEVELS.map((level) => (
+                            <option key={level} value={level}>
+                              {t(`levels.${level}`)}
+                            </option>
+                          ))}
+                        </select>
+                        <Icon
+                          name="expand_more"
+                          className="pointer-events-none absolute top-1/2 right-2 -translate-y-1/2 text-[16px] text-secondary"
+                        />
+                      </div>
+                    </div>
                   );
                 })}
               </div>
@@ -517,57 +545,53 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
               <p className="font-body-sm text-body-sm text-secondary">{t("vaultBody")}</p>
 
               <div className="mt-1 grid grid-cols-1 gap-space-md md:grid-cols-2">
-                <div className="flex flex-col gap-1.5">
-                  <label
-                    className="flex items-center gap-1 font-label-md text-label-md font-semibold text-on-surface"
-                    htmlFor="persona-instagram"
-                  >
-                    <span>{t("instagram")}</span>
-                    <span className="font-normal text-secondary">{t("instagramMeta")}</span>
-                  </label>
-                  <div className="relative">
-                    <span className="absolute top-2.5 left-3 font-label-md text-label-md text-secondary">
-                      @
-                    </span>
-                    <input
-                      id="persona-instagram"
-                      name="instagram"
-                      type="text"
-                      defaultValue={initial?.instagram ?? ""}
-                      placeholder={t("instagramPlaceholder")}
-                      className={cn(inputClass, "pl-8")}
-                    />
+                {CHANNELS.map((channel) => (
+                  <div key={channel.key} className="flex flex-col gap-1.5">
+                    <label
+                      className="flex items-center gap-1 font-label-md text-label-md font-semibold text-on-surface"
+                      htmlFor={`persona-${channel.key}`}
+                    >
+                      <span>{t(channel.key)}</span>
+                    </label>
+                    <div className="relative">
+                      {channel.prefix ? (
+                        <span className="absolute top-2.5 left-3 font-label-md text-label-md text-secondary">
+                          {channel.prefix}
+                        </span>
+                      ) : null}
+                      <input
+                        id={`persona-${channel.key}`}
+                        name={channel.key}
+                        type="text"
+                        value={contacts[channel.key]}
+                        onChange={(event) =>
+                          setContacts((prev) => ({ ...prev, [channel.key]: event.target.value }))
+                        }
+                        placeholder={t(channel.placeholderKey)}
+                        className={cn(inputClass, channel.prefix && "pl-8", "pr-10")}
+                      />
+                      <Icon
+                        name={channel.icon}
+                        className="absolute top-3 right-3 text-[18px] text-secondary"
+                      />
+                    </div>
                   </div>
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <label
-                    className="flex items-center gap-1 font-label-md text-label-md font-semibold text-on-surface"
-                    htmlFor="persona-chat"
-                  >
-                    <span>{t("chat")}</span>
-                    <span className="font-normal text-secondary">{t("chatMeta")}</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      id="persona-chat"
-                      name="chat"
-                      type="text"
-                      defaultValue={initial?.chat ?? ""}
-                      placeholder={t("chatPlaceholder")}
-                      className={cn(inputClass, "pr-10")}
-                    />
-                    <Icon
-                      name="chat"
-                      className="absolute top-3 right-3 text-[18px] text-secondary"
-                    />
-                  </div>
-                </div>
+                ))}
               </div>
 
-              <div className="flex items-center gap-2 pt-1 text-secondary">
-                <Icon name="check_circle" className="text-[16px] text-tertiary" />
-                <span className="font-body-sm text-body-sm">{t("vaultNote")}</span>
+              <div
+                className={cn(
+                  "flex items-center gap-2 pt-1",
+                  hasContact ? "text-secondary" : "text-primary",
+                )}
+              >
+                <Icon
+                  name={hasContact ? "check_circle" : "error"}
+                  className={cn("text-[16px]", hasContact ? "text-tertiary" : "text-primary")}
+                />
+                <span className="font-body-sm text-body-sm">
+                  {t(hasContact ? "vaultNote" : "contactRequired")}
+                </span>
               </div>
             </section>
 

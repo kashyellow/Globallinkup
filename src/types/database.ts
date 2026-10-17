@@ -492,15 +492,18 @@ export type Database = {
         Args: {
           p_bio?: string;
           p_bio_locale?: string;
-          p_chat?: string;
           p_city: string;
           p_country_code: string;
           p_date_of_birth?: string;
           p_display_name: string;
+          p_facebook?: string;
           p_instagram?: string;
           p_interests?: string[];
           p_languages?: Json;
-          p_origin_flavor?: string;
+          p_telegram?: string;
+          p_tiktok?: string;
+          p_whatsapp?: string;
+          p_x?: string;
         };
         Returns: Database["public"]["Enums"]["approval_status"];
       };

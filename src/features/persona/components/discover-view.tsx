@@ -4,7 +4,6 @@ import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import { PersonaDossier } from "./persona-dossier";
 import { PersonaFeed } from "./persona-feed";
-import { ReceivedRequests } from "./received-requests";
 import { SearchRibbon } from "./search-ribbon";
 
 const STEPS = [
@@ -112,7 +111,6 @@ export async function DiscoverView() {
 
         <aside className="space-y-space-lg lg:sticky lg:top-24 lg:col-span-5">
           <PersonaDossier />
-          <ReceivedRequests />
 
           <div className="bezel-tray">
             <div
