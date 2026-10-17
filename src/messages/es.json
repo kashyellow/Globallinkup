@@ -647,11 +647,6 @@
       "errorGeneric": "No pudimos crear tu cuenta. Inténtalo de nuevo."
     },
     "verify": {
-      "previewLabel": "Vista previa del estado de la cuenta",
-      "previewHint": "• Sandbox de validación visual",
-      "state_pending": "1. Revisión pendiente",
-      "state_approved": "2. Verificado y activo",
-      "state_action": "3. Aclaración necesaria",
       "progressLabel": "Progreso de Incorporación",
       "step1": "01 Cuenta",
       "step1Sub": "Credenciales",
@@ -678,7 +673,6 @@
       "reassureSecondary": "Apreciamos tu paciencia. Cada solicitud se revisa manualmente para garantizar una comunidad cálida, segura y 100% auténtica.",
       "dossierTitle": "Vista Previa del Dossier Enviado",
       "dossierBadge": "Cápsula Cifrada",
-      "portraitAlt": "Fotografía editorial de retrato de Sofia Martinez en Barcelona.",
       "private": "Privado",
       "socialLabel": "Contactos y enlaces sociales verificados",
       "socialLocked": "Bloqueado hasta aprobación mutua",
@@ -695,8 +689,6 @@
       "next3Footer": "Listo al aprobar",
       "exploreStories": "Explorar Historias Públicas",
       "editPersona": "Editar Persona Enviada",
-      "state_rejected": "3. Aclaración Necesaria",
-      "state_suspended": "4. Suspendido",
       "suspendedTitle": "Cuenta Suspendida",
       "suspendedBadge": "Acceso en pausa",
       "suspendedBody": "Tu cuenta ha sido suspendida. Si crees que es un error, contacta a la mesa de revisión.",

@@ -1,24 +1,18 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useState } from "react";
 import type { CSSProperties } from "react";
+import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 export type VerifyState = "pending" | "approved" | "rejected" | "suspended";
 
-const VERIFY_STATES: VerifyState[] = ["pending", "approved", "rejected", "suspended"];
-
-const PORTRAIT =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuChgUiDvARrc_Bw8m37Od2StWpcgREYi9FgPC_NGDUO0m5K2HvD71pDpGV9areRHYo9sXfndYKiosc-UIzCwa09HUk5Wv_-HLhiY_vrHP81qLYhOU_V4N6LvTLlcuccLFPLAEacMrnV4iUaN-izqKRMoMNbRkMMcYKFvuNLizu2SyqeB_sMe1-uzLl5Ez_NpeqZUf16ky1nPh8QnRia9PZ9tUdN2TGF6V9PkS53kNwaoufEwFEJ5N0adA";
-
 const EASE = "duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]";
 
 /**
- * The review screen, driven by the real `approval_status` (S2). It keeps a
- * dev-only preview strip (the mockups ship every state) but production renders
+ * The review screen, driven by the real `approval_status` (S2): it renders
  * exactly the state the server passed in.
  */
 export type VerifyPersona = {
@@ -31,10 +25,7 @@ export type VerifyPersona = {
 export function VerifyView({ status, persona }: { status: VerifyState; persona: VerifyPersona }) {
   const t = useTranslations("Auth.verify");
   const tPersona = useTranslations("PersonaForm");
-  const [preview, setPreview] = useState<VerifyState>(status);
-  const state = preview;
-
-  const isDev = process.env.NODE_ENV === "development";
+  const state = status;
 
   const progress = state === "approved" ? "100%" : "78%";
 
@@ -74,31 +65,6 @@ export function VerifyView({ status, persona }: { status: VerifyState; persona: 
   return (
     <div className="flex w-full flex-col">
       <div className="mx-auto flex w-full max-w-[1100px] flex-col px-margin-mobile pt-space-md pb-page-mobile lg:px-margin lg:pt-space-xl lg:pb-page">
-        {isDev ? (
-          <div className="mb-space-lg flex w-full flex-wrap items-center gap-space-xs rounded-2xl border border-outline-variant bg-surface-low p-space-sm">
-            <span className="flex items-center gap-space-xs pr-space-xs text-secondary">
-              <Icon name="tune" filled className="text-lg text-primary" />
-              <span className="font-label-md text-label-md">{t("previewLabel")}</span>
-            </span>
-            {VERIFY_STATES.map((key) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setPreview(key)}
-                className={cn(
-                  "rounded-full px-space-sm py-1.5 font-label-md text-label-md transition-colors",
-                  EASE,
-                  state === key
-                    ? "bg-surface-container-high font-semibold text-on-surface"
-                    : "text-secondary hover:text-on-surface",
-                )}
-              >
-                {t(`state_${key}`)}
-              </button>
-            ))}
-          </div>
-        ) : null}
-
         {/* Progress milestone tracker */}
         <nav aria-label={t("progressLabel")} className="mb-space-lg w-full sm:mb-space-xl">
           <div className="relative flex items-start justify-between">
@@ -382,13 +348,7 @@ export function VerifyView({ status, persona }: { status: VerifyState; persona: 
 
                 <div className="flex flex-col items-start gap-space-md sm:flex-row">
                   <div className="relative h-28 w-24 shrink-0 overflow-hidden rounded-2xl border border-outline-variant bg-surface">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      alt={t("portraitAlt")}
-                      className="h-full w-full object-cover"
-                      src={PORTRAIT}
-                      loading="lazy"
-                    />
+                    <DefaultAvatar className="h-full w-full" />
                     {/*
                       Privacy stamp on the locked portrait preview. Sized at the
                       11px label-caps floor (was 10px) with enough padding to read

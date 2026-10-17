@@ -647,11 +647,6 @@
       "errorGeneric": "We could not create your account. Please try again."
     },
     "verify": {
-      "previewLabel": "Preview Account State",
-      "previewHint": "• Visual validation sandbox",
-      "state_pending": "1. Pending Review",
-      "state_approved": "2. Verified & Active",
-      "state_action": "3. Clarification Needed",
       "progressLabel": "Onboarding Progress",
       "step1": "01 Account",
       "step1Sub": "Credentials",
@@ -678,7 +673,6 @@
       "reassureSecondary": "We appreciate your patience. Every request is reviewed by hand to keep this community warm, safe, and 100% authentic.",
       "dossierTitle": "Submitted Dossier Preview",
       "dossierBadge": "Encrypted Capsule",
-      "portraitAlt": "Editorial portrait photograph of Sofia Martinez in Barcelona.",
       "private": "Private",
       "socialLabel": "Contact handles & verified social links",
       "socialLocked": "Locked Until Mutual Approval",
@@ -695,8 +689,6 @@
       "next3Footer": "Ready upon pass",
       "exploreStories": "Explore Public Community Stories",
       "editPersona": "Edit Submitted Persona",
-      "state_rejected": "3. Clarification Needed",
-      "state_suspended": "4. Suspended",
       "suspendedTitle": "Account Suspended",
       "suspendedBadge": "Access paused",
       "suspendedBody": "Your account has been suspended. If you believe this is a mistake, contact the review desk.",

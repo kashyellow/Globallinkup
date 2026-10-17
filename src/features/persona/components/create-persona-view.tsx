@@ -2,13 +2,11 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useState, useEffect, useRef, type FormEvent } from "react";
+import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { savePersonaAction, type PersonaError } from "@/features/persona/actions";
 import { useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
-
-const AVATAR =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuCMXczYpS-catSoQN-hNs5jsU_y4sLr8O0tGkXJgT9UiAWX23iVLug4IYUcxCAUkV8jYSVpk3iOteWmSMHrhPcibIMXftgyJOAMaDmuZ91OR7EWgfv4s5qe46dBfK8flssnEhfYi6y9jeomecYsYsw4FU7wssoHt6hl4sIkBjyWbxiUXgRSU_LB4D1OF9ir9cpmunNHI9Zp552qpDollKo_1_zkU45r_9ZhutGTnBHUeyL87hJwL9dONw";
 
 const COUNTRIES = ["ES", "MX", "CO", "AR", "US", "CR", "CL", "PE", "PT"] as const;
 
@@ -255,12 +253,16 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
                     aria-label={t("change")}
                     className="relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-2 border-outline-variant bg-surface-variant shadow-inner transition-transform duration-300 group-hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      alt={t("avatarAlt")}
-                      className="h-full w-full object-cover"
-                      src={photoPreview ?? AVATAR}
-                    />
+                    {photoPreview ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        alt={t("avatarAlt")}
+                        className="h-full w-full object-cover"
+                        src={photoPreview}
+                      />
+                    ) : (
+                      <DefaultAvatar className="h-full w-full" />
+                    )}
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-background/60 text-on-surface opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                       <Icon name="photo_camera" className="text-[24px]" />
                       <span className="font-label-caps text-label-caps uppercase">
