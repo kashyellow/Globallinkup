@@ -138,22 +138,6 @@
       "unlockedNote": "Acuerdo mutuo registrado el 12 de mayo de 2024. Se aplican las normas de contacto respetuoso.",
       "sendRequest": "Enviar Solicitud de Conexión"
     },
-    "requests": {
-      "title": "Solicitudes Recibidas",
-      "pending": "{count} Pendientes",
-      "manageAll": "Gestionar Todo",
-      "connectedToast": "✓ ¡Conectado! Contactos sociales intercambiados con {name}.",
-      "items": {
-        "daniel": {
-          "name": "Daniel Rivera, 30",
-          "meta": "Ciudad de México · Quiere intercambiar notas sobre urbanismo"
-        },
-        "valentina": {
-          "name": "Valentina Gomez, 26",
-          "meta": "Bogotá · Interesada en tu ruta fotográfica por Madrid"
-        }
-      }
-    },
     "trustSeal": "Sello de Verificación Humana de GlobalLinkup"
   },
   "Posts": {
@@ -724,9 +708,6 @@
       "backToLogin": "Volver a Iniciar Sesión"
     },
     "resetPassword": {
-      "previewLabel": "Vista previa del enlace de recuperación:",
-      "state_valid": "1. Enlace válido",
-      "state_invalid": "2. Enlace expirado",
       "title": "Establece una nueva contraseña",
       "subtitle": "Elige una contraseña nueva y segura para tu cuenta de GlobalLinkup.",
       "passwordLabel": "Nueva contraseña",

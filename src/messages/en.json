@@ -138,22 +138,6 @@
       "unlockedNote": "Mutual agreement recorded on May 12, 2024. Respectful outreach guidelines apply.",
       "sendRequest": "Send Connection Request"
     },
-    "requests": {
-      "title": "Received Requests",
-      "pending": "{count} Pending",
-      "manageAll": "Manage All",
-      "connectedToast": "✓ Connected! Social handles exchanged with {name}.",
-      "items": {
-        "daniel": {
-          "name": "Daniel Rivera, 30",
-          "meta": "Mexico City · Wants to exchange notes on urban planning"
-        },
-        "valentina": {
-          "name": "Valentina Gomez, 26",
-          "meta": "Bogotá · Interested in your Madrid photography tour"
-        }
-      }
-    },
     "trustSeal": "GlobalLinkup Human Verification Seal"
   },
   "Posts": {
@@ -724,9 +708,6 @@
       "backToLogin": "Back to Log In"
     },
     "resetPassword": {
-      "previewLabel": "Recovery Link Preview:",
-      "state_valid": "1. Valid Link",
-      "state_invalid": "2. Expired Link",
       "title": "Set a new password",
       "subtitle": "Choose a strong new password for your GlobalLinkup account.",
       "passwordLabel": "New password",

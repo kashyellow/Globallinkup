@@ -128,27 +128,5 @@ export const DOSSIER = {
   },
 } as const;
 
-export type InboundRequest = {
-  id: string;
-  nameKey: "daniel" | "valentina";
-  avatar: string;
-  avatarAlt: string;
-};
-
-export const INBOUND_REQUESTS: InboundRequest[] = [
-  {
-    id: "daniel",
-    nameKey: "daniel",
-    avatar: `${CDN}AB6AXuD4oZOjTxiZ5BKt2Rf6TT6Qdle3Xqvl9DRxG_3SOe4_5bUKnOwBMjxLvcNQBoyp5ZrSSNyjgbSuqHCU8E0zJh66aS0hCBRicUwWJfP07mOaSPK0ECgzWuNcpQQanh-m_h2HW1bA62qCssruNWD1pUHOEDnDTyF1EovWzUztmyUCRnAKGpYjbpcBxoO0xAzYdKzJWBWOvzFsusjVWfHHPEpFwGdL3__BnwhTj2J9ExlyOcATtCBsjd-a2A`,
-    avatarAlt: "Close portrait of Daniel Rivera, a 30-year-old architect from Mexico City.",
-  },
-  {
-    id: "valentina",
-    nameKey: "valentina",
-    avatar: `${CDN}AB6AXuC8zs6MWjEIYsHWOJ9mQc-_BjzEAmhwVEiakrhzd1hVsaUEWJi8yxEV8ZjUgrGUKdST6vL7a6HWIXy3e0bbeSl9a2OIavIkdkckXKKtyIYKmINEHIyL2YtcCS7dwFYvBIIwGVY8wcsl8t3URO5l1JjLJtJWbkYgqUJaalFPbWF-MOSCsV2tZD4jsV-lVZxuIsXArepMOBg7_HCXgAqjCCUw8_2xdmpSD5sZ_8TArEkFvfx-uzAAucK9Mw`,
-    avatarAlt: "Close warm portrait of Valentina Gomez, 26, from Bogotá, Colombia.",
-  },
-];
-
 export const REGION_FILTERS = ["all", "spain", "mexico", "colombia", "unitedStates"] as const;
 export type RegionFilter = (typeof REGION_FILTERS)[number];
