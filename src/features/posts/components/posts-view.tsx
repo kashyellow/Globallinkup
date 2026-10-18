@@ -2,48 +2,67 @@
 
 import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { Pagination } from "@/components/ui/pagination";
+import { sendConnectRequestAction } from "@/features/connect/actions";
+import { deletePostAction } from "@/features/posts/actions";
+import { ConnectDialog, type ConnectTarget } from "@/features/shared/connect-dialog";
+import { usePagination } from "@/features/shared/use-pagination";
+import { useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
-import { POSTS, POST_FILTERS, type Post, type PostFilter } from "../data";
+import { POST_FILTERS, type PostFilter } from "../data";
+import type { FeedPost } from "../queries";
 import { PostCard } from "./post-card";
 import { PostComposer } from "./post-composer";
-import { usePagination } from "@/features/shared/use-pagination";
-import { ConnectDialog, type ConnectTarget } from "@/features/shared/connect-dialog";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
 /** Posts per page — the feed is a tall single column, so two is a full viewport. */
 const PAGE_SIZE = 2;
 
-/** Iberian + LatAm locations, matched against the post's free-text `location`. */
-const SPAIN_LATAM = /Spain|España|Mexico|México|Colombia|Argentina|Chile|Peru|Perú/i;
+/** Iberian + LatAm locations, matched against the author's free-text location. */
+const SPAIN_LATAM = /Spain|España|Mexico|México|Colombia|Argentina|Chile|Peru|Perú|Portugal/i;
 
-function matchesFilter(post: Post, filter: PostFilter) {
-  if (filter === "connectionsOnly") return post.state === "connected";
+function matchesFilter(post: FeedPost, filter: PostFilter) {
+  if (filter === "connectionsOnly") return post.connected;
   if (filter === "spainLatam") return SPAIN_LATAM.test(post.location);
   return true;
 }
 
-export function PostsView() {
+export function PostsView({
+  posts,
+  viewer,
+}: {
+  posts: FeedPost[];
+  viewer: { id: string; name: string; avatar: string | null };
+}) {
   const t = useTranslations("Posts");
+  const router = useRouter();
   const [filter, setFilter] = useState<PostFilter>("all");
-  const [requested, setRequested] = useState<Record<string, boolean>>({});
   const [target, setTarget] = useState<ConnectTarget | null>(null);
-  const visiblePosts = POSTS.filter((post) => matchesFilter(post, filter));
+  const visiblePosts = posts.filter((post) => matchesFilter(post, filter));
   const { page, totalPages, pageItems, setPage, resetPage } = usePagination(
     visiblePosts,
     PAGE_SIZE,
   );
 
-  const closeDialog = useCallback(() => setTarget(null), []);
-
-  const sendRequest = useCallback(() => {
-    if (!target) return;
-    setRequested((prev) => ({ ...prev, [target.id]: true }));
+  function closeDialog() {
     setTarget(null);
-  }, [target]);
+  }
+
+  async function sendRequest(note: string) {
+    if (!target) return;
+    const recipientId = target.id;
+    setTarget(null);
+    const result = await sendConnectRequestAction({ recipientId, note });
+    if (result.ok) router.refresh();
+  }
+
+  async function remove(postId: string) {
+    const result = await deletePostAction({ postId });
+    if (result.ok) router.refresh();
+  }
 
   // Changing the filter changes the result set, so the old page index is
   // meaningless. Reset in the handler rather than an effect.
@@ -85,12 +104,7 @@ export function PostsView() {
             >
               <span>{t(`filters.${key}`)}</span>
               {filter === key ? (
-                <span
-                  className={cn(
-                    "rounded-full px-1.5 py-0.5 font-label-caps text-label-caps tabular-nums",
-                    "bg-on-primary/20 text-on-primary",
-                  )}
-                >
+                <span className="rounded-full bg-on-primary/20 px-1.5 py-0.5 font-label-caps text-label-caps text-on-primary tabular-nums">
                   {visiblePosts.length}
                 </span>
               ) : null}
@@ -102,22 +116,24 @@ export function PostsView() {
       {/* Main grid */}
       <div className="mt-block-mobile grid grid-cols-1 items-start gap-space-lg md:mt-block lg:grid-cols-12">
         <div className="mx-auto flex w-full max-w-[700px] flex-col gap-space-lg lg:col-span-8 lg:mx-0 lg:max-w-none">
-          <PostComposer />
+          <PostComposer viewerName={viewer.name} viewerAvatar={viewer.avatar} />
 
           {pageItems.map((post, index) => (
             <PostCard
               key={`${post.id}-${page}-${index}`}
               post={post}
-              requested={requested[post.id] ?? false}
+              requested={false}
+              isAuthor={post.authorId === viewer.id}
               onConnect={() =>
                 setTarget({
-                  id: post.id,
+                  id: post.authorId,
                   name: post.author,
                   location: post.location,
                   image: post.avatar,
-                  imageAlt: post.avatarAlt,
+                  imageAlt: post.author,
                 })
               }
+              onDelete={() => void remove(post.id)}
             />
           ))}
 
@@ -152,8 +168,6 @@ export function PostsView() {
             className="mt-space-xs"
           />
 
-          {/* The end cap belongs to the end of the list, so it only renders on
-              the final page — otherwise it reads as "no more posts" mid-feed. */}
           {page === totalPages ? (
             <div className="flex flex-col items-center justify-center gap-2 py-space-md text-center">
               <div className="h-1 w-8 rounded-full bg-outline-variant" />
@@ -166,7 +180,6 @@ export function PostsView() {
         </div>
 
         <aside className="flex flex-col gap-space-lg lg:sticky lg:top-24 lg:col-span-4">
-          {/* Manifesto */}
           <div className="bezel-tray">
             <div
               className="flex flex-col gap-space-sm bezel-core p-space-lg"
@@ -188,7 +201,6 @@ export function PostsView() {
             </div>
           </div>
 
-          {/* Etiquette */}
           <div className="bezel-tray">
             <div
               className="flex flex-col gap-space-xs bezel-core p-space-lg"
@@ -203,22 +215,10 @@ export function PostsView() {
               <p className="font-body-sm text-body-sm text-pretty text-secondary">
                 {t("sidebar.etiquetteBody")}
               </p>
-              {/* No guidelines page yet: plain text rather than a dead anchor. */}
               <span className="pt-1 font-label-lg text-label-lg font-semibold text-text-muted">
                 {t("sidebar.readGuidelines")}
               </span>
             </div>
-          </div>
-
-          {/* Language banner */}
-          <div className="flex items-center justify-between gap-space-sm px-space-md py-space-sm">
-            <div className="flex items-center gap-1.5 font-label-lg text-label-lg text-secondary">
-              <Icon name="language" className="text-base" />
-              <span>{t("sidebar.feedLanguage")}</span>
-            </div>
-            <span className="font-label-lg text-label-lg font-semibold text-text-muted">
-              {t("sidebar.change")}
-            </span>
           </div>
         </aside>
       </div>
@@ -227,7 +227,7 @@ export function PostsView() {
         target={target}
         open={target !== null}
         onClose={closeDialog}
-        onSend={sendRequest}
+        onSend={(note) => void sendRequest(note)}
       />
     </div>
   );

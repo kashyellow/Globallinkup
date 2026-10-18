@@ -1,30 +1,44 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
+import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
+import { toggleLikeAction } from "@/features/posts/actions";
 import { cn } from "@/lib/utils";
-import type { Post } from "../data";
+import type { FeedPost } from "../queries";
 
 export function PostCard({
   post,
   requested,
+  isAuthor,
   onConnect,
+  onDelete,
 }: {
-  post: Post;
+  post: FeedPost;
   requested: boolean;
+  isAuthor: boolean;
   onConnect: () => void;
+  onDelete: () => void;
 }) {
   const t = useTranslations("Posts");
   const tCommon = useTranslations("Common");
-  const [liked, setLiked] = useState(false);
+  const format = useFormatter();
+  const [liked, setLiked] = useState(post.likedByViewer);
+  const [likes, setLikes] = useState(post.likes);
 
-  const likeCount = post.likes + (liked ? 1 : 0);
-  const timeLabel =
-    post.time.kind === "hoursAgo"
-      ? t("postMeta.hoursAgo", { count: post.time.value })
-      : t("postMeta.yesterday");
+  async function like() {
+    const next = !liked;
+    setLiked(next);
+    setLikes((count) => count + (next ? 1 : -1));
+
+    const result = await toggleLikeAction({ postId: post.id, liked: next });
+    if (!result.ok) {
+      setLiked(!next);
+      setLikes((count) => count + (next ? -1 : 1));
+    }
+  }
 
   return (
     <article className="bezel-tray">
@@ -34,30 +48,24 @@ export function PostCard({
       >
         {/* Author header */}
         <div className="flex flex-wrap items-center justify-between gap-x-space-md gap-y-space-sm p-space-lg">
-          {/*
-            `flex-1` (basis 0) keeps the name block from claiming its full
-            content width, so the connect control shares the row beside the
-            name on phones instead of wrapping onto its own line.
-          */}
           <div className="flex min-w-0 flex-1 items-center gap-space-md">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              alt={post.avatarAlt}
-              className="h-12 w-12 shrink-0 rounded-full object-cover ring-1 ring-outline-variant"
-              src={post.avatar}
-              loading="lazy"
-            />
+            {post.avatar ? (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  alt={post.author}
+                  className="h-12 w-12 shrink-0 rounded-full object-cover ring-1 ring-outline-variant"
+                  src={post.avatar}
+                  loading="lazy"
+                />
+              </>
+            ) : (
+              <DefaultAvatar className="h-12 w-12 shrink-0 rounded-full ring-1 ring-outline-variant" />
+            )}
             <div className="flex min-w-0 flex-col">
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                <h2 className="font-label-lg text-label-lg font-semibold text-on-surface">
-                  {post.author}
-                </h2>
-                {post.roleText ? (
-                  <span className="font-label-md text-label-md text-secondary">
-                    {post.roleText}
-                  </span>
-                ) : null}
-              </div>
+              <h2 className="font-label-lg text-label-lg font-semibold text-on-surface">
+                {post.author}
+              </h2>
               <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-secondary">
                 <span className="flex items-center gap-1.5">
                   <Icon name="location_on" className="text-sm" />
@@ -66,18 +74,24 @@ export function PostCard({
                 <span aria-hidden className="text-xs text-outline-strong">
                   •
                 </span>
-                <span className="font-body-sm text-body-sm">{timeLabel}</span>
+                <span className="font-body-sm text-body-sm">
+                  {format.relativeTime(new Date(post.createdAt), new Date())}
+                </span>
               </div>
             </div>
           </div>
 
-          {/*
-            Connect / connected control. Below `sm` it collapses to a 44px icon
-            button so it stays beside the author name instead of wrapping onto
-            its own row and pushing the photo down; the label returns from `sm`
-            up and stays screen-reader visible at every width.
-          */}
-          {post.state === "connected" ? (
+          {isAuthor ? (
+            <button
+              type="button"
+              onClick={onDelete}
+              title={t("postMeta.remove")}
+              aria-label={t("postMeta.remove")}
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-variant hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              <Icon name="delete" className="text-lg" />
+            </button>
+          ) : post.connected ? (
             <div className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-success-border bg-success-surface text-success-text sm:h-auto sm:w-auto sm:gap-1 sm:px-3 sm:py-1">
               <Icon name="check_circle" className="text-sm text-tertiary" />
               <span className="sr-only font-medium text-tertiary sm:not-sr-only">
@@ -109,17 +123,21 @@ export function PostCard({
 
         {/* Editorial photography frame */}
         <div className="group relative aspect-[4/3] w-full overflow-hidden border-y border-outline-variant bg-surface">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            alt={post.imageAlt}
-            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
-            src={post.image}
-            loading="lazy"
-          />
-          <span className="absolute right-3 bottom-3 flex items-center gap-1.5 rounded-full border border-outline-variant bg-surface-low/95 px-2.5 py-1 font-label-md text-label-md text-on-surface shadow-lift-sm">
-            <Icon name={post.badgeIcon} className="text-xs" />
-            <span>{t(`photoBadges.${post.id}`)}</span>
-          </span>
+          {post.image ? (
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                alt={post.caption}
+                className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                src={post.image}
+                loading="lazy"
+              />
+            </>
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-surface-variant text-secondary">
+              <Icon name="image" className="text-4xl" />
+            </div>
+          )}
         </div>
 
         {/* Content & reactions */}
@@ -128,7 +146,7 @@ export function PostCard({
             <div className="flex min-w-0 items-center gap-space-md">
               <button
                 type="button"
-                onClick={() => setLiked((value) => !value)}
+                onClick={() => void like()}
                 className="group flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-1 text-on-surface-strong transition-colors duration-300 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 <Icon
@@ -140,16 +158,7 @@ export function PostCard({
                   )}
                 />
                 <span className="font-label-md text-label-md font-semibold">
-                  {t("postMeta.likes", { count: likeCount })}
-                </span>
-              </button>
-              <button
-                type="button"
-                className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-1 text-secondary transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              >
-                <Icon name="chat_bubble" className="text-2xl" />
-                <span className="font-label-md text-label-md">
-                  {t("postMeta.notes", { count: post.notes })}
+                  {t("postMeta.likes", { count: likes })}
                 </span>
               </button>
               <button
@@ -169,31 +178,9 @@ export function PostCard({
             </button>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <p className="font-body-md text-body-md leading-relaxed text-on-surface-strong">
-              <span className="font-semibold text-on-surface">{post.author}</span>{" "}
-              {t(`captions.${post.id}`)}
-            </p>
-          </div>
-
-          {post.hasComment ? (
-            <div className="flex flex-col gap-space-xs rounded-[0.75rem] border border-outline-variant bg-surface p-space-sm">
-              <div className="flex items-start justify-between gap-space-sm">
-                <p className="font-body-sm text-body-sm text-on-surface-strong">
-                  <span className="font-semibold text-on-surface">
-                    {t(`comments.${post.id}Author`)}
-                  </span>{" "}
-                  {t(`comments.${post.id}Body`)}
-                </p>
-                <span className="shrink-0 font-label-md text-label-md text-text-muted">
-                  {t(`comments.${post.id}Time`)}
-                </span>
-              </div>
-              <span className="pt-1 font-label-md text-label-md text-text-muted">
-                {t("postMeta.viewComments", { count: post.notes })}
-              </span>
-            </div>
-          ) : null}
+          <p className="font-body-md text-body-md leading-relaxed text-on-surface-strong">
+            <span className="font-semibold text-on-surface">{post.author}</span> {post.caption}
+          </p>
         </div>
       </div>
     </article>

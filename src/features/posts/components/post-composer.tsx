@@ -3,47 +3,69 @@
 import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
+import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
-import { CURRENT_USER } from "@/lib/brand";
+import { uploadImageAction } from "@/features/media/actions";
+import { createPostAction } from "@/features/posts/actions";
+import { useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 type PublishState = "idle" | "publishing" | "posted";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
-/** Shared shape for the two attachment buttons. */
+/** Shared shape for the attachment button. */
 const ATTACH_BASE =
   "inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full border border-outline-variant bg-surface-container px-3.5 py-2 font-label-md text-label-md transition-colors duration-300 hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px";
 
-export function PostComposer() {
+export function PostComposer({
+  viewerName,
+  viewerAvatar,
+}: {
+  viewerName: string;
+  viewerAvatar: string | null;
+}) {
   const t = useTranslations("Posts.composer");
+  const router = useRouter();
   const [text, setText] = useState("");
-  const [showPreview, setShowPreview] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
   const [publishState, setPublishState] = useState<PublishState>("idle");
   const [showEmptyPrompt, setShowEmptyPrompt] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  function publish() {
-    if (text.trim() === "") {
+  const canPublish = text.trim() !== "" && file !== null;
+
+  async function publish() {
+    if (text.trim() === "" || !file) {
       setShowEmptyPrompt(true);
       inputRef.current?.focus();
       return;
     }
 
     setPublishState("publishing");
-    setTimeout(() => {
-      setPublishState("posted");
-      setText("");
-      setShowPreview(false);
 
-      setTimeout(() => {
-        setPublishState("idle");
-        setShowEmptyPrompt(false);
-      }, 1800);
-    }, 700);
+    const formData = new FormData();
+    formData.set("bucket", "post-images");
+    formData.set("file", file);
+    const upload = await uploadImageAction(formData);
+    if (!upload.ok) {
+      setPublishState("idle");
+      return;
+    }
+
+    const created = await createPostAction({ caption: text, imagePath: upload.path });
+    if (!created.ok) {
+      setPublishState("idle");
+      return;
+    }
+
+    setPublishState("posted");
+    setText("");
+    setFile(null);
+    router.refresh();
+
+    setTimeout(() => setPublishState("idle"), 1800);
   }
-
-  const canPublish = text.trim() !== "";
 
   return (
     <section className="bezel-tray">
@@ -52,20 +74,21 @@ export function PostComposer() {
         style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
       >
         <div className="flex flex-col gap-space-md p-space-md sm:p-space-lg">
-          {/*
-           * Author line. On mobile the avatar sits above the field rather than
-           * beside it: sharing the row with a 44px avatar left the text column
-           * ~60% of the width and wrapped the placeholder onto three lines.
-           */}
           <div className="flex min-w-0 items-center gap-space-sm">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              alt={CURRENT_USER.name}
-              className="h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-outline-variant"
-              src={CURRENT_USER.avatarUrl}
-            />
+            {viewerAvatar ? (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  alt={viewerName}
+                  className="h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-outline-variant"
+                  src={viewerAvatar}
+                />
+              </>
+            ) : (
+              <DefaultAvatar className="h-9 w-9 shrink-0 rounded-full ring-1 ring-outline-variant" />
+            )}
             <span className="min-w-0 truncate font-label-lg text-label-lg font-semibold text-on-surface">
-              {CURRENT_USER.name}
+              {viewerName}
             </span>
           </div>
 
@@ -83,7 +106,7 @@ export function PostComposer() {
             )}
           />
 
-          {showPreview ? (
+          {file ? (
             <div className="flex flex-col gap-space-sm rounded-2xl border border-outline-variant bg-surface p-space-sm">
               <div className="flex items-center justify-between gap-space-sm">
                 <span className="font-label-md text-label-md font-semibold tracking-[0.08em] text-primary uppercase">
@@ -91,7 +114,7 @@ export function PostComposer() {
                 </span>
                 <button
                   type="button"
-                  onClick={() => setShowPreview(false)}
+                  onClick={() => setFile(null)}
                   aria-label={t("previewTitle")}
                   className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-container hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 >
@@ -104,7 +127,7 @@ export function PostComposer() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-label-md text-label-md text-on-surface">
-                    {t("previewFileName")}
+                    {file.name}
                   </p>
                   <p className="truncate font-body-sm text-body-sm text-secondary">
                     {t("previewMeta")}
@@ -115,35 +138,23 @@ export function PostComposer() {
           ) : null}
         </div>
 
-        {/*
-         * Action bar. Anchored to the bottom of the card with its own divider so
-         * the compose area reads as one surface and the publish action reads as
-         * the commit step, rather than a button floating under the pills.
-         */}
         <div className="flex flex-col gap-space-sm border-t border-outline-variant bg-surface-container p-space-md sm:flex-row sm:items-center sm:justify-between sm:p-space-lg">
-          {/* Horizontal rail on mobile: the three controls stay one swipeable
-              row instead of stacking into a vertical column. */}
           <div className="-mx-space-md no-scrollbar flex items-center gap-space-xs overflow-x-auto px-space-md sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
             <label className={cn(ATTACH_BASE, "cursor-pointer text-on-surface")}>
               <Icon name="add_photo_alternate" className="text-lg text-primary" />
               <span>{t("uploadPhoto")}</span>
               <input
                 type="file"
-                accept="image/*"
+                accept="image/png,image/jpeg,image/webp"
                 className="hidden"
-                onChange={() => setShowPreview(true)}
+                onChange={(event) => setFile(event.target.files?.[0] ?? null)}
               />
             </label>
-
-            <button type="button" className={cn(ATTACH_BASE, "text-on-surface")}>
-              <Icon name="pin_drop" className="text-lg text-secondary" />
-              <span>{t("addLocation")}</span>
-            </button>
           </div>
 
           <button
             type="button"
-            onClick={publish}
+            onClick={() => void publish()}
             disabled={publishState === "publishing"}
             className={cn(
               "inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-full px-6 font-label-lg text-label-lg font-semibold transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-80",

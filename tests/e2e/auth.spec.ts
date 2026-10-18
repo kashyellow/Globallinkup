@@ -103,6 +103,16 @@ test("@auth connections show accepted contact and pending requests", async ({ pa
   await expect(page.getByRole("button", { name: /accept/i })).toBeVisible();
 });
 
+test("@auth the feed shows real posts and a composer", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await page.goto("/en/posts");
+  await page.waitForTimeout(1200);
+
+  // Seeded post caption proves the feed reads real rows.
+  await expect(page.getByText(/Gothic Quarter, shot on expired Portra/)).toBeVisible();
+  await expect(page.getByRole("button", { name: /publish/i })).toBeVisible();
+});
+
 test("@auth onboarding creates a persona for a new account", async ({ page }) => {
   const email = `e2e-${Date.now()}@example.com`;
   await page.goto("/en/register");
