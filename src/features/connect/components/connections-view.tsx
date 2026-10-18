@@ -5,23 +5,13 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
-import {
-  ACTIVE_CONNECTIONS,
-  CONNECTION_TABS,
-  RECEIVED_REQUESTS,
-  REGION_FILTERS,
-  SENT_REQUESTS,
-  type ConnectionTab,
-  type RegionFilter,
-} from "../data";
+import { CONNECTION_TABS, REGION_FILTERS, type ConnectionTab, type RegionFilter } from "../data";
+import type { ConnectionsData } from "../queries";
 import { ActiveConnectionsPanel } from "./active-connections-panel";
 import { ReceivedRequestsPanel } from "./received-requests-panel";
 import { ArchivedPanel, SentRequestsPanel } from "./sent-requests-panel";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
-
-const LATAM_COUNT = ACTIVE_CONNECTIONS.filter((c) => c.region === "latam").length;
-const EUROPE_COUNT = ACTIVE_CONNECTIONS.filter((c) => c.region === "europe").length;
 
 /** Shared styling for the two header stat chips. */
 function StatChip({
@@ -60,22 +50,24 @@ function StatChip({
   );
 }
 
-export function ConnectionsView() {
+export function ConnectionsView({ data }: { data: ConnectionsData }) {
   const t = useTranslations("Connections");
   const [tab, setTab] = useState<ConnectionTab>("active");
   const [region, setRegion] = useState<RegionFilter>("all");
 
   const tabCounts: Record<ConnectionTab, number | null> = {
-    active: ACTIVE_CONNECTIONS.length,
-    requests: RECEIVED_REQUESTS.length,
-    sent: SENT_REQUESTS.length,
+    active: data.active.length,
+    requests: data.received.length,
+    sent: data.sent.length,
     archived: null,
   };
 
+  const LATAM = new Set(["MX", "CO", "AR", "CL", "PE", "CR", "UY", "EC"]);
+  const EUROPE = new Set(["ES", "PT", "FR", "IT", "DE"]);
   const regionCounts: Record<RegionFilter, number | null> = {
     all: null,
-    latam: LATAM_COUNT,
-    europe: EUROPE_COUNT,
+    latam: data.active.filter((connection) => LATAM.has(connection.countryCode)).length,
+    europe: data.active.filter((connection) => EUROPE.has(connection.countryCode)).length,
     recent: null,
   };
 
@@ -96,13 +88,8 @@ export function ConnectionsView() {
         </div>
 
         <div className="flex flex-wrap items-center gap-space-sm">
-          <StatChip value={ACTIVE_CONNECTIONS.length} label={t("header.activeConnections")} />
-          <StatChip
-            value={RECEIVED_REQUESTS.length}
-            label={t("header.pendingRequests")}
-            accent
-            pulse
-          />
+          <StatChip value={data.active.length} label={t("header.activeConnections")} />
+          <StatChip value={data.received.length} label={t("header.pendingRequests")} accent pulse />
           <button
             type="button"
             className={cn(
@@ -125,11 +112,6 @@ export function ConnectionsView() {
           style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
         >
           <div className="flex flex-wrap items-center justify-between gap-space-md">
-            {/*
-             * The rail bleeds to the bezel-core padding edge (`-mx-space-md`)
-             * rather than the page margin. Using `-mx-margin-mobile` here
-             * overhung the inner panel by 0.25rem and clipped the last tab.
-             */}
             <div className="-mx-space-md no-scrollbar flex w-full items-center gap-2 overflow-x-auto px-space-md md:mx-0 md:w-auto md:px-0">
               {CONNECTION_TABS.map((key) => {
                 const active = tab === key;
@@ -222,10 +204,14 @@ export function ConnectionsView() {
       {/* Panels */}
       <div className="mt-space-xl">
         {tab === "active" ? (
-          <ActiveConnectionsPanel onReviewInquiries={() => setTab("requests")} />
+          <ActiveConnectionsPanel
+            connections={data.active}
+            requestCount={data.received.length}
+            onReviewInquiries={() => setTab("requests")}
+          />
         ) : null}
-        {tab === "requests" ? <ReceivedRequestsPanel /> : null}
-        {tab === "sent" ? <SentRequestsPanel /> : null}
+        {tab === "requests" ? <ReceivedRequestsPanel requests={data.received} /> : null}
+        {tab === "sent" ? <SentRequestsPanel requests={data.sent} /> : null}
         {tab === "archived" ? <ArchivedPanel /> : null}
       </div>
 
@@ -248,8 +234,6 @@ export function ConnectionsView() {
               </p>
             </div>
           </div>
-          {/* No key-management or audit-log screen exists yet, so these are
-              stated as facts rather than dead buttons. */}
           <div className="flex shrink-0 flex-wrap items-center gap-space-sm">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-success-border bg-success-surface px-space-md py-2 font-label-md text-label-md text-success-text">
               <Icon name="key" className="text-sm" />

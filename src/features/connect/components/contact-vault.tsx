@@ -5,11 +5,40 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
-import type { ActiveConnection } from "../data";
+import type { ContactChannel } from "../queries";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
-export function ContactVault({ connection }: { connection: ActiveConnection }) {
+const CHANNEL_ICONS: Record<ContactChannel["key"], string> = {
+  whatsapp: "chat",
+  telegram: "send",
+  instagram: "photo_camera",
+  facebook: "public",
+  tiktok: "music_note",
+  x: "tag",
+};
+
+function channelHref(channel: ContactChannel): string | null {
+  const handle = channel.value.replace(/^@/, "");
+  switch (channel.key) {
+    case "whatsapp":
+      return `https://wa.me/${channel.value.replace(/\D/g, "")}`;
+    case "telegram":
+      return `https://t.me/${handle}`;
+    case "instagram":
+      return `https://instagram.com/${handle}`;
+    case "facebook":
+      return `https://facebook.com/${handle}`;
+    case "tiktok":
+      return `https://tiktok.com/@${handle}`;
+    case "x":
+      return `https://x.com/${handle}`;
+    default:
+      return null;
+  }
+}
+
+export function ContactVault({ channels }: { channels: ContactChannel[] }) {
   const t = useTranslations("Connections.active");
 
   return (
@@ -25,59 +54,46 @@ export function ContactVault({ connection }: { connection: ActiveConnection }) {
         <span className="font-label-md text-label-md text-success-text">{t("vaultStatus")}</span>
       </div>
 
-      <div className="space-y-space-xs pt-1">
-        {/* WhatsApp / Telegram */}
-        <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-outline-variant bg-surface-low px-space-sm py-2">
-          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5 text-on-surface">
-            <Icon name="chat" className="text-base text-success-text" />
-            <span className="font-label-md text-label-md font-semibold">
-              {connection.whatsappDisplay}
-            </span>
-            <span className="font-label-md text-label-md text-secondary">
-              {t(connection.whatsappLabel)}
-            </span>
-          </div>
-          <div className="flex shrink-0 items-center gap-1">
-            <CopyButton value={connection.whatsappRaw} />
-            <a
-              href={`https://wa.me/${connection.whatsappRaw.replace(/\D/g, "")}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center gap-1 rounded-full border border-success-border bg-success-surface px-3 py-2 font-label-md text-label-md text-success-text transition-colors duration-300 hover:bg-success-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              <span>{t("open")}</span>
-              <Icon name="arrow_outward" className="text-xs" />
-            </a>
-          </div>
+      {channels.length === 0 ? (
+        <p className="pt-1 font-body-sm text-body-sm text-secondary">{t("vaultEmpty")}</p>
+      ) : (
+        <div className="grid grid-cols-1 gap-space-xs pt-1 sm:grid-cols-2">
+          {channels.map((channel) => {
+            const href = channelHref(channel);
+            return (
+              <div
+                key={channel.key}
+                className="flex items-center justify-between gap-2 rounded-2xl border border-outline-variant bg-surface-low px-space-sm py-1.5"
+              >
+                <div className="flex min-w-0 items-center gap-1.5 text-on-surface">
+                  <Icon
+                    name={CHANNEL_ICONS[channel.key]}
+                    className="shrink-0 text-base text-primary"
+                  />
+                  <span className="truncate font-label-md text-label-md">{channel.value}</span>
+                  <span className="shrink-0 font-label-md text-label-md text-secondary">
+                    {t(`channels.${channel.key}`)}
+                  </span>
+                </div>
+                <div className="flex shrink-0 items-center gap-1">
+                  <CopyButton value={channel.value} variant="icon" />
+                  {href ? (
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={t("open")}
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-variant hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    >
+                      <Icon name="open_in_new" className="text-sm" />
+                    </a>
+                  ) : null}
+                </div>
+              </div>
+            );
+          })}
         </div>
-
-        {/* Instagram + Email */}
-        <div className="grid grid-cols-1 gap-space-xs sm:grid-cols-2">
-          <div className="flex items-center justify-between gap-2 rounded-2xl border border-outline-variant bg-surface-low px-space-sm py-1.5">
-            <div className="flex min-w-0 items-center gap-1.5 text-on-surface">
-              <Icon name="photo_camera" className="shrink-0 text-base text-primary" />
-              <span className="truncate font-label-md text-label-md">{connection.instagram}</span>
-            </div>
-            <a
-              href={connection.instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-variant hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              aria-label={t("openInstagram")}
-            >
-              <Icon name="open_in_new" className="text-sm" />
-            </a>
-          </div>
-
-          <div className="flex items-center justify-between gap-2 rounded-2xl border border-outline-variant bg-surface-low px-space-sm py-1.5">
-            <div className="flex min-w-0 items-center gap-1.5 text-on-surface">
-              <Icon name="mail" className="shrink-0 text-base text-secondary" />
-              <span className="truncate font-label-md text-label-md">{connection.email}</span>
-            </div>
-            <CopyButton value={connection.email} variant="icon" />
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

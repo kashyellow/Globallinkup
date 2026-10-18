@@ -467,7 +467,18 @@
       "copyTitle": "Copy to clipboard",
       "open": "Open",
       "openInstagram": "Open Instagram profile",
-      "settings": "Connection Settings & Consent Revocation"
+      "settings": "Connection Settings & Consent Revocation",
+      "emptyTitle": "No connections yet",
+      "disconnect": "Disconnect",
+      "vaultEmpty": "No contact channels shared yet.",
+      "channels": {
+        "whatsapp": "WhatsApp",
+        "telegram": "Telegram",
+        "instagram": "Instagram",
+        "facebook": "Facebook",
+        "tiktok": "TikTok",
+        "x": "X"
+      }
     },
     "requests": {
       "guidanceTitle": "Zero-Pressure Confidentiality Guarantee",
@@ -479,7 +490,9 @@
       "accept": "Accept",
       "decline": "Decline Politely",
       "grantedTitle": "Mutual Consent Granted",
-      "grantedBody": "You have revealed your contact channels to {name}. This person now has access to your direct vault."
+      "grantedBody": "You have revealed your contact channels to {name}. This person now has access to your direct vault.",
+      "emptyTitle": "No pending requests",
+      "lockedPreview": "Contact details unlock on acceptance"
     },
     "sent": {
       "title": "Sent Inquiries Awaiting Bilateral Acceptance ({count})",

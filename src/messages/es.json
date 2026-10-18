@@ -467,7 +467,18 @@
       "copyTitle": "Copiar al portapapeles",
       "open": "Abrir",
       "openInstagram": "Abrir perfil de Instagram",
-      "settings": "Ajustes de Conexión y Revocación de Consentimiento"
+      "settings": "Ajustes de Conexión y Revocación de Consentimiento",
+      "emptyTitle": "Aún no tienes conexiones",
+      "disconnect": "Desconectar",
+      "vaultEmpty": "Aún no se han compartido canales de contacto.",
+      "channels": {
+        "whatsapp": "WhatsApp",
+        "telegram": "Telegram",
+        "instagram": "Instagram",
+        "facebook": "Facebook",
+        "tiktok": "TikTok",
+        "x": "X"
+      }
     },
     "requests": {
       "guidanceTitle": "Garantía de Confidencialidad Sin Presión",
@@ -479,7 +490,9 @@
       "accept": "Aceptar",
       "decline": "Rechazar Cortésmente",
       "grantedTitle": "Consentimiento Mutuo Concedido",
-      "grantedBody": "Has revelado tus canales de contacto a {name}. Esta persona ya tiene acceso a tu bóveda directa."
+      "grantedBody": "Has revelado tus canales de contacto a {name}. Esta persona ya tiene acceso a tu bóveda directa.",
+      "emptyTitle": "No hay solicitudes pendientes",
+      "lockedPreview": "Los datos de contacto se desbloquean al aceptar"
     },
     "sent": {
       "title": "Consultas Enviadas Esperando Aceptación Bilateral ({count})",

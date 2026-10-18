@@ -88,6 +88,21 @@ test("@auth discover shows real personas and viewer connect state", async ({ pag
   await expect(page.getByRole("button", { name: /^connect$/i }).first()).toBeVisible();
 });
 
+test("@auth connections show accepted contact and pending requests", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await page.goto("/en/connections");
+  await page.waitForTimeout(1000);
+
+  // Active tab: Camila is an accepted connection, so her channel is unlocked.
+  await expect(page.getByText(/Camila Osorio/)).toBeVisible();
+  await expect(page.getByText(/\+57 312 849 2011/)).toBeVisible();
+
+  // Requests tab: Mateo's pending request with an Accept action.
+  await page.getByRole("button", { name: /received requests/i }).click();
+  await expect(page.getByText(/Mateo Silva/)).toBeVisible();
+  await expect(page.getByRole("button", { name: /accept/i })).toBeVisible();
+});
+
 test("@auth onboarding creates a persona for a new account", async ({ page }) => {
   const email = `e2e-${Date.now()}@example.com`;
   await page.goto("/en/register");

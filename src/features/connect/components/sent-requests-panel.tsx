@@ -1,20 +1,17 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useFormatter, useTranslations } from "next-intl";
+import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
-import { SENT_REQUESTS } from "../data";
+import type { SentRequestDto } from "../queries";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
-export function SentRequestsPanel() {
+export function SentRequestsPanel({ requests }: { requests: SentRequestDto[] }) {
   const t = useTranslations("Connections.sent");
-  const tConnections = useTranslations("Connections");
-  const [withdrawn, setWithdrawn] = useState<Record<string, boolean>>({});
-
-  const visible = SENT_REQUESTS.filter((request) => !withdrawn[request.id]);
+  const format = useFormatter();
 
   return (
     <div className="bezel-tray">
@@ -24,14 +21,14 @@ export function SentRequestsPanel() {
       >
         <div>
           <h3 className="font-headline-sm text-headline-sm font-semibold text-on-surface tabular-nums">
-            {t("title", { count: visible.length })}
+            {t("title", { count: requests.length })}
           </h3>
           <p className="mt-space-xs font-body-md text-body-md text-on-surface-strong">
             {t("body")}
           </p>
         </div>
 
-        {visible.length === 0 ? (
+        {requests.length === 0 ? (
           <div className="flex flex-col items-center gap-2 rounded-2xl border border-outline-variant bg-surface-container py-space-xl text-center">
             <Icon name="outbox" className="text-3xl text-secondary" />
             <p className="font-label-lg text-label-lg font-semibold text-on-surface">
@@ -43,29 +40,35 @@ export function SentRequestsPanel() {
           </div>
         ) : (
           <div className="space-y-space-sm">
-            {visible.map((request) => (
+            {requests.map((request) => (
               <div
                 key={request.id}
                 className="flex flex-col justify-between gap-space-md rounded-2xl border border-outline-variant bg-surface-container p-space-md sm:flex-row sm:items-center"
               >
                 <div className="flex min-w-0 items-center gap-space-md">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    alt={request.avatarAlt}
-                    className="h-14 w-14 shrink-0 rounded-full object-cover ring-1 ring-outline-variant"
-                    src={request.avatar}
-                    loading="lazy"
-                  />
+                  {request.avatar ? (
+                    <>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        alt={request.name}
+                        className="h-14 w-14 shrink-0 rounded-full object-cover ring-1 ring-outline-variant"
+                        src={request.avatar}
+                        loading="lazy"
+                      />
+                    </>
+                  ) : (
+                    <DefaultAvatar className="h-14 w-14 shrink-0 rounded-full ring-1 ring-outline-variant" />
+                  )}
                   <div className="min-w-0">
                     <h4 className="font-headline-sm text-headline-sm font-medium text-on-surface">
-                      {request.name}, {request.age}
+                      {request.age > 0 ? `${request.name}, ${request.age}` : request.name}
                     </h4>
-                    <p className="font-body-sm text-body-sm text-secondary">
-                      {request.location} · {tConnections(`topics.${request.topic}`)}
-                    </p>
+                    <p className="font-body-sm text-body-sm text-secondary">{request.location}</p>
                     <span className="mt-1 inline-flex items-center gap-1.5 font-label-md text-label-md text-secondary">
                       <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary-container" />
-                      {t("sentAgoAwaiting", { time: request.sentAgo })}
+                      {t("sentAgoAwaiting", {
+                        time: format.relativeTime(new Date(request.createdAt), new Date()),
+                      })}
                     </span>
                   </div>
                 </div>
@@ -81,13 +84,6 @@ export function SentRequestsPanel() {
                     )}
                   >
                     {t("viewNote")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setWithdrawn((prev) => ({ ...prev, [request.id]: true }))}
-                    className="inline-flex min-h-11 items-center rounded-full px-space-md py-2 font-label-md text-label-md text-secondary transition-colors duration-300 hover:bg-surface-variant hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                  >
-                    {t("withdraw")}
                   </button>
                 </div>
               </div>
