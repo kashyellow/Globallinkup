@@ -347,7 +347,6 @@ export type Database = {
           interests: string[];
           languages: NonNullable<Json>;
           neighborhood: string | null;
-          origin_flavor: string | null;
           reviewed_at: string | null;
           reviewed_by: string | null;
           role: Database["public"]["Enums"]["app_role"];
@@ -369,7 +368,6 @@ export type Database = {
           interests?: string[];
           languages?: NonNullable<Json>;
           neighborhood?: string | null;
-          origin_flavor?: string | null;
           reviewed_at?: string | null;
           reviewed_by?: string | null;
           role?: Database["public"]["Enums"]["app_role"];
@@ -391,7 +389,6 @@ export type Database = {
           interests?: string[];
           languages?: NonNullable<Json>;
           neighborhood?: string | null;
-          origin_flavor?: string | null;
           reviewed_at?: string | null;
           reviewed_by?: string | null;
           role?: Database["public"]["Enums"]["app_role"];

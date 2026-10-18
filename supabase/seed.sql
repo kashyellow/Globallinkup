@@ -115,7 +115,7 @@ values (
 
 insert into public.profiles (
   id, display_name, country_code, city, neighborhood, avatar_url,
-  bio_en, bio_es, origin_flavor, headline, languages, interests, badge,
+  bio_en, bio_es, headline, languages, interests, badge,
   approval_status, role, submitted_at, reviewed_at, reviewed_by
 )
 values
@@ -124,7 +124,6 @@ values
     'avatars/seed/sofia.jpg',
     'Architect and ceramicist based in El Born. Passionate about brutalist forms, analog rolls, and mezcal pairings.',
     'Arquitecta y ceramista afincada en El Born. Apasionada de las formas brutalistas, los carretes analógicos y las catas de mezcal.',
-    'Gothic Quarter, Barcelona',
     'Architect & Cultural Documentary Filmmaker',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"fluent"}]'::jsonb,
     array['architecture', 'analogPhotography', 'ceramicsCraft'],
@@ -135,7 +134,6 @@ values
     'avatars/seed/mateo.jpg',
     'Creative director working between CDMX studios and archaeological sites, drawn to street photography and gastronomy.',
     'Director creativo que trabaja entre estudios de la CDMX y sitios arqueológicos, atraído por la fotografía urbana y la gastronomía.',
-    'Coyoacán courtyards',
     'Creative Director',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"conversational"}]'::jsonb,
     array['culinaryHeritage', 'independentCinema', 'architecture'],
@@ -146,7 +144,6 @@ values
     'avatars/seed/camila.jpg',
     'Textile curator documenting hand-loom traditions in the Antioquian highlands.',
     'Curadora textil que documenta las tradiciones del telar en el altiplano antioqueño.',
-    'Aburrá Valley',
     'Textile Curator',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"proficient"}]'::jsonb,
     array['ceramicsCraft', 'hikingNature', 'analogPhotography'],
@@ -157,7 +154,6 @@ values
     'avatars/seed/lucas.jpg',
     'Sound designer and author collecting vinyl and oral histories in Buenos Aires.',
     'Diseñador de sonido y autor que colecciona vinilos e historias orales en Buenos Aires.',
-    'Río de la Plata',
     'Sound Designer & Author',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"conversational"}]'::jsonb,
     array['literature', 'independentCinema', 'analogPhotography'],
@@ -168,7 +164,6 @@ values
     'avatars/seed/elena.jpg',
     'Documentary film producer living in Madrid, obsessed with ceramics and independent bookshops.',
     'Productora de documentales afincada en Madrid, obsesionada con la cerámica y las librerías independientes.',
-    'Chamberí studios',
     'Documentary Film Producer',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"fluent"},{"code":"FR","level":"basic"}]'::jsonb,
     array['independentCinema', 'culinaryHeritage', 'ceramicsCraft'],
@@ -179,7 +174,7 @@ values
     null,
     'Just arrived and waiting for the review desk to wave me through.',
     'Recién llegado y esperando que la mesa de revisión me dé paso.',
-    null, 'Photographer',
+    'Photographer',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"basic"}]'::jsonb,
     array['hikingNature', 'literature', 'architecture'],
     null, 'pending', 'user', now(), null, null
@@ -189,7 +184,7 @@ values
     'avatars/seed/reset.jpg',
     'Account dedicated to exercising the password-recovery flow.',
     'Cuenta dedicada a ejercitar el flujo de recuperación de contraseña.',
-    null, 'Product Tester',
+    'Product Tester',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"fluent"}]'::jsonb,
     array['literature', 'architecture', 'hikingNature'],
     null, 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
@@ -199,7 +194,7 @@ values
     null,
     'Portrait photo did not meet the review guidelines; ready to resubmit.',
     'La foto de perfil no cumplía las normas de revisión; listo para reenviar.',
-    null, 'Photographer',
+    'Photographer',
     '[{"code":"PT","level":"native"},{"code":"EN","level":"fluent"}]'::jsonb,
     array['analogPhotography', 'literature', 'ceramicsCraft'],
     null, 'rejected', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
@@ -209,7 +204,7 @@ values
     null,
     'Account suspended following a community report; awaiting review.',
     'Cuenta suspendida tras un reporte de la comunidad; en espera de revisión.',
-    null, 'Journalist',
+    'Journalist',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"advanced"}]'::jsonb,
     array['literature', 'independentCinema', 'architecture'],
     null, 'suspended', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'

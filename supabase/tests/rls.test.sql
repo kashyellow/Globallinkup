@@ -9,7 +9,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(37);
+select plan(38);
 
 -- Fixed ids from the seed.
 --   admin   11111111-…  sofia 22222222-…  mateo 33333333-…
@@ -401,6 +401,15 @@ select results_eq(
        null, null, '@s', null, null, null)::text $$,
   $$ values ('approved') $$,
   'save_persona keeps an approved profile approved'
+);
+reset role;
+
+-- 38. S3.0: anon cannot read storage objects (no policy -> fail closed).
+set local role anon;
+set local request.jwt.claims = '{}';
+select is_empty(
+  $$ select 1 from storage.objects $$,
+  'anon sees no storage objects'
 );
 reset role;
 
