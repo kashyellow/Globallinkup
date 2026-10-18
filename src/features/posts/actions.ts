@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { uuidSchema } from "@/lib/validation/ids";
 
 import { getCurrentProfile, getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
@@ -39,7 +40,7 @@ export async function createPostAction(input: unknown): Promise<PostResult> {
   return { ok: true, id: data.id };
 }
 
-const likeSchema = z.object({ postId: z.uuid(), liked: z.boolean() });
+const likeSchema = z.object({ postId: uuidSchema, liked: z.boolean() });
 
 export async function toggleLikeAction(input: unknown): Promise<PostResult> {
   const user = await getCurrentUser();
@@ -61,7 +62,7 @@ export async function toggleLikeAction(input: unknown): Promise<PostResult> {
   return { ok: true };
 }
 
-const idSchema = z.object({ postId: z.uuid() });
+const idSchema = z.object({ postId: uuidSchema });
 
 export async function deletePostAction(input: unknown): Promise<PostResult> {
   const user = await getCurrentUser();

@@ -1,15 +1,25 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 import type { CSSProperties } from "react";
+import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
+import { reviewPersonaAction } from "@/features/admin/actions";
+import { useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
-import { ADMIN_USERS, type AdminUser } from "../data";
+import type { AdminProfileDto } from "../queries";
 
 const ACTION_BASE =
   "inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 py-2 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-px";
 
-export function AdminUsersTab() {
+const STATUS_KEY: Record<AdminProfileDto["status"], string> = {
+  pending: "statusPending",
+  approved: "statusApproved",
+  rejected: "statusRejected",
+  suspended: "statusSuspended",
+};
+
+export function AdminUsersTab({ users }: { users: AdminProfileDto[] }) {
   const t = useTranslations("Admin.users");
 
   return (
@@ -30,36 +40,48 @@ export function AdminUsersTab() {
               <p className="mt-0.5 font-body-sm text-body-sm text-secondary">{t("body")}</p>
             </div>
           </div>
-
-          <label className="flex items-center gap-space-sm">
-            <span className="font-label-md text-label-md text-secondary">{t("filterLabel")}</span>
-            <select className="h-11 rounded-full border border-outline-variant bg-surface-dim px-space-md font-label-md text-label-md text-on-surface transition-colors duration-300 hover:border-outline-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-              <option>{t("filterAll")}</option>
-              <option>{t("filterPhoto")}</option>
-              <option>{t("filterVerifiedToday")}</option>
-            </select>
-          </label>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-space-md">
-        {ADMIN_USERS.map((user) => (
-          <UserCard key={user.id} user={user} />
-        ))}
-      </div>
+      {users.length === 0 ? (
+        <div className="bezel-tray">
+          <div
+            className="flex flex-col items-center gap-2 bezel-core py-space-xl text-center"
+            style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
+          >
+            <Icon name="person_off" className="text-3xl text-secondary" />
+            <p className="font-label-lg text-label-lg font-semibold text-on-surface">
+              {t("emptyTitle")}
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-space-md">
+          {users.map((user) => (
+            <UserCard key={user.id} user={user} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-function UserCard({ user }: { user: AdminUser }) {
+function UserCard({ user }: { user: AdminProfileDto }) {
   const t = useTranslations("Admin.users");
+  const format = useFormatter();
+  const router = useRouter();
 
   const chipTone =
-    user.status === "flagged"
-      ? "border-danger-border bg-danger-surface text-danger-text"
-      : user.status === "approved"
-        ? "border-success-border bg-success-surface text-success-text"
-        : "border-outline-variant bg-surface-container text-secondary";
+    user.status === "approved"
+      ? "border-success-border bg-success-surface text-success-text"
+      : user.status === "pending"
+        ? "border-outline-variant bg-surface-container text-secondary"
+        : "border-danger-border bg-danger-surface text-danger-text";
+
+  async function review(decision: "approved" | "rejected" | "suspended") {
+    const result = await reviewPersonaAction({ profileId: user.id, decision });
+    if (result.ok) router.refresh();
+  }
 
   return (
     <div
@@ -69,20 +91,26 @@ function UserCard({ user }: { user: AdminUser }) {
       <article className="flex flex-col items-start justify-between gap-space-lg bezel-core p-space-lg lg:flex-row lg:items-center">
         <div className="flex w-full flex-col items-start gap-space-md sm:flex-row sm:items-center lg:w-auto">
           <div className="relative shrink-0">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              alt={user.avatarAlt}
-              className="h-24 w-20 rounded-2xl border border-outline-variant object-cover"
-              src={user.avatar}
-              loading="lazy"
-            />
+            {user.avatar ? (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  alt={user.name}
+                  className="h-24 w-20 rounded-2xl border border-outline-variant object-cover"
+                  src={user.avatar}
+                  loading="lazy"
+                />
+              </>
+            ) : (
+              <DefaultAvatar className="h-24 w-20 rounded-2xl border border-outline-variant" />
+            )}
             <span
               className={cn(
                 "absolute -right-2 -bottom-2 rounded-full border px-2 py-0.5 font-label-md text-label-md font-semibold",
                 chipTone,
               )}
             >
-              {user.chipKey ? t(user.chipKey) : user.langBadge}
+              {t(STATUS_KEY[user.status])}
             </span>
           </div>
 
@@ -95,33 +123,24 @@ function UserCard({ user }: { user: AdminUser }) {
                 <Icon name="location_on" className="text-sm" />
                 {user.location}
               </span>
-              {user.status === "pending" && user.registeredTime ? (
+              {user.languages ? (
                 <span className="rounded-full border border-outline-variant bg-surface-container px-2.5 py-0.5 font-label-md text-label-md text-secondary">
-                  {t("registeredAgo", { time: user.registeredTime })}
+                  {user.languages}
                 </span>
               ) : null}
-              {user.status === "flagged" ? (
-                <span className="rounded-full border border-danger-border bg-danger-surface px-2.5 py-0.5 font-label-md text-label-md text-danger-text">
-                  {t("lowLighting")}
-                </span>
-              ) : null}
-              {user.status === "approved" ? (
-                <span className="rounded-full border border-success-border bg-success-surface px-2.5 py-0.5 font-label-md text-label-md font-semibold text-success-text">
-                  {t("verifiedActiveMember")}
+              {user.status === "pending" && user.submittedAt ? (
+                <span className="rounded-full border border-outline-variant bg-surface-container px-2.5 py-0.5 font-label-md text-label-md text-secondary">
+                  {t("registeredAgo", {
+                    time: format.relativeTime(new Date(user.submittedAt), new Date()),
+                  })}
                 </span>
               ) : null}
             </div>
 
+            {user.headline ? (
+              <p className="font-label-md text-label-md text-primary">{user.headline}</p>
+            ) : null}
             <p className="max-w-xl font-body-sm text-body-sm text-text-muted">{user.bio}</p>
-
-            <div className="flex flex-wrap items-center gap-x-space-sm gap-y-1 pt-1">
-              {user.meta.map((item, index) => (
-                <span key={item.key} className="flex items-center gap-space-sm">
-                  {index > 0 ? <span className="text-outline-variant">·</span> : null}
-                  <MetaChip metaKey={item.key} tone={item.tone} />
-                </span>
-              ))}
-            </div>
           </div>
         </div>
 
@@ -134,27 +153,20 @@ function UserCard({ user }: { user: AdminUser }) {
               </span>
               <button
                 type="button"
+                onClick={() => void review("suspended")}
                 className={cn(
                   ACTION_BASE,
                   "border border-outline-variant text-secondary hover:border-danger-border-strong/60 hover:text-danger focus-visible:outline-danger-border-strong",
                 )}
               >
-                {t("revoke")}
+                {t("suspend")}
               </button>
             </>
           ) : (
             <>
               <button
                 type="button"
-                className={cn(
-                  ACTION_BASE,
-                  "border border-outline-variant bg-surface-dim text-on-surface hover:border-outline-hover hover:bg-surface-container focus-visible:outline-primary",
-                )}
-              >
-                {user.status === "flagged" ? t("requestPhoto") : t("inspectDossier")}
-              </button>
-              <button
-                type="button"
+                onClick={() => void review("rejected")}
                 className={cn(
                   ACTION_BASE,
                   "border border-danger-border bg-danger-surface text-danger-text hover:border-danger-border-strong/60 focus-visible:outline-danger-border-strong",
@@ -165,53 +177,19 @@ function UserCard({ user }: { user: AdminUser }) {
               </button>
               <button
                 type="button"
+                onClick={() => void review("approved")}
                 className={cn(
                   ACTION_BASE,
                   "border border-success-ring/30 bg-success-strong text-white hover:bg-success-hover focus-visible:outline-success-ring",
                 )}
               >
                 <Icon name="check" className="text-base" />
-                {user.status === "flagged" ? t("approveAnyway") : t("approveProfile")}
+                {t("approveProfile")}
               </button>
             </>
           )}
         </div>
       </article>
     </div>
-  );
-}
-
-function MetaChip({ metaKey, tone }: { metaKey: string; tone: "ok" | "warn" | "neutral" }) {
-  const t = useTranslations("Admin.users");
-  const valueTone = tone === "warn" ? "text-danger-text" : "text-success-text";
-
-  if (metaKey === "phoneVerified") {
-    return (
-      <span className="font-label-md text-label-md text-secondary">
-        {t("phoneVerified")} <span className={valueTone}>{t("yes")}</span>
-      </span>
-    );
-  }
-  if (metaKey === "photoIntegrity") {
-    return (
-      <span className="font-label-md text-label-md text-secondary">
-        {t("photoIntegrity")} <span className={valueTone}>{t("photoIntegrityHigh")}</span>
-      </span>
-    );
-  }
-  if (metaKey === "instagramSynced") {
-    return (
-      <span className="font-label-md text-label-md text-secondary">
-        {t("instagramSynced")} <span className={valueTone}>{t("verified")}</span>
-      </span>
-    );
-  }
-  if (metaKey === "needsClearFace") {
-    return (
-      <span className="font-label-md text-label-md text-danger-text">{t("needsClearFace")}</span>
-    );
-  }
-  return (
-    <span className="font-label-md text-label-md text-success-text">{t("identityConfirmed")}</span>
   );
 }

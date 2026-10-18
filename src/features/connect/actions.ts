@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { uuidSchema } from "@/lib/validation/ids";
 
 import { getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
@@ -14,11 +15,11 @@ import { createClient } from "@/lib/supabase/server";
 export type ConnectResult = { ok: true } | { ok: false; error: string };
 
 const requestSchema = z.object({
-  recipientId: z.uuid(),
+  recipientId: uuidSchema,
   note: z.string().trim().min(1, "noteRequired").max(2000),
 });
 
-const idSchema = z.object({ id: z.uuid() });
+const idSchema = z.object({ id: uuidSchema });
 
 export async function sendConnectRequestAction(input: unknown): Promise<ConnectResult> {
   const user = await getCurrentUser();

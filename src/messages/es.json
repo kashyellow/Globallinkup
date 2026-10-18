@@ -346,7 +346,13 @@
       "verifiedActiveMember": "Miembro Activo Verificado",
       "identityConfirmed": "Identidad Confirmada por Admin ID #419",
       "publishedToDiscover": "Publicado en Descubrir",
-      "revoke": "Revocar"
+      "revoke": "Revocar",
+      "statusPending": "Pendiente de revisión",
+      "statusApproved": "Aprobado",
+      "statusRejected": "Rechazado",
+      "statusSuspended": "Suspendido",
+      "suspend": "Suspender",
+      "emptyTitle": "Aún no hay perfiles"
     },
     "marketplace": {
       "restrictedAccess": "Acceso Restringido",
@@ -372,10 +378,8 @@
       "toggleVisibility": "Alternar Visibilidad",
       "deleteFromStore": "Eliminar de la Tienda",
       "categories": {
-        "artisanCrafts": "Artesanías",
-        "homeLiving": "Hogar y Vida",
-        "textiles": "Textiles",
-        "travelGear": "Equipaje de Viaje Curado"
+        "booksCulture": "Libros y cultura",
+        "localGoods": "Productos locales"
       },
       "form": {
         "title": "Publicar Nueva Pieza del Mercado",
@@ -395,6 +399,17 @@
         "publish": "Publicar Producto en el Mercado",
         "defaultTitle": "Bolso de Piel Oaxaqueño Hecho a Mano",
         "defaultNarrative": "Piel curtida al vegetal elaborada con costura de montura mexicana indígena. Obtenida directamente de talleres familiares en los Valles Centrales."
+      },
+      "origin": "Origen (ej. Oaxaca, MX)",
+      "availability": "Disponibilidad",
+      "publish": "Publicar",
+      "unpublish": "Despublicar",
+      "delete": "Eliminar producto",
+      "emptyTitle": "Aún no hay productos",
+      "availabilityOptions": {
+        "in_stock": "En stock",
+        "out_of_stock": "Sin stock",
+        "made_to_order": "Bajo pedido"
       }
     },
     "moderation": {
@@ -421,7 +436,9 @@
         "impersonationBody": "Un miembro reportó que la foto de perfil coincide con una modelo de moda destacada de Pinterest sin contactos sociales mutuos vinculados.",
         "impersonationAuthor": "Lucas V. (Bogotá)",
         "impersonationReporter": "Marca Automática del Admin"
-      }
+      },
+      "emptyTitle": "Nada que moderar",
+      "resolve": "Resolver"
     }
   },
   "Connections": {

@@ -120,6 +120,18 @@ test("@auth the marketplace lists real products", async ({ page }) => {
   await expect(page.getByText(/Handmade Oaxacan Leather Travel Bag/)).toBeVisible();
 });
 
+test("@auth an admin approves a pending persona", async ({ page }) => {
+  await signIn(page, "admin@globallinkup.test");
+  await page.goto("/en/admin");
+  await page.waitForTimeout(1200);
+
+  const card = page.locator("article", { hasText: "Pending Applicant" });
+  await expect(card).toBeVisible();
+  await card.getByRole("button", { name: /approve/i }).click();
+  await page.waitForTimeout(1500);
+  await expect(card.getByText(/Approved/).first()).toBeVisible();
+});
+
 test("@auth onboarding creates a persona for a new account", async ({ page }) => {
   const email = `e2e-${Date.now()}@example.com`;
   await page.goto("/en/register");

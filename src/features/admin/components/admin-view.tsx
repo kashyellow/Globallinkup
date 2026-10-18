@@ -4,7 +4,8 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
-import { ADMIN_METRICS, ADMIN_TAB_COUNTS, ADMIN_TABS, type AdminTab } from "../data";
+import { ADMIN_TABS, type AdminTab } from "../data";
+import type { AdminData } from "../queries";
 import { AdminMarketplaceTab } from "./marketplace-tab";
 import { AdminModerationTab } from "./moderation-tab";
 import { AdminUsersTab } from "./users-tab";
@@ -15,16 +16,22 @@ const TAB_ICONS: Record<AdminTab, string> = {
   moderation: "gavel",
 };
 
-const METRIC_KEYS = [
-  { key: "pendingProfiles", count: ADMIN_METRICS.pendingProfiles, dot: "bg-primary" },
-  { key: "reportedPosts", count: ADMIN_METRICS.reportedPosts, dot: "bg-danger" },
-  { key: "curatedProducts", count: ADMIN_METRICS.curatedProducts, dot: "bg-success-bright" },
-  { key: "openReports", count: ADMIN_METRICS.openReports, dot: "bg-secondary" },
-] as const;
-
-export function AdminView() {
+export function AdminView({ data }: { data: AdminData }) {
   const t = useTranslations("Admin");
   const [tab, setTab] = useState<AdminTab>("users");
+
+  const metricKeys = [
+    { key: "pendingProfiles", count: data.metrics.pendingProfiles, dot: "bg-primary" },
+    { key: "reportedPosts", count: data.metrics.reportedPosts, dot: "bg-danger" },
+    { key: "curatedProducts", count: data.metrics.curatedProducts, dot: "bg-success-bright" },
+    { key: "openReports", count: data.metrics.openReports, dot: "bg-secondary" },
+  ] as const;
+
+  const tabCounts: Record<AdminTab, number> = {
+    users: data.users.length,
+    marketplace: data.products.length,
+    moderation: data.reports.filter((report) => report.status === "open").length,
+  };
 
   return (
     <>
@@ -45,7 +52,7 @@ export function AdminView() {
           </div>
 
           <div className="no-scrollbar flex items-center gap-space-xs overflow-x-auto pb-0.5 lg:flex-wrap lg:gap-space-sm lg:overflow-visible lg:pb-0">
-            {METRIC_KEYS.map((metric) => (
+            {metricKeys.map((metric) => (
               <div
                 key={metric.key}
                 className="flex shrink-0 items-center gap-1.5 rounded-full border border-outline-variant bg-surface-container px-space-sm py-1 font-label-md text-label-md text-secondary"
@@ -108,7 +115,7 @@ export function AdminView() {
                           : "border-outline-variant bg-surface-container text-secondary",
                     )}
                   >
-                    {ADMIN_TAB_COUNTS[key]}
+                    {tabCounts[key]}
                   </span>
                 </button>
               );
@@ -116,9 +123,9 @@ export function AdminView() {
           </div>
         </div>
 
-        {tab === "users" ? <AdminUsersTab /> : null}
-        {tab === "marketplace" ? <AdminMarketplaceTab /> : null}
-        {tab === "moderation" ? <AdminModerationTab /> : null}
+        {tab === "users" ? <AdminUsersTab users={data.users} /> : null}
+        {tab === "marketplace" ? <AdminMarketplaceTab products={data.products} /> : null}
+        {tab === "moderation" ? <AdminModerationTab reports={data.reports} /> : null}
       </div>
     </>
   );

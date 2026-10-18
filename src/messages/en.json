@@ -346,7 +346,13 @@
       "verifiedActiveMember": "Verified Active Member",
       "identityConfirmed": "Identity Confirmed by Admin ID #419",
       "publishedToDiscover": "Published to Discover",
-      "revoke": "Revoke"
+      "revoke": "Revoke",
+      "statusPending": "Pending review",
+      "statusApproved": "Approved",
+      "statusRejected": "Rejected",
+      "statusSuspended": "Suspended",
+      "suspend": "Suspend",
+      "emptyTitle": "No member profiles yet"
     },
     "marketplace": {
       "restrictedAccess": "Restricted Access",
@@ -372,10 +378,8 @@
       "toggleVisibility": "Toggle Visibility",
       "deleteFromStore": "Delete from Store",
       "categories": {
-        "artisanCrafts": "Artisan Crafts",
-        "homeLiving": "Home & Living",
-        "textiles": "Textiles",
-        "travelGear": "Curated Travel Gear"
+        "booksCulture": "Books & Culture",
+        "localGoods": "Local Goods"
       },
       "form": {
         "title": "Publish New Marketplace Piece",
@@ -395,6 +399,17 @@
         "publish": "Publish Product to Marketplace",
         "defaultTitle": "Handmade Oaxacan Leather Bag",
         "defaultNarrative": "Vegetable-tanned leather crafted with indigenous Mexican saddle stitching. Sourced directly from family-run workshops in the Central Valleys."
+      },
+      "origin": "Origin (e.g. Oaxaca, MX)",
+      "availability": "Availability",
+      "publish": "Publish",
+      "unpublish": "Unpublish",
+      "delete": "Delete product",
+      "emptyTitle": "No products yet",
+      "availabilityOptions": {
+        "in_stock": "In stock",
+        "out_of_stock": "Out of stock",
+        "made_to_order": "Made to order"
       }
     },
     "moderation": {
@@ -421,7 +436,9 @@
         "impersonationBody": "Member reported that avatar photo matches a prominent fashion model from Pinterest without mutual social handles linked.",
         "impersonationAuthor": "Lucas V. (Bogotá)",
         "impersonationReporter": "Admin Auto-Flag"
-      }
+      },
+      "emptyTitle": "Nothing to moderate",
+      "resolve": "Resolve"
     }
   },
   "Connections": {

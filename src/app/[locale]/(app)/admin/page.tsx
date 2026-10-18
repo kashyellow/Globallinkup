@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { AdminView } from "@/features/admin/components/admin-view";
+import { getAdminData } from "@/features/admin/queries";
 import { requireAdmin } from "@/lib/auth";
 
 export async function generateMetadata({
@@ -15,6 +16,7 @@ export async function generateMetadata({
 
 export default async function AdminPage() {
   await requireAdmin();
+  const data = await getAdminData();
 
-  return <AdminView />;
+  return <AdminView data={data} />;
 }
