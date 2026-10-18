@@ -19,14 +19,14 @@ views. `data.ts` stays as dev fixtures until each function is flipped.
 
 ## Slices
 
-| Slice | What                                                               | Status                                         | Depends on    |
-| ----- | ------------------------------------------------------------------ | ---------------------------------------------- | ------------- |
-| S3.0  | **Storage bring-forward** (avatars/post/product buckets + URLs)    | ✅ complete 2026-10-19                         | —             |
-| S3a   | Persona/Discover + own Profile (people core)                       | 🟡 discover done; own profile next             | S3.0          |
-| S3b   | Connect (request with a note → `intro`, accept/decline/disconnect) | 🟡 actions + send wired; connections page next | S3a           |
-| S3c   | Posts (feed, create, soft delete, like)                            | planned                                        | S3.0, S3b     |
-| S3d   | Marketplace (reads + admin product CRUD)                           | planned                                        | S3.0          |
-| S3e   | Admin (users review, reports/moderation, dashboard counts)         | planned                                        | S3b, S3c, S3d |
+| Slice | What                                                               | Status                             | Depends on    |
+| ----- | ------------------------------------------------------------------ | ---------------------------------- | ------------- |
+| S3.0  | **Storage bring-forward** (avatars/post/product buckets + URLs)    | ✅ complete 2026-10-19             | —             |
+| S3a   | Persona/Discover + own Profile (people core)                       | 🟡 discover done; own profile next | S3.0          |
+| S3b   | Connect (request with a note → `intro`, accept/decline/disconnect) | ✅ complete 2026-10-19             | S3a           |
+| S3c   | Posts (feed, create, soft delete, like)                            | ✅ complete 2026-10-19             | S3.0, S3b     |
+| S3d   | Marketplace (reads + admin product CRUD)                           | planned                            | S3.0          |
+| S3e   | Admin (users review, reports/moderation, dashboard counts)         | planned                            | S3b, S3c, S3d |
 
 Land one slice green before the next.
 
