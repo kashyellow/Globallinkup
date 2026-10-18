@@ -4,7 +4,7 @@ Flip the mock-driven pillars to Supabase, one slice at a time, behind the
 existing UI. Depends on **S2 ✅** and the UI update + `s3_contact_channels`
 migration (2026-10-19).
 
-- **Status:** in progress — plan locked, implementation starting
+- **Status:** in progress — S3.0 done, S3a/S3b partially landed
 - **Goal:** every pillar reads real rows; writes go through Server Actions with
   Zod + RLS; nothing mock-driven remains except demo fixtures kept for tests.
 - **Gate:** per slice — `db:reset` + `db:test` + `format:check`/`lint`/
@@ -19,14 +19,14 @@ views. `data.ts` stays as dev fixtures until each function is flipped.
 
 ## Slices
 
-| Slice | What                                                               | Depends on    |
-| ----- | ------------------------------------------------------------------ | ------------- |
-| S3.0  | **Storage bring-forward** (avatars/post/product buckets + URLs)    | —             |
-| S3a   | Persona/Discover + own Profile (people core)                       | S3.0          |
-| S3b   | Connect (request with a note → `intro`, accept/decline/disconnect) | S3a           |
-| S3c   | Posts (feed, create, soft delete, like)                            | S3.0, S3b     |
-| S3d   | Marketplace (reads + admin product CRUD)                           | S3.0          |
-| S3e   | Admin (users review, reports/moderation, dashboard counts)         | S3b, S3c, S3d |
+| Slice | What                                                               | Status                                         | Depends on    |
+| ----- | ------------------------------------------------------------------ | ---------------------------------------------- | ------------- |
+| S3.0  | **Storage bring-forward** (avatars/post/product buckets + URLs)    | ✅ complete 2026-10-19                         | —             |
+| S3a   | Persona/Discover + own Profile (people core)                       | 🟡 discover done; own profile next             | S3.0          |
+| S3b   | Connect (request with a note → `intro`, accept/decline/disconnect) | 🟡 actions + send wired; connections page next | S3a           |
+| S3c   | Posts (feed, create, soft delete, like)                            | planned                                        | S3.0, S3b     |
+| S3d   | Marketplace (reads + admin product CRUD)                           | planned                                        | S3.0          |
+| S3e   | Admin (users review, reports/moderation, dashboard counts)         | planned                                        | S3b, S3c, S3d |
 
 Land one slice green before the next.
 
