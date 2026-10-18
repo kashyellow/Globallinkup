@@ -1,22 +1,18 @@
 "use client";
 
-import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Reveal } from "@/components/ui/reveal";
 import { Icon } from "@/components/ui/icon";
 import { signOutAction } from "@/features/auth/actions";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
-import { PROFILE_IDENTITY, PROFILE_METRICS, TRUST_SCORE } from "../data";
+import type { OwnProfile } from "../queries";
 import { SectionHead } from "./section-head";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
-/**
- * Register control: square corners, hairline edge, no pills anywhere on the
- * dossier. Press physics match the landing CTAs (settle + dip).
- */
 const CONTROL = cn(
   "inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-md border border-outline-variant bg-transparent px-3 font-label-md text-label-md whitespace-nowrap text-on-surface",
   "transition-[background-color,border-color,color,transform] duration-300",
@@ -31,7 +27,6 @@ const CONTROL_PRIMARY = cn(
 
 const CONTROL_DANGER = cn(CONTROL, "text-secondary hover:border-danger/60 hover:text-danger");
 
-/** Slash separator used in the identity meta line (one per gap, muted). */
 function Sep() {
   return (
     <span aria-hidden className="text-outline-strong">
@@ -40,29 +35,7 @@ function Sep() {
   );
 }
 
-/** Linear consent-trust gauge: a ruled track filled to the score. */
-function TrustTrack({ value }: { value: number }) {
-  const t = useTranslations("Profile.trust");
-
-  return (
-    <div className="mt-space-lg max-w-[26rem]">
-      <div className="flex items-baseline justify-between gap-space-sm">
-        <span className="font-label-md text-label-md font-semibold tracking-[0.08em] text-text-muted uppercase">
-          {t("label")}
-        </span>
-        <span className="font-display-md text-display-md-mobile font-bold text-success-text tabular-nums">
-          {value}
-        </span>
-      </div>
-      <div className="mt-2 h-2 w-full border border-outline-variant bg-surface-lowest">
-        <div className="h-full bg-success-strong" style={{ width: `${value}%` } as CSSProperties} />
-      </div>
-      <p className="mt-2 max-w-[42ch] font-body-sm text-body-sm text-text-muted">{t("body")}</p>
-    </div>
-  );
-}
-
-export function DossierHeader() {
+export function DossierHeader({ profile }: { profile: OwnProfile }) {
   const t = useTranslations("Profile");
   const router = useRouter();
   const [copied, setCopied] = useState(false);
@@ -78,22 +51,26 @@ export function DossierHeader() {
   }
 
   async function logout() {
-    // End the Supabase session; `replace` keeps the back button out of the app.
     const result = await signOutAction();
     router.replace(result.redirectTo);
   }
 
+  const metrics = [
+    { id: "connections", value: String(profile.metrics.connections), accent: false },
+    { id: "dispatches", value: String(profile.metrics.dispatches), accent: false },
+  ];
+
   return (
     <section className="relative w-full">
       <div className="mx-auto max-w-[1240px] px-margin-mobile pt-block-mobile md:px-margin md:pt-block">
-        {/* Index bar: dossier reference, verification state, actions. */}
+        {/* Index bar */}
         <div className="flex flex-wrap items-center justify-between gap-y-space-sm border-y border-outline-variant py-space-sm">
           <div className="flex flex-wrap items-center gap-space-sm">
             <span className="font-label-md text-label-md font-semibold tracking-[0.08em] text-text-muted uppercase">
               {t("meta.dossier")}
             </span>
             <span className="font-label-md text-label-md font-semibold text-primary tabular-nums">
-              {PROFILE_IDENTITY.dossierId}
+              GL-{profile.id.slice(0, 8).toUpperCase()}
             </span>
             <span className="flex items-center gap-1.5 font-label-md text-label-md font-semibold tracking-[0.08em] text-success-text uppercase">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success-text" />
@@ -101,11 +78,6 @@ export function DossierHeader() {
             </span>
           </div>
 
-          {/*
-           * On mobile the three controls cannot share a row (the bilingual
-           * labels overflow), so they stack full-width instead of wrapping into
-           * an uneven two-row block. From `sm` up they sit inline as before.
-           */}
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
             <button type="button" onClick={share} className={CONTROL}>
               <Icon
@@ -118,14 +90,14 @@ export function DossierHeader() {
               <Icon name="edit_square" className="text-base" />
               <span>{t("actions.edit")}</span>
             </Link>
-            <button type="button" onClick={logout} className={CONTROL_DANGER}>
+            <button type="button" onClick={() => void logout()} className={CONTROL_DANGER}>
               <Icon name="logout" className="text-base" />
               <span>{t("actions.logout")}</span>
             </button>
           </div>
         </div>
 
-        {/* 01 — Identity: name and record on the document side, portrait on the plate side. */}
+        {/* 01 — Identity */}
         <Reveal delay={60}>
           <div className="mt-space-lg">
             <SectionHead index="01" title={t("sections.identity")} />
@@ -133,45 +105,54 @@ export function DossierHeader() {
             <div className="mt-space-md grid grid-cols-1 gap-space-lg lg:grid-cols-12 lg:items-end">
               <div className="lg:col-span-7">
                 <h1 className="font-display-lg text-display-lg-mobile font-bold tracking-tight text-balance text-on-surface md:text-display-lg">
-                  {PROFILE_IDENTITY.name}{" "}
-                  <span className="align-baseline font-headline-md text-headline-md font-normal text-text-muted">
-                    {PROFILE_IDENTITY.age}
-                  </span>
+                  {profile.name}{" "}
+                  {profile.age > 0 ? (
+                    <span className="align-baseline font-headline-md text-headline-md font-normal text-text-muted">
+                      {profile.age}
+                    </span>
+                  ) : null}
                 </h1>
 
-                <p className="mt-2 font-body-lg text-body-lg text-text-muted">
-                  {PROFILE_IDENTITY.role}
-                </p>
+                {profile.headline ? (
+                  <p className="mt-2 font-body-lg text-body-lg text-text-muted">
+                    {profile.headline}
+                  </p>
+                ) : null}
 
                 <p className="mt-space-sm flex flex-wrap items-center gap-x-2 gap-y-1 font-label-md text-label-md text-on-surface-variant">
                   <span className="flex items-center gap-1 text-on-surface">
                     <Icon name="location_on" className="text-base text-primary" />
-                    {PROFILE_IDENTITY.location}
+                    {profile.location}
                   </span>
-                  <Sep />
-                  <span>{PROFILE_IDENTITY.languages}</span>
-                  <Sep />
-                  <span className="text-primary">{PROFILE_IDENTITY.tier}</span>
+                  {profile.languages ? (
+                    <>
+                      <Sep />
+                      <span>{profile.languages}</span>
+                    </>
+                  ) : null}
                   <Sep />
                   <span className="flex items-center gap-1.5 text-success-text">
                     <span className="h-1.5 w-1.5 rounded-full bg-success-text" />
                     {t("identity.mutualConsent")}
                   </span>
                 </p>
-
-                <TrustTrack value={TRUST_SCORE} />
               </div>
 
-              {/* Portrait plate: sharp corners, hairline frame, passport stamp. */}
               <div className="lg:col-span-5">
                 <div className="group relative mx-auto w-full max-w-[19rem] lg:mx-0 lg:ml-auto lg:max-w-none">
                   <div className="aspect-[4/5] w-full overflow-hidden border border-outline-variant bg-surface-low">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      alt={PROFILE_IDENTITY.avatarAlt}
-                      src={PROFILE_IDENTITY.avatar}
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 motion-reduce:transform-none"
-                    />
+                    {profile.avatar ? (
+                      <>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          alt={profile.name}
+                          src={profile.avatar}
+                          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 motion-reduce:transform-none"
+                        />
+                      </>
+                    ) : (
+                      <DefaultAvatar className="h-full w-full" />
+                    )}
                   </div>
                   <span className="absolute -bottom-4 left-4 inline-flex -rotate-6 items-center gap-1.5 border border-primary bg-surface-lowest px-2.5 py-1 font-label-md text-label-md font-bold tracking-[0.08em] text-primary uppercase transition-transform duration-500 hover:rotate-0 motion-reduce:transition-none">
                     <Icon name="verified" filled className="text-sm" />
@@ -183,13 +164,13 @@ export function DossierHeader() {
           </div>
         </Reveal>
 
-        {/* 02 — Ledger: the record in figures, ruled rather than boxed. */}
+        {/* 02 — Ledger */}
         <Reveal delay={140}>
           <div className="mt-space-lg">
             <SectionHead index="02" title={t("sections.record")} />
 
             <dl className="grid grid-cols-2 sm:grid-cols-4">
-              {PROFILE_METRICS.map((metric, index) => (
+              {metrics.map((metric, index) => (
                 <div
                   key={metric.id}
                   className={cn(

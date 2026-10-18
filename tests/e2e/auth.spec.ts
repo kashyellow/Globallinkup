@@ -91,7 +91,7 @@ test("@auth discover shows real personas and viewer connect state", async ({ pag
 test("@auth connections show accepted contact and pending requests", async ({ page }) => {
   await signIn(page, "sofia.martinez@example.com");
   await page.goto("/en/connections");
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(2500);
 
   // Active tab: Camila is an accepted connection, so her channel is unlocked.
   await expect(page.getByText(/Camila Osorio/)).toBeVisible();
@@ -106,7 +106,7 @@ test("@auth connections show accepted contact and pending requests", async ({ pa
 test("@auth the feed shows real posts and a composer", async ({ page }) => {
   await signIn(page, "sofia.martinez@example.com");
   await page.goto("/en/posts");
-  await page.waitForTimeout(1200);
+  await page.waitForTimeout(2500);
 
   // Seeded post caption proves the feed reads real rows.
   await expect(page.getByText(/Gothic Quarter, shot on expired Portra/)).toBeVisible();
@@ -116,20 +116,28 @@ test("@auth the feed shows real posts and a composer", async ({ page }) => {
 test("@auth the marketplace lists real products", async ({ page }) => {
   await signIn(page, "sofia.martinez@example.com");
   await page.goto("/en/marketplace");
-  await page.waitForTimeout(1200);
+  await page.waitForTimeout(2500);
   await expect(page.getByText(/Handmade Oaxacan Leather Travel Bag/)).toBeVisible();
 });
 
 test("@auth an admin approves a pending persona", async ({ page }) => {
   await signIn(page, "admin@globallinkup.test");
   await page.goto("/en/admin");
-  await page.waitForTimeout(1200);
+  await page.waitForTimeout(2500);
 
   const card = page.locator("article", { hasText: "Pending Applicant" });
   await expect(card).toBeVisible();
   await card.getByRole("button", { name: /approve/i }).click();
   await page.waitForTimeout(1500);
   await expect(card.getByText(/Approved/).first()).toBeVisible();
+});
+
+test("@auth the profile shows the real dossier and unlocked channels", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await page.goto("/en/profile");
+  await page.waitForTimeout(2500);
+  await expect(page.getByRole("heading", { name: /Sofia Martinez/ })).toBeVisible();
+  await expect(page.getByText(/\+34 612 849 201/)).toBeVisible();
 });
 
 test("@auth onboarding creates a persona for a new account", async ({ page }) => {
