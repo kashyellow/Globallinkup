@@ -4,14 +4,16 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
-import { MARKETPLACE_CONTACT, type Product } from "../data";
+import type { MarketplaceContact, MarketplaceProduct } from "../queries";
 
 export function ProductDrawer({
   product,
+  contact,
   open,
   onClose,
 }: {
-  product: Product | null;
+  product: MarketplaceProduct | null;
+  contact: MarketplaceContact;
   open: boolean;
   onClose: () => void;
 }) {
@@ -53,16 +55,24 @@ export function ProductDrawer({
           open ? "translate-x-0" : "translate-x-full",
         )}
       >
-        {product ? <DrawerContent product={product} onClose={onClose} /> : null}
+        {product ? <DrawerContent product={product} contact={contact} onClose={onClose} /> : null}
       </aside>
     </div>
   );
 }
 
-function DrawerContent({ product, onClose }: { product: Product; onClose: () => void }) {
+function DrawerContent({
+  product,
+  contact,
+  onClose,
+}: {
+  product: MarketplaceProduct;
+  contact: MarketplaceContact;
+  onClose: () => void;
+}) {
   const t = useTranslations("Marketplace.drawer");
 
-  const whatsappHref = `${MARKETPLACE_CONTACT.whatsappLink}?text=${encodeURIComponent(
+  const whatsappHref = `${contact.whatsappLink}?text=${encodeURIComponent(
     t("whatsappMessage", { product: product.name, sku: product.sku }),
   )}`;
 
@@ -158,19 +168,19 @@ function DrawerContent({ product, onClose }: { product: Product; onClose: () => 
           <div className="mt-1 flex items-center justify-center gap-2 font-label-md text-label-md text-secondary">
             <span>{t("whatsappPrefix")}</span>
             <a
-              href={`tel:${MARKETPLACE_CONTACT.whatsappNumber.replace(/\s/g, "")}`}
+              href={`tel:${contact.whatsappNumber.replace(/\s/g, "")}`}
               className="rounded font-semibold text-on-surface transition-colors duration-300 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-              {MARKETPLACE_CONTACT.whatsappNumber}
+              {contact.whatsappNumber}
             </a>
           </div>
           <div className="flex items-center justify-center gap-2 font-label-md text-label-md text-secondary">
             <span>{t("emailPrefix")}</span>
             <a
-              href={`mailto:${MARKETPLACE_CONTACT.email}`}
+              href={`mailto:${contact.email}`}
               className="rounded font-semibold text-on-surface transition-colors duration-300 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-              {MARKETPLACE_CONTACT.email}
+              {contact.email}
             </a>
           </div>
         </div>
@@ -189,19 +199,27 @@ function DrawerContent({ product, onClose }: { product: Product; onClose: () => 
   );
 }
 
-function DrawerGallery({ product }: { product: Product }) {
+function DrawerGallery({ product }: { product: MarketplaceProduct }) {
   const [imageIndex, setImageIndex] = useState(0);
   const hasMultiple = product.gallery.length > 1;
 
   return (
     <div className="flex flex-col gap-space-sm">
       <div className="aspect-[4/3] w-full overflow-hidden rounded-[1.25rem] border border-outline-variant bg-surface-container">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          alt={product.galleryAlts[imageIndex]}
-          className="h-full w-full object-cover"
-          src={product.gallery[imageIndex]}
-        />
+        {product.gallery[imageIndex] ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              alt={product.galleryAlts[imageIndex]}
+              className="h-full w-full object-cover"
+              src={product.gallery[imageIndex]}
+            />
+          </>
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-surface-variant text-secondary">
+            <Icon name="image" className="text-5xl" />
+          </div>
+        )}
       </div>
 
       {hasMultiple ? (

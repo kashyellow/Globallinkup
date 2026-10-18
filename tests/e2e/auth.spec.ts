@@ -113,6 +113,13 @@ test("@auth the feed shows real posts and a composer", async ({ page }) => {
   await expect(page.getByRole("button", { name: /publish/i })).toBeVisible();
 });
 
+test("@auth the marketplace lists real products", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await page.goto("/en/marketplace");
+  await page.waitForTimeout(1200);
+  await expect(page.getByText(/Handmade Oaxacan Leather Travel Bag/)).toBeVisible();
+});
+
 test("@auth onboarding creates a persona for a new account", async ({ page }) => {
   const email = `e2e-${Date.now()}@example.com`;
   await page.goto("/en/register");

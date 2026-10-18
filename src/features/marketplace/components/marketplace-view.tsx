@@ -6,13 +6,8 @@ import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { Pagination } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
-import {
-  MARKETPLACE_CONTACT,
-  MARKETPLACE_FILTERS,
-  PRODUCTS,
-  type MarketplaceFilter,
-  type Product,
-} from "../data";
+import { MARKETPLACE_FILTERS, type MarketplaceFilter } from "../data";
+import type { MarketplaceContact, MarketplaceProduct } from "../queries";
 import { ProductDrawer } from "./product-drawer";
 import { usePagination } from "@/features/shared/use-pagination";
 
@@ -24,15 +19,21 @@ const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
  */
 const PAGE_SIZE = 4;
 
-export function MarketplaceView() {
+export function MarketplaceView({
+  products,
+  contact,
+}: {
+  products: MarketplaceProduct[];
+  contact: MarketplaceContact;
+}) {
   const t = useTranslations("Marketplace");
   const [filter, setFilter] = useState<MarketplaceFilter>("all");
   // `selected` is intentionally retained after closing so the panel can animate
   // out with its content still mounted.
-  const [selected, setSelected] = useState<Product | null>(null);
+  const [selected, setSelected] = useState<MarketplaceProduct | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const visible = PRODUCTS.filter((product) => filter === "all" || product.category === filter);
+  const visible = products.filter((product) => filter === "all" || product.category === filter);
   const { page, totalPages, pageItems, setPage, resetPage } = usePagination(visible, PAGE_SIZE);
 
   // The first card *on this page* carries the featured treatment, so each page
@@ -45,7 +46,7 @@ export function MarketplaceView() {
     resetPage();
   }
 
-  function openProduct(product: Product) {
+  function openProduct(product: MarketplaceProduct) {
     setSelected(product);
     setIsDrawerOpen(true);
   }
@@ -157,7 +158,7 @@ export function MarketplaceView() {
                     : "border border-outline-variant bg-surface-low text-on-surface-variant hover:border-outline-hover hover:bg-surface-container hover:text-on-surface",
                 )}
               >
-                {key === "all" ? t("filters.all", { count: PRODUCTS.length }) : t(`filters.${key}`)}
+                {key === "all" ? t("filters.all", { count: products.length }) : t(`filters.${key}`)}
               </button>
             ))}
           </div>
@@ -206,7 +207,7 @@ export function MarketplaceView() {
               </div>
             </div>
             <a
-              href={`mailto:${MARKETPLACE_CONTACT.email}`}
+              href={`mailto:${contact.email}`}
               className={cn(
                 "group inline-flex h-11 shrink-0 items-center gap-2 rounded-full border border-outline bg-surface-low px-5 font-label-lg text-label-lg whitespace-nowrap text-on-surface transition-colors duration-300 hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
                 EASE,
@@ -223,6 +224,7 @@ export function MarketplaceView() {
 
       <ProductDrawer
         product={selected}
+        contact={contact}
         open={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
       />
@@ -236,7 +238,7 @@ function ProductCard({
   featured,
   onOpen,
 }: {
-  product: Product;
+  product: MarketplaceProduct;
   productIndex: number;
   featured: boolean;
   onOpen: () => void;
@@ -271,13 +273,21 @@ function ProductCard({
             className="relative block w-full overflow-hidden bg-surface-container focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
           >
             <span className={cn("block w-full", featured ? "aspect-[16/11]" : "aspect-[4/3]")}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                alt={product.imageAlt}
-                className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
-                src={product.image}
-                loading="lazy"
-              />
+              {product.image ? (
+                <>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    alt={product.imageAlt}
+                    className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
+                    src={product.image}
+                    loading="lazy"
+                  />
+                </>
+              ) : (
+                <span className="flex h-full w-full items-center justify-center bg-surface-variant text-secondary">
+                  <Icon name="image" className="text-4xl" />
+                </span>
+              )}
             </span>
 
             <span className="absolute top-3 right-3 rounded-full border border-outline-variant bg-surface-low/95 px-2.5 py-1 font-label-md text-label-md text-on-surface shadow-lift-sm">
