@@ -63,10 +63,24 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
+            foreignKeyName: "connections_recipient_id_fkey";
+            columns: ["recipient_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
+            referencedColumns: ["id"];
+          },
+          {
             foreignKeyName: "connections_requester_id_fkey";
             columns: ["requester_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "connections_requester_id_fkey";
+            columns: ["requester_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
             referencedColumns: ["id"];
           },
         ];
@@ -102,6 +116,13 @@ export type Database = {
             columns: ["profile_id"];
             isOneToOne: true;
             referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "contact_details_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: true;
+            referencedRelation: "profiles_public";
             referencedColumns: ["id"];
           },
         ];
@@ -201,6 +222,13 @@ export type Database = {
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
+          {
+            foreignKeyName: "marketplace_products_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
+            referencedColumns: ["id"];
+          },
         ];
       };
       platform_settings: {
@@ -252,6 +280,13 @@ export type Database = {
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
+          {
+            foreignKeyName: "post_likes_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
+            referencedColumns: ["id"];
+          },
         ];
       };
       posts: {
@@ -297,10 +332,24 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
+            foreignKeyName: "posts_author_id_fkey";
+            columns: ["author_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
+            referencedColumns: ["id"];
+          },
+          {
             foreignKeyName: "posts_removed_by_fkey";
             columns: ["removed_by"];
             isOneToOne: false;
             referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "posts_removed_by_fkey";
+            columns: ["removed_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
             referencedColumns: ["id"];
           },
         ];
@@ -327,6 +376,13 @@ export type Database = {
             columns: ["profile_id"];
             isOneToOne: true;
             referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "profile_private_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: true;
+            referencedRelation: "profiles_public";
             referencedColumns: ["id"];
           },
         ];
@@ -403,6 +459,13 @@ export type Database = {
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
+          {
+            foreignKeyName: "profiles_reviewed_by_fkey";
+            columns: ["reviewed_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
+            referencedColumns: ["id"];
+          },
         ];
       };
       reports: {
@@ -454,10 +517,24 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
+            foreignKeyName: "reports_reporter_id_fkey";
+            columns: ["reporter_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
+            referencedColumns: ["id"];
+          },
+          {
             foreignKeyName: "reports_resolved_by_fkey";
             columns: ["resolved_by"];
             isOneToOne: false;
             referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "reports_resolved_by_fkey";
+            columns: ["resolved_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
             referencedColumns: ["id"];
           },
           {
@@ -474,11 +551,74 @@ export type Database = {
             referencedRelation: "profiles";
             referencedColumns: ["id"];
           },
+          {
+            foreignKeyName: "reports_target_user_id_fkey";
+            columns: ["target_user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
+            referencedColumns: ["id"];
+          },
         ];
       };
     };
     Views: {
-      [_ in never]: never;
+      profiles_public: {
+        Row: {
+          age: number | null;
+          approval_status: Database["public"]["Enums"]["approval_status"] | null;
+          avatar_url: string | null;
+          badge: string | null;
+          bio_en: string | null;
+          bio_es: string | null;
+          city: string | null;
+          country_code: string | null;
+          created_at: string | null;
+          display_name: string | null;
+          headline: string | null;
+          id: string | null;
+          interests: string[] | null;
+          languages: Json | null;
+          neighborhood: string | null;
+          role: Database["public"]["Enums"]["app_role"] | null;
+        };
+        Insert: {
+          age?: never;
+          approval_status?: Database["public"]["Enums"]["approval_status"] | null;
+          avatar_url?: string | null;
+          badge?: string | null;
+          bio_en?: string | null;
+          bio_es?: string | null;
+          city?: string | null;
+          country_code?: string | null;
+          created_at?: string | null;
+          display_name?: string | null;
+          headline?: string | null;
+          id?: string | null;
+          interests?: string[] | null;
+          languages?: Json | null;
+          neighborhood?: string | null;
+          role?: Database["public"]["Enums"]["app_role"] | null;
+        };
+        Update: {
+          age?: never;
+          approval_status?: Database["public"]["Enums"]["approval_status"] | null;
+          avatar_url?: string | null;
+          badge?: string | null;
+          bio_en?: string | null;
+          bio_es?: string | null;
+          city?: string | null;
+          country_code?: string | null;
+          created_at?: string | null;
+          display_name?: string | null;
+          headline?: string | null;
+          id?: string | null;
+          interests?: string[] | null;
+          languages?: Json | null;
+          neighborhood?: string | null;
+          role?: Database["public"]["Enums"]["app_role"] | null;
+        };
+        Relationships: [];
+      };
     };
     Functions: {
       are_connected: { Args: { a: string; b: string }; Returns: boolean };

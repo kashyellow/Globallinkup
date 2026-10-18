@@ -15,7 +15,8 @@ export type Persona = {
   name: string;
   age: number;
   location: string;
-  image: string;
+  /** Storage-backed URL, or `null` when the member has no photo yet. */
+  image: string | null;
   imageAlt: string;
   languages: PersonaLanguage[];
   /** Interest keys resolved against `Discover.interests.*`. */

@@ -75,6 +75,19 @@ test("@auth a rejected user resubmits and returns to review", async ({ page }) =
   await expect(page.getByText(/Pending Administrator Review/i)).toBeVisible();
 });
 
+test("@auth discover shows real personas and viewer connect state", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await expect(page).toHaveURL(/\/en\/discover$/);
+
+  // Real rows, sorted by name — page 1 is Camila, Elena, Lucas, Mateo.
+  await expect(page.getByRole("heading", { name: /Camila Osorio/ })).toBeVisible();
+  // Camila is an accepted connection in the seed; Mateo has a pending request.
+  await expect(page.getByText(/^Connected$/i).first()).toBeVisible();
+  await expect(page.getByText(/Request Sent/i).first()).toBeVisible();
+  // Elena has no connection yet, so the card offers Connect.
+  await expect(page.getByRole("button", { name: /^connect$/i }).first()).toBeVisible();
+});
+
 test("@auth onboarding creates a persona for a new account", async ({ page }) => {
   const email = `e2e-${Date.now()}@example.com`;
   await page.goto("/en/register");
@@ -88,6 +101,8 @@ test("@auth onboarding creates a persona for a new account", async ({ page }) =>
   await page.fill("#persona-fullname", "E2E Onboarding");
   await page.fill("#persona-city", "Lisbon");
   await page.fill("#persona-bio", "Created by the end-to-end onboarding spec.");
+  // The vault now requires at least one channel.
+  await page.fill("#persona-whatsapp", "+351 900 000 000");
   await page.locator("form button[type=submit]").click();
   await expect(page).toHaveURL(/\/en\/verify$/);
 });

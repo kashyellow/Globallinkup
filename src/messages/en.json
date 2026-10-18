@@ -130,7 +130,13 @@
       "vinyl": "Vinyl",
       "documentary": "Documentary",
       "culinaryArts": "Culinary Arts",
-      "ceramics": "Ceramics"
+      "ceramics": "Ceramics",
+      "analogPhotography": "Analog Photography",
+      "ceramicsCraft": "Ceramics & Craft",
+      "independentCinema": "Independent Cinema",
+      "culinaryHeritage": "Culinary Heritage",
+      "hikingNature": "Hiking & Nature",
+      "latinMusic": "Latin Music & Rhythms"
     },
     "dossier": {
       "activeDossier": "Active Dossier",

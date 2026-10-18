@@ -1,34 +1,44 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useCallback, useState } from "react";
+import { useState } from "react";
+import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { Pagination } from "@/components/ui/pagination";
-import { cn } from "@/lib/utils";
-import { PERSONAS, type ConnectState, type Persona } from "../data";
-import { usePagination } from "@/features/shared/use-pagination";
+import { sendConnectRequestAction } from "@/features/connect/actions";
 import { ConnectDialog } from "@/features/shared/connect-dialog";
+import { usePagination } from "@/features/shared/use-pagination";
+import { cn } from "@/lib/utils";
+import type { ConnectState, Persona } from "../data";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
 /** Cards per page. Two rows of the 2-up grid, keeping the CTA tile last. */
 const PAGE_SIZE = 4;
 
-export function PersonaFeed() {
+export function PersonaFeed({ personas }: { personas: Persona[] }) {
   const t = useTranslations("Discover");
   const [states, setStates] = useState<Record<string, ConnectState>>(() =>
-    Object.fromEntries(PERSONAS.map((persona) => [persona.id, persona.state])),
+    Object.fromEntries(personas.map((persona) => [persona.id, persona.state])),
   );
   const [target, setTarget] = useState<Persona | null>(null);
-  const { page, totalPages, pageItems, setPage } = usePagination(PERSONAS, PAGE_SIZE);
+  const { page, totalPages, pageItems, setPage } = usePagination(personas, PAGE_SIZE);
 
-  const closeDialog = useCallback(() => setTarget(null), []);
-
-  const sendRequest = useCallback(() => {
-    if (!target) return;
-    setStates((prev) => ({ ...prev, [target.id]: "requested" }));
+  function closeDialog() {
     setTarget(null);
-  }, [target]);
+  }
+
+  async function sendRequest(note: string) {
+    if (!target) return;
+    const recipientId = target.id;
+    setTarget(null);
+
+    const result = await sendConnectRequestAction({ recipientId, note });
+    // The DB owns the state machine; only reflect a confirmed write.
+    if (result.ok) {
+      setStates((previous) => ({ ...previous, [recipientId]: "requested" }));
+    }
+  }
 
   return (
     <section className="space-y-space-md lg:col-span-7">
@@ -46,8 +56,7 @@ export function PersonaFeed() {
           <PersonaCard
             key={`${persona.id}-${page}-${index}`}
             persona={persona}
-            state={states[persona.id]}
-            selected={persona.id === "sofia"}
+            state={states[persona.id] ?? persona.state}
             onConnect={() => setTarget(persona)}
           />
         ))}
@@ -59,7 +68,7 @@ export function PersonaFeed() {
         target={target}
         open={target !== null}
         onClose={closeDialog}
-        onSend={sendRequest}
+        onSend={(note) => void sendRequest(note)}
       />
     </section>
   );
@@ -68,32 +77,31 @@ export function PersonaFeed() {
 function PersonaCard({
   persona,
   state,
-  selected,
   onConnect,
 }: {
   persona: Persona;
   state: ConnectState;
-  selected: boolean;
   onConnect: () => void;
 }) {
   const t = useTranslations("Discover");
   const tCommon = useTranslations("Common");
 
   return (
-    <article
-      className={cn(
-        "group flex flex-col justify-between overflow-hidden rounded-[1.25rem] bg-surface-low transition-colors duration-300",
-        selected ? "border border-primary" : "border border-outline-variant hover:border-outline",
-      )}
-    >
+    <article className="group flex flex-col justify-between overflow-hidden rounded-[1.25rem] border border-outline-variant bg-surface-low transition-colors duration-300 hover:border-outline">
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface-container">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          alt={persona.imageAlt}
-          className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
-          src={persona.image}
-          loading="lazy"
-        />
+        {persona.image ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              alt={persona.imageAlt}
+              className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
+              src={persona.image}
+              loading="lazy"
+            />
+          </>
+        ) : (
+          <DefaultAvatar className="h-full w-full" />
+        )}
 
         {/*
          * Solid tinted surfaces rather than `backdrop-blur`: these sit in normal
@@ -104,12 +112,6 @@ function PersonaCard({
           <Icon name="verified" className="text-sm text-tertiary" />
           <span>{tCommon("verified")}</span>
         </div>
-
-        {persona.badge === "previewed" ? (
-          <div className="absolute right-3 bottom-3 rounded-full border border-outline-variant bg-surface-low/95 px-2.5 py-1 font-label-md text-label-md text-on-surface shadow-lift-sm">
-            {t("feed.profilePreviewed")}
-          </div>
-        ) : null}
 
         {persona.badge === "directContact" ? (
           <div className="absolute bottom-3 left-3 flex items-center gap-1 rounded-full border border-success-border bg-success-surface px-2.5 py-1 font-label-md text-label-md text-success-text shadow-lift-sm">
@@ -122,7 +124,7 @@ function PersonaCard({
       <div className="flex flex-1 flex-col justify-between gap-space-sm p-space-md">
         <div>
           <h3 className="font-headline-sm text-headline-sm text-on-surface">
-            {persona.name}, {persona.age}
+            {persona.age > 0 ? `${persona.name}, ${persona.age}` : persona.name}
           </h3>
           <div className="mt-0.5 flex items-center gap-1 text-secondary">
             <Icon name="location_on" className="text-sm" />
@@ -135,7 +137,10 @@ function PersonaCard({
                 key={language.code}
                 className="rounded-full border border-outline-variant bg-surface-variant px-2 py-0.5 font-label-md text-label-md text-on-surface-variant"
               >
-                {language.code} · {t(`fluency.${language.level}`)}
+                {language.code} ·{" "}
+                {t.has(`fluency.${language.level}`)
+                  ? t(`fluency.${language.level}`)
+                  : language.level}
               </span>
             ))}
           </div>
@@ -146,7 +151,7 @@ function PersonaCard({
                 key={interest}
                 className="rounded-full border border-outline-variant bg-surface-container px-2 py-0.5 font-label-md text-label-md text-on-surface-strong"
               >
-                {t(`interests.${interest}`)}
+                {t.has(`interests.${interest}`) ? t(`interests.${interest}`) : interest}
               </span>
             ))}
           </div>

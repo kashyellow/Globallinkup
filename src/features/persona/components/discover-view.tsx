@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { getTranslations } from "next-intl/server";
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
+import type { Persona } from "../data";
 import { PersonaDossier } from "./persona-dossier";
 import { PersonaFeed } from "./persona-feed";
 import { SearchRibbon } from "./search-ribbon";
@@ -13,7 +14,7 @@ const STEPS = [
   { label: "step4", accent: true },
 ] as const;
 
-export async function DiscoverView() {
+export async function DiscoverView({ personas }: { personas: Persona[] }) {
   const t = await getTranslations("Discover");
   const tCommon = await getTranslations("Common");
 
@@ -107,7 +108,7 @@ export async function DiscoverView() {
 
       {/* Workspace */}
       <div className="mt-page-mobile grid grid-cols-1 items-start gap-space-lg md:mt-page lg:grid-cols-12">
-        <PersonaFeed />
+        <PersonaFeed personas={personas} />
 
         <aside className="space-y-space-lg lg:sticky lg:top-24 lg:col-span-5">
           <PersonaDossier />

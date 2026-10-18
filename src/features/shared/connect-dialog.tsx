@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +15,7 @@ export type ConnectTarget = {
   name: string;
   age?: number;
   location: string;
-  image: string;
+  image: string | null;
   imageAlt: string;
 };
 
@@ -88,12 +89,18 @@ export function ConnectDialog({
           <>
             <div className="flex items-start justify-between gap-space-sm border-b border-outline-variant p-space-lg">
               <div className="flex min-w-0 items-center gap-space-md">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  alt={target.imageAlt}
-                  src={target.image}
-                  className="h-12 w-12 shrink-0 rounded-full border border-outline-variant object-cover"
-                />
+                {target.image ? (
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      alt={target.imageAlt}
+                      src={target.image}
+                      className="h-12 w-12 shrink-0 rounded-full border border-outline-variant object-cover"
+                    />
+                  </>
+                ) : (
+                  <DefaultAvatar className="h-12 w-12 shrink-0 rounded-full border border-outline-variant" />
+                )}
                 <div className="min-w-0">
                   <p className="font-label-caps text-label-caps tracking-[0.16em] text-primary uppercase">
                     {t("eyebrow")}
