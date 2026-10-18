@@ -196,3 +196,7 @@ link recovery mengarah ke domain penyerang.
   (test 8). Jalankan `db:reset` dulu untuk keadaan bersih.
 - Gate akhir: `db:test` 37/37 · `@auth` e2e 9/9 · e2e default 9 · unit 24 ·
   `build` bersih.
+- **Update UI (2026-10-19):** `/verify` menghapus dev state preview dan memakai
+  `DefaultAvatar`; jalur data `status`/`persona` yang ditambahkan di sini tetap
+  utuh. Model kontak berpindah ke kanal terpisah (lihat
+  `api-layer-decisions.md` §4d).

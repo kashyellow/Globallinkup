@@ -33,6 +33,13 @@ created here, or the UI changes. This slice is where the columns are born, so
 | SD-11 | `price: number` in USD dollars vs `price_cents` + `currency`                                                              | `marketplace/data.ts`, PRD OQ-9                                                       | (a) single configured currency (`price_cents` + fixed `currency`); (b) multi-currency                                       | locked |
 | SD-12 | Admin **Settings** (FR-9.5) has no table anywhere in the plan                                                             | PRD §5.9                                                                              | (a) add `platform_settings`; (b) explicitly defer FR-9.5                                                                    | locked |
 
+> **S3 revision (2026-10-19):** `20261017120000_s3_contact_channels.sql` (from
+> the UI update) supersedes two rows above — **SD-4 is reversed** (the anchor
+> field and `profiles.origin_flavor` are dropped) and **SD-5 is widened** to
+> separate channels: `contact_details.whatsapp` + `instagram` +
+> `other {telegram,facebook,tiktok,x}`, with **at least one channel required**
+> (Zod + RPC, fail closed). See `api-layer-decisions.md` §4d.
+
 ## 2. Config corrections (applied)
 
 - **Password policy (CFG-1, done).** `supabase/config.toml` now ships

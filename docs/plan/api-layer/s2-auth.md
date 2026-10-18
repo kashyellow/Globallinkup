@@ -183,8 +183,13 @@ Avatar upload defers to **S4** (`avatar_url = null`).
   (SB-1c); the seed gains rejected/suspended accounts **and** the `auth.users`
   token columns GoTrue needs (they defaulted to NULL and broke password sign-in).
 - **Tests:** Zod unit tests; `@auth` e2e (7 specs, `AUTH_E2E=1`); pgTAP 34/34.
-- **Audit fixes (S2):** the persona write now goes through the atomic
-  `save_persona` RPC; locale travels in the action payload (never `getLocale()`
-  in an action); the reset origin comes from `NEXT_PUBLIC_SITE_URL`; and `/verify`
-  shows the real persona — see [`s2-audit-fixes.md`](./s2-audit-fixes.md).
+- **Audit fixes (S2):** the persona write goes through the atomic `save_persona`
+  RPC; locale travels in the action payload (never `getLocale()` in an action);
+  the reset origin comes from `NEXT_PUBLIC_SITE_URL`; and `/verify` shows the real
+  persona — see [`s2-audit-fixes.md`](./s2-audit-fixes.md).
+- **Later UI update (2026-10-19):** `/verify` no longer ships the dev state
+  preview and uses `DefaultAvatar` instead of a mock portrait; the real
+  `status`/`persona` props are unchanged. The contact model moved to separate
+  channels via `20261017120000_s3_contact_channels.sql`, so `save_persona` now
+  takes 14 args (see `api-layer-decisions.md` §4d).
 - **Deferred:** "remember device", rate-limit tuning, and the cloud cutover.

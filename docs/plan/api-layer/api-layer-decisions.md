@@ -69,26 +69,26 @@ keamanan/seeder, jadi semua kolom "lahir" di sini.
 
 ## 4. Keputusan final (locked)
 
-| ID    | Keputusan final                                                                                                       |
-| ----- | --------------------------------------------------------------------------------------------------------------------- |
-| SD-1  | `profiles.date_of_birth date`; umur diturunkan. Input tanggal di form persona menyusul (S3).                          |
-| SD-2  | `profiles.languages jsonb` `[{code, level}]`                                                                          |
-| SD-3  | **(override UI-first)** `bio_en` + `bio_es` — tampilan bio dua bahasa tetap                                           |
-| SD-4  | `profiles.origin_flavor text`                                                                                         |
-| SD-5  | `contact_details.instagram` + `other jsonb` `{chat}`                                                                  |
-| SD-6  | **(override UI-first)** UI `notes`/`hasComment` dibiarkan apa adanya; tidak ada kolom (dead UI sampai nanti)          |
-| SD-7  | Tanpa kolom; `state` diturunkan, `badgeIcon`/`roleText` format-only                                                   |
-| SD-8  | Mock-only; tidak dipersist                                                                                            |
-| SD-9  | **(override UI-first)** `profiles.neighborhood` + `profiles.badge`; `region`/`connectedSince`/`tags` tetap diturunkan |
-| SD-10 | `availability` enum (`in_stock\|out_of_stock\|made_to_order`); `category` text + check 5 nilai                        |
-| SD-11 | `price_cents int` + `currency` tetap `USD`                                                                            |
-| SD-12 | Tabel `platform_settings`                                                                                             |
-| CFG-1 | `minimum_password_length = 8` + `password_requirements = "lower_upper_letters_digits"`                                |
-| CFG-2 | `enable_confirmations = false` diterima untuk lokal                                                                   |
-| SA-1  | `reviewPersonaAction` minimal masuk S2                                                                                |
-| SA-2  | State `rejected` + `suspended` masuk S2                                                                               |
-| SA-3  | e2e butuh `db:start` + `db:reset`; spec auth di-skip kalau stack mati; CI tetap stack-free                            |
-| SA-4  | Seed akun tetap (admin/pending/approved/reset); password `Password123` (menyesuaikan CFG-1)                           |
+| ID    | Keputusan final                                                                                                                |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------ |
+| SD-1  | `profiles.date_of_birth date`; umur diturunkan. Input tanggal di form persona menyusul (S3).                                   |
+| SD-2  | `profiles.languages jsonb` `[{code, level}]`                                                                                   |
+| SD-3  | **(override UI-first)** `bio_en` + `bio_es` — tampilan bio dua bahasa tetap                                                    |
+| SD-4  | ~~`profiles.origin_flavor text`~~ — **dibatalkan di S3**: field & kolom dibuang                                                |
+| SD-5  | **berevolusi di S3**: kanal terpisah `whatsapp` + `instagram` + `other {telegram,facebook,tiktok,x}`; minimal satu wajib diisi |
+| SD-6  | **(override UI-first)** UI `notes`/`hasComment` dibiarkan apa adanya; tidak ada kolom (dead UI sampai nanti)                   |
+| SD-7  | Tanpa kolom; `state` diturunkan, `badgeIcon`/`roleText` format-only                                                            |
+| SD-8  | Mock-only; tidak dipersist                                                                                                     |
+| SD-9  | **(override UI-first)** `profiles.neighborhood` + `profiles.badge`; `region`/`connectedSince`/`tags` tetap diturunkan          |
+| SD-10 | `availability` enum (`in_stock\|out_of_stock\|made_to_order`); `category` text + check 5 nilai                                 |
+| SD-11 | `price_cents int` + `currency` tetap `USD`                                                                                     |
+| SD-12 | Tabel `platform_settings`                                                                                                      |
+| CFG-1 | `minimum_password_length = 8` + `password_requirements = "lower_upper_letters_digits"`                                         |
+| CFG-2 | `enable_confirmations = false` diterima untuk lokal                                                                            |
+| SA-1  | `reviewPersonaAction` minimal masuk S2                                                                                         |
+| SA-2  | State `rejected` + `suspended` masuk S2                                                                                        |
+| SA-3  | e2e butuh `db:start` + `db:reset`; spec auth di-skip kalau stack mati; CI tetap stack-free                                     |
+| SA-4  | Seed akun tetap (admin/pending/approved/reset); password `Password123` (menyesuaikan CFG-1)                                    |
 
 Wujudnya di S1: `supabase/migrations/20261016000000_initial_schema.sql`,
 `supabase/seed.sql`, dan `supabase/tests/rls.test.sql` (32 tes pgTAP), plus
@@ -133,6 +133,19 @@ Muncul setelah S1 + fix audit (lihat [`s2-auth.md`](./s2-auth.md) §1).
 | SB-2 | **(a)** tambah input DOB opsional di form persona → `profile_private` / `profile_age()`                                           |
 | SB-3 | **(a)** satu field bio ditulis ke kolom sesuai locale aktif (`bio_en`/`bio_es`), fallback saat baca                               |
 | SB-4 | **(a)** spec auth bertanda `@auth`, skip kalau stack mati, dijalankan di workflow DB                                              |
+
+### 4d. Revisi saat S3 dimulai (2026-10-19)
+
+Migrasi `20261017120000_s3_contact_channels.sql` (dari update UI) mengubah model
+kontak, jadi dua keputusan S1 direvisi:
+
+| ID   | Revisi                                                                                                                                                                                                                                          |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SD-4 | **Dibatalkan**: form "anchor/origin flavour" dihapus dan `save_persona` tak lagi menerimanya → `profiles.origin_flavor` menjadi kolom mati. Diputuskan **drop** kolomnya (migrasi susulan di S3).                                               |
+| SD-5 | **Diperluas**: vault kini mengumpulkan kanal terpisah — `contact_details.whatsapp`, `instagram`, dan `other` `{telegram,facebook,tiktok,x}`. Tidak ada lagi `{chat}`. **Minimal satu kanal wajib** (Zod + ditegakkan lagi di RPC, fail closed). |
+
+Catatan: seed `other` ikut berubah (`chat` → `telegram`), dan signature
+`save_persona` menjadi 14 argumen.
 
 ---
 
