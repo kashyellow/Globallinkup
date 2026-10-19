@@ -3,7 +3,6 @@
 import { useTranslations } from "next-intl";
 import { Icon } from "@/components/ui/icon";
 import { Link, usePathname } from "@/lib/i18n/navigation";
-import { PENDING_REQUEST_COUNT } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
@@ -28,7 +27,7 @@ const NAV_ITEMS = [
  * Same floating-glass treatment as the top pill so the shell reads as one
  * system, and `backdrop-blur` is safe here because the element is fixed.
  */
-export function BottomNav() {
+export function BottomNav({ pendingRequests = 0 }: { pendingRequests?: number }) {
   const t = useTranslations("Nav");
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
@@ -61,14 +60,14 @@ export function BottomNav() {
                     active ? "text-primary" : "text-secondary",
                   )}
                 />
-                {item.key === "connections" ? (
+                {item.key === "connections" && pendingRequests > 0 ? (
                   <span
                     className={cn(
                       "absolute -top-1 -right-[0.55rem] flex h-4 min-w-4 items-center justify-center rounded-full px-1 font-label-caps text-[11px] tabular-nums",
                       active ? "bg-primary text-on-primary" : "bg-primary/15 text-primary",
                     )}
                   >
-                    {PENDING_REQUEST_COUNT}
+                    {pendingRequests}
                   </span>
                 ) : null}
               </span>

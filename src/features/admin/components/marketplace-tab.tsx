@@ -1,8 +1,8 @@
 "use client";
 
-import type { CSSProperties, ChangeEvent } from "react";
+import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import {
   createProductAction,
@@ -14,17 +14,10 @@ import { useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import type { AdminProductDto } from "../queries";
 
-const CATEGORIES = [
-  "artisanCrafts",
-  "homeLiving",
-  "booksCulture",
-  "localGoods",
-  "travelGear",
-] as const;
-const AVAILABILITY = ["in_stock", "out_of_stock", "made_to_order"] as const;
-
 const INPUT =
   "h-11 w-full rounded-full border border-outline-variant bg-surface-dim px-space-md font-body-sm text-body-sm text-on-surface transition-colors duration-300 placeholder:text-text-muted hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+
+const LABEL = "font-label-md text-label-md font-semibold text-on-surface";
 
 export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] }) {
   const t = useTranslations("Admin.marketplace");
@@ -33,12 +26,23 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [origin, setOrigin] = useState("");
-  const [category, setCategory] = useState<(typeof CATEGORIES)[number]>("artisanCrafts");
-  const [availability, setAvailability] = useState<(typeof AVAILABILITY)[number]>("in_stock");
+  const [phone, setPhone] = useState("");
   const [description, setDescription] = useState("");
-  const [file, setFile] = useState<File | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [publishNow, setPublishNow] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (photoPreview) URL.revokeObjectURL(photoPreview);
+    };
+  }, [photoPreview]);
+
+  function pickPhoto(file: File | null) {
+    setPhotoFile(file);
+    setPhotoPreview(file ? URL.createObjectURL(file) : null);
+  }
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -46,22 +50,21 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
     setBusy(true);
 
     let imagePath: string | undefined;
-    if (file) {
+    if (photoFile) {
       const formData = new FormData();
       formData.set("bucket", "product-images");
-      formData.set("file", file);
+      formData.set("file", photoFile);
       const upload = await uploadImageAction(formData);
       if (upload.ok) imagePath = upload.path;
     }
 
     const result = await createProductAction({
       name: name.trim(),
-      category,
       priceCents: Math.round(Number(price || "0") * 100),
       currency: "USD",
       originLabel: origin.trim(),
+      sellerPhone: phone.trim(),
       description: description.trim(),
-      availability,
       isPublished: publishNow,
       imagePath,
     });
@@ -71,8 +74,9 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
       setName("");
       setPrice("");
       setOrigin("");
+      setPhone("");
       setDescription("");
-      setFile(null);
+      pickPhoto(null);
       setPublishNow(false);
       router.refresh();
     }
@@ -97,76 +101,56 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
           </div>
 
           <div className="grid grid-cols-1 gap-space-md md:grid-cols-2">
-            <input
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              placeholder={t("form.productTitlePlaceholder")}
-              className={INPUT}
-              aria-label={t("form.productTitle")}
-            />
-            <input
-              value={price}
-              onChange={(event) => setPrice(event.target.value)}
-              inputMode="decimal"
-              placeholder={t("form.price")}
-              className={INPUT}
-              aria-label={t("form.price")}
-            />
-            <input
-              value={origin}
-              onChange={(event) => setOrigin(event.target.value)}
-              placeholder={t("origin")}
-              className={INPUT}
-              aria-label={t("origin")}
-            />
-            <select
-              value={category}
-              onChange={(event) => setCategory(event.target.value as (typeof CATEGORIES)[number])}
-              className={cn(INPUT, "cursor-pointer")}
-              aria-label={t("table.category")}
-            >
-              {CATEGORIES.map((key) => (
-                <option key={key} value={key}>
-                  {t.has(`categories.${key}`) ? t(`categories.${key}`) : key}
-                </option>
-              ))}
-            </select>
-            <select
-              value={availability}
-              onChange={(event) =>
-                setAvailability(event.target.value as (typeof AVAILABILITY)[number])
-              }
-              className={cn(INPUT, "cursor-pointer")}
-              aria-label={t("availability")}
-            >
-              {AVAILABILITY.map((key) => (
-                <option key={key} value={key}>
-                  {t(`availabilityOptions.${key}`)}
-                </option>
-              ))}
-            </select>
-            <label className={cn(INPUT, "flex cursor-pointer items-center gap-2")}>
-              <Icon name="add_photo_alternate" className="text-lg text-primary" />
-              <span className="truncate">{file ? file.name : t("form.imageUpload")}</span>
+            <label className="flex flex-col gap-1.5">
+              <span className={LABEL}>{t("form.productTitle")}</span>
               <input
-                type="file"
-                accept="image/png,image/jpeg,image/webp"
-                className="hidden"
-                onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                  setFile(event.target.files?.[0] ?? null)
-                }
+                value={name}
+                onChange={(event) => setName(event.target.value)}
+                placeholder={t("form.productTitlePlaceholder")}
+                className={INPUT}
+              />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className={LABEL}>{t("form.price")}</span>
+              <input
+                value={price}
+                onChange={(event) => setPrice(event.target.value)}
+                inputMode="decimal"
+                placeholder="0.00"
+                className={INPUT}
+              />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className={LABEL}>{t("origin")}</span>
+              <input
+                value={origin}
+                onChange={(event) => setOrigin(event.target.value)}
+                placeholder={t("originPlaceholder")}
+                className={INPUT}
+              />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className={LABEL}>{t("form.phone")}</span>
+              <input
+                value={phone}
+                onChange={(event) => setPhone(event.target.value)}
+                inputMode="tel"
+                placeholder={t("form.phonePlaceholder")}
+                className={INPUT}
               />
             </label>
           </div>
 
-          <textarea
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            rows={3}
-            placeholder={t("form.narrativePlaceholder")}
-            className="w-full resize-none rounded-2xl border border-outline-variant bg-surface-dim p-space-md font-body-sm text-body-sm text-on-surface transition-colors duration-300 placeholder:text-text-muted hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            aria-label={t("form.narrative")}
-          />
+          <label className="flex flex-col gap-1.5">
+            <span className={LABEL}>{t("form.narrative")}</span>
+            <textarea
+              value={description}
+              onChange={(event) => setDescription(event.target.value)}
+              rows={3}
+              placeholder={t("form.narrativePlaceholder")}
+              className="w-full resize-none rounded-2xl border border-outline-variant bg-surface-dim p-space-md font-body-sm text-body-sm text-on-surface transition-colors duration-300 placeholder:text-text-muted hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            />
+          </label>
 
           <div className="flex flex-wrap items-center justify-between gap-space-sm">
             <label className="flex cursor-pointer items-center gap-space-sm">
@@ -193,6 +177,46 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
             </button>
           </div>
         </form>
+      </div>
+
+      {/* Product photo — its own panel, not a field inside the form above. */}
+      <div
+        className="bezel-tray"
+        style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
+      >
+        <div className="flex flex-col items-start gap-space-md bezel-core p-space-lg sm:flex-row sm:items-center">
+          <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl border border-outline-variant bg-surface-variant text-secondary">
+            {photoPreview ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img alt="" src={photoPreview} className="h-full w-full object-cover" />
+            ) : (
+              <Icon name="image" className="text-2xl" />
+            )}
+          </div>
+          <div className="min-w-0 flex-1">
+            <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
+              {t("form.image")}
+            </h2>
+            <p className="mt-0.5 truncate font-body-sm text-body-sm text-secondary">
+              {photoFile ? photoFile.name : t("form.imageHint")}
+            </p>
+          </div>
+          <label
+            className={cn(
+              "inline-flex min-h-11 shrink-0 cursor-pointer items-center gap-2 rounded-full border border-outline-variant bg-surface-dim px-4 font-label-md text-label-md text-on-surface transition-colors duration-300",
+              "focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary hover:border-outline-hover hover:bg-surface-container",
+            )}
+          >
+            <Icon name="add_photo_alternate" className="text-lg text-primary" />
+            <span>{photoFile ? t("form.imageReplace") : t("form.imageUpload")}</span>
+            <input
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              className="sr-only"
+              onChange={(event) => pickPhoto(event.target.files?.[0] ?? null)}
+            />
+          </label>
+        </div>
       </div>
 
       {/* Catalog */}
@@ -263,7 +287,7 @@ function ProductRow({ product }: { product: AdminProductDto }) {
               {product.name}
             </h3>
             <p className="truncate font-body-sm text-body-sm text-secondary">
-              {product.origin} · {product.price}
+              {[product.origin, product.price, product.phone].filter(Boolean).join(" · ")}
             </p>
           </div>
         </div>

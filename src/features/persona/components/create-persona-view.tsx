@@ -5,6 +5,7 @@ import { useState, useEffect, useRef, type FormEvent } from "react";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { savePersonaAction, type PersonaError } from "@/features/persona/actions";
+import { uploadImageAction } from "@/features/media/actions";
 import { useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -54,6 +55,8 @@ export type PersonaInitial = {
   languages: { code: string; level: string }[];
   interests: string[];
   bio: string;
+  /** Signed URL of the stored avatar, for the edit/resubmit preview. */
+  avatarUrl?: string | null;
 } & Record<ChannelKey, string>;
 
 export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
@@ -89,17 +92,19 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
     tiktok: initial?.tiktok ?? "",
     x: initial?.x ?? "",
   }));
-  const [error, setError] = useState<PersonaError | null>(null);
+  const [error, setError] = useState<PersonaError | "upload" | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   /*
-   * Local-only photo preview: the file never leaves the browser. Storage
-   * buckets and the upload Server Action are still deferred (slice S4), so
-   * this is a picker + preview, not a persisted avatar.
+   * The file stays in memory until submit: it is uploaded to the `avatars`
+   * bucket first, and the returned storage path travels with the persona
+   * payload. On the edit path the preview starts from the stored avatar, and
+   * leaving it alone keeps that path untouched.
    */
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(initial?.avatarUrl ?? null);
 
   useEffect(() => {
     return () => {
@@ -109,6 +114,7 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
 
   function previewFile(file?: File) {
     if (!file) return;
+    setPhotoFile(file);
     setPhotoPreview(URL.createObjectURL(file));
   }
 
@@ -140,11 +146,27 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
     setSubmitting(true);
 
     try {
+      let avatarPath = "";
+
+      if (photoFile) {
+        const upload = new FormData();
+        upload.set("bucket", "avatars");
+        upload.set("file", photoFile);
+        const uploaded = await uploadImageAction(upload);
+        if (!uploaded.ok) {
+          setError("upload");
+          setSubmitting(false);
+          return;
+        }
+        avatarPath = uploaded.path;
+      }
+
       const result = await savePersonaAction({
         fullName: text("fullname"),
         country: text("country"),
         city: text("city"),
         dateOfBirth: text("date-of-birth"),
+        avatarPath,
         languages: LANGUAGES.filter((language) => languages[language.code].active).map(
           (language) => ({
             code: language.code,
@@ -227,7 +249,13 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
               >
                 <Icon name="error_outline" className="mt-0.5 shrink-0 text-lg text-danger-text" />
                 <span className="font-body-sm text-body-sm text-danger-text">
-                  {t(error === "invalid" ? "errorInvalid" : "errorUnknown")}
+                  {t(
+                    error === "invalid"
+                      ? "errorInvalid"
+                      : error === "upload"
+                        ? "errorUpload"
+                        : "errorUnknown",
+                  )}
                 </span>
               </div>
             ) : null}

@@ -214,38 +214,6 @@ export function ConnectionsView({ data }: { data: ConnectionsData }) {
         {tab === "sent" ? <SentRequestsPanel requests={data.sent} /> : null}
         {tab === "archived" ? <ArchivedPanel /> : null}
       </div>
-
-      {/* Sovereign privacy banner */}
-      <section className="mt-space-xl bezel-tray">
-        <div
-          className="flex flex-col items-center justify-between gap-space-lg bezel-core p-space-lg md:flex-row"
-          style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
-        >
-          <div className="flex items-center gap-space-md">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-success-border bg-success-surface text-success-text">
-              <Icon name="shield" className="text-2xl" />
-            </div>
-            <div className="space-y-0.5">
-              <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
-                {t("security.title")}
-              </h2>
-              <p className="max-w-2xl font-body-sm text-body-sm text-on-surface-strong">
-                {t("security.body")}
-              </p>
-            </div>
-          </div>
-          <div className="flex shrink-0 flex-wrap items-center gap-space-sm">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-success-border bg-success-surface px-space-md py-2 font-label-md text-label-md text-success-text">
-              <Icon name="key" className="text-sm" />
-              {t("security.manageKeys")}
-            </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-outline-variant bg-surface-container px-space-md py-2 font-label-md text-label-md text-secondary">
-              <Icon name="history" className="text-sm" />
-              {t("security.auditLogs")}
-            </span>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

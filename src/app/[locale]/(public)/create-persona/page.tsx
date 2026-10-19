@@ -5,6 +5,7 @@ import {
   type PersonaInitial,
 } from "@/features/persona/components/create-persona-view";
 import { getCurrentProfile, getServerClient } from "@/lib/auth";
+import { createSignedImageUrl } from "@/lib/storage";
 
 export async function generateMetadata({
   params,
@@ -31,8 +32,16 @@ async function loadInitial(): Promise<PersonaInitial | undefined> {
     x: "",
   };
   let dateOfBirth = "";
+  let avatarUrl: string | null = null;
 
   if (supabase) {
+    const avatarPath = profile.avatar_url;
+    avatarUrl = !avatarPath
+      ? null
+      : avatarPath.startsWith("http")
+        ? avatarPath
+        : await createSignedImageUrl(supabase, "avatars", avatarPath);
+
     const { data: contact } = await supabase
       .from("contact_details")
       .select("whatsapp, instagram, other")
@@ -68,6 +77,7 @@ async function loadInitial(): Promise<PersonaInitial | undefined> {
     languages,
     interests: profile.interests ?? [],
     bio: profile.bio_en ?? profile.bio_es ?? "",
+    avatarUrl,
     ...contacts,
   };
 }

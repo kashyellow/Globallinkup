@@ -6,7 +6,7 @@ import { BrandMark } from "@/components/ui/brand-mark";
 import { Icon } from "@/components/ui/icon";
 import { Link, usePathname, useRouter } from "@/lib/i18n/navigation";
 import { routing, type Locale } from "@/lib/i18n/routing";
-import { CURRENT_USER, PENDING_REQUEST_COUNT } from "@/lib/brand";
+import { CURRENT_USER } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -18,7 +18,14 @@ const NAV_ITEMS = [
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
-export function Navbar({ isAdmin = false }: { isAdmin?: boolean }) {
+export function Navbar({
+  isAdmin = false,
+  pendingRequests = 0,
+}: {
+  isAdmin?: boolean;
+  /** Inbound requests awaiting review, from the layout's count query. */
+  pendingRequests?: number;
+}) {
   const t = useTranslations("Nav");
   const pathname = usePathname();
   const router = useRouter();
@@ -77,7 +84,7 @@ export function Navbar({ isAdmin = false }: { isAdmin?: boolean }) {
                 )}
               >
                 {t(item.key)}
-                {item.key === "connections" ? (
+                {item.key === "connections" && pendingRequests > 0 ? (
                   <span
                     className={cn(
                       "inline-flex min-w-5 items-center justify-center rounded-full px-1.5 py-0.5 font-label-caps text-label-caps tabular-nums",
@@ -86,7 +93,7 @@ export function Navbar({ isAdmin = false }: { isAdmin?: boolean }) {
                         : "bg-surface-container-highest text-secondary",
                     )}
                   >
-                    {PENDING_REQUEST_COUNT}
+                    {pendingRequests}
                   </span>
                 ) : null}
               </Link>

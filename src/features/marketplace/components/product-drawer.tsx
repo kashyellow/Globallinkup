@@ -154,6 +154,20 @@ function DrawerContent({
           </p>
         </div>
 
+        {/* Seller contact — the phone the admin entered for this piece. */}
+        {product.sellerPhone ? (
+          <div className="flex items-center gap-space-sm rounded-2xl border border-outline-variant bg-surface-container p-space-md">
+            <Icon name="call" className="text-lg text-tertiary" />
+            <span className="font-label-md text-label-md text-secondary">{t("sellerPhone")}</span>
+            <a
+              href={`tel:${product.sellerPhone.replace(/\s/g, "")}`}
+              className="ml-auto rounded font-semibold text-on-surface transition-colors duration-300 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              {product.sellerPhone}
+            </a>
+          </div>
+        ) : null}
+
         {/* Concierge CTA */}
         <div className="flex flex-col gap-space-sm">
           <a

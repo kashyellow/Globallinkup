@@ -10,11 +10,11 @@ export type MarketplaceProduct = {
   sku: string;
   name: string;
   originLabel: string;
-  category: string;
   badge: string | null;
   price: number;
   summary: string;
   description: string;
+  sellerPhone: string;
   specs: {
     origin: string;
     artisan: string;
@@ -41,7 +41,7 @@ export async function getPublishedProducts(): Promise<MarketplaceProduct[]> {
   const { data: rows } = await supabase
     .from("marketplace_products")
     .select(
-      "id, name, sku, price_cents, currency, category, summary, description, origin_label, badge, specs, availability, created_at",
+      "id, name, sku, price_cents, currency, summary, description, origin_label, badge, specs, contact_information, created_at",
     )
     .eq("is_published", true)
     .order("created_at", { ascending: false });
@@ -78,11 +78,11 @@ export async function getPublishedProducts(): Promise<MarketplaceProduct[]> {
         sku: row.sku ?? "",
         name: row.name,
         originLabel: row.origin_label ?? "",
-        category: row.category,
         badge: row.badge ?? null,
         price: (row.price_cents ?? 0) / 100,
         summary: row.summary ?? "",
         description: row.description ?? "",
+        sellerPhone: row.contact_information ?? "",
         specs: {
           origin: specs.origin ?? "",
           artisan: specs.artisan ?? "",

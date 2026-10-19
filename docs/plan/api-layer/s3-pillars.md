@@ -152,3 +152,23 @@ still fixture-driven; seeded rows have no storage objects, so avatars/post/
 product images render the neutral placeholder until files are uploaded;
 withdrawing a pending sent request has no policy yet; like counts are
 optimistic (no realtime).
+
+## S4 — Storage (2026-10-19)
+
+The buckets and the upload action landed early as **S3.0**; S4 closed the last
+gap, so a persona's photo is no longer a browser-only preview.
+
+- `20261019120000_s3_storage.sql` — private `avatars` / `post-images` /
+  `product-images` buckets with MIME + size limits, owner write, approved read,
+  admin write for product images.
+- `uploadImageAction` — Zod on bucket/type/size, stores
+  `<user-id>/<uuid>.<ext>`; storage RLS is the backstop.
+- `20261019130000_s4_avatar.sql` — `save_persona(p_avatar_url)` writes
+  `profiles.avatar_url`, keeps the stored path when the argument is omitted
+  (editing without re-picking a photo), and rejects a path outside the caller's
+  folder.
+- Reads sign the path (`createSignedImageUrl`), so discover, the profile page
+  and the nav avatar resolve the stored object.
+
+**Still open:** replacing an avatar leaves the previous object in the bucket —
+no delete-on-replace yet, matching the post/product upload paths.

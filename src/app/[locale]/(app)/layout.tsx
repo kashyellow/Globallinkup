@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
+import { getPendingRequestCount } from "@/features/connect/queries";
 import { requireApprovedUser } from "@/lib/auth";
 
 /**
@@ -14,10 +15,11 @@ import { requireApprovedUser } from "@/lib/auth";
  */
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const { profile } = await requireApprovedUser();
+  const pendingRequests = await getPendingRequestCount(profile.id);
 
   return (
     <>
-      <Navbar isAdmin={profile.role === "admin"} />
+      <Navbar isAdmin={profile.role === "admin"} pendingRequests={pendingRequests} />
       <main className="min-h-[100dvh] w-full flex-1 bg-background pt-20">{children}</main>
       {/*
        * The fixed mobile tab bar overlays whatever sits at the very bottom of
@@ -27,7 +29,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       <div className="pb-24 lg:pb-0">
         <Footer />
       </div>
-      <BottomNav />
+      <BottomNav pendingRequests={pendingRequests} />
     </>
   );
 }

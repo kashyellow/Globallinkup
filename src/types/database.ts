@@ -158,9 +158,7 @@ export type Database = {
       };
       marketplace_products: {
         Row: {
-          availability: Database["public"]["Enums"]["product_availability"];
           badge: string | null;
-          category: string;
           contact_information: string | null;
           created_at: string;
           created_by: string | null;
@@ -177,9 +175,7 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
-          availability?: Database["public"]["Enums"]["product_availability"];
           badge?: string | null;
-          category: string;
           contact_information?: string | null;
           created_at?: string;
           created_by?: string | null;
@@ -196,9 +192,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
-          availability?: Database["public"]["Enums"]["product_availability"];
           badge?: string | null;
-          category?: string;
           contact_information?: string | null;
           created_at?: string;
           created_by?: string | null;
@@ -627,6 +621,7 @@ export type Database = {
       profile_age: { Args: { p_profile_id: string }; Returns: number };
       save_persona: {
         Args: {
+          p_avatar_url?: string;
           p_bio?: string;
           p_bio_locale?: string;
           p_city: string;
@@ -650,7 +645,6 @@ export type Database = {
       approval_status: "pending" | "approved" | "rejected" | "suspended";
       connection_status: "requested" | "accepted" | "declined";
       moderation_status: "visible" | "removed";
-      product_availability: "in_stock" | "out_of_stock" | "made_to_order";
       report_status: "open" | "resolved" | "dismissed";
       report_target_type: "user" | "post";
     };
@@ -771,7 +765,6 @@ export const Constants = {
       approval_status: ["pending", "approved", "rejected", "suspended"],
       connection_status: ["requested", "accepted", "declined"],
       moderation_status: ["visible", "removed"],
-      product_availability: ["in_stock", "out_of_stock", "made_to_order"],
       report_status: ["open", "resolved", "dismissed"],
       report_target_type: ["user", "post"],
     },

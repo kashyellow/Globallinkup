@@ -26,6 +26,22 @@ export const savePersonaSchema = z
     languages: z.array(personaLanguageSchema).min(1, "languagesRequired").max(10),
     interests: z.array(z.string().trim().min(1).max(60)).min(3, "interestsRequired").max(20),
     bio: z.string().trim().min(1, "bioRequired").max(160),
+    /**
+     * Storage path returned by `uploadImageAction` — `<user-id>/<uuid>.<ext>`.
+     * The action re-checks the folder prefix; the RPC checks it again.
+     */
+    avatarPath: z
+      .union([
+        z.literal(""),
+        z
+          .string()
+          .trim()
+          .regex(
+            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/[0-9a-f-]{36}\.[a-z0-9]{1,5}$/i,
+            "avatarInvalid",
+          ),
+      ])
+      .optional(),
     whatsapp: contactText(40),
     telegram: contactText(60),
     instagram: contactText(60),

@@ -6,7 +6,6 @@ import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { Pagination } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
-import { MARKETPLACE_FILTERS, type MarketplaceFilter } from "../data";
 import type { MarketplaceContact, MarketplaceProduct } from "../queries";
 import { ProductDrawer } from "./product-drawer";
 import { usePagination } from "@/features/shared/use-pagination";
@@ -27,24 +26,17 @@ export function MarketplaceView({
   contact: MarketplaceContact;
 }) {
   const t = useTranslations("Marketplace");
-  const [filter, setFilter] = useState<MarketplaceFilter>("all");
   // `selected` is intentionally retained after closing so the panel can animate
   // out with its content still mounted.
   const [selected, setSelected] = useState<MarketplaceProduct | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const visible = products.filter((product) => filter === "all" || product.category === filter);
-  const { page, totalPages, pageItems, setPage, resetPage } = usePagination(visible, PAGE_SIZE);
+  const { page, totalPages, pageItems, setPage } = usePagination(products, PAGE_SIZE);
 
   // The first card *on this page* carries the featured treatment, so each page
   // has its own anchor tile rather than a featured card that only exists on
   // page one.
   const featuredId = pageItems[0]?.id;
-
-  function changeFilter(next: MarketplaceFilter) {
-    setFilter(next);
-    resetPage();
-  }
 
   function openProduct(product: MarketplaceProduct) {
     setSelected(product);
@@ -141,26 +133,6 @@ export function MarketplaceView({
                 />
               </div>
             </div>
-          </div>
-
-          <div className="-mx-margin-mobile no-scrollbar flex items-center gap-2 overflow-x-auto px-margin-mobile md:mx-0 md:px-0">
-            {MARKETPLACE_FILTERS.map((key) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => changeFilter(key)}
-                aria-pressed={filter === key}
-                className={cn(
-                  "min-h-11 shrink-0 rounded-full px-4 py-2 font-label-lg text-label-lg whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
-                  EASE,
-                  filter === key
-                    ? "bg-primary font-semibold text-on-primary"
-                    : "border border-outline-variant bg-surface-low text-on-surface-variant hover:border-outline-hover hover:bg-surface-container hover:text-on-surface",
-                )}
-              >
-                {key === "all" ? t("filters.all", { count: products.length }) : t(`filters.${key}`)}
-              </button>
-            ))}
           </div>
         </div>
       </section>

@@ -112,14 +112,13 @@ export async function removePostAction(input: unknown): Promise<AdminResult> {
 // ---------------------------------------------------------------------------
 const productSchema = z.object({
   name: z.string().trim().min(2).max(160),
-  category: z.enum(["artisanCrafts", "homeLiving", "booksCulture", "localGoods", "travelGear"]),
   priceCents: z.number().int().min(0).max(100_000_000),
   currency: z.string().trim().length(3).default("USD"),
   summary: z.string().trim().max(400).optional(),
   description: z.string().trim().max(2000).optional(),
   originLabel: z.string().trim().max(120).optional(),
-  availability: z.enum(["in_stock", "out_of_stock", "made_to_order"]).default("in_stock"),
-  contactInformation: z.string().trim().max(200).optional(),
+  /** Phone for the seller contact line on the public catalog. */
+  sellerPhone: z.string().trim().max(60).optional(),
   isPublished: z.boolean().default(false),
   imagePath: z.string().trim().max(400).optional(),
 });
@@ -136,14 +135,12 @@ export async function createProductAction(input: unknown): Promise<AdminResult> 
     .from("marketplace_products")
     .insert({
       name: data.name,
-      category: data.category,
       price_cents: data.priceCents,
       currency: data.currency,
       summary: data.summary ?? null,
       description: data.description ?? null,
       origin_label: data.originLabel ?? null,
-      availability: data.availability,
-      contact_information: data.contactInformation ?? null,
+      contact_information: data.sellerPhone ?? null,
       is_published: data.isPublished,
       created_by: ctx.user.id,
     })

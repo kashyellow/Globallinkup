@@ -9,7 +9,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(38);
+select plan(40);
 
 -- Fixed ids from the seed.
 --   admin   11111111-…  sofia 22222222-…  mateo 33333333-…
@@ -94,7 +94,7 @@ reset role;
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"22222222-2222-2222-2222-222222222222","role":"authenticated"}';
 select throws_ok(
-  $$ insert into public.marketplace_products (name, category) values ('Hacked product', 'travelGear') $$,
+  $$ insert into public.marketplace_products (name) values ('Hacked product') $$,
   42501,
   null,
   'non-admin cannot insert a marketplace product'
@@ -118,8 +118,8 @@ select is(
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated"}';
 select lives_ok(
-  $$ insert into public.marketplace_products (name, category, created_by)
-     values ('Admin draft', 'localGoods', '11111111-1111-1111-1111-111111111111') $$,
+  $$ insert into public.marketplace_products (name, created_by)
+     values ('Admin draft', '11111111-1111-1111-1111-111111111111') $$,
   'admin can insert a marketplace product'
 );
 reset role;
@@ -410,6 +410,37 @@ set local request.jwt.claims = '{}';
 select is_empty(
   $$ select 1 from storage.objects $$,
   'anon sees no storage objects'
+);
+reset role;
+
+-- 39. S4: save_persona persists the avatar path, and keeps it when omitted.
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"22222222-2222-2222-2222-222222222222","role":"authenticated"}';
+select public.save_persona('Sofia Martinez','ES','Barcelona','Updated bio.','en',
+  '[]'::jsonb, array['architecture','literature','hikingNature'], null,
+  null, null, '@s', null, null, null,
+  '22222222-2222-2222-2222-222222222222/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa.jpg');
+select public.save_persona('Sofia Martinez','ES','Barcelona','Updated bio.','en',
+  '[]'::jsonb, array['architecture','literature','hikingNature'], null,
+  null, null, '@s', null, null, null);
+select is(
+  (select avatar_url from public.profiles where id = '22222222-2222-2222-2222-222222222222'),
+  '22222222-2222-2222-2222-222222222222/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa.jpg',
+  'save_persona persists the avatar path and keeps it when omitted'
+);
+reset role;
+
+-- 40. S4: save_persona refuses an avatar path outside the caller's folder.
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"22222222-2222-2222-2222-222222222222","role":"authenticated"}';
+select throws_ok(
+  $$ select public.save_persona('Sofia Martinez','ES','Barcelona','Updated bio.','en',
+       '[]'::jsonb, array['architecture','literature','hikingNature'], null,
+       null, null, '@s', null, null, null,
+       '33333333-3333-3333-3333-333333333333/stolen.jpg') $$,
+  22023,
+  null,
+  'save_persona rejects an avatar path outside the caller folder'
 );
 reset role;
 

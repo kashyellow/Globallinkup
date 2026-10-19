@@ -38,7 +38,7 @@ export type AdminProductDto = {
   name: string;
   origin: string;
   price: string;
-  category: string;
+  phone: string;
   isPublished: boolean;
   image: string | null;
 };
@@ -76,7 +76,7 @@ export async function getAdminData(): Promise<AdminData> {
       .order("created_at", { ascending: false }),
     supabase
       .from("marketplace_products")
-      .select("id, name, origin_label, price_cents, currency, category, is_published")
+      .select("id, name, origin_label, price_cents, currency, contact_information, is_published")
       .order("created_at", { ascending: false }),
     supabase
       .from("marketplace_product_images")
@@ -132,7 +132,7 @@ export async function getAdminData(): Promise<AdminData> {
       name: product.name,
       origin: product.origin_label ?? "",
       price: `${(product.price_cents ?? 0) / 100} ${product.currency}`,
-      category: product.category,
+      phone: product.contact_information ?? "",
       isPublished: product.is_published,
       image: firstImageByProduct.has(product.id)
         ? await createSignedImageUrl(

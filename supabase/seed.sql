@@ -271,46 +271,46 @@ values
 -- Marketplace catalog (admin-authored; price in minor units, SD-11)
 -- ----------------------------------------------------------------------------
 insert into public.marketplace_products (
-  id, name, sku, price_cents, currency, category, summary, description,
-  origin_label, badge, specs, availability, contact_information, is_published, created_by
+  id, name, sku, price_cents, currency, summary, description,
+  origin_label, badge, specs, contact_information, is_published, created_by
 )
 values
-  ('b0000000-0000-0000-0000-000000000001', 'Handmade Oaxacan Leather Travel Bag', 'GL-OAX-882', 12000, 'USD', 'artisanCrafts',
+  ('b0000000-0000-0000-0000-000000000001', 'Handmade Oaxacan Leather Travel Bag', 'GL-OAX-882', 12000, 'USD',
    'Full-grain vegetable-tanned leather carry-on crafted with a Oaxacan artisan guild.',
    'Full-grain vegetable-tanned leather crafted with the Velásquez artisan guild in Oaxaca.',
    'Oaxaca, MX', 'artisanPartner',
    '{"origin":"Oaxaca, Mexico","artisan":"Mateo Velásquez Guild","material":"100% full-grain bovine","dimensions":"52 x 28 x 25 cm (carry-on)","weight":"1.45 kg","fulfillment":"fulfillmentCourier"}'::jsonb,
-   'in_stock', 'concierge@globallinkup.com', true, '11111111-1111-1111-1111-111111111111'),
-  ('b0000000-0000-0000-0000-000000000002', 'Artisanal Ceramic Espresso Set (Barcelona)', 'GL-BCN-410', 6400, 'USD', 'homeLiving',
+   'concierge@globallinkup.com', true, '11111111-1111-1111-1111-111111111111'),
+  ('b0000000-0000-0000-0000-000000000002', 'Artisanal Ceramic Espresso Set (Barcelona)', 'GL-BCN-410', 6400, 'USD',
    'Pair of matte-glazed terracotta espresso cups fired in Gràcia.',
    'Hand-thrown speckled stoneware fired twice in a Gràcia family atelier.',
    'Barcelona, ES', 'adminCurated',
    '{"origin":"Barcelona, Spain","artisan":"Taller Gràcia Ceramics","material":"Speckled stoneware, matte glaze","dimensions":"6 x 6 x 7 cm per cup (set of 2)","weight":"0.62 kg","fulfillment":"fulfillmentCourier"}'::jsonb,
-   'in_stock', 'concierge@globallinkup.com', true, '11111111-1111-1111-1111-111111111111'),
-  ('b0000000-0000-0000-0000-000000000003', 'Bilingual Cultural Phrasebook & Journal (EN/ES)', 'GL-EDT-024', 2400, 'USD', 'booksCulture',
+   'concierge@globallinkup.com', true, '11111111-1111-1111-1111-111111111111'),
+  ('b0000000-0000-0000-0000-000000000003', 'Bilingual Cultural Phrasebook & Journal (EN/ES)', 'GL-EDT-024', 2400, 'USD',
    'Linen-bound bilingual journal with a copper pen, curated by linguists.',
    'Linen-bound official GlobalLinkup journal paired with a copper pen.',
    'Official Edition', 'globalLinkupOriginal',
    '{"origin":"Madrid, Spain","artisan":"GlobalLinkup Editorial Studio","material":"Linen-bound, 120gsm archival paper","dimensions":"21 x 14.8 x 2.1 cm (A5)","weight":"0.48 kg","fulfillment":"fulfillmentPostal"}'::jsonb,
-   'in_stock', 'concierge@globallinkup.com', true, '11111111-1111-1111-1111-111111111111'),
-  ('b0000000-0000-0000-0000-000000000004', 'Handwoven Merino Wool Travel Throw', 'GL-MDE-330', 8800, 'USD', 'artisanCrafts',
+   'concierge@globallinkup.com', true, '11111111-1111-1111-1111-111111111111'),
+  ('b0000000-0000-0000-0000-000000000004', 'Handwoven Merino Wool Travel Throw', 'GL-MDE-330', 8800, 'USD',
    'Ultra-soft lightweight merino loomed in the Antioquian highlands.',
    'Extra-fine merino loomed on wooden looms in the Antioquian highlands.',
    'Medellín, CO', 'adminVerified',
    '{"origin":"Medellín, Colombia","artisan":"Tejedoras de Antioquia","material":"100% extra-fine merino wool","dimensions":"180 x 130 cm (rolled 30 cm)","weight":"0.85 kg","fulfillment":"fulfillmentCourier"}'::jsonb,
-   'made_to_order', 'concierge@globallinkup.com', true, '11111111-1111-1111-1111-111111111111'),
-  ('b0000000-0000-0000-0000-000000000005', 'Specialty Roasted Chiapas Coffee Beans (500g)', 'GL-CHP-500', 1900, 'USD', 'localGoods',
+   'concierge@globallinkup.com', true, '11111111-1111-1111-1111-111111111111'),
+  ('b0000000-0000-0000-0000-000000000005', 'Specialty Roasted Chiapas Coffee Beans (500g)', 'GL-CHP-500', 1900, 'USD',
    'Single-origin high-altitude beans with cacao, fig and orange blossom notes.',
    'Single-origin Typica and Bourbon grown at 1,600m by a smallholder collective.',
    'Chiapas, MX', 'directTrade',
    '{"origin":"Chiapas, Mexico","artisan":"Finca La Esperanza Collective","material":"Single-origin Typica & Bourbon","dimensions":"500 g valve-sealed kraft bag","weight":"0.52 kg","fulfillment":"fulfillmentCourier"}'::jsonb,
-   'in_stock', 'concierge@globallinkup.com', true, '11111111-1111-1111-1111-111111111111'),
-  ('b0000000-0000-0000-0000-000000000006', 'Minimalist Passport & Document Wallet', 'GL-MAD-118', 4500, 'USD', 'travelGear',
+   'concierge@globallinkup.com', true, '11111111-1111-1111-1111-111111111111'),
+  ('b0000000-0000-0000-0000-000000000006', 'Minimalist Passport & Document Wallet', 'GL-MAD-118', 4500, 'USD',
    'RFID-shielded leather passport wallet cut and stitched in Madrid.',
    'RFID-shielded vegetable-tanned leather wallet cut and stitched in Madrid.',
    'Madrid, ES', 'adminCurated',
    '{"origin":"Madrid, Spain","artisan":"Taller Piel Madrid","material":"Full-grain leather, RFID shielding","dimensions":"14 x 10 x 1.8 cm","weight":"0.18 kg","fulfillment":"fulfillmentPostal"}'::jsonb,
-   'out_of_stock', 'concierge@globallinkup.com', true, '11111111-1111-1111-1111-111111111111');
+   'concierge@globallinkup.com', true, '11111111-1111-1111-1111-111111111111');
 
 insert into public.marketplace_product_images (product_id, storage_path, sort)
 values

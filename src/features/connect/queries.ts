@@ -104,6 +104,18 @@ async function resolveAvatar(
   return createSignedImageUrl(supabase, "avatars", avatarUrl);
 }
 
+/** Nav badge: inbound requests still waiting on the viewer. */
+export async function getPendingRequestCount(viewerId: string): Promise<number> {
+  const supabase = await createClient();
+  const { count } = await supabase
+    .from("connections")
+    .select("id", { count: "exact", head: true })
+    .eq("recipient_id", viewerId)
+    .eq("status", "requested");
+
+  return count ?? 0;
+}
+
 export async function getConnectionsData(viewerId: string): Promise<ConnectionsData> {
   const supabase = await createClient();
 

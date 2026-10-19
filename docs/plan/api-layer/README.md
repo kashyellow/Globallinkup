@@ -13,8 +13,8 @@ Umbrella doc for building the backend against the existing mock-driven UI.
 | S0    | Foundation: config, clients, env, proxy, types                       | ✅ complete 2026-10-13 | [s0-foundation.md](./s0-foundation.md)           |
 | S1    | Schema, RLS & seed                                                   | ✅ complete 2026-10-16 | [s1-schema-rls-seed.md](./s1-schema-rls-seed.md) |
 | S2    | Auth wired end-to-end                                                | ✅ complete 2026-10-16 | [s2-auth.md](./s2-auth.md)                       |
-| S3+   | Per pillar: discover/persona → connect → posts → marketplace → admin | in progress            | [s3-pillars.md](./s3-pillars.md)                 |
-| S4    | Storage: buckets + upload Server Action                              | deferred               | —                                                |
+| S3+   | Per pillar: discover/persona → connect → posts → marketplace → admin | ✅ complete 2026-10-19 | [s3-pillars.md](./s3-pillars.md)                 |
+| S4    | Storage: buckets + upload Server Action                              | ✅ complete 2026-10-19 | [s3-pillars.md](./s3-pillars.md)                 |
 
 Land one slice green before starting the next.
 

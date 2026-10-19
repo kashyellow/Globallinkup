@@ -1,7 +1,8 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
-import type { CSSProperties } from "react";
+import { useState } from "react";
+import type { CSSProperties, FormEvent } from "react";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { reviewPersonaAction } from "@/features/admin/actions";
@@ -21,6 +22,30 @@ const STATUS_KEY: Record<AdminProfileDto["status"], string> = {
 
 export function AdminUsersTab({ users }: { users: AdminProfileDto[] }) {
   const t = useTranslations("Admin.users");
+  const [draft, setDraft] = useState("");
+  const [query, setQuery] = useState("");
+
+  const needle = query.trim().toLowerCase();
+  const visible =
+    needle.length === 0
+      ? users
+      : users.filter((user) =>
+          [user.name, user.location, user.headline, user.bio, user.languages]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase()
+            .includes(needle),
+        );
+
+  function search(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setQuery(draft.trim());
+  }
+
+  function clearSearch() {
+    setDraft("");
+    setQuery("");
+  }
 
   return (
     <div className="flex flex-col gap-space-lg">
@@ -28,36 +53,76 @@ export function AdminUsersTab({ users }: { users: AdminProfileDto[] }) {
         className="bezel-tray"
         style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
       >
-        <div className="flex flex-col justify-between gap-space-md bezel-core p-space-md sm:flex-row sm:items-center">
-          <div className="flex items-center gap-space-md">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-admin-border bg-admin-surface text-primary">
-              <Icon name="verified_user" />
-            </span>
-            <div>
-              <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
-                {t("title")}
-              </h2>
-              <p className="mt-0.5 font-body-sm text-body-sm text-secondary">{t("body")}</p>
-            </div>
+        <form
+          onSubmit={search}
+          className="flex flex-col gap-space-sm bezel-core p-space-md sm:flex-row sm:items-center"
+        >
+          <div className="relative flex-1">
+            <Icon
+              name="search"
+              className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-lg text-secondary"
+            />
+            <label htmlFor="admin-user-search" className="sr-only">
+              {t("searchLabel")}
+            </label>
+            <input
+              id="admin-user-search"
+              type="search"
+              value={draft}
+              onChange={(event) => setDraft(event.target.value)}
+              placeholder={t("searchPlaceholder")}
+              className="h-11 w-full rounded-full border border-outline-variant bg-surface-dim pr-4 pl-11 font-body-sm text-body-sm text-on-surface transition-colors duration-300 placeholder:text-placeholder hover:border-outline-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            />
           </div>
-        </div>
+          <button
+            type="submit"
+            className={cn(
+              ACTION_BASE,
+              "justify-center border border-transparent bg-primary text-on-primary hover:bg-primary-hover focus-visible:outline-primary",
+            )}
+          >
+            <Icon name="search" className="text-base" />
+            {t("searchAction")}
+          </button>
+        </form>
       </div>
 
-      {users.length === 0 ? (
+      {query.length > 0 ? (
+        <p className="px-space-xs font-label-md text-label-md text-secondary">
+          {t("resultsCount", { shown: visible.length, total: users.length })}
+        </p>
+      ) : null}
+
+      {visible.length === 0 ? (
         <div className="bezel-tray">
           <div
             className="flex flex-col items-center gap-2 bezel-core py-space-xl text-center"
             style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
           >
-            <Icon name="person_off" className="text-3xl text-secondary" />
+            <Icon
+              name={users.length === 0 ? "person_off" : "search_off"}
+              className="text-3xl text-secondary"
+            />
             <p className="font-label-lg text-label-lg font-semibold text-on-surface">
-              {t("emptyTitle")}
+              {users.length === 0 ? t("emptyTitle") : t("noResultsTitle")}
             </p>
+            {users.length > 0 ? (
+              <button
+                type="button"
+                onClick={clearSearch}
+                className={cn(
+                  ACTION_BASE,
+                  "mt-space-xs border border-outline-variant bg-surface-container text-on-surface hover:border-outline-hover hover:bg-surface-container-high focus-visible:outline-primary",
+                )}
+              >
+                {t("clearSearch")}
+              </button>
+            ) : null}
           </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-space-md">
-          {users.map((user) => (
+          {visible.map((user) => (
             <UserCard key={user.id} user={user} />
           ))}
         </div>

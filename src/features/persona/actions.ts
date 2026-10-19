@@ -27,6 +27,14 @@ export async function savePersonaAction(input: unknown): Promise<PersonaResult> 
   if (!parsed.success) return { ok: false, error: "invalid" };
   const data = parsed.data;
 
+  // The path comes back from the upload action, so it is already ours — but the
+  // profile row is what readers resolve, so refuse anything outside the
+  // caller's storage folder before it is written.
+  const avatarPath = nonEmpty(data.avatarPath);
+  if (avatarPath && !avatarPath.startsWith(`${user.id}/`)) {
+    return { ok: false, error: "invalid" };
+  }
+
   const supabase = await createClient();
   const { data: status, error } = await supabase.rpc("save_persona", {
     p_display_name: data.fullName,
@@ -37,6 +45,7 @@ export async function savePersonaAction(input: unknown): Promise<PersonaResult> 
     p_languages: data.languages,
     p_interests: data.interests,
     p_date_of_birth: nonEmpty(data.dateOfBirth) ?? undefined,
+    p_avatar_url: avatarPath ?? undefined,
     p_whatsapp: nonEmpty(data.whatsapp) ?? undefined,
     p_telegram: nonEmpty(data.telegram) ?? undefined,
     p_instagram: nonEmpty(data.instagram) ?? undefined,
