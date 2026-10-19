@@ -14,7 +14,7 @@ Umbrella doc for building the backend against the existing mock-driven UI.
 | S1    | Schema, RLS & seed                                                   | ✅ complete 2026-10-16 | [s1-schema-rls-seed.md](./s1-schema-rls-seed.md) |
 | S2    | Auth wired end-to-end                                                | ✅ complete 2026-10-16 | [s2-auth.md](./s2-auth.md)                       |
 | S3+   | Per pillar: discover/persona → connect → posts → marketplace → admin | ✅ complete 2026-10-19 | [s3-pillars.md](./s3-pillars.md)                 |
-| S4    | Storage: buckets + upload Server Action                              | ✅ complete 2026-10-19 | [s3-pillars.md](./s3-pillars.md)                 |
+| S4    | Storage: buckets + upload Server Action                              | ✅ complete 2026-10-19 | [s4-storage.md](./s4-storage.md)                 |
 
 Land one slice green before starting the next.
 
