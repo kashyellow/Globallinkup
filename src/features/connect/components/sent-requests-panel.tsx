@@ -2,6 +2,7 @@
 
 import type { CSSProperties } from "react";
 import { useFormatter, useTranslations } from "next-intl";
+import { useState } from "react";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
@@ -12,6 +13,7 @@ const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 export function SentRequestsPanel({ requests }: { requests: SentRequestDto[] }) {
   const t = useTranslations("Connections.sent");
   const format = useFormatter();
+  const [openId, setOpenId] = useState<string | null>(null);
 
   return (
     <div className="bezel-tray">
@@ -76,6 +78,10 @@ export function SentRequestsPanel({ requests }: { requests: SentRequestDto[] }) 
                 <div className="flex shrink-0 flex-wrap items-center gap-space-xs">
                   <button
                     type="button"
+                    onClick={() =>
+                      setOpenId((current) => (current === request.id ? null : request.id))
+                    }
+                    aria-expanded={openId === request.id}
                     className={cn(
                       "inline-flex min-h-11 items-center rounded-full border border-outline-variant bg-surface-container-high px-space-md py-2 font-label-md text-label-md text-on-surface",
                       "hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
@@ -86,6 +92,11 @@ export function SentRequestsPanel({ requests }: { requests: SentRequestDto[] }) 
                     {t("viewNote")}
                   </button>
                 </div>
+                {openId === request.id ? (
+                  <p className="w-full rounded-xl border border-outline-variant bg-surface-low p-space-sm font-body-sm text-body-sm text-on-surface-strong sm:basis-full">
+                    {request.intro}
+                  </p>
+                ) : null}
               </div>
             ))}
           </div>

@@ -50,10 +50,35 @@ function StatChip({
   );
 }
 
+const LATAM = new Set(["MX", "CO", "AR", "CL", "PE", "CR", "UY", "EC"]);
+const EUROPE = new Set(["ES", "PT", "FR", "IT", "DE"]);
+
 export function ConnectionsView({ data }: { data: ConnectionsData }) {
   const t = useTranslations("Connections");
   const [tab, setTab] = useState<ConnectionTab>("active");
   const [region, setRegion] = useState<RegionFilter>("all");
+  const [query, setQuery] = useState("");
+  // Snapshot once so the render stays pure; "recent" is relative to page load.
+  const [now] = useState(() => Date.now());
+
+  const needle = query.trim().toLowerCase();
+  const visibleActive = data.active.filter((connection) => {
+    if (region === "latam" && !LATAM.has(connection.countryCode)) return false;
+    if (region === "europe" && !EUROPE.has(connection.countryCode)) return false;
+    if (
+      region === "recent" &&
+      now - new Date(connection.connectedSince).getTime() > 30 * 24 * 60 * 60 * 1000
+    ) {
+      return false;
+    }
+    if (!needle) return true;
+    return (
+      connection.name.toLowerCase().includes(needle) ||
+      connection.location.toLowerCase().includes(needle) ||
+      connection.neighborhood.toLowerCase().includes(needle) ||
+      connection.interests.some((interest) => interest.toLowerCase().includes(needle))
+    );
+  });
 
   const tabCounts: Record<ConnectionTab, number | null> = {
     active: data.active.length,
@@ -62,8 +87,6 @@ export function ConnectionsView({ data }: { data: ConnectionsData }) {
     archived: null,
   };
 
-  const LATAM = new Set(["MX", "CO", "AR", "CL", "PE", "CR", "UY", "EC"]);
-  const EUROPE = new Set(["ES", "PT", "FR", "IT", "DE"]);
   const regionCounts: Record<RegionFilter, number | null> = {
     all: null,
     latam: data.active.filter((connection) => LATAM.has(connection.countryCode)).length,
@@ -90,18 +113,6 @@ export function ConnectionsView({ data }: { data: ConnectionsData }) {
         <div className="flex flex-wrap items-center gap-space-sm">
           <StatChip value={data.active.length} label={t("header.activeConnections")} />
           <StatChip value={data.received.length} label={t("header.pendingRequests")} accent pulse />
-          <button
-            type="button"
-            className={cn(
-              "inline-flex min-h-11 items-center gap-space-xs rounded-full border border-outline-variant bg-surface-container px-space-md py-2 font-label-lg text-label-lg text-on-surface",
-              "hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
-              "transition-colors duration-300",
-              EASE,
-            )}
-          >
-            <Icon name="badge" className="text-sm text-secondary" />
-            <span>{t("header.exportVCard")}</span>
-          </button>
         </div>
       </header>
 
@@ -166,6 +177,8 @@ export function ConnectionsView({ data }: { data: ConnectionsData }) {
               />
               <input
                 type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
                 placeholder={t("search.placeholder")}
                 className="h-11 w-full rounded-full border border-outline-variant bg-surface-container pr-space-md pl-11 font-body-sm text-body-sm text-on-surface transition-colors duration-300 placeholder:text-text-muted hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               />
@@ -205,7 +218,7 @@ export function ConnectionsView({ data }: { data: ConnectionsData }) {
       <div className="mt-space-xl">
         {tab === "active" ? (
           <ActiveConnectionsPanel
-            connections={data.active}
+            connections={visibleActive}
             requestCount={data.received.length}
             onReviewInquiries={() => setTab("requests")}
           />
