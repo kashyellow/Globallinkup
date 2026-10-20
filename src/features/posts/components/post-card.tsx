@@ -6,20 +6,21 @@ import { useState } from "react";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { toggleLikeAction } from "@/features/posts/actions";
+import { ReportDialog } from "@/features/reports/components/report-dialog";
 import { cn } from "@/lib/utils";
 import type { FeedPost } from "../queries";
 
 export function PostCard({
   post,
-  requested,
   isAuthor,
   onConnect,
+  onAccept,
   onDelete,
 }: {
   post: FeedPost;
-  requested: boolean;
   isAuthor: boolean;
   onConnect: () => void;
+  onAccept: () => void;
   onDelete: () => void;
 }) {
   const t = useTranslations("Posts");
@@ -27,9 +28,13 @@ export function PostCard({
   const format = useFormatter();
   const [liked, setLiked] = useState(post.likedByViewer);
   const [likes, setLikes] = useState(post.likes);
+  const [liking, setLiking] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
 
   async function like() {
+    if (liking) return;
     const next = !liked;
+    setLiking(true);
     setLiked(next);
     setLikes((count) => count + (next ? 1 : -1));
 
@@ -38,6 +43,7 @@ export function PostCard({
       setLiked(!next);
       setLikes((count) => count + (next ? -1 : 1));
     }
+    setLiking(false);
   }
 
   return (
@@ -91,31 +97,43 @@ export function PostCard({
             >
               <Icon name="delete" className="text-lg" />
             </button>
-          ) : post.connected ? (
+          ) : post.state === "connected" ? (
             <div className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-success-border bg-success-surface text-success-text sm:h-auto sm:w-auto sm:gap-1 sm:px-3 sm:py-1">
               <Icon name="check_circle" className="text-sm text-tertiary" />
               <span className="sr-only font-medium text-tertiary sm:not-sr-only">
                 {tCommon("connected")}
               </span>
             </div>
+          ) : post.state === "received" ? (
+            <button
+              type="button"
+              onClick={onAccept}
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center gap-1.5 rounded-full border border-success-border bg-success-surface font-label-md text-label-md text-success-text transition-colors duration-300 hover:bg-success-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px sm:h-auto sm:w-auto sm:px-3.5 sm:py-2"
+            >
+              <Icon name="check" className="text-base" />
+              <span className="sr-only sm:not-sr-only">{tCommon("accept")}</span>
+            </button>
           ) : (
             <button
               type="button"
               onClick={onConnect}
-              disabled={requested}
+              disabled={post.state === "requested"}
               className={cn(
                 "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-label-md text-label-md transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px sm:h-auto sm:w-auto sm:gap-1.5 sm:px-3.5 sm:py-2",
-                requested
+                post.state === "requested"
                   ? "border border-success-border bg-success-surface text-success-text"
                   : "border border-outline-variant bg-surface-container text-on-surface-strong hover:bg-surface-variant hover:text-on-surface",
               )}
             >
               <Icon
-                name={requested ? "check" : "person_add"}
-                className={cn("text-base", requested ? "text-sm text-tertiary" : "text-primary")}
+                name={post.state === "requested" ? "check" : "person_add"}
+                className={cn(
+                  "text-base",
+                  post.state === "requested" ? "text-sm text-tertiary" : "text-primary",
+                )}
               />
               <span className="sr-only sm:not-sr-only">
-                {requested ? t("postMeta.requested") : tCommon("connect")}
+                {post.state === "requested" ? t("postMeta.requested") : tCommon("connect")}
               </span>
             </button>
           )}
@@ -147,6 +165,7 @@ export function PostCard({
               <button
                 type="button"
                 onClick={() => void like()}
+                disabled={liking}
                 className="group flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-1 text-on-surface-strong transition-colors duration-300 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
                 <Icon
@@ -169,13 +188,26 @@ export function PostCard({
                 <Icon name="share" className="text-xl" />
               </button>
             </div>
-            <button
-              type="button"
-              title={t("postMeta.save")}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-container hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              <Icon name="bookmark" className="text-2xl" />
-            </button>
+            <div className="flex items-center gap-1">
+              {!isAuthor ? (
+                <button
+                  type="button"
+                  onClick={() => setReportOpen(true)}
+                  title={t("postMeta.report")}
+                  aria-label={t("postMeta.report")}
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-container hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                >
+                  <Icon name="flag" className="text-xl" />
+                </button>
+              ) : null}
+              <button
+                type="button"
+                title={t("postMeta.save")}
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-container hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              >
+                <Icon name="bookmark" className="text-2xl" />
+              </button>
+            </div>
           </div>
 
           <p className="font-body-md text-body-md leading-relaxed text-on-surface-strong">
@@ -183,6 +215,11 @@ export function PostCard({
           </p>
         </div>
       </div>
+      <ReportDialog
+        target={{ type: "post", id: post.id, name: post.author }}
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+      />
     </article>
   );
 }

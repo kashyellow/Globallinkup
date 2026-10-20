@@ -24,6 +24,10 @@ export async function createPostAction(input: unknown): Promise<PostResult> {
 
   const parsed = createSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
+  // The author may only attach an object from their own storage folder.
+  if (!parsed.data.imagePath.startsWith(`${user.id}/`)) {
+    return { ok: false, error: "invalid" };
+  }
 
   const supabase = await createClient();
   const { data, error } = await supabase

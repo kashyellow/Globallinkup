@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { Pagination } from "@/components/ui/pagination";
-import { sendConnectRequestAction } from "@/features/connect/actions";
+import { acceptConnectionAction, sendConnectRequestAction } from "@/features/connect/actions";
 import { deletePostAction } from "@/features/posts/actions";
 import { ConnectDialog, type ConnectTarget } from "@/features/shared/connect-dialog";
 import { usePagination } from "@/features/shared/use-pagination";
@@ -61,6 +61,12 @@ export function PostsView({
 
   async function remove(postId: string) {
     const result = await deletePostAction({ postId });
+    if (result.ok) router.refresh();
+  }
+
+  async function accept(connectionId: string | undefined) {
+    if (!connectionId) return;
+    const result = await acceptConnectionAction({ id: connectionId });
     if (result.ok) router.refresh();
   }
 
@@ -122,7 +128,6 @@ export function PostsView({
             <PostCard
               key={`${post.id}-${page}-${index}`}
               post={post}
-              requested={false}
               isAuthor={post.authorId === viewer.id}
               onConnect={() =>
                 setTarget({
@@ -133,6 +138,7 @@ export function PostsView({
                   imageAlt: post.author,
                 })
               }
+              onAccept={() => void accept(post.connectionId)}
               onDelete={() => void remove(post.id)}
             />
           ))}

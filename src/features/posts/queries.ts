@@ -21,6 +21,8 @@ export type FeedPost = {
   likes: number;
   likedByViewer: boolean;
   connected: boolean;
+  state: "none" | "requested" | "received" | "connected" | "declined";
+  connectionId: string | undefined;
 };
 
 export async function getFeed(viewerId: string): Promise<FeedPost[]> {
@@ -53,35 +55,50 @@ export async function getFeed(viewerId: string): Promise<FeedPost[]> {
 
   const { data: connections } = await supabase
     .from("connections")
-    .select("requester_id, recipient_id")
-    .eq("status", "accepted")
+    .select("id, requester_id, recipient_id, status")
     .or(`requester_id.eq.${viewerId},recipient_id.eq.${viewerId}`);
 
   const connectedPeers = new Set<string>();
+  const stateByPeer = new Map<string, { state: FeedPost["state"]; id: string }>();
   for (const connection of connections ?? []) {
-    connectedPeers.add(
-      connection.requester_id === viewerId ? connection.recipient_id : connection.requester_id,
-    );
+    const peer =
+      connection.requester_id === viewerId ? connection.recipient_id : connection.requester_id;
+    if (connection.status === "accepted") connectedPeers.add(peer);
+    const state: FeedPost["state"] =
+      connection.status === "accepted"
+        ? "connected"
+        : connection.status === "declined"
+          ? "declined"
+          : connection.recipient_id === viewerId
+            ? "received"
+            : "requested";
+    stateByPeer.set(peer, { state, id: connection.id });
   }
 
-  return Promise.all(
+  const mapped = await Promise.all(
     posts.map(async (post) => {
       const author = authorById.get(post.author_id);
+      // `profiles_public` hides non-approved members, so a missing author means
+      // the account was suspended/rejected: drop the post instead of rendering
+      // a nameless card.
+      if (!author) return null;
+
       const image = post.image_path
         ? await createSignedImageUrl(supabase, "post-images", post.image_path)
         : null;
-      const avatarPath = author?.avatar_url ?? null;
+      const avatarPath = author.avatar_url ?? null;
       const avatar = !avatarPath
         ? null
         : avatarPath.startsWith("http")
           ? avatarPath
           : await createSignedImageUrl(supabase, "avatars", avatarPath);
+      const connection = stateByPeer.get(post.author_id);
 
       return {
         id: post.id,
         authorId: post.author_id,
-        author: author?.display_name ?? "",
-        location: [author?.city, author?.country_code].filter(Boolean).join(", "),
+        author: author.display_name ?? "",
+        location: [author.city, author.country_code].filter(Boolean).join(", "),
         avatar,
         image,
         caption: post.caption ?? "",
@@ -89,7 +106,11 @@ export async function getFeed(viewerId: string): Promise<FeedPost[]> {
         likes: likeCount.get(post.id) ?? 0,
         likedByViewer: likedByViewer.has(post.id),
         connected: connectedPeers.has(post.author_id),
-      };
+        state: connection?.state ?? "none",
+        connectionId: connection?.id,
+      } satisfies FeedPost;
     }),
   );
+
+  return mapped.filter((post): post is FeedPost => post !== null);
 }
