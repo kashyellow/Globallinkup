@@ -26,15 +26,22 @@ export async function getDiscoverPersonas(viewerId: string): Promise<Persona[]> 
 
   const { data: connections } = await supabase
     .from("connections")
-    .select("requester_id, recipient_id, status")
+    .select("id, requester_id, recipient_id, status")
     .or(`requester_id.eq.${viewerId},recipient_id.eq.${viewerId}`);
 
-  const stateByPeer = new Map<string, ConnectState>();
+  const stateByPeer = new Map<string, { state: ConnectState; id: string }>();
   for (const connection of connections ?? []) {
     const peer =
       connection.requester_id === viewerId ? connection.recipient_id : connection.requester_id;
-    if (connection.status === "accepted") stateByPeer.set(peer, "connected");
-    else if (connection.status === "requested") stateByPeer.set(peer, "requested");
+    const state: ConnectState =
+      connection.status === "accepted"
+        ? "connected"
+        : connection.status === "declined"
+          ? "declined"
+          : connection.recipient_id === viewerId
+            ? "received"
+            : "requested";
+    stateByPeer.set(peer, { state, id: connection.id });
   }
 
   return Promise.all(
@@ -47,9 +54,63 @@ export async function getDiscoverPersonas(viewerId: string): Promise<Persona[]> 
           : await createSignedImageUrl(supabase, "avatars", avatarPath);
 
       return mapPersonaRow(row, {
-        connectState: stateByPeer.get(row.id ?? "") ?? "none",
+        connectState: stateByPeer.get(row.id ?? "")?.state ?? "none",
+        connectionId: stateByPeer.get(row.id ?? "")?.id,
         imageUrl,
       });
     }),
   );
+}
+
+/** FR-4.3 — one approved persona plus the viewer's connection state. */
+export type PersonaDetail = Persona & { bio: string };
+
+export async function getPersonaDetail(
+  viewerId: string,
+  personaId: string,
+): Promise<PersonaDetail | null> {
+  const supabase = await createClient();
+
+  const { data: row } = await supabase
+    .from("profiles_public")
+    .select("*")
+    .eq("id", personaId)
+    .eq("approval_status", "approved")
+    .maybeSingle();
+
+  if (!row) return null;
+
+  const { data: connection } = await supabase
+    .from("connections")
+    .select("id, requester_id, recipient_id, status")
+    .or(
+      `and(requester_id.eq.${viewerId},recipient_id.eq.${personaId}),and(requester_id.eq.${personaId},recipient_id.eq.${viewerId})`,
+    )
+    .maybeSingle();
+
+  const state: ConnectState = !connection
+    ? "none"
+    : connection.status === "accepted"
+      ? "connected"
+      : connection.status === "declined"
+        ? "declined"
+        : connection.recipient_id === viewerId
+          ? "received"
+          : "requested";
+
+  const avatarPath = row.avatar_url;
+  const imageUrl = !avatarPath
+    ? null
+    : avatarPath.startsWith("http")
+      ? avatarPath
+      : await createSignedImageUrl(supabase, "avatars", avatarPath);
+
+  return {
+    ...mapPersonaRow(row, {
+      connectState: state,
+      connectionId: connection?.id,
+      imageUrl,
+    }),
+    bio: row.bio_en ?? row.bio_es ?? "",
+  };
 }

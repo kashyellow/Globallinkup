@@ -81,9 +81,10 @@ test("@auth discover shows real personas and viewer connect state", async ({ pag
 
   // Real rows, sorted by name — page 1 is Camila, Elena, Lucas, Mateo.
   await expect(page.getByRole("heading", { name: /Camila Osorio/ })).toBeVisible();
-  // Camila is an accepted connection in the seed; Mateo has a pending request.
+  // Camila is an accepted connection in the seed; Mateo sent Sofia a request,
+  // so the viewer must see the RECEIVED state (Accept), not "Request Sent".
   await expect(page.getByText(/^Connected$/i).first()).toBeVisible();
-  await expect(page.getByText(/Request Sent/i).first()).toBeVisible();
+  await expect(page.getByRole("button", { name: /^accept$/i }).first()).toBeVisible();
   // Elena has no connection yet, so the card offers Connect.
   await expect(page.getByRole("button", { name: /^connect$/i }).first()).toBeVisible();
 });

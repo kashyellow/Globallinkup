@@ -32,18 +32,20 @@ function parseLanguages(value: unknown): PersonaLanguage[] {
 
 export function mapPersonaRow(
   row: ProfilePublicRow,
-  options: { connectState: ConnectState; imageUrl: string | null },
+  options: { connectState: ConnectState; imageUrl: string | null; connectionId?: string },
 ): Persona {
   return {
     id: row.id ?? "",
     name: row.display_name ?? "",
     age: row.age ?? 0,
+    countryCode: row.country_code ?? "",
     location: [row.city, row.country_code].filter(Boolean).join(", "),
     image: options.imageUrl,
     imageAlt: row.display_name ?? "",
     languages: parseLanguages(row.languages),
     interests: row.interests ?? [],
     state: options.connectState,
+    connectionId: options.connectionId,
     badge: options.connectState === "connected" ? "directContact" : undefined,
   };
 }
