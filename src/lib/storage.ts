@@ -10,6 +10,12 @@ export const IMAGE_BUCKETS = ["avatars", "post-images", "product-images"] as con
 export type ImageBucket = (typeof IMAGE_BUCKETS)[number];
 
 export const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+/** Avatar storage is capped at 5 MB by the bucket; mirror it at the boundary. */
+export const BUCKET_MAX_BYTES: Record<ImageBucket, number> = {
+  avatars: 5 * 1024 * 1024,
+  "post-images": MAX_IMAGE_BYTES,
+  "product-images": MAX_IMAGE_BYTES,
+};
 export const ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"] as const;
 export const SIGNED_URL_TTL_SECONDS = 60 * 60;
 

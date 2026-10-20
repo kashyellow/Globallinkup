@@ -5,9 +5,9 @@ import { z } from "zod";
 import { getCurrentProfile, getCurrentUser, getServerClient } from "@/lib/auth";
 import {
   ALLOWED_IMAGE_TYPES,
+  BUCKET_MAX_BYTES,
   buildStoragePath,
   IMAGE_BUCKETS,
-  MAX_IMAGE_BYTES,
 } from "@/lib/storage";
 
 /**
@@ -28,7 +28,9 @@ export async function uploadImageAction(formData: FormData): Promise<UploadResul
   const file = formData.get("file");
   if (!bucket.success || !(file instanceof File)) return { ok: false, error: "invalid" };
 
-  if (file.size === 0 || file.size > MAX_IMAGE_BYTES) return { ok: false, error: "size" };
+  if (file.size === 0 || file.size > BUCKET_MAX_BYTES[bucket.data]) {
+    return { ok: false, error: "size" };
+  }
   if (!(ALLOWED_IMAGE_TYPES as readonly string[]).includes(file.type)) {
     return { ok: false, error: "type" };
   }
