@@ -1,6 +1,6 @@
 {
   "Metadata": {
-    "title": "GlobalLinkup \u2014 Bilingual Discovery",
+    "title": "GlobalLinkup — Bilingual Discovery",
     "description": "Discover verified personas across the globe, share posts, connect mutually, and browse the curated marketplace. Bilingual EN/ES."
   },
   "Legal": {
@@ -28,7 +28,7 @@
   "Footer": {
     "logoAlt": "GlobalLinkup brand logo",
     "tagline": "Bilingual discovery platform",
-    "copyright": "\u00a9 2024 GlobalLinkup Inc. All rights reserved.",
+    "copyright": "© 2024 GlobalLinkup Inc. All rights reserved.",
     "privacy": "Privacy Policy",
     "guidelines": "Connect Guidelines",
     "adminAccess": "Admin Access"
@@ -37,7 +37,7 @@
     "verified": "Verified",
     "connect": "Connect",
     "connected": "Connected",
-    "requestSent": "Request Sent \u00b7 Waiting",
+    "requestSent": "Request Sent · Waiting",
     "accept": "Accept",
     "decline": "Decline",
     "reset": "Reset",
@@ -51,7 +51,7 @@
       "body": "Send {name} one short, respectful note. Contact details stay private until they accept.",
       "noteLabel": "Your note",
       "noteRequirement": "required",
-      "notePlaceholder": "Hi {name} \u2014 your profile stood out to me. I'd love to hear more about your work and the city you call home.",
+      "notePlaceholder": "Hi {name} — your profile stood out to me. I'd love to hear more about your work and the city you call home.",
       "noteHint": "Keep it specific. Requests without context are usually declined.",
       "charCount": "{count} / {max}",
       "privacyNote": "Reviewed against community guidelines. No links or contact details in the note.",
@@ -66,6 +66,24 @@
       "goToPage": "Go to page {page}",
       "prevShort": "Previous",
       "nextShort": "Next"
+    },
+    "report": {
+      "title": "Report this content",
+      "body": "Tell the review desk what is wrong with {name}. Reports are private.",
+      "reasonLabel": "Reason",
+      "detailsLabel": "Details (optional)",
+      "detailsPlaceholder": "Add anything that helps the review desk.",
+      "submit": "Send report",
+      "cancel": "Cancel",
+      "sending": "Sending…",
+      "sent": "Report sent. Thank you.",
+      "error": "The report could not be sent. Please try again.",
+      "reasons": {
+        "spam": "Spam or advertising",
+        "harassment": "Harassment or hate",
+        "inappropriate": "Inappropriate content",
+        "other": "Something else"
+      }
     }
   },
   "Discover": {
@@ -78,7 +96,7 @@
     "clearFilters": "Clear Filters",
     "allRegions": "All Regions",
     "regions": {
-      "spain": "Spain (Espa\u00f1a)",
+      "spain": "Spain (España)",
       "mexico": "Mexico (CDMX)",
       "colombia": "Colombia",
       "unitedStates": "United States"
@@ -97,7 +115,7 @@
       "step4Body": "Verified handles and direct dialogue instantly unlocked."
     },
     "feed": {
-      "listTitle": "Verified Ambassadors \u00b7 Curated List",
+      "listTitle": "Verified Ambassadors · Curated List",
       "resultsCount": "Displaying 5 of 32 results",
       "profilePreviewed": "Profile Previewed",
       "directContactVisible": "Direct Contact Visible"
@@ -140,15 +158,15 @@
     },
     "dossier": {
       "activeDossier": "Active Dossier",
-      "meta": "27 \u00b7 Born & based in Barcelona, Spain",
+      "meta": "27 · Born & based in Barcelona, Spain",
       "photoCount": "1 / 4 Photos",
       "personaNote": "Persona Note",
-      "bio": "\u201cPhotographer & architectural researcher based in Barcelona. Fluent in Spanish & learning conversational English. Looking to connect with creatives worldwide for cultural trades and local walks.\u201d",
+      "bio": "“Photographer & architectural researcher based in Barcelona. Fluent in Spanish & learning conversational English. Looking to connect with creatives worldwide for cultural trades and local walks.”",
       "contactLayer": "Social Contact Security Layer",
       "lockedTitle": "Private Handles Protected",
       "lockedBody": "Connect with {name} to reveal social handles. Social contact is strictly private until connection request is accepted.",
       "lockedHandle": "@sofia.mtz_bcn (Locked)",
-      "lockedPhone": "+34 \u2022\u2022\u2022 \u2022\u2022\u2022 \u2022\u2022\u2022 (Locked)",
+      "lockedPhone": "+34 ••• ••• ••• (Locked)",
       "simulateAcceptance": "Simulate Acceptance State",
       "autoEncrypted": "Auto-Encrypted",
       "unlockedTitle": "Connection Verified & Active",
@@ -158,7 +176,16 @@
       "unlockedNote": "Mutual agreement recorded on May 12, 2024. Respectful outreach guidelines apply.",
       "sendRequest": "Send Connection Request"
     },
-    "trustSeal": "GlobalLinkup Human Verification Seal"
+    "trustSeal": "GlobalLinkup Human Verification Seal",
+    "searchEmpty": "No personas match these filters.",
+    "sendError": "That request could not be sent. Please try again.",
+    "detail": {
+      "back": "Back to discovery",
+      "about": "About",
+      "contactNote": "Contact details stay hidden until you are mutually connected.",
+      "report": "Report persona",
+      "metaTitle": "Persona"
+    }
   },
   "Posts": {
     "eyebrowPrimary": "Visual Chronology",
@@ -182,7 +209,7 @@
       "emptyPrompt": "Please write a sentence or choose an analog capture...",
       "previewTitle": "ATTACHED ANALOG CAPTURE",
       "previewFileName": "barcelona_elborn_35mm.jpg",
-      "previewMeta": "2.4 MB \u00b7 Kodak Portra 400 preset"
+      "previewMeta": "2.4 MB · Kodak Portra 400 preset"
     },
     "postMeta": {
       "hoursAgo": "{count} hours ago",
@@ -192,18 +219,19 @@
       "share": "Share Dispatch",
       "save": "Save to collection",
       "requested": "Requested",
-      "viewComments": "View all {count} reflections & comments \u2192",
-      "remove": "Remove post"
+      "viewComments": "View all {count} reflections & comments →",
+      "remove": "Remove post",
+      "report": "Report post"
     },
     "captions": {
-      "sofia": "Golden hour after a long walk through El Born. Exploring new perspectives through analog film this week \u2615\ufe0f\ud83d\udcf7",
-      "mateo": "Morning stroll in Coyoac\u00e1n. Always amazed by the morning light here. What is your favorite corner of the city?",
+      "sofia": "Golden hour after a long walk through El Born. Exploring new perspectives through analog film this week ☕️📷",
+      "mateo": "Morning stroll in Coyoacán. Always amazed by the morning light here. What is your favorite corner of the city?",
       "elena": "Contemporary art weekend. Great conversations with fellow designers exploring sustainable architectural forms!"
     },
     "photoBadges": {
-      "sofia": "35mm Analog \u00b7 Barcelona",
-      "mateo": "Jacaranda Season \u00b7 Coyoac\u00e1n",
-      "elena": "Galer\u00eda Albarr\u00e1n Bourdais \u00b7 Madrid"
+      "sofia": "35mm Analog · Barcelona",
+      "mateo": "Jacaranda Season · Coyoacán",
+      "elena": "Galería Albarrán Bourdais · Madrid"
     },
     "comments": {
       "sofiaAuthor": "Lucas Ramos",
@@ -223,7 +251,7 @@
       "humanCurated": "Human-curated community",
       "etiquetteTitle": "Community Etiquette",
       "etiquetteBody": "Respectful, intentional, and culturally curious. We celebrate photography that captures local context, real travel reflections, and cross-cultural friendship.",
-      "readGuidelines": "Read Community Guidelines \u2192",
+      "readGuidelines": "Read Community Guidelines →",
       "feedLanguage": "FEED LANGUAGE: ENGLISH",
       "change": "Change"
     }
@@ -307,7 +335,7 @@
       "curatedProducts": "<b>{count}</b> Curated Products",
       "openReports": "<b>{count}</b> Open Reports"
     },
-    "eyebrow": "Administrative Desk \u00b7 Monitoring & Verification",
+    "eyebrow": "Administrative Desk · Monitoring & Verification",
     "title": "Governance & Content Control",
     "tabs": {
       "users": "Users & Personas",
@@ -360,7 +388,7 @@
       "statusLive": "Live",
       "statusReserved": "Draft",
       "origin": "Origin (e.g. Oaxaca, MX)",
-      "originPlaceholder": "Oaxaca, Mexico \u00b7 Taller San Mart\u00edn",
+      "originPlaceholder": "Oaxaca, Mexico · Taller San Martín",
       "publish": "Publish",
       "unpublish": "Unpublish",
       "delete": "Delete product",
@@ -374,7 +402,7 @@
         "image": "Product Image",
         "imageUpload": "Upload a photo",
         "imageReplace": "Replace photo",
-        "imageHint": "JPG, PNG or WebP \u00b7 up to 5 MB",
+        "imageHint": "JPG, PNG or WebP · up to 5 MB",
         "narrative": "Artisan Narrative / Description (EN + ES recommended)",
         "narrativePlaceholder": "Describe the materials, provenance and cultural significance...",
         "instantRelease": "Instant catalog release on confirm",
@@ -382,7 +410,13 @@
         "publish": "Publish Product to Marketplace",
         "phone": "Phone Number (Seller Contact)",
         "phonePlaceholder": "+52 55 1234 5678"
-      }
+      },
+      "edit": "Edit",
+      "editTitle": "Edit marketplace piece",
+      "editBody": "Update the listing; the public catalog refreshes on save.",
+      "cancelEdit": "Cancel editing",
+      "update": "Save changes",
+      "errorInvalid": "Check the fields — the product was not saved."
     },
     "moderation": {
       "title": "Community Trust & Moderation Queue",
@@ -399,14 +433,14 @@
         "spamBadge": "Spam Link Detected",
         "spamTime": "Today at 11:24 AM",
         "spamTitle": "Commercial Crypto WhatsApp Link",
-        "spamBody": "\u201cHey girls join my secret investment group for Latin digital nomads! Click wa.me/34689... to earn daily returns.\u201d",
+        "spamBody": "“Hey girls join my secret investment group for Latin digital nomads! Click wa.me/34689... to earn daily returns.”",
         "spamAuthor": "user_9918 (New account)",
         "spamReporter": "Mariana R.",
         "impersonationBadge": "Impersonation Suspect",
         "impersonationTime": "Yesterday at 6:40 PM",
         "impersonationTitle": "Stolen Model Photography on Bio",
         "impersonationBody": "Member reported that avatar photo matches a prominent fashion model from Pinterest without mutual social handles linked.",
-        "impersonationAuthor": "Lucas V. (Bogot\u00e1)",
+        "impersonationAuthor": "Lucas V. (Bogotá)",
         "impersonationReporter": "Admin Auto-Flag"
       },
       "emptyTitle": "Nothing to moderate",
@@ -430,7 +464,7 @@
     },
     "privacyChip": "Zero Unconsented Sharing Enforced",
     "search": {
-      "placeholder": "Search by name, city (Medell\u00edn, Madrid, CDMX), or cultural tags..."
+      "placeholder": "Search by name, city (Medellín, Madrid, CDMX), or cultural tags..."
     },
     "regionFilters": {
       "all": "All Regions",
@@ -440,7 +474,7 @@
     },
     "active": {
       "calloutTitle": "{count} Bilateral Connection Requests Awaiting Your Review",
-      "calloutBody": "Daniel from Mexico City and Valentina from Bogot\u00e1 requested direct contact channels. Your info remains securely hidden until you accept.",
+      "calloutBody": "Daniel from Mexico City and Valentina from Bogotá requested direct contact channels. Your info remains securely hidden until you accept.",
       "reviewInquiries": "Review Inquiries",
       "badges": {
         "ambassador": "Verified Ambassador",
@@ -489,7 +523,7 @@
       "body": "You reached out to these community members. Once they grant bilateral consent, their direct channels will automatically unveil here.",
       "emptyTitle": "No pending invitations",
       "emptyBody": "Every invitation you have sent has been answered. New requests will appear here while you wait.",
-      "sentAgoAwaiting": "Sent {time} ago \u00b7 Awaiting review",
+      "sentAgoAwaiting": "Sent {time} ago · Awaiting review",
       "viewNote": "View Sent Note",
       "withdraw": "Withdraw"
     },
@@ -515,10 +549,10 @@
       "bookbindery": "Bookbindery"
     },
     "context": {
-      "camila": "\u201cConnected during the Barcelona\u2013Medell\u00edn Architecture Salon exchange.\u201d",
-      "mateo": "\u201cExchanged notes on the Luis Barrag\u00e1n retrospective tour.\u201d",
-      "elena": "\u201cLocal co-host for Chamber\u00ed hidden bookstore walks.\u201d",
-      "lucas": "\u201cCollaborating on a bilingual audio documentary script.\u201d"
+      "camila": "“Connected during the Barcelona–Medellín Architecture Salon exchange.”",
+      "mateo": "“Exchanged notes on the Luis Barragán retrospective tour.”",
+      "elena": "“Local co-host for Chamberí hidden bookstore walks.”",
+      "lucas": "“Collaborating on a bilingual audio documentary script.”"
     },
     "topics": {
       "artisanCeramics": "Artisan Ceramics",
@@ -541,7 +575,7 @@
     "guidelines": "Community Guidelines",
     "safety": "Safety Center",
     "explore": "Explore the app",
-    "copyright": "\u00a9 2024 GlobalLinkup Inc. All rights reserved.",
+    "copyright": "© 2024 GlobalLinkup Inc. All rights reserved.",
     "assurance": "End-to-End Encrypted Auth & Identity Assurance"
   },
   "MarketingNav": {
@@ -570,13 +604,13 @@
       "connectGuidelines": "Connect Guidelines",
       "adminAccess": "Admin Access"
     },
-    "copyright": "\u00a9 2025 GlobalLinkup Inc. All rights reserved.",
-    "motto": "AUTHENTIC \u2022 DISCREET \u2022 CURATED"
+    "copyright": "© 2025 GlobalLinkup Inc. All rights reserved.",
+    "motto": "AUTHENTIC • DISCREET • CURATED"
   },
   "Auth": {
     "login": {
       "backdropAlt": "Editorial photograph of two people sharing artisanal coffee on a sunlit terrace in Mexico City.",
-      "quote": "\u201cA quiet, intentional space for cross-cultural discovery. Zero algorithmic noise, verified humans, privacy-first connections.\u201d",
+      "quote": "“A quiet, intentional space for cross-cultural discovery. Zero algorithmic noise, verified humans, privacy-first connections.”",
       "peerVerified": "100% Peer Verified",
       "bilingualNarrative": "Bilingual Narrative",
       "title": "Welcome back",
@@ -605,12 +639,12 @@
       "step3": "03 Verification",
       "photoAlt": "Global community members connecting in a warm outdoor courtyard.",
       "photoBadge": "Verified Global Community",
-      "photoCaption": "Elena (Barcelona) & Mateo (Bogot\u00e1) \u00b7 Connected 8 months ago",
+      "photoCaption": "Elena (Barcelona) & Mateo (Bogotá) · Connected 8 months ago",
       "quoteTitle": "Human connections without borders.",
       "quoteBody": "Connect beyond borders with verified people around the globe. Simple, respectful, and strictly privacy-first. Your personal dossier is curated with full consent.",
       "privacyTitle": "No middlemen, no trackers",
       "privacyBody": "Identity protected with end-to-end encryption.",
-      "cardBadge": "Step 1 of 3 \u00b7 Account Setup",
+      "cardBadge": "Step 1 of 3 · Account Setup",
       "title": "Create your account",
       "subtitle": "Enter your email and a secure password. Your public profile and cultural dossier are set up in the next step.",
       "bannerTitle": "Check the details you entered",
@@ -638,7 +672,7 @@
       "submit": "Create Account & Continue",
       "haveAccount": "Already have an account?",
       "logIn": "Log in",
-      "submitting": "Creating account\u2026",
+      "submitting": "Creating account…",
       "errorEmailInUse": "That email is already registered. Try signing in instead.",
       "errorWeakPassword": "Choose a stronger password: 8+ characters with upper, lower and a number.",
       "errorRateLimited": "Too many attempts. Please wait a moment and try again.",
@@ -665,7 +699,7 @@
       "statusApproved": "Status: Identity Verified & Active",
       "statusAction": "Status: Clarification Required",
       "timeline": "Estimated wait time:",
-      "timelineStrong": "Usually verified within 4\u201312 hours",
+      "timelineStrong": "Usually verified within 4–12 hours",
       "timelineHint": "(Usual response time)",
       "reassurePrimary": "Thanks for creating your GlobalLinkup Persona. To protect our community from spam, bots, and automated scraping, every new member dossier is personally reviewed by our team before you can start connecting with people.",
       "reassureSecondary": "We appreciate your patience. Every request is reviewed by hand to keep this community warm, safe, and 100% authentic.",
@@ -751,7 +785,7 @@
     }
   },
   "PersonaForm": {
-    "eyebrow": "Registration Phase \u2022 Step 02",
+    "eyebrow": "Registration Phase • Step 02",
     "eyebrowMeta": "Bilingual Editorial Curation",
     "title": "Create Your Persona",
     "pipeStep1": "01 Account",
@@ -767,12 +801,12 @@
     "photoFormats": "JPG, WEBP, or PNG up to 10MB. Natural grain favored over studio filters.",
     "fullName": "Full Name",
     "fullNameMeta": "Public",
-    "fullNamePlaceholder": "e.g. Sofia Mart\u00ednez",
+    "fullNamePlaceholder": "e.g. Sofia Martínez",
     "country": "Country",
     "countryMeta": "Residency",
     "city": "City",
     "cityMeta": "Metropolis",
-    "cityPlaceholder": "e.g. Barcelona, Oaxaca, Medell\u00edn",
+    "cityPlaceholder": "e.g. Barcelona, Oaxaca, Medellín",
     "languagesLabel": "Languages & Fluency",
     "languagesHint": "Select all that define your bilingual daily life or conversational ambitions.",
     "levels": {
@@ -784,7 +818,7 @@
     "bioLabel": "Short Bio",
     "bioCounter": "{count} / {max}",
     "bioPlaceholder": "Tell others about your cultural passions, travel experiences, or craft...",
-    "bioHint": "Share what kind of exchanges inspire you\u2014artistic collaborations, travel tips, or slow conversations.",
+    "bioHint": "Share what kind of exchanges inspire you—artistic collaborations, travel tips, or slow conversations.",
     "interestsLabel": "Cultural Interests",
     "interestsHint": "Select at least 3 ({count} selected)",
     "interests": {
@@ -798,8 +832,8 @@
       "latinMusic": "Latin Music & Rhythms"
     },
     "countries": {
-      "ES": "Spain (Espa\u00f1a)",
-      "MX": "Mexico (M\u00e9xico)",
+      "ES": "Spain (España)",
+      "MX": "Mexico (México)",
       "CO": "Colombia",
       "AR": "Argentina",
       "US": "United States",
@@ -819,7 +853,7 @@
     "optional": "Optional",
     "dobLabel": "Date of birth",
     "dobMeta": "Optional",
-    "submitting": "Submitting\u2026",
+    "submitting": "Submitting…",
     "errorInvalid": "Please check the highlighted fields and try again.",
     "errorUpload": "We could not upload that photo. Try a JPG, PNG or WEBP under 10 MB.",
     "errorUnknown": "We could not save your persona. Please try again.",
@@ -843,10 +877,10 @@
       "body": "Discover real people, share your world, and reach across cultures. No feed algorithms, no cold messages, no contact details exchanged without permission.",
       "join": "Join GlobalLinkup",
       "explore": "Explore People",
-      "cardAlt": "Sofia Mart\u00ednez, photographed on a sunlit street in Barcelona.",
+      "cardAlt": "Sofia Martínez, photographed on a sunlit street in Barcelona.",
       "city": "Barcelona, Spain",
       "verified": "Verified Persona",
-      "name": "Sofia Mart\u00ednez, 27",
+      "name": "Sofia Martínez, 27",
       "role": "Architect and cultural documentary maker",
       "languages": "ES native, EN fluent",
       "bio": "Curious about brutalist restoration, sunlit terraces, and analog film walks through the Gothic Quarter. Looking for genuine exchange across Spanish and English perspectives.",
@@ -882,8 +916,8 @@
       "body": "Switch between the two states to see exactly what is visible at each stage.",
       "lockedTab": "Before Connect",
       "unlockedTab": "After Approval",
-      "miniAlt": "Sofia Mart\u00ednez",
-      "miniName": "Sofia Mart\u00ednez",
+      "miniAlt": "Sofia Martínez",
+      "miniName": "Sofia Martínez",
       "miniMeta": "Barcelona, ES and EN",
       "statusLabel": "Status",
       "statusLocked": "Waiting on a mutual decision",
@@ -931,7 +965,7 @@
       "memberKind": "Member since 2024",
       "dispatchKind": "Community dispatch",
       "goodsKind": "Artisan goods",
-      "mateoAlt": "Mateo photographed in a sunlit caf\u00e9 in Roma Norte, Mexico City.",
+      "mateoAlt": "Mateo photographed in a sunlit café in Roma Norte, Mexico City.",
       "mateoCity": "Mexico City, MX",
       "mateoName": "Mateo Silva, 31",
       "mateoQuote": "Visual storyteller working in modernist typography, mezcal traditions, and urban cycling in CDMX.",
@@ -939,7 +973,7 @@
       "mateoTag2": "Culinary",
       "lucasAlt": "Lucas walking with a canvas bag in San Telmo, Buenos Aires.",
       "lucasCity": "Buenos Aires, AR",
-      "lucasName": "Lucas Ben\u00edtez, 29",
+      "lucasName": "Lucas Benítez, 29",
       "lucasQuote": "Writing open-source code by morning, playing bandoneon by evening. Happy to host travellers passing through Palermo.",
       "lucasTag1": "Tango",
       "lucasTag2": "Open Source",
@@ -948,14 +982,14 @@
       "bagAlt": "A handcrafted tan leather tote bag made by artisans in Oaxaca.",
       "bagOrigin": "Workshop in Oaxaca",
       "bagName": "Hand-stitched saddle leather bag",
-      "bagBody": "Vegetable-tanned by maestro Emiliano in San Mart\u00edn Tilcajete, hand-stitched with waxed linen thread.",
+      "bagBody": "Vegetable-tanned by maestro Emiliano in San Martín Tilcajete, hand-stitched with waxed linen thread.",
       "viewProvenance": "See provenance",
       "postAlt": "A rustic ceramics workshop in Seville, Spain.",
       "postTag": "Seville, Spain",
       "postAuthor": "Clara Linares",
       "postTime": "3 hours ago",
       "postTitle": "Finding quiet in the old Triana pottery quarters.",
-      "postBody": "Every corner of this alley smells of damp clay and orange blossom. I met Don Ram\u00f3n, who has kept his wood-fire kiln running since 1974. No crowds, just an honest conversation."
+      "postBody": "Every corner of this alley smells of damp clay and orange blossom. I met Don Ramón, who has kept his wood-fire kiln running since 1974. No crowds, just an honest conversation."
     },
     "cta": {
       "badge": "English and Spanish",
@@ -983,7 +1017,7 @@
     },
     "trust": {
       "label": "Consent Trust Score",
-      "body": "Zero unwanted unveils \u2022 Reciprocal vetting"
+      "body": "Zero unwanted unveils • Reciprocal vetting"
     },
     "sections": {
       "identity": "Identity",
