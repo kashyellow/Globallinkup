@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import {
   CreatePersonaView,
   type PersonaInitial,
 } from "@/features/persona/components/create-persona-view";
-import { getCurrentProfile, getServerClient } from "@/lib/auth";
+import { getCurrentProfile, getCurrentUser, getServerClient } from "@/lib/auth";
+import { redirect } from "@/lib/i18n/navigation";
 import { createSignedImageUrl } from "@/lib/storage";
 
 export async function generateMetadata({
@@ -83,6 +84,12 @@ async function loadInitial(): Promise<PersonaInitial | undefined> {
 }
 
 export default async function CreatePersonaPage() {
+  const user = await getCurrentUser();
+  if (!user) {
+    const locale = await getLocale();
+    redirect({ href: "/login", locale });
+  }
+
   const initial = await loadInitial();
 
   return <CreatePersonaView initial={initial} />;
