@@ -120,7 +120,8 @@ export async function requestPasswordResetAction(
       const origin = await getRequestOrigin();
       const supabase = await createClient();
       await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${origin}/${locale}/auth/callback?next=/${locale}/reset-password`,
+        // `next` is locale-less: the callback prefixes the active locale once.
+        redirectTo: `${origin}/${locale}/auth/callback?next=/reset-password`,
       });
     } catch {
       // Unconfigured Supabase (CI/e2e): fall through to the confirmation step.
