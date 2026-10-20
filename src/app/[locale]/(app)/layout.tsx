@@ -3,23 +3,35 @@ import { BottomNav } from "@/components/layout/bottom-nav";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
 import { getPendingRequestCount } from "@/features/connect/queries";
-import { requireApprovedUser } from "@/lib/auth";
+import { getServerClient, requireApprovedUser } from "@/lib/auth";
+import { createSignedImageUrl } from "@/lib/storage";
 
 /**
  * Signed-in application shell: fixed navbar + footer, plus a mobile tab bar
- * below `lg`. The bottom bar overlays content, so `<main>` reserves ~5rem of
- * space for it on phones only — the same reserve the top pill needs via `pt-20`.
- *
- * Access is enforced here (server-side): no session → login, no profile →
- * onboarding, not approved → /verify. The proxy stays optimistic only.
+ * below `lg`. Access is enforced here (server-side): no session → login, no
+ * profile → onboarding, not approved → /verify. The proxy stays optimistic only.
  */
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const { profile } = await requireApprovedUser();
   const pendingRequests = await getPendingRequestCount(profile.id);
 
+  const supabase = await getServerClient();
+  const avatarPath = profile.avatar_url;
+  const viewerAvatar =
+    !avatarPath || !supabase
+      ? null
+      : avatarPath.startsWith("http")
+        ? avatarPath
+        : await createSignedImageUrl(supabase, "avatars", avatarPath);
+
   return (
     <>
-      <Navbar isAdmin={profile.role === "admin"} pendingRequests={pendingRequests} />
+      <Navbar
+        isAdmin={profile.role === "admin"}
+        viewerName={profile.display_name}
+        viewerAvatar={viewerAvatar}
+        pendingRequests={pendingRequests}
+      />
       <main className="min-h-[100dvh] w-full flex-1 bg-background pt-20">{children}</main>
       {/*
        * The fixed mobile tab bar overlays whatever sits at the very bottom of

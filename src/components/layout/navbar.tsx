@@ -3,10 +3,10 @@
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { BrandMark } from "@/components/ui/brand-mark";
+import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { Link, usePathname, useRouter } from "@/lib/i18n/navigation";
 import { routing, type Locale } from "@/lib/i18n/routing";
-import { CURRENT_USER } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -20,9 +20,13 @@ const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
 export function Navbar({
   isAdmin = false,
+  viewerName,
+  viewerAvatar,
   pendingRequests = 0,
 }: {
   isAdmin?: boolean;
+  viewerName: string;
+  viewerAvatar: string | null;
   /** Inbound requests awaiting review, from the layout's count query. */
   pendingRequests?: number;
 }) {
@@ -140,22 +144,33 @@ export function Navbar({
               isActive("/profile") ? "bg-surface-container-high" : "hover:bg-surface-container",
             )}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              alt={t("profileAlt")}
-              className={cn(
-                "h-7 w-7 rounded-full object-cover",
-                isActive("/profile") ? "ring-2 ring-primary" : "ring-1 ring-outline-variant",
-              )}
-              src={CURRENT_USER.avatarUrl}
-            />
+            {viewerAvatar ? (
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  alt={t("profileAlt")}
+                  className={cn(
+                    "h-7 w-7 rounded-full object-cover",
+                    isActive("/profile") ? "ring-2 ring-primary" : "ring-1 ring-outline-variant",
+                  )}
+                  src={viewerAvatar}
+                />
+              </>
+            ) : (
+              <DefaultAvatar
+                className={cn(
+                  "h-7 w-7 rounded-full",
+                  isActive("/profile") ? "ring-2 ring-primary" : "ring-1 ring-outline-variant",
+                )}
+              />
+            )}
             <span
               className={cn(
                 "hidden font-label-lg text-label-lg leading-none font-semibold xl:inline",
                 isActive("/profile") ? "text-on-surface" : "text-secondary",
               )}
             >
-              {CURRENT_USER.name}
+              {viewerName}
             </span>
           </Link>
 
@@ -201,12 +216,17 @@ export function Navbar({
             )}
           >
             {t("profile")}
-            <img
-              alt=""
-              aria-hidden
-              className="h-6 w-6 rounded-full object-cover ring-1 ring-outline-variant"
-              src={CURRENT_USER.avatarUrl}
-            />
+            {viewerAvatar ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                alt=""
+                aria-hidden
+                className="h-6 w-6 rounded-full object-cover ring-1 ring-outline-variant"
+                src={viewerAvatar}
+              />
+            ) : (
+              <DefaultAvatar className="h-6 w-6 rounded-full ring-1 ring-outline-variant" />
+            )}
           </Link>
           {isAdmin ? (
             <Link
