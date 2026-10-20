@@ -70,16 +70,18 @@ export async function resolveReportAction(input: unknown): Promise<AdminResult> 
   const parsed = reportSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
 
-  const { error } = await ctx.supabase
+  const { data: updated, error } = await ctx.supabase
     .from("reports")
     .update({
       status: parsed.data.status,
       resolved_by: ctx.user.id,
       resolved_at: new Date().toISOString(),
     })
-    .eq("id", parsed.data.reportId);
+    .eq("id", parsed.data.reportId)
+    .select("id");
 
   if (error) return { ok: false, error: "unknown" };
+  if (!updated || updated.length === 0) return { ok: false, error: "forbidden" };
   revalidatePath("/admin");
   return { ok: true };
 }
@@ -93,16 +95,18 @@ export async function removePostAction(input: unknown): Promise<AdminResult> {
   const parsed = postSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
 
-  const { error } = await ctx.supabase
+  const { data: updated, error } = await ctx.supabase
     .from("posts")
     .update({
       moderation_status: "removed",
       removed_by: ctx.user.id,
       removed_at: new Date().toISOString(),
     })
-    .eq("id", parsed.data.postId);
+    .eq("id", parsed.data.postId)
+    .select("id");
 
   if (error) return { ok: false, error: "unknown" };
+  if (!updated || updated.length === 0) return { ok: false, error: "forbidden" };
   revalidatePath("/admin");
   return { ok: true };
 }
@@ -160,6 +164,46 @@ export async function createProductAction(input: unknown): Promise<AdminResult> 
   return { ok: true };
 }
 
+const updateSchema = productSchema.extend({ productId: uuidSchema });
+
+export async function updateProductAction(input: unknown): Promise<AdminResult> {
+  const ctx = await requireAdminClient();
+  if (!ctx) return { ok: false, error: "forbidden" };
+
+  const parsed = updateSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid" };
+  const data = parsed.data;
+
+  const { data: updated, error } = await ctx.supabase
+    .from("marketplace_products")
+    .update({
+      name: data.name,
+      price_cents: data.priceCents,
+      currency: data.currency,
+      summary: data.summary ?? null,
+      description: data.description ?? null,
+      origin_label: data.originLabel ?? null,
+      contact_information: data.sellerPhone ?? null,
+      is_published: data.isPublished,
+    })
+    .eq("id", data.productId)
+    .select("id");
+
+  if (error) return { ok: false, error: "unknown" };
+  if (!updated || updated.length === 0) return { ok: false, error: "forbidden" };
+
+  if (data.imagePath) {
+    await ctx.supabase.from("marketplace_product_images").delete().eq("product_id", data.productId);
+    await ctx.supabase
+      .from("marketplace_product_images")
+      .insert({ product_id: data.productId, storage_path: data.imagePath, sort: 0 });
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/marketplace");
+  return { ok: true };
+}
+
 const publishSchema = z.object({ productId: uuidSchema, isPublished: z.boolean() });
 
 export async function setProductPublishedAction(input: unknown): Promise<AdminResult> {
@@ -169,12 +213,14 @@ export async function setProductPublishedAction(input: unknown): Promise<AdminRe
   const parsed = publishSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
 
-  const { error } = await ctx.supabase
+  const { data: updated, error } = await ctx.supabase
     .from("marketplace_products")
     .update({ is_published: parsed.data.isPublished })
-    .eq("id", parsed.data.productId);
+    .eq("id", parsed.data.productId)
+    .select("id");
 
   if (error) return { ok: false, error: "unknown" };
+  if (!updated || updated.length === 0) return { ok: false, error: "forbidden" };
   revalidatePath("/admin");
   revalidatePath("/marketplace");
   return { ok: true };
@@ -189,12 +235,14 @@ export async function deleteProductAction(input: unknown): Promise<AdminResult> 
   const parsed = productIdSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
 
-  const { error } = await ctx.supabase
+  const { data: deleted, error } = await ctx.supabase
     .from("marketplace_products")
     .delete()
-    .eq("id", parsed.data.productId);
+    .eq("id", parsed.data.productId)
+    .select("id");
 
   if (error) return { ok: false, error: "unknown" };
+  if (!deleted || deleted.length === 0) return { ok: false, error: "forbidden" };
   revalidatePath("/admin");
   revalidatePath("/marketplace");
   return { ok: true };

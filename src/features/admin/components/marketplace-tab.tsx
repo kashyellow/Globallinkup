@@ -8,6 +8,7 @@ import {
   createProductAction,
   deleteProductAction,
   setProductPublishedAction,
+  updateProductAction,
 } from "@/features/admin/actions";
 import { uploadImageAction } from "@/features/media/actions";
 import { useRouter } from "@/lib/i18n/navigation";
@@ -23,6 +24,7 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
   const t = useTranslations("Admin.marketplace");
   const router = useRouter();
 
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [origin, setOrigin] = useState("");
@@ -32,6 +34,7 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [publishNow, setPublishNow] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     return () => {
@@ -44,10 +47,43 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
     setPhotoPreview(file ? URL.createObjectURL(file) : null);
   }
 
+  function resetForm() {
+    setEditingId(null);
+    setName("");
+    setPrice("");
+    setOrigin("");
+    setPhone("");
+    setDescription("");
+    pickPhoto(null);
+    setPublishNow(false);
+    setError(null);
+  }
+
+  function startEdit(product: AdminProductDto) {
+    setEditingId(product.id);
+    setName(product.name);
+    setPrice(product.price.replace(/[^0-9.]/g, ""));
+    setOrigin(product.origin);
+    setPhone(product.phone);
+    setDescription(product.description);
+    setPublishNow(product.isPublished);
+    pickPhoto(null);
+    setError(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     if (name.trim() === "" || busy) return;
+
+    const amount = Number(price.trim().replace(",", ".") || "0");
+    if (!Number.isFinite(amount) || amount < 0) {
+      setError(t("errorInvalid"));
+      return;
+    }
+
     setBusy(true);
+    setError(null);
 
     let imagePath: string | undefined;
     if (photoFile) {
@@ -55,36 +91,42 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
       formData.set("bucket", "product-images");
       formData.set("file", photoFile);
       const upload = await uploadImageAction(formData);
-      if (upload.ok) imagePath = upload.path;
+      if (!upload.ok) {
+        setBusy(false);
+        setError(t("errorInvalid"));
+        return;
+      }
+      imagePath = upload.path;
     }
 
-    const result = await createProductAction({
+    const payload = {
       name: name.trim(),
-      priceCents: Math.round(Number(price || "0") * 100),
+      priceCents: Math.round(amount * 100),
       currency: "USD",
       originLabel: origin.trim(),
       sellerPhone: phone.trim(),
       description: description.trim(),
       isPublished: publishNow,
       imagePath,
-    });
+    };
+
+    const result = editingId
+      ? await updateProductAction({ ...payload, productId: editingId })
+      : await createProductAction(payload);
 
     setBusy(false);
-    if (result.ok) {
-      setName("");
-      setPrice("");
-      setOrigin("");
-      setPhone("");
-      setDescription("");
-      pickPhoto(null);
-      setPublishNow(false);
-      router.refresh();
+    if (!result.ok) {
+      setError(t("errorInvalid"));
+      return;
     }
+
+    resetForm();
+    router.refresh();
   }
 
   return (
     <div className="flex flex-col gap-space-lg">
-      {/* Create form */}
+      {/* Create / edit form */}
       <div
         className="bezel-tray"
         style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
@@ -93,11 +135,24 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
           onSubmit={(event) => void submit(event)}
           className="flex flex-col gap-space-md bezel-core p-space-lg"
         >
-          <div>
-            <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
-              {t("form.title")}
-            </h2>
-            <p className="mt-0.5 font-body-sm text-body-sm text-secondary">{t("form.body")}</p>
+          <div className="flex flex-wrap items-start justify-between gap-space-sm">
+            <div>
+              <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
+                {editingId ? t("editTitle") : t("form.title")}
+              </h2>
+              <p className="mt-0.5 font-body-sm text-body-sm text-secondary">
+                {editingId ? t("editBody") : t("form.body")}
+              </p>
+            </div>
+            {editingId ? (
+              <button
+                type="button"
+                onClick={resetForm}
+                className="inline-flex min-h-11 items-center rounded-full border border-outline-variant px-4 font-label-md text-label-md text-secondary transition-colors hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              >
+                {t("cancelEdit")}
+              </button>
+            ) : null}
           </div>
 
           <div className="grid grid-cols-1 gap-space-md md:grid-cols-2">
@@ -152,6 +207,15 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
             />
           </label>
 
+          {error ? (
+            <p
+              role="alert"
+              className="rounded-xl border border-danger-border bg-danger-surface px-space-md py-2 font-body-sm text-body-sm text-danger-text"
+            >
+              {error}
+            </p>
+          ) : null}
+
           <div className="flex flex-wrap items-center justify-between gap-space-sm">
             <label className="flex cursor-pointer items-center gap-space-sm">
               <input
@@ -170,10 +234,10 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
               className="inline-flex min-h-11 items-center gap-2 rounded-full bg-primary px-5 font-label-lg text-label-lg font-semibold text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-80"
             >
               <Icon
-                name={busy ? "progress_activity" : "add"}
+                name={busy ? "progress_activity" : editingId ? "save" : "add"}
                 className={cn("text-lg", busy && "animate-spin")}
               />
-              {publishNow ? t("form.publish") : t("form.saveDraft")}
+              {editingId ? t("update") : publishNow ? t("form.publish") : t("form.saveDraft")}
             </button>
           </div>
         </form>
@@ -235,7 +299,7 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
       ) : (
         <div className="flex flex-col gap-space-sm">
           {products.map((product) => (
-            <ProductRow key={product.id} product={product} />
+            <ProductRow key={product.id} product={product} onEdit={() => startEdit(product)} />
           ))}
         </div>
       )}
@@ -243,7 +307,7 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
   );
 }
 
-function ProductRow({ product }: { product: AdminProductDto }) {
+function ProductRow({ product, onEdit }: { product: AdminProductDto; onEdit: () => void }) {
   const t = useTranslations("Admin.marketplace");
   const router = useRouter();
 
@@ -303,6 +367,13 @@ function ProductRow({ product }: { product: AdminProductDto }) {
           >
             {product.isPublished ? t("statusLive") : t("statusReserved")}
           </span>
+          <button
+            type="button"
+            onClick={onEdit}
+            className="inline-flex min-h-11 items-center rounded-full border border-outline-variant bg-surface-dim px-4 font-label-md text-label-md text-on-surface transition-colors duration-300 hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
+          >
+            {t("edit")}
+          </button>
           <button
             type="button"
             onClick={() => void toggle()}
