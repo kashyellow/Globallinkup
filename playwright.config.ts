@@ -7,6 +7,8 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
+  // Dev-server first compiles can exceed the 30 s default under load.
+  timeout: 60_000,
   reporter: process.env.CI ? "github" : "list",
   use: {
     baseURL,
