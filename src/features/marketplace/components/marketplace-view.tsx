@@ -30,8 +30,28 @@ export function MarketplaceView({
   // out with its content still mounted.
   const [selected, setSelected] = useState<MarketplaceProduct | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<"featured" | "price-low" | "price-high" | "newest">("featured");
 
-  const { page, totalPages, pageItems, setPage } = usePagination(products, PAGE_SIZE);
+  const needle = query.trim().toLowerCase();
+  const filtered = products
+    .filter((product) => {
+      if (!needle) return true;
+      return (
+        product.name.toLowerCase().includes(needle) ||
+        product.originLabel.toLowerCase().includes(needle) ||
+        product.summary.toLowerCase().includes(needle) ||
+        product.description.toLowerCase().includes(needle)
+      );
+    })
+    .sort((a, b) => {
+      if (sort === "price-low") return a.price - b.price;
+      if (sort === "price-high") return b.price - a.price;
+      if (sort === "newest") return b.createdAt.localeCompare(a.createdAt);
+      return 0;
+    });
+
+  const { page, totalPages, pageItems, setPage, resetPage } = usePagination(filtered, PAGE_SIZE);
 
   // The first card *on this page* carries the featured treatment, so each page
   // has its own anchor tile rather than a featured card that only exists on
@@ -100,8 +120,14 @@ export function MarketplaceView({
                 className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-xl text-text-muted"
               />
               <input
-                type="text"
+                type="search"
+                value={query}
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                  resetPage();
+                }}
                 placeholder={t("controls.searchPlaceholder")}
+                aria-label={t("controls.searchPlaceholder")}
                 className="h-12 w-full rounded-full border border-outline-variant bg-surface-low pr-4 pl-12 font-body-md text-body-md text-on-surface transition-colors duration-300 placeholder:text-text-muted hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               />
             </div>
@@ -116,7 +142,11 @@ export function MarketplaceView({
               <div className="relative min-w-0 flex-1 md:flex-none">
                 <select
                   id="marketplace-sort"
-                  defaultValue="featured"
+                  value={sort}
+                  onChange={(event) => {
+                    setSort(event.target.value as typeof sort);
+                    resetPage();
+                  }}
                   className={cn(
                     "h-12 w-full cursor-pointer appearance-none rounded-full border border-outline-variant bg-surface-low pr-10 pl-4 font-label-lg text-label-lg text-on-surface transition-colors duration-300 hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:w-auto",
                     EASE,

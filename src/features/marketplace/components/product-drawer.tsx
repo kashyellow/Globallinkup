@@ -76,6 +76,19 @@ function DrawerContent({
     t("whatsappMessage", { product: product.name, sku: product.sku }),
   )}`;
 
+  const specRows = [
+    { label: t("specOrigin"), value: product.specs.origin, accent: false },
+    { label: t("specArtisan"), value: product.specs.artisan, accent: false },
+    { label: t("specMaterial"), value: product.specs.material, accent: false },
+    { label: t("specDimensions"), value: product.specs.dimensions, accent: false },
+    { label: t("specWeight"), value: product.specs.weight, accent: false },
+    {
+      label: t("specFulfillment"),
+      value: product.specs.fulfillment ? t(product.specs.fulfillment) : "",
+      accent: true,
+    },
+  ].filter((row) => row.value.length > 0);
+
   return (
     <>
       {/* Drawer header */}
@@ -85,9 +98,11 @@ function DrawerContent({
             <Icon name="verified" className="text-xs" />
             {t("adminVerified")}
           </span>
-          <span className="font-label-md text-label-md text-secondary">
-            {t("sku", { sku: product.sku })}
-          </span>
+          {product.sku ? (
+            <span className="font-label-md text-label-md text-secondary">
+              {t("sku", { sku: product.sku })}
+            </span>
+          ) : null}
         </div>
         <button
           type="button"
@@ -124,24 +139,24 @@ function DrawerContent({
           </p>
         </div>
 
-        {/* Specifications */}
-        <div className="flex flex-col gap-space-sm rounded-[1.25rem] border border-outline-variant bg-surface p-space-md">
-          <span className="font-label-lg text-label-lg font-semibold text-on-surface">
-            {t("specsTitle")}
-          </span>
-          <div className="grid grid-cols-2 gap-x-space-md gap-y-3 text-body-sm">
-            <Spec label={t("specOrigin")} value={product.specs.origin} />
-            <Spec label={t("specArtisan")} value={product.specs.artisan} />
-            <Spec label={t("specMaterial")} value={product.specs.material} />
-            <Spec label={t("specDimensions")} value={product.specs.dimensions} />
-            <Spec label={t("specWeight")} value={product.specs.weight} />
-            <Spec
-              label={t("specFulfillment")}
-              value={t(product.specs.fulfillment)}
-              valueClassName="text-tertiary"
-            />
+        {/* Specifications (only rows the admin actually filled in) */}
+        {specRows.length > 0 ? (
+          <div className="flex flex-col gap-space-sm rounded-[1.25rem] border border-outline-variant bg-surface p-space-md">
+            <span className="font-label-lg text-label-lg font-semibold text-on-surface">
+              {t("specsTitle")}
+            </span>
+            <div className="grid grid-cols-2 gap-x-space-md gap-y-3 text-body-sm">
+              {specRows.map((row) => (
+                <Spec
+                  key={row.label}
+                  label={row.label}
+                  value={row.value}
+                  valueClassName={row.accent ? "text-tertiary" : undefined}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        ) : null}
 
         {/* How to order */}
         <div className="flex flex-col gap-space-sm rounded-[1.25rem] border border-outline-variant bg-surface-container p-space-md">

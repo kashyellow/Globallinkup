@@ -10,6 +10,7 @@ export type MarketplaceProduct = {
   sku: string;
   name: string;
   originLabel: string;
+  createdAt: string;
   badge: string | null;
   price: number;
   summary: string;
@@ -78,6 +79,7 @@ export async function getPublishedProducts(): Promise<MarketplaceProduct[]> {
         sku: row.sku ?? "",
         name: row.name,
         originLabel: row.origin_label ?? "",
+        createdAt: row.created_at ?? "",
         badge: row.badge ?? null,
         price: (row.price_cents ?? 0) / 100,
         summary: row.summary ?? "",
@@ -89,7 +91,7 @@ export async function getPublishedProducts(): Promise<MarketplaceProduct[]> {
           material: specs.material ?? "",
           dimensions: specs.dimensions ?? "",
           weight: specs.weight ?? "",
-          fulfillment: specs.fulfillment ?? "fulfillmentCourier",
+          fulfillment: specs.fulfillment ?? "",
         },
         image: urls[0] ?? null,
         imageAlt: row.name,
