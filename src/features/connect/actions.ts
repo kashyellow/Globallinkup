@@ -36,9 +36,25 @@ export async function sendConnectRequestAction(input: unknown): Promise<ConnectR
     status: "requested",
     intro: parsed.data.note,
   });
-  if (error) return { ok: false, error: "unknown" };
 
-  return { ok: true };
+  if (!error) return { ok: true };
+
+  // The pair is unique, so a declined row blocks the insert. FR-5.6/OQ-2: the
+  // original sender resets that row to `requested` instead of creating a second
+  // one. The trigger owns the transition; a non-declined row simply stays as is.
+  if (error.code === "23505") {
+    const { data: updated, error: updateError } = await supabase
+      .from("connections")
+      .update({ status: "requested", intro: parsed.data.note })
+      .eq("requester_id", user.id)
+      .eq("recipient_id", parsed.data.recipientId)
+      .eq("status", "declined")
+      .select("id");
+
+    if (!updateError && updated && updated.length > 0) return { ok: true };
+  }
+
+  return { ok: false, error: "unknown" };
 }
 
 async function setStatus(
