@@ -233,7 +233,7 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
           </div>
           <span className="font-label-md text-label-md text-outline-variant">/</span>
           <div className="flex items-center gap-space-xs text-secondary">
-            <span className="h-2 w-2 rounded-full bg-[#3E3A35]" />
+            <span className="h-2 w-2 rounded-full bg-outline-strong" />
             <span className="font-label-md text-label-md whitespace-nowrap">{t("pipeStep3")}</span>
           </div>
         </div>
@@ -629,7 +629,7 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
             <div className="flex flex-col items-center justify-between gap-space-md pt-space-md sm:flex-row">
               <button
                 type="button"
-                className="flex w-full items-center justify-center gap-space-xs rounded-lg border border-outline-variant bg-surface-variant px-space-lg py-3 font-label-lg text-label-lg text-on-surface shadow-sm transition-colors hover:bg-[#2E2B27] sm:w-auto"
+                className="flex w-full items-center justify-center gap-space-xs rounded-lg border border-outline-variant bg-surface-variant px-space-lg py-3 font-label-lg text-label-lg text-on-surface shadow-sm transition-colors hover:bg-surface-container-high sm:w-auto"
               >
                 <Icon name="arrow_back" className="text-[18px]" />
                 <span>{t("back")}</span>

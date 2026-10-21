@@ -64,7 +64,7 @@ export function LoginView() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 alt={t("backdropAlt")}
-                className="h-full w-full object-cover object-center brightness-[0.80] contrast-[1.05]"
+                className="h-full w-full object-cover object-center brightness-95 contrast-[1.05]"
                 src={BACKDROP}
               />
               {/* Strong enough to hold contrast under the blockquote at the

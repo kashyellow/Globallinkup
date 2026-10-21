@@ -13,95 +13,95 @@
 
 @theme {
   /* ── Brand ─────────────────────────────────────────────────────────── */
-  --color-primary: #e86a5b;
-  --color-primary-container: #e86a5b;
-  --color-primary-hover: #d85e50;
-  --color-inverse-primary: #a6392e;
+  --color-primary: #253c36;
+  --color-primary-container: #2d4740;
+  --color-primary-hover: #1b2f2a;
+  --color-inverse-primary: #e2b678;
   --color-on-primary: #ffffff;
-  --color-on-primary-container: #ffffff;
+  --color-on-primary-container: #f7f0e5;
 
-  /* ── Backgrounds & surfaces (dark) ─────────────────────────────────── */
-  --color-background: #0b0a09;
-  --color-background-cream: #0b0a09;
-  --color-surface: #121110;
-  --color-surface-dark: #121110;
-  --color-surface-dim: #141311;
-  --color-surface-lowest: #0e0d0c;
-  --color-surface-low: #181715;
-  --color-surface-card: #181715;
-  --color-surface-container: #1e1c1a;
-  --color-surface-container-high: #262320;
-  --color-surface-container-highest: #2b2824;
-  --color-surface-bright: #262320;
-  --color-surface-variant: #242220;
-  --color-inverse-surface: #f6f3ee;
-  --color-inverse-on-surface: #121110;
+  /* ── Backgrounds & surfaces (warm paper) ───────────────────────────── */
+  --color-background: #f7f1e6;
+  --color-background-cream: #f1e5d2;
+  --color-surface: #ffffff;
+  --color-surface-dark: #ede3d2;
+  --color-surface-dim: #f3ebde;
+  --color-surface-lowest: #ffffff;
+  --color-surface-low: #fbf7ef;
+  --color-surface-card: #ffffff;
+  --color-surface-container: #f4ecdf;
+  --color-surface-container-high: #ece1cf;
+  --color-surface-container-highest: #e4d7c2;
+  --color-surface-bright: #ffffff;
+  --color-surface-variant: #efe6d6;
+  --color-inverse-surface: #253c36;
+  --color-inverse-on-surface: #f7f0e5;
 
   /* ── Foreground / text ─────────────────────────────────────────────── */
-  --color-on-background: #f6f3ee;
-  --color-on-surface: #f6f3ee;
-  --color-text-ivory: #f6f3ee;
-  --color-on-surface-variant: #b0aaa2;
-  --color-on-surface-strong: #ede9e3;
-  --color-on-surface-muted: #c8c3bd;
-  --color-text-muted: #878179;
-  --color-text-muted-dark: #9e9992;
-  --color-placeholder: #5c564f;
+  --color-on-background: #243b35;
+  --color-on-surface: #243b35;
+  --color-text-ivory: #243b35;
+  --color-on-surface-variant: #5b6b63;
+  --color-on-surface-strong: #1b2f2a;
+  --color-on-surface-muted: #4d5b54;
+  --color-text-muted: #5a6660;
+  --color-text-muted-dark: #5a6660;
+  --color-placeholder: #8a938c;
 
-  /* ── Secondary (warm grey) ─────────────────────────────────────────── */
-  --color-secondary: #9e9992;
+  /* ── Secondary (sage) ──────────────────────────────────────────────── */
+  --color-secondary: #5f7067;
   --color-on-secondary: #ffffff;
-  --color-secondary-container: #2b2320;
-  --color-secondary-container-alt: #26201d;
-  --color-secondary-fixed: #2b2220;
-  --color-secondary-fixed-dim: #362e2b;
-  --color-on-secondary-container: #ede9e3;
+  --color-secondary-container: #e3e7dc;
+  --color-secondary-container-alt: #eaeee4;
+  --color-secondary-fixed: #dde2d6;
+  --color-secondary-fixed-dim: #cdd4c5;
+  --color-on-secondary-container: #2f3e37;
 
-  /* ── Tertiary / success (green) ────────────────────────────────────── */
-  --color-tertiary: #2e9b68;
-  --color-tertiary-container: #2e9b68;
-  --color-tertiary-fixed: #1a402f;
-  --color-tertiary-fixed-dim: #2e9b68;
+  /* ── Tertiary / success (deep green) ───────────────────────────────── */
+  --color-tertiary: #3f7a57;
+  --color-tertiary-container: #3f7a57;
+  --color-tertiary-fixed: #dcebdd;
+  --color-tertiary-fixed-dim: #bed6c4;
   --color-on-tertiary: #ffffff;
-  --color-on-tertiary-container: #73dba2;
-  --color-success: #2e9b68;
-  --color-success-bright: #22c55e;
-  --color-success-strong: #006d44;
-  --color-success-hover: #258257;
-  --color-success-surface: #163d2c;
-  --color-success-surface-alt: #1b382b;
-  --color-success-container: #184e36;
-  --color-success-border: #2d7d56;
-  --color-success-ring: #38a36f;
-  --color-success-text: #73dba2;
-  --color-success-text-bright: #8ff7bc;
+  --color-on-tertiary-container: #1f5136;
+  --color-success: #2f7a4e;
+  --color-success-bright: #1f6b40;
+  --color-success-strong: #1f6b40;
+  --color-success-hover: #195a36;
+  --color-success-surface: #e3f0e6;
+  --color-success-surface-alt: #edf5ef;
+  --color-success-container: #cfe6d6;
+  --color-success-border: #b7d3bf;
+  --color-success-ring: #2f7a4e;
+  --color-success-text: #1f6b40;
+  --color-success-text-bright: #14512f;
 
   /* ── Error / danger ────────────────────────────────────────────────── */
-  --color-error: #cf6679;
-  --color-error-container: #491a1a;
+  --color-error: #b42318;
+  --color-error-container: #fbe4e1;
   --color-on-error: #ffffff;
-  --color-on-error-container: #ffdad6;
-  --color-danger: #ef4444;
-  --color-danger-surface: #3d1414;
-  --color-danger-border: #5c1d1d;
-  --color-danger-border-strong: #ba1a1a;
-  --color-danger-text: #fca5a5;
+  --color-on-error-container: #7a1c13;
+  --color-danger: #c0362c;
+  --color-danger-surface: #fdeceb;
+  --color-danger-border: #f2c9c4;
+  --color-danger-border-strong: #b42318;
+  --color-danger-text: #a02a1f;
 
-  /* ── Admin accent (coral-tinted) ───────────────────────────────────── */
-  --color-admin-surface: #2e201e;
-  --color-admin-border: #482823;
-  --color-admin-text: #ffb4a9;
-  --color-admin-text-soft: #ffdad5;
+  /* ── Admin accent (clay-tinted) ────────────────────────────────────── */
+  --color-admin-surface: #fbeee9;
+  --color-admin-border: #f0d2c6;
+  --color-admin-text: #9a4a34;
+  --color-admin-text-soft: #7a3b2b;
 
   /* ── Lines ─────────────────────────────────────────────────────────── */
-  --color-outline: #3d3833;
-  --color-outline-variant: #2e2b27;
-  --color-border-subtle: #2e2b27;
-  --color-border-dark: #383430;
-  --color-border-strong: #3e3430;
-  --color-outline-strong: #524d47;
-  --color-outline-hover: #48433d;
-  --color-surface-tint: #e86a5b;
+  --color-outline: #d8cab5;
+  --color-outline-variant: #e6dac7;
+  --color-border-subtle: #e6dac7;
+  --color-border-dark: #d2c3ac;
+  --color-border-strong: #bfae95;
+  --color-outline-strong: #a89a82;
+  --color-outline-hover: #c7b79f;
+  --color-surface-tint: #253c36;
 
   /* ── Spacing (named, mirrors the reference config) ─────────────────── */
   --spacing-space-xs: 0.25rem;
@@ -236,37 +236,47 @@
 
   /*
    * ── Marketing surface ladder ────────────────────────────────────────
-   * The reference mockups jump straight from #121110 to #1E1C1A, which
-   * flattens every panel into the same value. These add the intermediate
-   * steps the redesign needs for nested (double-bezel) surfaces.
+   * Sand page, paper shell, white core. These mirror the light landing
+   * mockup, where bands alternate between warm sand (#F1E5D2) and white.
    */
-  --color-marketing-base: #100e0d;
-  --color-marketing-shell: #171513;
-  --color-marketing-core: #1c1917;
-  --color-marketing-raised: #23201d;
-  --color-marketing-high: #2b2724;
+  --color-marketing-base: #f1e5d2;
+  --color-marketing-shell: #fbf7ef;
+  --color-marketing-core: #ffffff;
+  --color-marketing-raised: #f7f0e5;
+  --color-marketing-high: #efe5d3;
 
   /*
-   * ── Marketing accent: muted jade ────────────────────────────────────
-   * The coral (#e86a5b) stays the product accent and the single locked
-   * landing accent. Jade is used for a small number of genuinely
-   * privacy-related signals so green always reads as "protected".
+   * ── Gold accent ─────────────────────────────────────────────────────
+   * Reserved for step numbers, prices, eyebrow dots and the headline
+   * highlight. `gold-strong` is the text-safe value on cream (4.7:1);
+   * `gold` itself is a fill and must not carry small text on light.
    */
-  --color-jade: #4aab77;
-  --color-jade-bright: #6ecf98;
-  --color-jade-dim: #2f6b4b;
-  --color-jade-surface: #15271d;
-  --color-jade-border: #234332;
+  --color-gold: #e2b678;
+  --color-gold-hover: #d6a65f;
+  --color-gold-strong: #8a5a1f;
+  --color-gold-soft: #f6e6cb;
+  --color-on-gold: #253c36;
+
+  /*
+   * ── Privacy accent: jade ────────────────────────────────────────────
+   * Green always reads as "protected". Deepened for light surfaces so
+   * the verified/privacy chips keep AA contrast.
+   */
+  --color-jade: #28703f;
+  --color-jade-bright: #24663d;
+  --color-jade-dim: #78a98a;
+  --color-jade-surface: #e3efe5;
+  --color-jade-border: #bfd6c6;
 
   /*
    * ── Warm-tinted shadows ─────────────────────────────────────────────
-   * Pure-black shadows on a warm off-black page read as grey smudges.
-   * These carry the page hue and a single implied light source.
+   * Shadows carry the ink hue rather than pure black, so panels sit on
+   * the cream page instead of reading as grey smudges.
    */
-  --shadow-lift-sm: 0 1px 2px rgb(6 5 4 / 0.4), 0 2px 8px -2px rgb(6 5 4 / 0.5);
-  --shadow-lift-md: 0 2px 4px rgb(6 5 4 / 0.35), 0 12px 28px -8px rgb(6 5 4 / 0.6);
-  --shadow-lift-lg: 0 4px 8px rgb(6 5 4 / 0.3), 0 28px 60px -16px rgb(6 5 4 / 0.7);
-  --shadow-bevel: inset 0 1px 0 rgb(255 246 238 / 0.07);
+  --shadow-lift-sm: 0 1px 2px rgb(36 59 53 / 0.05), 0 2px 8px -2px rgb(36 59 53 / 0.08);
+  --shadow-lift-md: 0 2px 4px rgb(36 59 53 / 0.05), 0 12px 28px -8px rgb(36 59 53 / 0.12);
+  --shadow-lift-lg: 0 4px 8px rgb(36 59 53 / 0.05), 0 28px 60px -16px rgb(36 59 53 / 0.16);
+  --shadow-bevel: inset 0 1px 0 rgb(255 255 255 / 0.7);
 }
 
 /*
@@ -297,6 +307,7 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    color-scheme: light;
   }
 
   body {
@@ -377,15 +388,15 @@
     background:
       radial-gradient(
         78rem 52rem at 12% -8%,
-        color-mix(in oklab, var(--color-primary) 13%, transparent),
+        color-mix(in oklab, var(--color-gold) 18%, transparent),
         transparent 62%
       ),
       radial-gradient(
         64rem 46rem at 88% 6%,
-        color-mix(in oklab, var(--color-jade) 9%, transparent),
+        color-mix(in oklab, var(--color-jade) 5%, transparent),
         transparent 60%
       ),
-      linear-gradient(180deg, #14110f 0%, var(--color-marketing-base) 38%);
+      linear-gradient(180deg, #f7edde 0%, var(--color-marketing-base) 38%);
   }
 
   &::after {
@@ -394,7 +405,7 @@
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    opacity: 0.16;
+    opacity: 0.05;
     /* Fractal noise keeps the surface from reading as a flat digital fill. */
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
   }
@@ -423,12 +434,12 @@
     background:
       radial-gradient(
         70rem 38rem at 6% -10%,
-        color-mix(in oklab, var(--color-primary) 7%, transparent),
+        color-mix(in oklab, var(--color-gold) 12%, transparent),
         transparent 70%
       ),
       radial-gradient(
         56rem 30rem at 96% 0%,
-        color-mix(in oklab, var(--color-jade) 5%, transparent),
+        color-mix(in oklab, var(--color-jade) 4%, transparent),
         transparent 66%
       );
   }
@@ -439,7 +450,7 @@
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    opacity: 0.05;
+    opacity: 0.04;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
   }
 }

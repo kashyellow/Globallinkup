@@ -579,10 +579,11 @@
     "assurance": "End-to-End Encrypted Auth & Identity Assurance"
   },
   "MarketingNav": {
-    "tagline": "Bilingual Community",
-    "howItWorks": "Privacy",
-    "theThree": "What you get",
-    "privacyProtocol": "See it locked",
+    "tagline": "People & Culture",
+    "howItWorks": "How It Works",
+    "discoverPeople": "Discover People",
+    "fieldDispatches": "Field Dispatches",
+    "artisanMarketplace": "Artisan Marketplace",
     "signIn": "Sign In",
     "join": "Join GlobalLinkup",
     "joinShort": "Join",
@@ -591,20 +592,22 @@
   },
   "MarketingFooter": {
     "blurb": "Cultivating authentic cross-cultural connections and lifestyle curation across English and Spanish-speaking communities. Built on intentional interaction, mutual trust, and cultural storytelling.",
-    "navigationTitle": "Navigation",
-    "navigation": {
-      "howItWorks": "How it Works",
-      "discoverPeople": "Discover People",
-      "communityPosts": "Community Posts",
-      "artisanMarketplace": "Artisan Marketplace"
+    "bilingualNote": "Built for English and Spanish-speaking communities, from Barcelona to CDMX and Medellín.",
+    "communityTitle": "Community",
+    "community": {
+      "discoverPeople": "Find People",
+      "fieldDispatches": "Field Dispatches",
+      "artisanMarketplace": "Artisan Marketplace",
+      "howPrivacyWorks": "How Privacy Works"
     },
-    "trustTitle": "Trust & Admin",
+    "trustTitle": "Ethics & Trust",
     "trust": {
-      "privacyPolicy": "Privacy Policy",
-      "connectGuidelines": "Connect Guidelines",
-      "adminAccess": "Admin Access"
+      "verifiedIdentity": "Verified Identity Standards",
+      "mutualConsent": "Mutual Consent Guidelines",
+      "artisanProvenance": "Artisan Provenance Pledge",
+      "communityCharter": "Community Charter"
     },
-    "copyright": "© 2025 GlobalLinkup Inc. All rights reserved.",
+    "copyright": "© 2026 GlobalLinkup Inc. All rights reserved.",
     "motto": "AUTHENTIC • DISCREET • CURATED"
   },
   "Auth": {
@@ -877,127 +880,151 @@
       "body": "Discover real people, share your world, and reach across cultures. No feed algorithms, no cold messages, no contact details exchanged without permission.",
       "join": "Join GlobalLinkup",
       "explore": "Explore People",
+      "trust1": "100% verified identities",
+      "trust2": "Zero algorithms",
+      "trust3": "Mutual consent channels",
       "cardAlt": "Sofia Martínez, photographed on a sunlit street in Barcelona.",
       "city": "Barcelona, Spain",
-      "verified": "Verified Persona",
+      "verified": "Verified persona",
       "name": "Sofia Martínez, 27",
       "role": "Architect and cultural documentary maker",
-      "languages": "ES native, EN fluent",
       "bio": "Curious about brutalist restoration, sunlit terraces, and analog film walks through the Gothic Quarter. Looking for genuine exchange across Spanish and English perspectives.",
-      "interests": {
-        "architecture": "Architecture",
-        "photography": "Photography",
-        "ceramics": "Ceramics"
-      },
       "ready": "Open to connect",
-      "requestConnect": "Request Connect",
-      "floatTitle": "Handles stay sealed",
-      "floatBody": "Released only after both people agree."
+      "profileCta": "View profile"
     },
-    "protocol": {
-      "badge": "The privacy protocol",
-      "title": "Nothing unlocks until you both say yes.",
-      "body": "Most networks hand your contact details to anyone who asks. GlobalLinkup keeps them sealed behind a mutual decision, which is why there is no unsolicited inbox to manage.",
-      "step1Label": "Browse",
-      "step1Title": "Browse verified personas",
-      "step1Body": "Read real dossiers: languages spoken, places lived, what people actually spend their time on. Every profile is reviewed by a human before it goes live.",
-      "step2Label": "Request",
+    "steps": {
+      "eyebrow": "Simple & respectful",
+      "title": "A natural way to connect",
+      "body": "No endless swiping or unsolicited messages. A respectful ritual built around shared interests, native languages, and real conversation.",
+      "step1Title": "Discover verified personas",
+      "step1Body": "Read real dossiers: languages spoken, places lived, and what people actually spend their time on. Every profile is reviewed by a human before it goes live.",
+      "step1Meta": "Identity authenticated",
       "step2Title": "Send one polite request",
       "step2Body": "Press Connect with intent. There is no open message box and no way to cold-call anyone. Your request simply registers as waiting.",
-      "step3Label": "Decide",
+      "step2Meta": "One request at a time",
       "step3Title": "They decide privately",
       "step3Body": "The person you asked reviews your dossier on their own time and answers yes or no. Declining costs nobody an awkward conversation.",
-      "step4Label": "Unlock",
+      "step3Meta": "Mutual privacy locker",
       "step4Title": "Direct contact is revealed",
-      "step4Body": "Only after you both agree does the locker open: verified Instagram, personal WhatsApp, or travel links, exchanged in the open because you chose it."
+      "step4Body": "Only after you both agree does the locker open: verified social channels, exchanged in the open because you chose it.",
+      "step4Meta": "Unlocked by mutual trust"
     },
-    "demo": {
-      "title": "See the locker before and after a mutual approval",
-      "body": "Switch between the two states to see exactly what is visible at each stage.",
-      "lockedTab": "Before Connect",
-      "unlockedTab": "After Approval",
-      "miniAlt": "Sofia Martínez",
-      "miniName": "Sofia Martínez",
-      "miniMeta": "Barcelona, ES and EN",
-      "statusLabel": "Status",
-      "statusLocked": "Waiting on a mutual decision",
-      "statusUnlocked": "Both people agreed",
-      "lockedTitle": "Private contact locker",
-      "encrypted": "Encrypted",
-      "masked": {
-        "ig": "@sofia.martinez.bcn",
-        "phone": "+34 622 000 000"
-      },
-      "locked": "Locked",
-      "lockedNote": "Direct channels stay masked until Sofia accepts your request. Neither party can read unverified contact details.",
-      "unlockedTitle": "Connection verified and unlocked",
-      "active": "Active",
-      "igUnlocked": "Instagram: @sofia.martinez.arch",
-      "tgUnlocked": "Telegram: @sofia_bcn",
-      "openProfile": "Open Profile",
-      "startChat": "Start Chat",
-      "unlockedNote": "Both people agreed to connect on 24 October. Direct channels are now authenticated and active."
-    },
-    "pillars": {
-      "badge": "What you get",
-      "title": "Three ways in, none of them a feed algorithm.",
-      "body": "Verified people, an unhurried visual feed, and craft sourced from the workshops that made it.",
-      "pillar1Label": "Discovery",
-      "pillar1Title": "Verified personas",
-      "pillar1Body": "Profiles with real cultural context, verified locations, native languages, and interests people actually keep. No gamified swiping.",
-      "pillar1Cta": "Browse personas",
-      "pillar2Label": "Stories",
-      "pillar2Title": "A chronological feed",
-      "pillar2Body": "No engagement ranking, no autoplay reels, no sponsored breaks. Photography and travel notes, newest first.",
-      "pillar2Cta": "Read community posts",
-      "pillar3Label": "Craft",
-      "pillar3Title": "A curated marketplace",
-      "pillar3Body": "Every piece is vetted by our team and traced to the workshop that made it, across Mexico, Spain, Colombia, and Argentina.",
-      "pillar3Cta": "See artisan goods"
-    },
-    "snapshot": {
-      "badge": "From the community",
-      "title": "People, dispatches, and provenance",
-      "body": "Three ways members and makers show up inside GlobalLinkup.",
-      "viewAll": "View all members",
-      "verified": "Verified",
+    "people": {
+      "eyebrow": "Community directory",
+      "title": "Find people exploring where you are going",
+      "body": "Verified members and local voices across Latin America, Europe, and beyond. Every persona is reviewed by a human before it goes live.",
+      "exploreAll": "Explore all personas",
       "requestConnect": "Request Connect",
-      "memberKind": "Member since 2024",
-      "dispatchKind": "Community dispatch",
-      "goodsKind": "Artisan goods",
-      "mateoAlt": "Mateo photographed in a sunlit café in Roma Norte, Mexico City.",
-      "mateoCity": "Mexico City, MX",
-      "mateoName": "Mateo Silva, 31",
-      "mateoQuote": "Visual storyteller working in modernist typography, mezcal traditions, and urban cycling in CDMX.",
-      "mateoTag1": "Typography",
-      "mateoTag2": "Culinary",
-      "lucasAlt": "Lucas walking with a canvas bag in San Telmo, Buenos Aires.",
-      "lucasCity": "Buenos Aires, AR",
-      "lucasName": "Lucas Benítez, 29",
-      "lucasQuote": "Writing open-source code by morning, playing bandoneon by evening. Happy to host travellers passing through Palermo.",
-      "lucasTag1": "Tango",
-      "lucasTag2": "Open Source",
-      "adminCurated": "Vetted by GlobalLinkup",
-      "bagPrice": "$120 USD",
-      "bagAlt": "A handcrafted tan leather tote bag made by artisans in Oaxaca.",
-      "bagOrigin": "Workshop in Oaxaca",
-      "bagName": "Hand-stitched saddle leather bag",
-      "bagBody": "Vegetable-tanned by maestro Emiliano in San Martín Tilcajete, hand-stitched with waxed linen thread.",
-      "viewProvenance": "See provenance",
-      "postAlt": "A rustic ceramics workshop in Seville, Spain.",
-      "postTag": "Seville, Spain",
-      "postAuthor": "Clara Linares",
-      "postTime": "3 hours ago",
-      "postTitle": "Finding quiet in the old Triana pottery quarters.",
-      "postBody": "Every corner of this alley smells of damp clay and orange blossom. I met Don Ramón, who has kept his wood-fire kiln running since 1974. No crowds, just an honest conversation."
+      "status": {
+        "activeThisWeek": "Active this week",
+        "studioOpen": "Studio open",
+        "hostGuide": "Host & guide"
+      },
+      "camila": {
+        "alt": "Camila photographed among plants in Medellín, Colombia.",
+        "city": "Medellín, Colombia",
+        "name": "Camila Restrepo, 26",
+        "languages": "ES (Nat) • EN",
+        "role": "Botanist and eco-textile weaver",
+        "quote": "Leading wild indigo dyeing workshops in Santa Elena with grandmothers, and weekend trail runs through Arví park.",
+        "tag1": "Textile dyeing",
+        "tag2": "Flora hikes",
+        "tag3": "Coffee roasting"
+      },
+      "mateo": {
+        "alt": "Mateo photographed in a sunlit café in Mexico City.",
+        "city": "Mexico City, Mexico",
+        "name": "Mateo Silva, 30",
+        "languages": "ES • EN • PT",
+        "role": "Architect and terracotta designer",
+        "quote": "Working in Roma Norte on clay acoustics. Eager to meet visiting creatives and show them lesser-known modernism and mezcalerías.",
+        "tag1": "Brutalist arch",
+        "tag2": "Ceramics",
+        "tag3": "Mezcal"
+      },
+      "lucas": {
+        "alt": "Lucas in a bookshop in San Telmo, Buenos Aires.",
+        "city": "Buenos Aires, Argentina",
+        "name": "Lucas Benítez, 32",
+        "languages": "ES • EN",
+        "role": "Documentary sound archivist",
+        "quote": "Based in San Telmo amid dusty tango vinyl records and old cinemas. Let’s drink mate and browse Sunday fairs for record-store treasures.",
+        "tag1": "Vinyl hunting",
+        "tag2": "Tango archives",
+        "tag3": "Mate culture"
+      }
+    },
+    "dispatches": {
+      "eyebrow": "Visual stories",
+      "title": "Field Dispatches & Travel Chronicles",
+      "body": "Unfiltered photography and cultural observations shared chronologically.",
+      "submit": "Submit a Dispatch",
+      "featuredAlt": "A rustic ceramics workshop in Triana, Seville.",
+      "featuredLocation": "Triana, Seville • Ceramic kilns",
+      "featuredAuthor": "Clara Linares",
+      "featuredMeta": "Seville • Dispatch #48",
+      "featuredTime": "Yesterday at dusk",
+      "featuredTitle": "\"Finding the last wood-fired kiln maestro along the Guadalquivir.\"",
+      "featuredBody": "We sat with Don Ramón, whose hands have turned Spanish clay for fifty years. No digital orders or mass production—just the smell of wet earth, orange blossoms drifting from the courtyard, and deep discussions on how traditions survive.",
+      "featuredQuote": "\"El barro enseña paciencia antes que belleza.\"",
+      "featuredLikes": "42 travelers inspired",
+      "mini1": {
+        "location": "Oaxaca City, MX • Santo Domingo",
+        "title": "\"Morning copal incense and slow woven rebozos in Teotitlán.\"",
+        "body": "I spent dawn watching cochineal insects turn natural wool into deep crimson. If you visit, skip the tourist vans and ride the collective taxi with maestro Pedro.",
+        "author": "Elena V.",
+        "time": "3 days ago"
+      },
+      "mini2": {
+        "location": "Patagonia, AR • Bariloche",
+        "title": "\"Hut-to-hut through the Lenga forests during early autumn.\"",
+        "body": "Winds howling across Refugio Frey, hot polenta cooked on an iron stove, and five different nationalities singing folk chords by firelight.",
+        "author": "Joaquín S.",
+        "time": "5 days ago"
+      },
+      "mini3": {
+        "location": "Granada, ES • Albayzín",
+        "title": "\"Flamenco rhythm echoing off white lime walls at midnight.\"",
+        "body": "No tickets or stadium lights. Just neighbors clapping bulerías on the stone terrace overlooking the Alhambra.",
+        "author": "Marcus & Ana",
+        "time": "1 week ago"
+      }
+    },
+    "marketplace": {
+      "eyebrow": "Direct provenance",
+      "title": "Artisan Goods & Nomadic Essentials",
+      "body": "Direct from heritage workshops across Mexico, Colombia, and Spain. No dropshipping, no markup exploitation.",
+      "verified": "100% Admin Vetted Provenance",
+      "cta": "Read Workshop Story & Order",
+      "bag": {
+        "alt": "A handcrafted tan leather tote bag made by artisans in Oaxaca.",
+        "price": "$120 USD",
+        "origin": "Oaxaca, Mexico",
+        "name": "Veg-Tanned Saddle Leather Tote",
+        "body": "Crafted by Maestro Emiliano in San Martín Tilcajete. Hand-cut and sewn with heavy waxed linen thread for decades of travel."
+      },
+      "ceramics": {
+        "alt": "A clay water pitcher beside coffee cups.",
+        "price": "$48 USD",
+        "origin": "Seville, Spain",
+        "name": "Triana Clay Water Botijo",
+        "body": "Porous natural terracotta that chills drinking water naturally through evaporation. Sourced from Don Ramón’s heritage kiln."
+      },
+      "coffee": {
+        "alt": "Coffee cups and roasted beans on a wooden table.",
+        "price": "$34 USD",
+        "origin": "Antioquia, Colombia",
+        "name": "High-Altitude Honey-Process Coffee",
+        "body": "Single-estate Castillo beans from Jericó. Sun-dried in cherry with notes of cacao and wild panela. Roasted in small batches."
+      }
     },
     "cta": {
-      "badge": "English and Spanish",
-      "title": "Connect beyond borders.",
-      "body": "Join a small international community built on trust and mutual discovery. No algorithms, no unwanted messages, just room to talk properly.",
-      "join": "Join GlobalLinkup",
-      "explore": "Explore People",
-      "assurance": "Human moderation. No advertising trackers. Mutual consent on every unlock."
+      "badge": "Join the GlobalLinkup community",
+      "title": "Ready to explore with people who cherish the journey?",
+      "body": "Connect with verified people, cultural storytellers, and hospitable hosts across two languages and dozens of cities. No algorithms, no unsolicited messages—just room to talk properly.",
+      "join": "Request Early Access",
+      "explore": "Learn the Privacy Protocol",
+      "assurance": "Human moderated • Zero data reselling • Mutual consent only"
     }
   },
   "Profile": {

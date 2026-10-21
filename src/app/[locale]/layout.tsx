@@ -51,7 +51,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   return (
     <html
       lang={locale}
-      className={`${manrope.variable} ${body.variable} dark h-full scroll-pt-24 antialiased motion-safe:scroll-smooth`}
+      className={`${manrope.variable} ${body.variable} h-full scroll-pt-24 antialiased motion-safe:scroll-smooth`}
       suppressHydrationWarning
     >
       <head>
