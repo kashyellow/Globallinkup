@@ -5,6 +5,7 @@ import { useState } from "react";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Reveal } from "@/components/ui/reveal";
 import { Icon } from "@/components/ui/icon";
+import { Spinner } from "@/components/ui/spinner";
 import { signOutAction } from "@/features/auth/actions";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -37,8 +38,10 @@ function Sep() {
 
 export function DossierHeader({ profile }: { profile: OwnProfile }) {
   const t = useTranslations("Profile");
+  const tCommon = useTranslations("Common");
   const router = useRouter();
   const [copied, setCopied] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   async function share() {
     try {
@@ -51,8 +54,14 @@ export function DossierHeader({ profile }: { profile: OwnProfile }) {
   }
 
   async function logout() {
-    const result = await signOutAction();
-    router.replace(result.redirectTo);
+    if (loggingOut) return;
+    setLoggingOut(true);
+    try {
+      const result = await signOutAction();
+      router.replace(result.redirectTo);
+    } catch {
+      setLoggingOut(false);
+    }
   }
 
   const metrics = [
@@ -90,9 +99,19 @@ export function DossierHeader({ profile }: { profile: OwnProfile }) {
               <Icon name="edit_square" className="text-base" />
               <span>{t("actions.edit")}</span>
             </Link>
-            <button type="button" onClick={() => void logout()} className={CONTROL_DANGER}>
-              <Icon name="logout" className="text-base" />
-              <span>{t("actions.logout")}</span>
+            <button
+              type="button"
+              onClick={() => void logout()}
+              disabled={loggingOut}
+              aria-busy={loggingOut || undefined}
+              className={CONTROL_DANGER}
+            >
+              {loggingOut ? (
+                <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
+              ) : (
+                <Icon name="logout" className="text-base" />
+              )}
+              <span>{loggingOut ? tCommon("processing") : t("actions.logout")}</span>
             </button>
           </div>
         </div>

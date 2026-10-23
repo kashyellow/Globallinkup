@@ -1,7 +1,6 @@
-"use client";
-
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Icon } from "@/components/ui/icon";
+import { MediaImage } from "@/components/ui/media-image";
 import { Link } from "@/lib/i18n/navigation";
 import { IMAGES } from "../data";
 import { CTA_PRIMARY, CTA_SECONDARY, CtaIcon, Eyebrow } from "./styles";
@@ -13,8 +12,8 @@ import { CTA_PRIMARY, CTA_SECONDARY, CtaIcon, Eyebrow } from "./styles";
  * under the copy at `max-w-sm` so it never becomes a full-width block, and the
  * detail panel sits below the photograph instead of covering it.
  */
-export function Hero() {
-  const t = useTranslations("Landing.hero");
+export async function Hero() {
+  const t = await getTranslations("Landing.hero");
 
   const trust = [
     { key: "trust1", icon: "verified_user" },
@@ -68,11 +67,11 @@ export function Hero() {
         <div className="mx-auto w-full max-w-xs sm:max-w-sm lg:col-span-5 lg:mx-0 lg:ml-auto lg:max-w-[26rem]">
           <article className="relative overflow-hidden rounded-[1.5rem] border border-outline-variant bg-marketing-core shadow-lift-lg">
             <div className="relative aspect-[4/3] w-full overflow-hidden bg-marketing-raised lg:aspect-[4/5]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                alt={t("cardAlt")}
-                className="h-full w-full object-cover"
+              <MediaImage
                 src={IMAGES.hero}
+                alt={t("cardAlt")}
+                wrapperClassName="h-full w-full"
+                loading="eager"
                 fetchPriority="high"
               />
               <div

@@ -7,6 +7,7 @@ import {
 import { getCurrentProfile, getCurrentUser, getServerClient } from "@/lib/auth";
 import { redirect } from "@/lib/i18n/navigation";
 import { createSignedImageUrl } from "@/lib/storage";
+import { unwrap } from "@/lib/supabase/unwrap";
 
 export async function generateMetadata({
   params,
@@ -37,17 +38,27 @@ async function loadInitial(): Promise<PersonaInitial | undefined> {
 
   if (supabase) {
     const avatarPath = profile.avatar_url;
-    avatarUrl = !avatarPath
-      ? null
-      : avatarPath.startsWith("http")
-        ? avatarPath
-        : await createSignedImageUrl(supabase, "avatars", avatarPath);
 
-    const { data: contact } = await supabase
-      .from("contact_details")
-      .select("whatsapp, instagram, other")
-      .eq("profile_id", profile.id)
-      .maybeSingle();
+    const [signedAvatar, contact, privateRow] = await Promise.all([
+      !avatarPath
+        ? Promise.resolve(null)
+        : avatarPath.startsWith("http")
+          ? Promise.resolve(avatarPath)
+          : createSignedImageUrl(supabase, "avatars", avatarPath),
+      supabase
+        .from("contact_details")
+        .select("whatsapp, instagram, other")
+        .eq("profile_id", profile.id)
+        .maybeSingle()
+        .then(unwrap),
+      supabase
+        .from("profile_private")
+        .select("date_of_birth")
+        .eq("profile_id", profile.id)
+        .maybeSingle()
+        .then(unwrap),
+    ]);
+
     const other = (contact?.other ?? null) as Record<string, string> | null;
     contacts.whatsapp = contact?.whatsapp ?? "";
     contacts.instagram = contact?.instagram ?? "";
@@ -55,13 +66,8 @@ async function loadInitial(): Promise<PersonaInitial | undefined> {
     contacts.facebook = other?.facebook ?? "";
     contacts.tiktok = other?.tiktok ?? "";
     contacts.x = other?.x ?? "";
-
-    const { data: privateRow } = await supabase
-      .from("profile_private")
-      .select("date_of_birth")
-      .eq("profile_id", profile.id)
-      .maybeSingle();
     dateOfBirth = privateRow?.date_of_birth ?? "";
+    avatarUrl = signedAvatar;
   }
 
   const languages = Array.isArray(profile.languages)

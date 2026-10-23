@@ -1,6 +1,4 @@
-"use client";
-
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Reveal } from "@/components/ui/reveal";
 import { Icon } from "@/components/ui/icon";
 import { Eyebrow } from "./styles";
@@ -16,8 +14,8 @@ const STEPS = [
  * Four-step protocol. Numbered cream cards on a white band — the sequence is
  * carried by the gold counters rather than a connecting rail.
  */
-export function StepsSection() {
-  const t = useTranslations("Landing.steps");
+export async function StepsSection() {
+  const t = await getTranslations("Landing.steps");
 
   return (
     <section

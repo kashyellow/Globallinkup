@@ -1,10 +1,11 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { BrandMark } from "@/components/ui/brand-mark";
 import { Icon } from "@/components/ui/icon";
-import { Link, usePathname, useRouter } from "@/lib/i18n/navigation";
+import { useLocaleSwitch } from "@/features/shared/use-locale-switch";
+import { Link } from "@/lib/i18n/navigation";
 import { routing, type Locale } from "@/lib/i18n/routing";
 import { cn } from "@/lib/utils";
 
@@ -26,11 +27,13 @@ function LocaleSwitch({
   locale,
   onSwitch,
   label,
+  disabled = false,
   className,
 }: {
   locale: string;
   onSwitch: (next: Locale) => void;
   label: string;
+  disabled?: boolean;
   className?: string;
 }) {
   return (
@@ -43,6 +46,8 @@ function LocaleSwitch({
           <button
             type="button"
             onClick={() => onSwitch(code)}
+            disabled={disabled}
+            aria-busy={disabled || undefined}
             aria-current={code === locale ? "true" : undefined}
             className={cn(
               "min-h-9 rounded-full px-1.5 font-label-md text-label-md transition-colors duration-300",
@@ -62,9 +67,7 @@ function LocaleSwitch({
 
 export function MarketingHeader() {
   const t = useTranslations("MarketingNav");
-  const pathname = usePathname();
-  const router = useRouter();
-  const locale = useLocale();
+  const { locale, pending: localePending, switchLocale } = useLocaleSwitch();
   const [menuOpen, setMenuOpen] = useState(false);
 
   // Close the mobile sheet whenever the viewport grows past `xl`, otherwise it
@@ -76,11 +79,6 @@ export function MarketingHeader() {
     query.addEventListener("change", close);
     return () => query.removeEventListener("change", close);
   }, [menuOpen]);
-
-  function switchLocale(next: Locale) {
-    if (next === locale) return;
-    router.replace(pathname, { locale: next });
-  }
 
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-outline-variant bg-marketing-shell/92 backdrop-blur-xl">
@@ -119,6 +117,7 @@ export function MarketingHeader() {
             locale={locale}
             onSwitch={switchLocale}
             label={t("language")}
+            disabled={localePending}
             className="hidden sm:flex"
           />
 
@@ -207,6 +206,8 @@ export function MarketingHeader() {
                     setMenuOpen(false);
                   }}
                   aria-pressed={code === locale}
+                  disabled={localePending}
+                  aria-busy={localePending || undefined}
                   tabIndex={menuOpen ? undefined : -1}
                   className={cn(
                     "flex min-h-11 min-w-11 items-center justify-center rounded-full border px-3 font-label-md text-label-md transition-colors duration-200",

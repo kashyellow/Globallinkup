@@ -1,9 +1,13 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
+
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
+import { InlineAlert } from "@/components/ui/inline-alert";
+import { Spinner } from "@/components/ui/spinner";
+import { useDialogA11y } from "@/features/shared/use-dialog-a11y";
 import { cn } from "@/lib/utils";
 
 /** Matches the single-inquiry rule in the privacy rail copy. */
@@ -19,6 +23,11 @@ export type ConnectTarget = {
   imageAlt: string;
 };
 
+/**
+ * `onSend` resolves `true` when the request was stored. The dialog stays open
+ * and shows the failure inline otherwise; this is what makes a failed request
+ * visible instead of closing before the Server Action answers.
+ */
 export function ConnectDialog({
   target,
   open,
@@ -28,48 +37,55 @@ export function ConnectDialog({
   target: ConnectTarget | null;
   open: boolean;
   onClose: () => void;
-  onSend: (note: string) => void;
+  onSend: (note: string) => Promise<boolean>;
 }) {
   const t = useTranslations("Common.connectDialog");
+  const tCommon = useTranslations("Common");
   const [draft, setDraft] = useState<{ id: string; text: string }>({ id: "", text: "" });
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const restoreRef = useRef<HTMLElement | null>(null);
 
-  useEffect(() => {
-    if (!open) return;
+  function close() {
+    if (sending) return;
+    setError(false);
+    onClose();
+  }
 
-    // Focus returns to the card button that opened the dialog once it closes.
-    restoreRef.current = document.activeElement as HTMLElement | null;
-
-    function handleKey(event: KeyboardEvent) {
-      if (event.key === "Escape") onClose();
-    }
-
-    document.addEventListener("keydown", handleKey);
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const focusTimer = window.setTimeout(() => textareaRef.current?.focus(), 150);
-
-    return () => {
-      window.clearTimeout(focusTimer);
-      document.removeEventListener("keydown", handleKey);
-      document.body.style.overflow = previousOverflow;
-      restoreRef.current?.focus();
-    };
-  }, [open, onClose]);
+  const containerRef = useDialogA11y(open, close, textareaRef);
 
   // The draft belongs to the person it was typed for, so opening a different
   // card always starts from a blank note without a reset effect.
   const note = draft.id === target?.id ? draft.text : "";
-  const canSend = note.trim().length > 0;
+  const canSend = note.trim().length > 0 && !sending;
   const firstName = target?.name.split(" ")[0] ?? "";
+
+  async function submit() {
+    if (!target || !canSend) return;
+
+    setSending(true);
+    setError(false);
+    try {
+      const ok = await onSend(note.trim());
+      if (!ok) {
+        setError(true);
+        return;
+      }
+      setDraft({ id: target.id, text: "" });
+      onClose();
+    } catch {
+      setError(true);
+    } finally {
+      setSending(false);
+    }
+  }
 
   return (
     <div
       aria-hidden={!open}
       inert={!open}
       onClick={(event) => {
-        if (event.target === event.currentTarget) onClose();
+        if (event.target === event.currentTarget) close();
       }}
       className={cn(
         "fixed inset-0 z-[70] flex items-end justify-center bg-background/80 backdrop-blur-sm transition-opacity duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] sm:items-center sm:p-space-lg",
@@ -77,9 +93,11 @@ export function ConnectDialog({
       )}
     >
       <div
+        ref={containerRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="connect-dialog-title"
+        aria-busy={sending || undefined}
         className={cn(
           "flex max-h-[92dvh] w-full max-w-lg flex-col overflow-y-auto rounded-t-[1.5rem] border border-outline-variant bg-surface-low shadow-lift-lg transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] sm:rounded-[1.5rem]",
           open ? "translate-y-0" : "translate-y-full sm:translate-y-4",
@@ -119,9 +137,10 @@ export function ConnectDialog({
               </div>
               <button
                 type="button"
-                onClick={onClose}
+                onClick={close}
+                disabled={sending}
                 aria-label={t("close")}
-                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-outline-variant bg-surface-container text-on-surface transition-colors duration-300 hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-outline-variant bg-surface-container text-on-surface transition-colors duration-300 hover:bg-surface-container-high focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60"
               >
                 <Icon name="close" className="text-xl" />
               </button>
@@ -130,14 +149,15 @@ export function ConnectDialog({
             <form
               onSubmit={(event) => {
                 event.preventDefault();
-                if (!canSend) return;
-                onSend(note.trim());
+                void submit();
               }}
               className="flex flex-col gap-space-md p-space-lg"
             >
               <p className="font-body-sm text-body-sm text-pretty text-secondary">
                 {t("body", { name: firstName })}
               </p>
+
+              {error ? <InlineAlert>{tCommon("actionError")}</InlineAlert> : null}
 
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-baseline justify-between gap-space-sm">
@@ -158,9 +178,10 @@ export function ConnectDialog({
                   rows={5}
                   maxLength={MAX_NOTE}
                   value={note}
+                  disabled={sending}
                   onChange={(event) => setDraft({ id: target.id, text: event.target.value })}
                   placeholder={t("notePlaceholder", { name: firstName })}
-                  className="w-full resize-none rounded-2xl border border-outline-variant bg-surface-dim px-space-md py-3 font-body-md text-body-md text-on-surface transition-colors duration-300 placeholder:text-placeholder hover:border-outline-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  className="w-full resize-none rounded-2xl border border-outline-variant bg-surface-dim px-space-md py-3 font-body-md text-body-md text-on-surface transition-colors duration-300 placeholder:text-placeholder hover:border-outline-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
                 />
                 <p className="flex items-start gap-1.5 font-body-sm text-body-sm text-text-muted">
                   <Icon name="lightbulb" className="mt-0.5 text-sm text-primary" />
@@ -176,8 +197,9 @@ export function ConnectDialog({
               <div className="flex flex-col gap-space-sm border-t border-outline-variant pt-space-md sm:flex-row sm:items-center sm:justify-end">
                 <button
                   type="button"
-                  onClick={onClose}
-                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-outline-variant bg-surface-dim px-space-lg py-2.5 font-label-lg text-label-lg font-semibold text-on-surface transition-colors duration-300 hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
+                  onClick={close}
+                  disabled={sending}
+                  className="inline-flex min-h-11 items-center justify-center rounded-full border border-outline-variant bg-surface-dim px-space-lg py-2.5 font-label-lg text-label-lg font-semibold text-on-surface transition-colors duration-300 hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-60"
                 >
                   {t("cancel")}
                 </button>
@@ -186,8 +208,12 @@ export function ConnectDialog({
                   disabled={!canSend}
                   className="inline-flex min-h-11 items-center justify-center gap-space-xs rounded-full bg-primary px-space-lg py-2.5 font-label-lg text-label-lg font-semibold text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:cursor-not-allowed disabled:bg-surface-container disabled:text-text-muted disabled:hover:bg-surface-container"
                 >
-                  <Icon name="send" className="text-lg" />
-                  {t("send")}
+                  {sending ? (
+                    <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
+                  ) : (
+                    <Icon name="send" className="text-lg" />
+                  )}
+                  {sending ? tCommon("processing") : t("send")}
                 </button>
               </div>
             </form>

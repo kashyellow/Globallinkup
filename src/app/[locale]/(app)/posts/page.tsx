@@ -17,16 +17,17 @@ export async function generateMetadata({
 
 export default async function PostsPage() {
   const { user, profile } = await requireApprovedUser();
-  const posts = await getFeed(user.id);
-
   const supabase = await getServerClient();
   const avatarPath = profile.avatar_url;
-  const avatar =
+
+  const [posts, avatar] = await Promise.all([
+    getFeed(user.id),
     !avatarPath || !supabase
-      ? null
+      ? Promise.resolve(null)
       : avatarPath.startsWith("http")
-        ? avatarPath
-        : await createSignedImageUrl(supabase, "avatars", avatarPath);
+        ? Promise.resolve(avatarPath)
+        : createSignedImageUrl(supabase, "avatars", avatarPath),
+  ]);
 
   return <PostsView posts={posts} viewer={{ id: user.id, name: profile.display_name, avatar }} />;
 }

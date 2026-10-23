@@ -5,6 +5,7 @@ import { getLocale } from "next-intl/server";
 
 import { redirect } from "@/lib/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { QueryError } from "@/lib/supabase/unwrap";
 import type { Database } from "@/types/database";
 
 /**
@@ -34,10 +35,16 @@ export const getCurrentUser = cache(async () => {
   if (!supabase) return null;
 
   try {
-    const { data } = await supabase.auth.getUser();
+    const { data, error } = await supabase.auth.getUser();
+    if (error) {
+      // A missing session is not an outage: treat it as logged out.
+      if (error.name === "AuthSessionMissingError" || error.status === 401) return null;
+      throw new QueryError(error.message, error.code);
+    }
     return data.user;
-  } catch {
-    return null;
+  } catch (error) {
+    if (error instanceof QueryError) throw error;
+    throw new QueryError(error instanceof Error ? error.message : "auth request failed");
   }
 });
 
@@ -46,12 +53,14 @@ export const getCurrentProfile = cache(async (): Promise<Profile | null> => {
   const user = await getCurrentUser();
   if (!supabase || !user) return null;
 
-  try {
-    const { data } = await supabase.from("profiles").select("*").eq("id", user.id).maybeSingle();
-    return data;
-  } catch {
-    return null;
-  }
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (error) throw new QueryError(error.message, error.code);
+  return data;
 });
 
 /** Signed in + profile exists + approved, else redirect. Used by the app shell. */

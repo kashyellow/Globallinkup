@@ -4,15 +4,20 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
+import { InlineAlert } from "@/components/ui/inline-alert";
+import { MediaImage } from "@/components/ui/media-image";
 import { Pagination } from "@/components/ui/pagination";
+import { Spinner } from "@/components/ui/spinner";
 import {
   acceptConnectionAction,
   declineConnectionAction,
   sendConnectRequestAction,
 } from "@/features/connect/actions";
 import { ConnectDialog } from "@/features/shared/connect-dialog";
+import { usePendingAction } from "@/features/shared/use-pending-action";
+import { useRefresh } from "@/features/shared/refresh-provider";
 import { usePagination } from "@/features/shared/use-pagination";
-import { Link, useRouter } from "@/lib/i18n/navigation";
+import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import type { ConnectState, Persona } from "../data";
 
@@ -21,12 +26,24 @@ const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 /** Cards per page. Two rows of the 2-up grid, keeping the CTA tile last. */
 const PAGE_SIZE = 4;
 
+/**
+ * A local override may be ahead of the server (request just sent) but must never
+ * hide a terminal server state such as "connected" or "declined" after a refresh.
+ */
+function effectiveState(override: ConnectState | undefined, server: ConnectState): ConnectState {
+  if (!override) return server;
+  if (server === "connected" || server === "declined") return server;
+  return override;
+}
+
 export function PersonaFeed({ personas }: { personas: Persona[] }) {
   const t = useTranslations("Discover");
-  const router = useRouter();
-  const [states, setStates] = useState<Record<string, ConnectState>>(() =>
-    Object.fromEntries(personas.map((persona) => [persona.id, persona.state])),
-  );
+  const { refresh } = useRefresh();
+  const { isPending, run } = usePendingAction();
+  // Only overrides live here; the server prop stays the source of truth for
+  // untouched cards. This survives a search/region change without remounting
+  // the feed (which used to resurrect a stale "Connect" button).
+  const [states, setStates] = useState<Record<string, ConnectState>>({});
   const [target, setTarget] = useState<Persona | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { page, totalPages, pageItems, setPage } = usePagination(personas, PAGE_SIZE);
@@ -35,32 +52,52 @@ export function PersonaFeed({ personas }: { personas: Persona[] }) {
     setTarget(null);
   }
 
-  async function sendRequest(note: string) {
-    if (!target) return;
+  async function sendRequest(note: string): Promise<boolean> {
+    if (!target) return false;
     const recipientId = target.id;
-    setTarget(null);
-    setError(null);
 
-    const result = await sendConnectRequestAction({ recipientId, note });
-    if (result.ok) {
-      setStates((previous) => ({ ...previous, [recipientId]: "requested" }));
-    } else {
-      setError(t("sendError"));
-    }
+    const result = await run(`connect:${recipientId}`, async () => {
+      setError(null);
+      try {
+        const response = await sendConnectRequestAction({ recipientId, note });
+        if (!response.ok) {
+          setError(t("sendError"));
+          return false;
+        }
+        setStates((previous) => ({ ...previous, [recipientId]: "requested" }));
+        refresh();
+        return true;
+      } catch {
+        setError(t("sendError"));
+        return false;
+      }
+    });
+
+    return result ?? false;
   }
 
   async function decide(personaId: string, connectionId: string | undefined, accept: boolean) {
     if (!connectionId) return;
-    setError(null);
-    const result = accept
-      ? await acceptConnectionAction({ id: connectionId })
-      : await declineConnectionAction({ id: connectionId });
-    if (!result.ok) {
-      setError(t("sendError"));
-      return;
-    }
-    setStates((previous) => ({ ...previous, [personaId]: accept ? "connected" : "declined" }));
-    router.refresh();
+
+    await run(`decision:${connectionId}`, async () => {
+      setError(null);
+      try {
+        const result = accept
+          ? await acceptConnectionAction({ id: connectionId })
+          : await declineConnectionAction({ id: connectionId });
+        if (!result.ok) {
+          setError(t("sendError"));
+          return;
+        }
+        setStates((previous) => ({
+          ...previous,
+          [personaId]: accept ? "connected" : "declined",
+        }));
+        refresh();
+      } catch {
+        setError(t("sendError"));
+      }
+    });
   }
 
   if (personas.length === 0) {
@@ -85,21 +122,15 @@ export function PersonaFeed({ personas }: { personas: Persona[] }) {
         <span className="font-label-lg text-label-lg text-text-muted">{t("activePersonas")}</span>
       </div>
 
-      {error ? (
-        <p
-          role="alert"
-          className="rounded-2xl border border-danger-border bg-danger-surface px-space-md py-2 font-body-sm text-body-sm text-danger-text"
-        >
-          {error}
-        </p>
-      ) : null}
+      {error ? <InlineAlert>{error}</InlineAlert> : null}
 
       <div className="grid grid-cols-1 gap-space-md sm:grid-cols-2">
-        {pageItems.map((persona, index) => (
+        {pageItems.map((persona) => (
           <PersonaCard
-            key={`${persona.id}-${page}-${index}`}
+            key={persona.id}
             persona={persona}
-            state={states[persona.id] ?? persona.state}
+            state={effectiveState(states[persona.id], persona.state)}
+            pending={isPending(`decision:${persona.connectionId ?? persona.id}`)}
             onConnect={() => setTarget(persona)}
             onAccept={() => void decide(persona.id, persona.connectionId, true)}
             onDecline={() => void decide(persona.id, persona.connectionId, false)}
@@ -113,7 +144,7 @@ export function PersonaFeed({ personas }: { personas: Persona[] }) {
         target={target}
         open={target !== null}
         onClose={closeDialog}
-        onSend={(note) => void sendRequest(note)}
+        onSend={sendRequest}
       />
     </section>
   );
@@ -122,12 +153,14 @@ export function PersonaFeed({ personas }: { personas: Persona[] }) {
 function PersonaCard({
   persona,
   state,
+  pending,
   onConnect,
   onAccept,
   onDecline,
 }: {
   persona: Persona;
   state: ConnectState;
+  pending: boolean;
   onConnect: () => void;
   onAccept: () => void;
   onDecline: () => void;
@@ -140,15 +173,12 @@ function PersonaCard({
       <Link href={`/persona/${persona.id}`} className="block">
         <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface-container">
           {persona.image ? (
-            <>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                alt={persona.imageAlt}
-                className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
-                src={persona.image}
-                loading="lazy"
-              />
-            </>
+            <MediaImage
+              src={persona.image}
+              alt={persona.imageAlt}
+              wrapperClassName="h-full w-full"
+              className="transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
+            />
           ) : (
             <DefaultAvatar className="h-full w-full" />
           )}
@@ -215,15 +245,21 @@ function PersonaCard({
             <button
               type="button"
               onClick={onAccept}
-              className="flex flex-1 items-center justify-center gap-space-xs rounded-full bg-primary px-space-md py-2.5 font-label-lg text-label-lg font-semibold text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
+              disabled={pending}
+              className="flex flex-1 items-center justify-center gap-space-xs rounded-full bg-primary px-space-md py-2.5 font-label-lg text-label-lg font-semibold text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-60"
             >
-              <Icon name="check" className="text-lg" />
-              {tCommon("accept")}
+              {pending ? (
+                <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
+              ) : (
+                <Icon name="check" className="text-lg" />
+              )}
+              {pending ? tCommon("processing") : tCommon("accept")}
             </button>
             <button
               type="button"
               onClick={onDecline}
-              className="flex flex-1 items-center justify-center rounded-full border border-outline-variant bg-surface-container px-space-md py-2.5 font-label-lg text-label-lg text-on-surface transition-colors duration-300 hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
+              disabled={pending}
+              className="flex flex-1 items-center justify-center rounded-full border border-outline-variant bg-surface-container px-space-md py-2.5 font-label-lg text-label-lg text-on-surface transition-colors duration-300 hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-60"
             >
               {tCommon("decline")}
             </button>

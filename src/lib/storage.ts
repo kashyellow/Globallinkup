@@ -39,3 +39,49 @@ export async function createSignedImageUrl(
 
   return data?.signedUrl ?? null;
 }
+
+/**
+ * One Storage request for many paths. This replaces the per-row N+1 signing in
+ * the list queries. Signed URLs are bearer tokens, so the map is request-scoped
+ * by the caller — never cache it across users.
+ */
+export async function createSignedImageUrls(
+  supabase: SupabaseClient<Database>,
+  bucket: ImageBucket,
+  paths: readonly (string | null | undefined)[],
+) {
+  const unique = [
+    ...new Set(
+      paths.filter(
+        (path): path is string =>
+          typeof path === "string" && path.length > 0 && !path.startsWith("http"),
+      ),
+    ),
+  ];
+
+  const byPath = new Map<string, string>();
+  if (unique.length === 0) return byPath;
+
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .createSignedUrls(unique, SIGNED_URL_TTL_SECONDS);
+
+  // A missing image should fall back to the avatar/placeholder, not fail the page.
+  if (error) return byPath;
+
+  for (const item of data ?? []) {
+    if (item.path && item.signedUrl) byPath.set(item.path, item.signedUrl);
+  }
+
+  return byPath;
+}
+
+/** Resolves a direct URL or a storage path from a batch map. */
+export function resolveImageUrl(
+  path: string | null | undefined,
+  byPath: ReadonlyMap<string, string>,
+): string | null {
+  if (!path) return null;
+  if (path.startsWith("http")) return path;
+  return byPath.get(path) ?? null;
+}

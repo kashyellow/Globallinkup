@@ -1,8 +1,7 @@
-"use client";
-
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Reveal } from "@/components/ui/reveal";
 import { Icon } from "@/components/ui/icon";
+import { MediaImage } from "@/components/ui/media-image";
 import { Link } from "@/lib/i18n/navigation";
 import { IMAGES } from "../data";
 import { Eyebrow } from "./styles";
@@ -17,8 +16,8 @@ const PRODUCTS = [
  * Marketplace strip: three admin-curated goods, each traced to a workshop.
  * Ordering happens on the real marketplace page, so the card CTA links there.
  */
-export function MarketplaceSection() {
-  const t = useTranslations("Landing.marketplace");
+export async function MarketplaceSection() {
+  const t = await getTranslations("Landing.marketplace");
 
   return (
     <section id="marketplace" className="w-full bg-marketing-base py-section-mobile md:py-section">
@@ -44,12 +43,10 @@ export function MarketplaceSection() {
             <Reveal as="li" key={product.key} delay={index * 80} className="h-full">
               <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-outline-variant bg-marketing-core shadow-lift-sm transition-shadow duration-500 hover:shadow-lift-md">
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-marketing-raised">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    alt={t(`${product.key}.alt`)}
-                    className="h-full w-full object-cover"
+                  <MediaImage
                     src={product.image}
-                    loading="lazy"
+                    alt={t(`${product.key}.alt`)}
+                    wrapperClassName="h-full w-full"
                   />
                   <span className="absolute top-3 right-3 rounded-full border border-outline-variant bg-marketing-core/95 px-2.5 py-1 font-label-md text-label-md font-semibold text-on-surface backdrop-blur-sm">
                     {t(`${product.key}.price`)}

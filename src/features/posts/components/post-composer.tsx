@@ -2,17 +2,24 @@
 
 import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
+import { InlineAlert } from "@/components/ui/inline-alert";
+import { Spinner } from "@/components/ui/spinner";
 import { uploadImageAction } from "@/features/media/actions";
 import { createPostAction } from "@/features/posts/actions";
-import { useRouter } from "@/lib/i18n/navigation";
+import { useRefresh } from "@/features/shared/refresh-provider";
 import { cn } from "@/lib/utils";
 
 type PublishState = "idle" | "publishing" | "posted";
+type PublishStage = "uploading" | "saving" | null;
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
+const MAX_CAPTION = 600;
+const MAX_BYTES = 10 * 1024 * 1024;
+const ALLOWED_TYPES = ["image/png", "image/jpeg", "image/webp"];
 
 /** Shared shape for the attachment button. */
 const ATTACH_BASE =
@@ -26,43 +33,100 @@ export function PostComposer({
   viewerAvatar: string | null;
 }) {
   const t = useTranslations("Posts.composer");
-  const router = useRouter();
+  const tCommon = useTranslations("Common");
+  const { refresh } = useRefresh();
   const [text, setText] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const previewRef = useRef<string | null>(null);
   const [publishState, setPublishState] = useState<PublishState>("idle");
-  const [showEmptyPrompt, setShowEmptyPrompt] = useState(false);
+  const [stage, setStage] = useState<PublishStage>(null);
+  const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  const canPublish = text.trim() !== "" && file !== null;
+  useEffect(() => {
+    return () => {
+      if (previewRef.current) URL.revokeObjectURL(previewRef.current);
+    };
+  }, []);
+
+  function setPreview(next: File | null) {
+    if (previewRef.current) URL.revokeObjectURL(previewRef.current);
+    const url = next ? URL.createObjectURL(next) : null;
+    previewRef.current = url;
+    setPreviewUrl(url);
+  }
+
+  const canPublish = text.trim() !== "" && file !== null && text.length <= MAX_CAPTION;
+
+  function chooseFile(next: File | null) {
+    setError(null);
+    if (!next) {
+      setFile(null);
+      setPreview(null);
+      return;
+    }
+    if (!ALLOWED_TYPES.includes(next.type) || next.size > MAX_BYTES) {
+      setError(t("uploadError"));
+      return;
+    }
+    setFile(next);
+    setPreview(next);
+  }
 
   async function publish() {
-    if (text.trim() === "" || !file) {
-      setShowEmptyPrompt(true);
+    if (text.trim() === "") {
+      setError(t("emptyPrompt"));
       inputRef.current?.focus();
       return;
     }
+    if (text.length > MAX_CAPTION) {
+      setError(t("captionTooLong"));
+      return;
+    }
+    if (!file) {
+      setError(t("photoRequired"));
+      return;
+    }
 
+    setError(null);
     setPublishState("publishing");
+    setStage("uploading");
 
     const formData = new FormData();
     formData.set("bucket", "post-images");
     formData.set("file", file);
-    const upload = await uploadImageAction(formData);
-    if (!upload.ok) {
-      setPublishState("idle");
-      return;
-    }
 
-    const created = await createPostAction({ caption: text, imagePath: upload.path });
-    if (!created.ok) {
+    try {
+      const upload = await uploadImageAction(formData);
+      if (!upload.ok) {
+        setError(t("uploadError"));
+        setPublishState("idle");
+        setStage(null);
+        return;
+      }
+
+      setStage("saving");
+      const created = await createPostAction({ caption: text, imagePath: upload.path });
+      if (!created.ok) {
+        setError(t("publishError"));
+        setPublishState("idle");
+        setStage(null);
+        return;
+      }
+    } catch {
+      setError(t("publishError"));
       setPublishState("idle");
+      setStage(null);
       return;
     }
 
     setPublishState("posted");
+    setStage(null);
     setText("");
     setFile(null);
-    router.refresh();
+    setPreview(null);
+    refresh();
 
     setTimeout(() => setPublishState("idle"), 1800);
   }
@@ -95,16 +159,36 @@ export function PostComposer({
           <textarea
             ref={inputRef}
             rows={3}
+            maxLength={MAX_CAPTION}
             value={text}
-            onChange={(event) => setText(event.target.value)}
-            placeholder={showEmptyPrompt ? t("emptyPrompt") : t("placeholder")}
+            onChange={(event) => {
+              setText(event.target.value);
+              if (error) setError(null);
+            }}
+            disabled={publishState === "publishing"}
+            placeholder={t("placeholder")}
+            aria-invalid={error ? true : undefined}
+            aria-describedby={error ? "composer-error" : undefined}
             className={cn(
-              "w-full resize-none rounded-2xl border bg-surface-container p-space-md font-body-md text-body-md text-on-surface transition-colors duration-300 placeholder:text-text-muted focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-              showEmptyPrompt
+              "w-full resize-none rounded-2xl border bg-surface-container p-space-md font-body-md text-body-md text-on-surface transition-colors duration-300 placeholder:text-text-muted focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70",
+              error
                 ? "border-danger-border-strong"
                 : "border-outline-variant hover:border-outline focus:border-primary",
             )}
           />
+
+          <div className="flex flex-wrap items-center justify-between gap-space-xs font-body-sm text-body-sm text-secondary">
+            <span>{t("emptyPrompt")}</span>
+            <span className="tabular-nums">
+              {text.length} / {MAX_CAPTION}
+            </span>
+          </div>
+
+          {error ? (
+            <div id="composer-error">
+              <InlineAlert>{error}</InlineAlert>
+            </div>
+          ) : null}
 
           {file ? (
             <div className="flex flex-col gap-space-sm rounded-2xl border border-outline-variant bg-surface p-space-sm">
@@ -114,16 +198,27 @@ export function PostComposer({
                 </span>
                 <button
                   type="button"
-                  onClick={() => setFile(null)}
+                  onClick={() => {
+                    setFile(null);
+                    setPreview(null);
+                  }}
+                  disabled={publishState === "publishing"}
                   aria-label={t("previewTitle")}
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-container hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-container hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50"
                 >
                   <Icon name="close" className="text-base" />
                 </button>
               </div>
               <div className="flex items-center gap-space-md">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-outline-variant bg-surface-variant">
-                  <Icon name="image" className="text-secondary" />
+                <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-outline-variant bg-surface-variant">
+                  {previewUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img alt={file.name} src={previewUrl} className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center">
+                      <Icon name="image" className="text-secondary" />
+                    </div>
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-label-md text-label-md text-on-surface">
@@ -147,7 +242,11 @@ export function PostComposer({
                 type="file"
                 accept="image/png,image/jpeg,image/webp"
                 className="hidden"
-                onChange={(event) => setFile(event.target.files?.[0] ?? null)}
+                disabled={publishState === "publishing"}
+                onChange={(event) => {
+                  chooseFile(event.target.files?.[0] ?? null);
+                  event.target.value = "";
+                }}
               />
             </label>
           </div>
@@ -156,6 +255,7 @@ export function PostComposer({
             type="button"
             onClick={() => void publish()}
             disabled={publishState === "publishing"}
+            aria-busy={publishState === "publishing" || undefined}
             className={cn(
               "inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-full px-6 font-label-lg text-label-lg font-semibold transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-80",
               EASE,
@@ -166,23 +266,19 @@ export function PostComposer({
                   : "border border-outline-variant bg-surface-low text-text-muted hover:border-outline hover:text-secondary",
             )}
           >
-            <Icon
-              name={
-                publishState === "publishing"
-                  ? "progress_activity"
-                  : publishState === "posted"
-                    ? "check"
-                    : "send"
-              }
-              className={cn(
-                "text-lg",
-                publishState === "publishing" && "animate-spin",
-                publishState === "posted" && "text-base",
-              )}
-            />
+            {publishState === "publishing" ? (
+              <Spinner className="h-5 w-5 text-current" label={tCommon("processing")} />
+            ) : (
+              <Icon
+                name={publishState === "posted" ? "check" : "send"}
+                className={cn("text-lg", publishState === "posted" && "text-base")}
+              />
+            )}
             <span>
               {publishState === "publishing"
-                ? t("publishing")
+                ? stage === "uploading"
+                  ? tCommon("uploading")
+                  : tCommon("saving")
                 : publishState === "posted"
                   ? t("posted")
                   : t("publish")}

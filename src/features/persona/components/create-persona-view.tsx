@@ -4,6 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useState, useEffect, useRef, type FormEvent } from "react";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
+import { Spinner } from "@/components/ui/spinner";
 import { savePersonaAction, type PersonaError } from "@/features/persona/actions";
 import { uploadImageAction } from "@/features/media/actions";
 import { useRouter } from "@/lib/i18n/navigation";
@@ -84,6 +85,8 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
     ),
   );
   const [bio, setBio] = useState(initial?.bio ?? "");
+  const [fullName, setFullName] = useState(initial?.fullName ?? "");
+  const [city, setCity] = useState(initial?.city ?? "");
   const [contacts, setContacts] = useState<Record<ChannelKey, string>>(() => ({
     whatsapp: initial?.whatsapp ?? "",
     telegram: initial?.telegram ?? "",
@@ -114,6 +117,14 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
 
   function previewFile(file?: File) {
     if (!file) return;
+    if (
+      !["image/png", "image/jpeg", "image/webp"].includes(file.type) ||
+      file.size > 10 * 1024 * 1024
+    ) {
+      setError("upload");
+      return;
+    }
+    setError(null);
     setPhotoFile(file);
     setPhotoPreview(URL.createObjectURL(file));
   }
@@ -121,7 +132,13 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
   const selectedInterests = Object.values(interests).filter(Boolean).length;
   const selectedLanguages = Object.values(languages).filter((entry) => entry.active).length;
   const hasContact = Object.values(contacts).some((value) => value.trim().length > 0);
-  const canSubmit = selectedInterests >= 3 && hasContact && selectedLanguages >= 1;
+  const canSubmit =
+    fullName.trim().length >= 2 &&
+    city.trim().length > 0 &&
+    bio.trim().length > 0 &&
+    selectedInterests >= 3 &&
+    hasContact &&
+    selectedLanguages >= 1;
 
   function toggleLanguage(code: string) {
     setLanguages((prev) => ({ ...prev, [code]: { ...prev[code], active: !prev[code].active } }));
@@ -358,7 +375,8 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
                     id="persona-fullname"
                     name="fullname"
                     type="text"
-                    defaultValue={initial?.fullName ?? ""}
+                    value={fullName}
+                    onChange={(event) => setFullName(event.target.value)}
                     placeholder={t("fullNamePlaceholder")}
                     className={inputClass}
                   />
@@ -396,7 +414,8 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
                     id="persona-city"
                     name="city"
                     type="text"
-                    defaultValue={initial?.city ?? ""}
+                    value={city}
+                    onChange={(event) => setCity(event.target.value)}
                     placeholder={t("cityPlaceholder")}
                     className={inputClass}
                   />
@@ -629,6 +648,7 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
             <div className="flex flex-col items-center justify-between gap-space-md pt-space-md sm:flex-row">
               <button
                 type="button"
+                onClick={() => router.back()}
                 className="flex w-full items-center justify-center gap-space-xs rounded-lg border border-outline-variant bg-surface-variant px-space-lg py-3 font-label-lg text-label-lg text-on-surface shadow-sm transition-colors hover:bg-surface-container-high sm:w-auto"
               >
                 <Icon name="arrow_back" className="text-[18px]" />
@@ -645,10 +665,14 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
                 )}
               >
                 <span>{submitting ? t("submitting") : t("submit")}</span>
-                <Icon
-                  name="arrow_forward"
-                  className="text-[18px] transition-transform duration-200 group-hover:translate-x-1"
-                />
+                {submitting ? (
+                  <Spinner className="h-4 w-4 text-current" label={t("submitting")} />
+                ) : (
+                  <Icon
+                    name="arrow_forward"
+                    className="text-[18px] transition-transform duration-200 group-hover:translate-x-1"
+                  />
+                )}
               </button>
             </div>
           </form>

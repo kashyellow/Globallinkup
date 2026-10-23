@@ -3,6 +3,7 @@
 import { useFormatter, useTranslations } from "next-intl";
 import { useLayoutEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui/icon";
+import { MediaImage } from "@/components/ui/media-image";
 import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import {
@@ -117,11 +118,10 @@ export function ProfileActivity() {
               {SAVED_GOODS.map((product) => (
                 <div key={product.id} className={LEDGER_ROW}>
                   <div className="h-14 w-14 shrink-0 overflow-hidden border border-outline-variant bg-surface-low">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      alt={product.imageAlt}
+                    <MediaImage
                       src={product.image}
-                      className="h-full w-full object-cover"
+                      alt={product.imageAlt}
+                      wrapperClassName="h-full w-full"
                     />
                   </div>
                   <div className="min-w-0 flex-1">

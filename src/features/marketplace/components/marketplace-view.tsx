@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
+import { MediaImage } from "@/components/ui/media-image";
 import { Pagination } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 import type { MarketplaceContact, MarketplaceProduct } from "../queries";
@@ -275,21 +276,12 @@ function ProductCard({
             className="relative block w-full overflow-hidden bg-surface-container focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
           >
             <span className={cn("block w-full", featured ? "aspect-[16/11]" : "aspect-[4/3]")}>
-              {product.image ? (
-                <>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    alt={product.imageAlt}
-                    className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
-                    src={product.image}
-                    loading="lazy"
-                  />
-                </>
-              ) : (
-                <span className="flex h-full w-full items-center justify-center bg-surface-variant text-secondary">
-                  <Icon name="image" className="text-4xl" />
-                </span>
-              )}
+              <MediaImage
+                src={product.image}
+                alt={product.imageAlt}
+                wrapperClassName="h-full w-full"
+                className="transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.03] motion-reduce:transform-none"
+              />
             </span>
 
             <span className="absolute top-3 right-3 rounded-full border border-outline-variant bg-surface-low/95 px-2.5 py-1 font-label-md text-label-md text-on-surface shadow-lift-sm">

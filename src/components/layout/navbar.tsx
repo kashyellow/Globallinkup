@@ -1,12 +1,14 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { BrandMark } from "@/components/ui/brand-mark";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
-import { Link, usePathname, useRouter } from "@/lib/i18n/navigation";
-import { routing, type Locale } from "@/lib/i18n/routing";
+import { LinkPending } from "@/components/layout/link-pending";
+import { useLocaleSwitch } from "@/features/shared/use-locale-switch";
+import { Link, usePathname } from "@/lib/i18n/navigation";
+import { routing } from "@/lib/i18n/routing";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -32,8 +34,7 @@ export function Navbar({
 }) {
   const t = useTranslations("Nav");
   const pathname = usePathname();
-  const router = useRouter();
-  const locale = useLocale();
+  const { locale, pending: localePending, switchLocale } = useLocaleSwitch();
   const [menuOpen, setMenuOpen] = useState(false);
 
   // Close the mobile sheet whenever the viewport grows past `lg`, otherwise it
@@ -45,11 +46,6 @@ export function Navbar({
     query.addEventListener("change", close);
     return () => query.removeEventListener("change", close);
   }, [menuOpen]);
-
-  function switchLocale(next: Locale) {
-    if (next === locale) return;
-    router.replace(pathname, { locale: next });
-  }
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
@@ -80,13 +76,14 @@ export function Navbar({
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "inline-flex items-center gap-1.5 rounded-full px-3 py-2 font-label-lg text-label-lg transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                  "relative inline-flex items-center gap-1.5 rounded-full px-3 py-2 font-label-lg text-label-lg transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                   EASE,
                   active
                     ? "bg-surface-container-high font-semibold text-on-surface"
                     : "font-medium text-secondary hover:bg-surface-container hover:text-on-surface",
                 )}
               >
+                <LinkPending />
                 {t(item.key)}
                 {item.key === "connections" && pendingRequests > 0 ? (
                   <span
@@ -112,6 +109,8 @@ export function Navbar({
                 key={code}
                 type="button"
                 onClick={() => switchLocale(code)}
+                disabled={localePending}
+                aria-busy={localePending || undefined}
                 aria-current={code === locale ? "true" : undefined}
                 className={cn(
                   "min-h-11 rounded-full px-2.5 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-7",
@@ -253,6 +252,8 @@ export function Navbar({
                   key={code}
                   type="button"
                   onClick={() => switchLocale(code)}
+                  disabled={localePending}
+                  aria-busy={localePending || undefined}
                   aria-current={code === locale ? "true" : undefined}
                   tabIndex={menuOpen ? undefined : -1}
                   className={cn(

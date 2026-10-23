@@ -57,6 +57,14 @@ async function getRequestOrigin() {
   const siteUrl = getPublicEnv().NEXT_PUBLIC_SITE_URL;
   if (siteUrl) return siteUrl.replace(/\/+$/, "");
 
+  // A production deployment must configure the canonical origin; falling back
+  // to a request header there would let a spoofed host poison reset links.
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "NEXT_PUBLIC_SITE_URL is required in production to build password-reset links.",
+    );
+  }
+
   const requestHeaders = await headers();
   const host =
     requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
@@ -123,7 +131,16 @@ export async function requestPasswordResetAction(
         // `next` is locale-less: the callback prefixes the active locale once.
         redirectTo: `${origin}/${locale}/auth/callback?next=/reset-password`,
       });
-    } catch {
+    } catch (error) {
+      // A production deployment without a canonical origin is a configuration
+      // bug, not a reason to silently pretend the email was sent.
+      if (
+        process.env.NODE_ENV === "production" &&
+        error instanceof Error &&
+        error.message.includes("NEXT_PUBLIC_SITE_URL")
+      ) {
+        throw error;
+      }
       // Unconfigured Supabase (CI/e2e): fall through to the confirmation step.
     }
   }

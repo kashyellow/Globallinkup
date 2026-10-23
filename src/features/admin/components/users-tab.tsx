@@ -3,15 +3,19 @@
 import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 import type { CSSProperties, FormEvent } from "react";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
+import { InlineAlert } from "@/components/ui/inline-alert";
+import { Spinner } from "@/components/ui/spinner";
 import { reviewPersonaAction } from "@/features/admin/actions";
-import { useRouter } from "@/lib/i18n/navigation";
+import { usePendingAction } from "@/features/shared/use-pending-action";
+import { useRefresh } from "@/features/shared/refresh-provider";
 import { cn } from "@/lib/utils";
 import type { AdminProfileDto } from "../queries";
 
 const ACTION_BASE =
-  "inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 py-2 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-px";
+  "inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 py-2 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-px disabled:opacity-60";
 
 const STATUS_KEY: Record<AdminProfileDto["status"], string> = {
   pending: "statusPending",
@@ -20,10 +24,23 @@ const STATUS_KEY: Record<AdminProfileDto["status"], string> = {
   suspended: "statusSuspended",
 };
 
+type Decision = "approved" | "rejected" | "suspended";
+
 export function AdminUsersTab({ users }: { users: AdminProfileDto[] }) {
   const t = useTranslations("Admin.users");
+  const tCommon = useTranslations("Common");
+  const { refresh } = useRefresh();
+  const { isPending, run } = usePendingAction();
   const [draft, setDraft] = useState("");
   const [query, setQuery] = useState("");
+  const [statusOverrides, setStatusOverrides] = useState<Record<string, AdminProfileDto["status"]>>(
+    {},
+  );
+  const [confirmTarget, setConfirmTarget] = useState<{
+    user: AdminProfileDto;
+    decision: Decision;
+  } | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const needle = query.trim().toLowerCase();
   const visible =
@@ -45,6 +62,35 @@ export function AdminUsersTab({ users }: { users: AdminProfileDto[] }) {
   function clearSearch() {
     setDraft("");
     setQuery("");
+  }
+
+  async function review(user: AdminProfileDto, decision: Decision) {
+    const result = await run(`review:${user.id}`, async () => {
+      setError(null);
+      try {
+        const response = await reviewPersonaAction({ profileId: user.id, decision });
+        if (!response.ok) {
+          setError(tCommon("actionError"));
+          return false;
+        }
+        setStatusOverrides((previous) => ({ ...previous, [user.id]: decision }));
+        refresh();
+        return true;
+      } catch {
+        setError(tCommon("actionError"));
+        return false;
+      }
+    });
+
+    if (result) setConfirmTarget(null);
+  }
+
+  function requestReview(user: AdminProfileDto, decision: Decision) {
+    if (decision === "approved") {
+      void review(user, decision);
+      return;
+    }
+    setConfirmTarget({ user, decision });
   }
 
   return (
@@ -87,6 +133,8 @@ export function AdminUsersTab({ users }: { users: AdminProfileDto[] }) {
         </form>
       </div>
 
+      {error ? <InlineAlert>{error}</InlineAlert> : null}
+
       {query.length > 0 ? (
         <p className="px-space-xs font-label-md text-label-md text-secondary">
           {t("resultsCount", { shown: visible.length, total: users.length })}
@@ -123,30 +171,55 @@ export function AdminUsersTab({ users }: { users: AdminProfileDto[] }) {
       ) : (
         <div className="grid grid-cols-1 gap-space-md">
           {visible.map((user) => (
-            <UserCard key={user.id} user={user} />
+            <UserCard
+              key={user.id}
+              user={user}
+              status={statusOverrides[user.id] ?? user.status}
+              pending={isPending(`review:${user.id}`)}
+              onReview={(decision) => requestReview(user, decision)}
+            />
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={confirmTarget !== null}
+        title={confirmTarget?.decision === "suspended" ? t("suspend") : t("reject")}
+        body={tCommon("confirmBody")}
+        confirmLabel={tCommon("confirmAction")}
+        cancelLabel={tCommon("cancel")}
+        pendingLabel={tCommon("processing")}
+        pending={confirmTarget ? isPending(`review:${confirmTarget.user.id}`) : false}
+        onClose={() => setConfirmTarget(null)}
+        onConfirm={() => {
+          if (confirmTarget) void review(confirmTarget.user, confirmTarget.decision);
+        }}
+      />
     </div>
   );
 }
 
-function UserCard({ user }: { user: AdminProfileDto }) {
+function UserCard({
+  user,
+  status,
+  pending,
+  onReview,
+}: {
+  user: AdminProfileDto;
+  status: AdminProfileDto["status"];
+  pending: boolean;
+  onReview: (decision: Decision) => void;
+}) {
   const t = useTranslations("Admin.users");
+  const tCommon = useTranslations("Common");
   const format = useFormatter();
-  const router = useRouter();
 
   const chipTone =
-    user.status === "approved"
+    status === "approved"
       ? "border-success-border bg-success-surface text-success-text"
-      : user.status === "pending"
+      : status === "pending"
         ? "border-outline-variant bg-surface-container text-secondary"
         : "border-danger-border bg-danger-surface text-danger-text";
-
-  async function review(decision: "approved" | "rejected" | "suspended") {
-    const result = await reviewPersonaAction({ profileId: user.id, decision });
-    if (result.ok) router.refresh();
-  }
 
   return (
     <div
@@ -175,7 +248,7 @@ function UserCard({ user }: { user: AdminProfileDto }) {
                 chipTone,
               )}
             >
-              {t(STATUS_KEY[user.status])}
+              {t(STATUS_KEY[status])}
             </span>
           </div>
 
@@ -193,8 +266,11 @@ function UserCard({ user }: { user: AdminProfileDto }) {
                   {user.languages}
                 </span>
               ) : null}
-              {user.status === "pending" && user.submittedAt ? (
-                <span className="rounded-full border border-outline-variant bg-surface-container px-2.5 py-0.5 font-label-md text-label-md text-secondary">
+              {status === "pending" && user.submittedAt ? (
+                <span
+                  className="rounded-full border border-outline-variant bg-surface-container px-2.5 py-0.5 font-label-md text-label-md text-secondary"
+                  suppressHydrationWarning
+                >
                   {t("registeredAgo", {
                     time: format.relativeTime(new Date(user.submittedAt), new Date()),
                   })}
@@ -210,7 +286,7 @@ function UserCard({ user }: { user: AdminProfileDto }) {
         </div>
 
         <div className="flex w-full flex-wrap items-center justify-end gap-space-sm border-t border-outline-variant pt-space-sm lg:w-auto lg:shrink-0 lg:flex-nowrap lg:border-t-0 lg:pt-0">
-          {user.status === "approved" ? (
+          {status === "approved" ? (
             <>
               <span className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-outline-variant bg-surface-dim px-4 font-label-md text-label-md whitespace-nowrap text-secondary">
                 <Icon name="check_circle" className="text-base text-success-text" />
@@ -218,12 +294,16 @@ function UserCard({ user }: { user: AdminProfileDto }) {
               </span>
               <button
                 type="button"
-                onClick={() => void review("suspended")}
+                onClick={() => onReview("suspended")}
+                disabled={pending}
                 className={cn(
                   ACTION_BASE,
                   "border border-outline-variant text-secondary hover:border-danger-border-strong/60 hover:text-danger focus-visible:outline-danger-border-strong",
                 )}
               >
+                {pending ? (
+                  <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
+                ) : null}
                 {t("suspend")}
               </button>
             </>
@@ -231,24 +311,34 @@ function UserCard({ user }: { user: AdminProfileDto }) {
             <>
               <button
                 type="button"
-                onClick={() => void review("rejected")}
+                onClick={() => onReview("rejected")}
+                disabled={pending}
                 className={cn(
                   ACTION_BASE,
                   "border border-danger-border bg-danger-surface text-danger-text hover:border-danger-border-strong/60 focus-visible:outline-danger-border-strong",
                 )}
               >
-                <Icon name="close" className="text-base" />
+                {pending ? (
+                  <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
+                ) : (
+                  <Icon name="close" className="text-base" />
+                )}
                 {t("reject")}
               </button>
               <button
                 type="button"
-                onClick={() => void review("approved")}
+                onClick={() => onReview("approved")}
+                disabled={pending}
                 className={cn(
                   ACTION_BASE,
                   "border border-success-ring/30 bg-success-strong text-white hover:bg-success-hover focus-visible:outline-success-ring",
                 )}
               >
-                <Icon name="check" className="text-base" />
+                {pending ? (
+                  <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
+                ) : (
+                  <Icon name="check" className="text-base" />
+                )}
                 {t("approveProfile")}
               </button>
             </>

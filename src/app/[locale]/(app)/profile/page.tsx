@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { notFound } from "next/navigation";
 import { ProfileView } from "@/features/profile/components/profile-view";
 import { getOwnProfile } from "@/features/profile/queries";
 import { requireApprovedUser } from "@/lib/auth";
@@ -19,7 +20,7 @@ export default async function ProfilePage() {
   const profile = await getOwnProfile(user.id);
 
   if (!profile) {
-    return null;
+    notFound();
   }
 
   return <ProfileView profile={profile} />;

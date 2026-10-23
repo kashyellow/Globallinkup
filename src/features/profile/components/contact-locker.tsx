@@ -111,7 +111,10 @@ export function ContactLocker({
                     <span className="block truncate font-label-md text-label-md text-on-surface">
                       {member.name}
                     </span>
-                    <span className="font-label-md text-label-md text-text-muted">
+                    <span
+                      className="font-label-md text-label-md text-text-muted"
+                      suppressHydrationWarning
+                    >
                       {member.city} •{" "}
                       {t("unlocked", {
                         time: member.unlockedAt

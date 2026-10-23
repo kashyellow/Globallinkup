@@ -1,9 +1,11 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
+import { InlineAlert } from "@/components/ui/inline-alert";
 import { createReportAction } from "@/features/reports/actions";
+import { useDialogA11y } from "@/features/shared/use-dialog-a11y";
 import { cn } from "@/lib/utils";
 
 const REASONS = ["spam", "harassment", "inappropriate", "other"] as const;
@@ -26,37 +28,26 @@ export function ReportDialog({
 }) {
   const t = useTranslations("Common.report");
   const [draft, setDraft] = useState<Draft>(EMPTY);
+  const containerRef = useDialogA11y(open, onClose);
 
   const targetId = target?.id ?? "";
   const current: Draft = draft.id === targetId ? draft : { ...EMPTY, id: targetId };
   const update = (patch: Partial<Draft>) => setDraft({ ...current, ...patch });
 
-  useEffect(() => {
-    if (!open) return;
-
-    function handleKey(event: KeyboardEvent) {
-      if (event.key === "Escape") onClose();
-    }
-
-    document.addEventListener("keydown", handleKey);
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", handleKey);
-      document.body.style.overflow = previous;
-    };
-  }, [open, onClose]);
-
   async function submit() {
     if (!target || current.state === "sending") return;
     update({ state: "sending" });
-    const result = await createReportAction({
-      targetType: target.type,
-      targetId: target.id,
-      reason: current.reason,
-      details: current.details,
-    });
-    update({ state: result.ok ? "sent" : "error" });
+    try {
+      const result = await createReportAction({
+        targetType: target.type,
+        targetId: target.id,
+        reason: current.reason,
+        details: current.details,
+      });
+      update({ state: result.ok ? "sent" : "error" });
+    } catch {
+      update({ state: "error" });
+    }
   }
 
   return (
@@ -72,10 +63,12 @@ export function ReportDialog({
       )}
     >
       <div
+        ref={containerRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="report-dialog-title"
-        className="w-full max-w-md rounded-t-[1.5rem] border border-outline-variant bg-surface-low p-space-lg shadow-lift-lg sm:rounded-[1.5rem]"
+        tabIndex={-1}
+        className="w-full max-w-md rounded-t-[1.5rem] border border-outline-variant bg-surface-low p-space-lg shadow-lift-lg outline-none sm:rounded-[1.5rem]"
       >
         <div className="flex items-start justify-between gap-space-sm">
           <div>
@@ -155,11 +148,7 @@ export function ReportDialog({
               />
             </label>
 
-            {current.state === "error" ? (
-              <p role="alert" className="font-body-sm text-body-sm text-danger-text">
-                {t("error")}
-              </p>
-            ) : null}
+            {current.state === "error" ? <InlineAlert>{t("error")}</InlineAlert> : null}
 
             <div className="flex items-center justify-end gap-space-sm">
               <button

@@ -1,7 +1,8 @@
 import "server-only";
 
-import { createSignedImageUrl } from "@/lib/storage";
+import { createSignedImageUrls, resolveImageUrl } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
+import { unwrap } from "@/lib/supabase/unwrap";
 
 /**
  * S3e — the admin workstation. Everything here runs on the RLS client as an
@@ -87,40 +88,12 @@ export async function getAdminData(): Promise<AdminData> {
       .order("sort"),
   ]);
 
-  const profiles = profilesRes.data ?? [];
-  const reports = reportsRes.data ?? [];
-  const products = productsRes.data ?? [];
-  const images = imagesRes.data ?? [];
+  const profiles = unwrap(profilesRes) ?? [];
+  const reports = unwrap(reportsRes) ?? [];
+  const products = unwrap(productsRes) ?? [];
+  const images = unwrap(imagesRes) ?? [];
 
   const nameById = new Map(profiles.map((profile) => [profile.id, profile.display_name ?? ""]));
-
-  const users = await Promise.all(
-    profiles.map(async (profile) => {
-      const avatarPath = profile.avatar_url;
-      const avatar = !avatarPath
-        ? null
-        : avatarPath.startsWith("http")
-          ? avatarPath
-          : await createSignedImageUrl(supabase, "avatars", avatarPath);
-
-      return {
-        id: profile.id,
-        name: profile.display_name ?? "",
-        location: [profile.city, profile.country_code].filter(Boolean).join(", "),
-        bio: profile.bio_en ?? profile.bio_es ?? "",
-        headline: profile.headline ?? null,
-        avatar,
-        status: profile.approval_status,
-        languages: Array.isArray(profile.languages)
-          ? (profile.languages as { code?: string }[])
-              .map((entry) => entry?.code ?? "")
-              .filter(Boolean)
-              .join("/")
-          : "",
-        submittedAt: profile.submitted_at,
-      } satisfies AdminProfileDto;
-    }),
-  );
 
   const firstImageByProduct = new Map<string, string>();
   for (const image of images) {
@@ -129,24 +102,42 @@ export async function getAdminData(): Promise<AdminData> {
     }
   }
 
-  const productDtos = await Promise.all(
-    products.map(async (product) => ({
-      id: product.id,
-      name: product.name,
-      origin: product.origin_label ?? "",
-      price: `${(product.price_cents ?? 0) / 100} ${product.currency}`,
-      phone: product.contact_information ?? "",
-      description: product.description ?? "",
-      isPublished: product.is_published,
-      image: firstImageByProduct.has(product.id)
-        ? await createSignedImageUrl(
-            supabase,
-            "product-images",
-            firstImageByProduct.get(product.id)!,
-          )
-        : null,
-    })),
-  );
+  const [avatars, productImages] = await Promise.all([
+    createSignedImageUrls(
+      supabase,
+      "avatars",
+      profiles.map((profile) => profile.avatar_url),
+    ),
+    createSignedImageUrls(supabase, "product-images", [...firstImageByProduct.values()]),
+  ]);
+
+  const users: AdminProfileDto[] = profiles.map((profile) => ({
+    id: profile.id,
+    name: profile.display_name ?? "",
+    location: [profile.city, profile.country_code].filter(Boolean).join(", "),
+    bio: profile.bio_en ?? profile.bio_es ?? "",
+    headline: profile.headline ?? null,
+    avatar: resolveImageUrl(profile.avatar_url, avatars),
+    status: profile.approval_status,
+    languages: Array.isArray(profile.languages)
+      ? (profile.languages as { code?: string }[])
+          .map((entry) => entry?.code ?? "")
+          .filter(Boolean)
+          .join("/")
+      : "",
+    submittedAt: profile.submitted_at,
+  }));
+
+  const productDtos: AdminProductDto[] = products.map((product) => ({
+    id: product.id,
+    name: product.name,
+    origin: product.origin_label ?? "",
+    price: `${(product.price_cents ?? 0) / 100} ${product.currency}`,
+    phone: product.contact_information ?? "",
+    description: product.description ?? "",
+    isPublished: product.is_published,
+    image: resolveImageUrl(firstImageByProduct.get(product.id), productImages),
+  }));
 
   const reportDtos: AdminReportDto[] = reports.map((report) => ({
     id: report.id,

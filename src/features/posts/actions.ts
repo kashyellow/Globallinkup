@@ -55,7 +55,12 @@ export async function toggleLikeAction(input: unknown): Promise<PostResult> {
 
   const supabase = await createClient();
   const { error } = parsed.data.liked
-    ? await supabase.from("post_likes").insert({ post_id: parsed.data.postId, user_id: user.id })
+    ? await supabase
+        .from("post_likes")
+        .upsert(
+          { post_id: parsed.data.postId, user_id: user.id },
+          { onConflict: "post_id,user_id", ignoreDuplicates: true },
+        )
     : await supabase
         .from("post_likes")
         .delete()

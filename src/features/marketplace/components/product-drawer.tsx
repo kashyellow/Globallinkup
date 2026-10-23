@@ -1,8 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
+import { MediaImage } from "@/components/ui/media-image";
+import { useDialogA11y } from "@/features/shared/use-dialog-a11y";
 import { cn } from "@/lib/utils";
 import type { MarketplaceContact, MarketplaceProduct } from "../queries";
 
@@ -17,22 +19,7 @@ export function ProductDrawer({
   open: boolean;
   onClose: () => void;
 }) {
-  useEffect(() => {
-    if (!open) return;
-
-    function handleKey(event: KeyboardEvent) {
-      if (event.key === "Escape") onClose();
-    }
-
-    document.addEventListener("keydown", handleKey);
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", handleKey);
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [open, onClose]);
+  const containerRef = useDialogA11y(open, onClose);
 
   return (
     <div
@@ -47,9 +34,11 @@ export function ProductDrawer({
       )}
     >
       <aside
+        ref={containerRef}
         role="dialog"
         aria-modal="true"
         aria-label={product?.name}
+        tabIndex={-1}
         className={cn(
           "flex h-full w-full max-w-xl transform flex-col overflow-y-auto border-l border-outline-variant bg-surface-low shadow-2xl transition-transform duration-300",
           open ? "translate-x-0" : "translate-x-full",
@@ -235,20 +224,12 @@ function DrawerGallery({ product }: { product: MarketplaceProduct }) {
   return (
     <div className="flex flex-col gap-space-sm">
       <div className="aspect-[4/3] w-full overflow-hidden rounded-[1.25rem] border border-outline-variant bg-surface-container">
-        {product.gallery[imageIndex] ? (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              alt={product.galleryAlts[imageIndex]}
-              className="h-full w-full object-cover"
-              src={product.gallery[imageIndex]}
-            />
-          </>
-        ) : (
-          <div className="flex h-full w-full items-center justify-center bg-surface-variant text-secondary">
-            <Icon name="image" className="text-5xl" />
-          </div>
-        )}
+        <MediaImage
+          src={product.gallery[imageIndex]}
+          alt={product.galleryAlts[imageIndex] ?? product.name}
+          wrapperClassName="h-full w-full"
+          loading="eager"
+        />
       </div>
 
       {hasMultiple ? (
@@ -277,7 +258,7 @@ function DrawerGallery({ product }: { product: MarketplaceProduct }) {
                 className="h-full w-full object-cover"
                 src={src}
                 loading="lazy"
-              />
+              />{" "}
             </button>
           ))}
         </div>

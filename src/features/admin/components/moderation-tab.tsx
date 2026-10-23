@@ -1,19 +1,85 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
+import { useState } from "react";
 import type { CSSProperties } from "react";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Icon } from "@/components/ui/icon";
+import { InlineAlert } from "@/components/ui/inline-alert";
+import { Spinner } from "@/components/ui/spinner";
 import { removePostAction, resolveReportAction } from "@/features/admin/actions";
-import { useRouter } from "@/lib/i18n/navigation";
+import { usePendingAction } from "@/features/shared/use-pending-action";
+import { useRefresh } from "@/features/shared/refresh-provider";
 import { cn } from "@/lib/utils";
 import type { AdminReportDto } from "../queries";
 
 const ACTION_BASE =
-  "inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 py-2 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-px";
+  "inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 py-2 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-px disabled:opacity-60";
+
+type ResolveStatus = "resolved" | "dismissed";
 
 export function AdminModerationTab({ reports }: { reports: AdminReportDto[] }) {
   const t = useTranslations("Admin.moderation");
-  const open = reports.filter((report) => report.status === "open");
+  const tCommon = useTranslations("Common");
+  const { refresh } = useRefresh();
+  const { isPending, run } = usePendingAction();
+  const [handledIds, setHandledIds] = useState<ReadonlySet<string>>(() => new Set());
+  const [confirmTarget, setConfirmTarget] = useState<AdminReportDto | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const open = reports.filter((report) => report.status === "open" && !handledIds.has(report.id));
+
+  async function resolve(report: AdminReportDto, status: ResolveStatus) {
+    const result = await run(`report:${report.id}`, async () => {
+      setError(null);
+      try {
+        const response = await resolveReportAction({ reportId: report.id, status });
+        if (!response.ok) {
+          setError(tCommon("actionError"));
+          return false;
+        }
+        setHandledIds((previous) => new Set(previous).add(report.id));
+        refresh();
+        return true;
+      } catch {
+        setError(tCommon("actionError"));
+        return false;
+      }
+    });
+
+    if (result) setConfirmTarget(null);
+  }
+
+  async function removePost(report: AdminReportDto) {
+    if (report.targetType !== "post" || !report.targetId) return;
+
+    const result = await run(`remove:${report.id}`, async () => {
+      setError(null);
+      try {
+        const removed = await removePostAction({ postId: report.targetId! });
+        if (!removed.ok) {
+          setError(tCommon("actionError"));
+          return false;
+        }
+        const resolved = await resolveReportAction({
+          reportId: report.id,
+          status: "resolved",
+        });
+        if (!resolved.ok) {
+          setError(tCommon("actionError"));
+          return false;
+        }
+        setHandledIds((previous) => new Set(previous).add(report.id));
+        refresh();
+        return true;
+      } catch {
+        setError(tCommon("actionError"));
+        return false;
+      }
+    });
+
+    if (result) setConfirmTarget(null);
+  }
 
   return (
     <div className="flex flex-col gap-space-lg">
@@ -39,6 +105,8 @@ export function AdminModerationTab({ reports }: { reports: AdminReportDto[] }) {
         </div>
       </div>
 
+      {error ? <InlineAlert>{error}</InlineAlert> : null}
+
       {open.length === 0 ? (
         <div className="bezel-tray">
           <div
@@ -54,32 +122,48 @@ export function AdminModerationTab({ reports }: { reports: AdminReportDto[] }) {
       ) : (
         <div className="grid grid-cols-1 gap-space-md md:grid-cols-2">
           {open.map((report) => (
-            <ReportCard key={report.id} report={report} />
+            <ReportCard
+              key={report.id}
+              report={report}
+              pending={isPending(`report:${report.id}`) || isPending(`remove:${report.id}`)}
+              onResolve={(status) => void resolve(report, status)}
+              onRemove={() => setConfirmTarget(report)}
+            />
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={confirmTarget !== null}
+        title={t("removePostWarn")}
+        body={tCommon("confirmBody")}
+        confirmLabel={tCommon("confirmAction")}
+        cancelLabel={tCommon("cancel")}
+        pendingLabel={tCommon("processing")}
+        pending={confirmTarget ? isPending(`remove:${confirmTarget.id}`) : false}
+        onClose={() => setConfirmTarget(null)}
+        onConfirm={() => {
+          if (confirmTarget) void removePost(confirmTarget);
+        }}
+      />
     </div>
   );
 }
 
-function ReportCard({ report }: { report: AdminReportDto }) {
+function ReportCard({
+  report,
+  pending,
+  onResolve,
+  onRemove,
+}: {
+  report: AdminReportDto;
+  pending: boolean;
+  onResolve: (status: ResolveStatus) => void;
+  onRemove: () => void;
+}) {
   const t = useTranslations("Admin.moderation");
+  const tCommon = useTranslations("Common");
   const format = useFormatter();
-  const router = useRouter();
-
-  async function resolve(status: "resolved" | "dismissed") {
-    const result = await resolveReportAction({ reportId: report.id, status });
-    if (result.ok) router.refresh();
-  }
-
-  async function removePost() {
-    if (report.targetType !== "post") return;
-    const result = await removePostAction({ postId: report.targetId });
-    if (result.ok) {
-      await resolveReportAction({ reportId: report.id, status: "resolved" });
-      router.refresh();
-    }
-  }
 
   return (
     <div
@@ -92,7 +176,7 @@ function ReportCard({ report }: { report: AdminReportDto }) {
             <span className="rounded-full border border-danger-border bg-danger-surface px-2.5 py-0.5 font-label-md text-label-md font-semibold text-danger-text">
               {report.reason}
             </span>
-            <span className="font-label-md text-label-md text-text-muted">
+            <span className="font-label-md text-label-md text-text-muted" suppressHydrationWarning>
               {format.relativeTime(new Date(report.createdAt), new Date())}
             </span>
           </div>
@@ -119,19 +203,25 @@ function ReportCard({ report }: { report: AdminReportDto }) {
           {report.targetType === "post" ? (
             <button
               type="button"
-              onClick={() => void removePost()}
+              onClick={onRemove}
+              disabled={pending}
               className={cn(
                 ACTION_BASE,
                 "bg-danger text-on-error hover:bg-danger-border-strong focus-visible:outline-danger-border-strong",
               )}
             >
-              <Icon name="delete_forever" className="text-sm" />
+              {pending ? (
+                <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
+              ) : (
+                <Icon name="delete_forever" className="text-sm" />
+              )}
               {t("removePostWarn")}
             </button>
           ) : null}
           <button
             type="button"
-            onClick={() => void resolve("dismissed")}
+            onClick={() => onResolve("dismissed")}
+            disabled={pending}
             className={cn(
               ACTION_BASE,
               "border border-outline-variant bg-surface-dim text-on-surface hover:border-outline-hover hover:bg-surface-container focus-visible:outline-primary",
@@ -141,13 +231,18 @@ function ReportCard({ report }: { report: AdminReportDto }) {
           </button>
           <button
             type="button"
-            onClick={() => void resolve("resolved")}
+            onClick={() => onResolve("resolved")}
+            disabled={pending}
             className={cn(
               ACTION_BASE,
               "bg-primary text-on-primary hover:bg-primary-hover focus-visible:outline-primary",
             )}
           >
-            <Icon name="check" className="text-sm" />
+            {pending ? (
+              <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
+            ) : (
+              <Icon name="check" className="text-sm" />
+            )}
             {t("resolve")}
           </button>
         </div>

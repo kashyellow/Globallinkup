@@ -1,15 +1,14 @@
 import "server-only";
 
-import type { SupabaseClient } from "@supabase/supabase-js";
-
-import { createSignedImageUrl } from "@/lib/storage";
+import { createSignedImageUrls, resolveImageUrl } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
-import type { Database } from "@/types/database";
+import { unwrap, unwrapCount } from "@/lib/supabase/unwrap";
 
 /**
  * S3b — the connections page reads. Accepted connections come with their
  * unlocked contact channels (RLS returns `contact_details` only for those),
  * inbound requests carry the note, and outbound requests show what was sent.
+ * Avatars are signed in one batch.
  */
 
 type Language = { code: string; level: string };
@@ -61,6 +60,9 @@ export type ConnectionsData = {
 
 const LEVELS = new Set(["native", "fluent", "advanced", "conversational", "proficient", "basic"]);
 
+const PROFILE_COLUMNS =
+  "id, display_name, age, city, country_code, neighborhood, avatar_url, languages, interests, badge";
+
 function parseLanguages(value: unknown): Language[] {
   if (!Array.isArray(value)) return [];
   return value.flatMap((entry) => {
@@ -95,35 +97,28 @@ function buildChannels(
   return channels;
 }
 
-async function resolveAvatar(
-  supabase: SupabaseClient<Database>,
-  avatarUrl: string | null,
-): Promise<string | null> {
-  if (!avatarUrl) return null;
-  if (avatarUrl.startsWith("http")) return avatarUrl;
-  return createSignedImageUrl(supabase, "avatars", avatarUrl);
-}
-
 /** Nav badge: inbound requests still waiting on the viewer. */
 export async function getPendingRequestCount(viewerId: string): Promise<number> {
   const supabase = await createClient();
-  const { count } = await supabase
-    .from("connections")
-    .select("id", { count: "exact", head: true })
-    .eq("recipient_id", viewerId)
-    .eq("status", "requested");
-
-  return count ?? 0;
+  return unwrapCount(
+    await supabase
+      .from("connections")
+      .select("id", { count: "exact", head: true })
+      .eq("recipient_id", viewerId)
+      .eq("status", "requested"),
+  );
 }
 
 export async function getConnectionsData(viewerId: string): Promise<ConnectionsData> {
   const supabase = await createClient();
 
-  const { data: rows } = await supabase
-    .from("connections")
-    .select("id, requester_id, recipient_id, status, intro, created_at, updated_at")
-    .or(`requester_id.eq.${viewerId},recipient_id.eq.${viewerId}`)
-    .order("created_at", { ascending: false });
+  const rows = unwrap(
+    await supabase
+      .from("connections")
+      .select("id, requester_id, recipient_id, status, intro, created_at, updated_at")
+      .or(`requester_id.eq.${viewerId},recipient_id.eq.${viewerId}`)
+      .order("created_at", { ascending: false }),
+  );
 
   if (!rows || rows.length === 0) return { active: [], received: [], sent: [] };
 
@@ -131,7 +126,9 @@ export async function getConnectionsData(viewerId: string): Promise<ConnectionsD
     row.requester_id === viewerId ? row.recipient_id : row.requester_id;
 
   const peerIds = [...new Set(rows.map(peerIdFor))];
-  const { data: profiles } = await supabase.from("profiles_public").select("*").in("id", peerIds);
+  const profiles = unwrap(
+    await supabase.from("profiles_public").select(PROFILE_COLUMNS).in("id", peerIds),
+  );
   const profileById = new Map((profiles ?? []).map((profile) => [profile.id, profile]));
 
   const acceptedPeerIds = rows.filter((row) => row.status === "accepted").map(peerIdFor);
@@ -140,12 +137,20 @@ export async function getConnectionsData(viewerId: string): Promise<ConnectionsD
     { whatsapp: string | null; instagram: string | null; other: unknown }
   >();
   if (acceptedPeerIds.length > 0) {
-    const { data: contacts } = await supabase
-      .from("contact_details")
-      .select("profile_id, whatsapp, instagram, other")
-      .in("profile_id", acceptedPeerIds);
+    const contacts = unwrap(
+      await supabase
+        .from("contact_details")
+        .select("profile_id, whatsapp, instagram, other")
+        .in("profile_id", acceptedPeerIds),
+    );
     for (const contact of contacts ?? []) contactById.set(contact.profile_id, contact);
   }
+
+  const signed = await createSignedImageUrls(
+    supabase,
+    "avatars",
+    (profiles ?? []).map((profile) => profile.avatar_url),
+  );
 
   const active: ActiveConnectionDto[] = [];
   const received: ReceivedRequestDto[] = [];
@@ -156,13 +161,12 @@ export async function getConnectionsData(viewerId: string): Promise<ConnectionsD
     const profile = profileById.get(peerId);
     if (!profile) continue;
 
-    const avatar = await resolveAvatar(supabase, profile.avatar_url);
     const shared = {
       name: profile.display_name ?? "",
       age: profile.age ?? 0,
       location: [profile.city, profile.country_code].filter(Boolean).join(", "),
       neighborhood: profile.neighborhood ?? "",
-      avatar,
+      avatar: resolveImageUrl(profile.avatar_url, signed),
       languages: parseLanguages(profile.languages),
     };
 

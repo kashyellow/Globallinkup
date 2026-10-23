@@ -59,7 +59,7 @@ export function DiscoverWorkspace({
       {privacy}
 
       <div className="mt-page-mobile grid grid-cols-1 items-start gap-space-lg md:mt-page lg:grid-cols-12">
-        <PersonaFeed key={`${query}|${region}`} personas={filtered} />
+        <PersonaFeed personas={filtered} />
         <aside className="space-y-space-lg lg:sticky lg:top-24 lg:col-span-5">{aside}</aside>
       </div>
     </>

@@ -26,17 +26,6 @@ export function ResetLinkSentView() {
         <p className="max-w-md font-body-sm text-body-sm text-text-muted">{t("spamHint")}</p>
 
         <div className="flex flex-col items-center gap-space-xs pt-space-xs">
-          <button
-            type="button"
-            className={cn(
-              "inline-flex min-h-10 items-center gap-1.5 rounded-full px-space-md py-2 font-label-md text-label-md font-semibold text-primary transition-colors hover:bg-surface-container",
-              EASE,
-              "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
-            )}
-          >
-            <Icon name="refresh" className="text-lg" />
-            {t("resend")}
-          </button>
           <Link
             href="/login"
             className={cn(

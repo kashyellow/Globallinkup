@@ -3,7 +3,10 @@
 import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Icon } from "@/components/ui/icon";
+import { InlineAlert } from "@/components/ui/inline-alert";
+import { Spinner } from "@/components/ui/spinner";
 import {
   createProductAction,
   deleteProductAction,
@@ -11,7 +14,8 @@ import {
   updateProductAction,
 } from "@/features/admin/actions";
 import { uploadImageAction } from "@/features/media/actions";
-import { useRouter } from "@/lib/i18n/navigation";
+import { usePendingAction } from "@/features/shared/use-pending-action";
+import { useRefresh } from "@/features/shared/refresh-provider";
 import { cn } from "@/lib/utils";
 import type { AdminProductDto } from "../queries";
 
@@ -19,10 +23,14 @@ const INPUT =
   "h-11 w-full rounded-full border border-outline-variant bg-surface-dim px-space-md font-body-sm text-body-sm text-on-surface transition-colors duration-300 placeholder:text-text-muted hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
 const LABEL = "font-label-md text-label-md font-semibold text-on-surface";
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
 
 export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] }) {
   const t = useTranslations("Admin.marketplace");
-  const router = useRouter();
+  const tCommon = useTranslations("Common");
+  const { refresh } = useRefresh();
+  const { isPending, run } = usePendingAction();
 
   const [editingId, setEditingId] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -35,6 +43,51 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
   const [publishNow, setPublishNow] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [removedIds, setRemovedIds] = useState<ReadonlySet<string>>(() => new Set());
+  const [confirmTarget, setConfirmTarget] = useState<AdminProductDto | null>(null);
+  const [rowError, setRowError] = useState<string | null>(null);
+
+  const visible = products.filter((product) => !removedIds.has(product.id));
+
+  async function togglePublished(product: AdminProductDto) {
+    await run(`publish:${product.id}`, async () => {
+      setRowError(null);
+      try {
+        const result = await setProductPublishedAction({
+          productId: product.id,
+          isPublished: !product.isPublished,
+        });
+        if (!result.ok) {
+          setRowError(tCommon("actionError"));
+          return;
+        }
+        refresh();
+      } catch {
+        setRowError(tCommon("actionError"));
+      }
+    });
+  }
+
+  async function removeProduct(product: AdminProductDto) {
+    const result = await run(`delete:${product.id}`, async () => {
+      setRowError(null);
+      try {
+        const response = await deleteProductAction({ productId: product.id });
+        if (!response.ok) {
+          setRowError(tCommon("actionError"));
+          return false;
+        }
+        setRemovedIds((previous) => new Set(previous).add(product.id));
+        refresh();
+        return true;
+      } catch {
+        setRowError(tCommon("actionError"));
+        return false;
+      }
+    });
+
+    if (result) setConfirmTarget(null);
+  }
 
   useEffect(() => {
     return () => {
@@ -43,8 +96,18 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
   }, [photoPreview]);
 
   function pickPhoto(file: File | null) {
+    setError(null);
+    if (!file) {
+      setPhotoFile(null);
+      setPhotoPreview(null);
+      return;
+    }
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type) || file.size > MAX_IMAGE_BYTES) {
+      setError(t("errorInvalid"));
+      return;
+    }
     setPhotoFile(file);
-    setPhotoPreview(file ? URL.createObjectURL(file) : null);
+    setPhotoPreview(URL.createObjectURL(file));
   }
 
   function resetForm() {
@@ -85,43 +148,47 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
     setBusy(true);
     setError(null);
 
-    let imagePath: string | undefined;
-    if (photoFile) {
-      const formData = new FormData();
-      formData.set("bucket", "product-images");
-      formData.set("file", photoFile);
-      const upload = await uploadImageAction(formData);
-      if (!upload.ok) {
-        setBusy(false);
+    try {
+      let imagePath: string | undefined;
+      if (photoFile) {
+        const formData = new FormData();
+        formData.set("bucket", "product-images");
+        formData.set("file", photoFile);
+        const upload = await uploadImageAction(formData);
+        if (!upload.ok) {
+          setError(t("errorInvalid"));
+          return;
+        }
+        imagePath = upload.path;
+      }
+
+      const payload = {
+        name: name.trim(),
+        priceCents: Math.round(amount * 100),
+        currency: "USD",
+        originLabel: origin.trim(),
+        sellerPhone: phone.trim(),
+        description: description.trim(),
+        isPublished: publishNow,
+        imagePath,
+      };
+
+      const result = editingId
+        ? await updateProductAction({ ...payload, productId: editingId })
+        : await createProductAction(payload);
+
+      if (!result.ok) {
         setError(t("errorInvalid"));
         return;
       }
-      imagePath = upload.path;
-    }
 
-    const payload = {
-      name: name.trim(),
-      priceCents: Math.round(amount * 100),
-      currency: "USD",
-      originLabel: origin.trim(),
-      sellerPhone: phone.trim(),
-      description: description.trim(),
-      isPublished: publishNow,
-      imagePath,
-    };
-
-    const result = editingId
-      ? await updateProductAction({ ...payload, productId: editingId })
-      : await createProductAction(payload);
-
-    setBusy(false);
-    if (!result.ok) {
+      resetForm();
+      refresh();
+    } catch {
       setError(t("errorInvalid"));
-      return;
+    } finally {
+      setBusy(false);
     }
-
-    resetForm();
-    router.refresh();
   }
 
   return (
@@ -284,7 +351,9 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
       </div>
 
       {/* Catalog */}
-      {products.length === 0 ? (
+      {rowError ? <InlineAlert>{rowError}</InlineAlert> : null}
+
+      {visible.length === 0 ? (
         <div className="bezel-tray">
           <div
             className="flex flex-col items-center gap-2 bezel-core py-space-xl text-center"
@@ -298,31 +367,50 @@ export function AdminMarketplaceTab({ products }: { products: AdminProductDto[] 
         </div>
       ) : (
         <div className="flex flex-col gap-space-sm">
-          {products.map((product) => (
-            <ProductRow key={product.id} product={product} onEdit={() => startEdit(product)} />
+          {visible.map((product) => (
+            <ProductRow
+              key={product.id}
+              product={product}
+              pending={isPending(`publish:${product.id}`) || isPending(`delete:${product.id}`)}
+              onEdit={() => startEdit(product)}
+              onToggle={() => void togglePublished(product)}
+              onDelete={() => setConfirmTarget(product)}
+            />
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={confirmTarget !== null}
+        title={t("delete")}
+        body={tCommon("confirmBody")}
+        confirmLabel={tCommon("confirmAction")}
+        cancelLabel={tCommon("cancel")}
+        pendingLabel={tCommon("processing")}
+        pending={confirmTarget ? isPending(`delete:${confirmTarget.id}`) : false}
+        onClose={() => setConfirmTarget(null)}
+        onConfirm={() => {
+          if (confirmTarget) void removeProduct(confirmTarget);
+        }}
+      />
     </div>
   );
 }
 
-function ProductRow({ product, onEdit }: { product: AdminProductDto; onEdit: () => void }) {
+function ProductRow({
+  product,
+  pending,
+  onEdit,
+  onToggle,
+  onDelete,
+}: {
+  product: AdminProductDto;
+  pending: boolean;
+  onEdit: () => void;
+  onToggle: () => void;
+  onDelete: () => void;
+}) {
   const t = useTranslations("Admin.marketplace");
-  const router = useRouter();
-
-  async function toggle() {
-    const result = await setProductPublishedAction({
-      productId: product.id,
-      isPublished: !product.isPublished,
-    });
-    if (result.ok) router.refresh();
-  }
-
-  async function remove() {
-    const result = await deleteProductAction({ productId: product.id });
-    if (result.ok) router.refresh();
-  }
 
   return (
     <div
@@ -376,17 +464,20 @@ function ProductRow({ product, onEdit }: { product: AdminProductDto; onEdit: () 
           </button>
           <button
             type="button"
-            onClick={() => void toggle()}
-            className="inline-flex min-h-11 items-center rounded-full border border-outline-variant bg-surface-dim px-4 font-label-md text-label-md text-on-surface transition-colors duration-300 hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
+            onClick={onToggle}
+            disabled={pending}
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-outline-variant bg-surface-dim px-4 font-label-md text-label-md text-on-surface transition-colors duration-300 hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-60"
           >
+            {pending ? <Spinner className="h-4 w-4 text-current" label={t("update")} /> : null}
             {product.isPublished ? t("unpublish") : t("publish")}
           </button>
           <button
             type="button"
-            onClick={() => void remove()}
+            onClick={onDelete}
+            disabled={pending}
             title={t("delete")}
             aria-label={t("delete")}
-            className="flex h-11 w-11 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-variant hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-variant hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60"
           >
             <Icon name="delete" className="text-lg" />
           </button>

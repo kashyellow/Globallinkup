@@ -1,10 +1,11 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { BrandMark } from "@/components/ui/brand-mark";
 import { Icon } from "@/components/ui/icon";
-import { Link, usePathname, useRouter } from "@/lib/i18n/navigation";
+import { useLocaleSwitch } from "@/features/shared/use-locale-switch";
+import { Link, usePathname } from "@/lib/i18n/navigation";
 import { routing, type Locale } from "@/lib/i18n/routing";
 import { cn } from "@/lib/utils";
 
@@ -19,10 +20,12 @@ const EASE = "duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]";
 function LocaleSwitch({
   locale,
   onSwitch,
+  disabled = false,
   className,
 }: {
   locale: string;
   onSwitch: (next: Locale) => void;
+  disabled?: boolean;
   className?: string;
 }) {
   return (
@@ -39,6 +42,8 @@ function LocaleSwitch({
             key={code}
             type="button"
             onClick={() => onSwitch(code)}
+            disabled={disabled}
+            aria-busy={disabled || undefined}
             aria-pressed={active}
             className={cn(
               "min-h-11 min-w-11 rounded-full px-space-sm py-1 font-label-md text-label-md font-semibold transition-colors sm:min-h-8",
@@ -60,14 +65,8 @@ function LocaleSwitch({
 export function PublicHeader() {
   const t = useTranslations("PublicNav");
   const pathname = usePathname();
-  const router = useRouter();
-  const locale = useLocale();
+  const { locale, pending: localePending, switchLocale } = useLocaleSwitch();
   const [menuOpen, setMenuOpen] = useState(false);
-
-  function switchLocale(next: Locale) {
-    if (next === locale) return;
-    router.replace(pathname, { locale: next });
-  }
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
@@ -113,7 +112,7 @@ export function PublicHeader() {
             })}
           </nav>
 
-          <LocaleSwitch locale={locale} onSwitch={switchLocale} />
+          <LocaleSwitch locale={locale} onSwitch={switchLocale} disabled={localePending} />
 
           <div className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full border border-outline-variant bg-surface-container text-secondary sm:flex">
             <Icon name="person" className="text-lg" />

@@ -2,10 +2,15 @@
 
 import type { CSSProperties } from "react";
 import { useFormatter, useTranslations } from "next-intl";
+import { useState } from "react";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Icon } from "@/components/ui/icon";
+import { InlineAlert } from "@/components/ui/inline-alert";
+import { MediaImage } from "@/components/ui/media-image";
 import { disconnectConnectionAction } from "@/features/connect/actions";
-import { useRouter } from "@/lib/i18n/navigation";
+import { usePendingAction } from "@/features/shared/use-pending-action";
+import { useRefresh } from "@/features/shared/refresh-provider";
 import { cn } from "@/lib/utils";
 import type { ActiveConnectionDto } from "../queries";
 import { ContactVault } from "./contact-vault";
@@ -22,6 +27,35 @@ export function ActiveConnectionsPanel({
   onReviewInquiries: () => void;
 }) {
   const t = useTranslations("Connections.active");
+  const tCommon = useTranslations("Common");
+  const { refresh } = useRefresh();
+  const { isPending, run } = usePendingAction();
+  const [removedIds, setRemovedIds] = useState<ReadonlySet<string>>(() => new Set());
+  const [disconnectTarget, setDisconnectTarget] = useState<ActiveConnectionDto | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const visible = connections.filter((connection) => !removedIds.has(connection.id));
+
+  async function disconnect(connection: ActiveConnectionDto) {
+    const result = await run(`disconnect:${connection.id}`, async () => {
+      setError(null);
+      try {
+        const response = await disconnectConnectionAction({ id: connection.id });
+        if (!response.ok) {
+          setError(tCommon("actionError"));
+          return false;
+        }
+        setRemovedIds((previous) => new Set(previous).add(connection.id));
+        refresh();
+        return true;
+      } catch {
+        setError(tCommon("actionError"));
+        return false;
+      }
+    });
+
+    if (result) setDisconnectTarget(null);
+  }
 
   return (
     <div className="space-y-space-xl">
@@ -64,7 +98,9 @@ export function ActiveConnectionsPanel({
         </div>
       ) : null}
 
-      {connections.length === 0 ? (
+      {error ? <InlineAlert>{error}</InlineAlert> : null}
+
+      {visible.length === 0 ? (
         <div className="bezel-tray">
           <div
             className="flex flex-col items-center gap-2 bezel-core py-space-xl text-center"
@@ -78,25 +114,43 @@ export function ActiveConnectionsPanel({
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-space-lg md:grid-cols-2">
-          {connections.map((connection) => (
-            <ConnectionCard key={connection.id} connection={connection} />
+          {visible.map((connection) => (
+            <ConnectionCard
+              key={connection.id}
+              connection={connection}
+              onDisconnect={() => setDisconnectTarget(connection)}
+            />
           ))}
         </div>
       )}
+
+      <ConfirmDialog
+        open={disconnectTarget !== null}
+        title={t("disconnect")}
+        body={tCommon("confirmBody")}
+        confirmLabel={tCommon("confirmAction")}
+        cancelLabel={tCommon("cancel")}
+        pendingLabel={tCommon("processing")}
+        pending={disconnectTarget ? isPending(`disconnect:${disconnectTarget.id}`) : false}
+        onClose={() => setDisconnectTarget(null)}
+        onConfirm={() => {
+          if (disconnectTarget) void disconnect(disconnectTarget);
+        }}
+      />
     </div>
   );
 }
 
-function ConnectionCard({ connection }: { connection: ActiveConnectionDto }) {
+function ConnectionCard({
+  connection,
+  onDisconnect,
+}: {
+  connection: ActiveConnectionDto;
+  onDisconnect: () => void;
+}) {
   const t = useTranslations("Connections.active");
   const tDiscover = useTranslations("Discover");
   const format = useFormatter();
-  const router = useRouter();
-
-  async function disconnect() {
-    const result = await disconnectConnectionAction({ id: connection.id });
-    if (result.ok) router.refresh();
-  }
 
   return (
     <article className="bezel-tray">
@@ -125,15 +179,11 @@ function ConnectionCard({ connection }: { connection: ActiveConnectionDto }) {
           {/* Profile snapshot */}
           <div className="flex items-start gap-space-md">
             {connection.avatar ? (
-              <>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  alt={connection.name}
-                  className="h-20 w-20 shrink-0 rounded-full object-cover ring-1 ring-outline-variant"
-                  src={connection.avatar}
-                  loading="lazy"
-                />
-              </>
+              <MediaImage
+                src={connection.avatar}
+                alt={connection.name}
+                wrapperClassName="h-20 w-20 shrink-0 rounded-full ring-1 ring-outline-variant"
+              />
             ) : (
               <DefaultAvatar className="h-20 w-20 shrink-0 rounded-full ring-1 ring-outline-variant" />
             )}
@@ -191,7 +241,7 @@ function ConnectionCard({ connection }: { connection: ActiveConnectionDto }) {
           <p className="min-w-0 font-body-sm text-body-sm text-secondary">{t("vaultStatus")}</p>
           <button
             type="button"
-            onClick={() => void disconnect()}
+            onClick={onDisconnect}
             title={t("disconnect")}
             aria-label={t("disconnect")}
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-variant hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"

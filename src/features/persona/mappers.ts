@@ -6,6 +6,21 @@ import type { ConnectState, LanguageLevel, Persona, PersonaLanguage } from "./da
 
 type ProfilePublicRow = Database["public"]["Views"]["profiles_public"]["Row"];
 
+/** The narrow column set the list queries actually select. */
+export type PersonaRow = Pick<
+  ProfilePublicRow,
+  | "id"
+  | "display_name"
+  | "country_code"
+  | "city"
+  | "avatar_url"
+  | "languages"
+  | "interests"
+  | "badge"
+  | "approval_status"
+  | "age"
+>;
+
 const LANGUAGE_LEVELS: readonly LanguageLevel[] = [
   "native",
   "fluent",
@@ -31,7 +46,7 @@ function parseLanguages(value: unknown): PersonaLanguage[] {
 }
 
 export function mapPersonaRow(
-  row: ProfilePublicRow,
+  row: PersonaRow,
   options: { connectState: ConnectState; imageUrl: string | null; connectionId?: string },
 ): Persona {
   return {

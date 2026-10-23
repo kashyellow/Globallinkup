@@ -5,6 +5,7 @@ import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
+import { MediaImage } from "@/components/ui/media-image";
 import { cn } from "@/lib/utils";
 import type { SentRequestDto } from "../queries";
 
@@ -49,15 +50,11 @@ export function SentRequestsPanel({ requests }: { requests: SentRequestDto[] }) 
               >
                 <div className="flex min-w-0 items-center gap-space-md">
                   {request.avatar ? (
-                    <>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        alt={request.name}
-                        className="h-14 w-14 shrink-0 rounded-full object-cover ring-1 ring-outline-variant"
-                        src={request.avatar}
-                        loading="lazy"
-                      />
-                    </>
+                    <MediaImage
+                      src={request.avatar}
+                      alt={request.name}
+                      wrapperClassName="h-14 w-14 shrink-0 rounded-full ring-1 ring-outline-variant"
+                    />
                   ) : (
                     <DefaultAvatar className="h-14 w-14 shrink-0 rounded-full ring-1 ring-outline-variant" />
                   )}
@@ -66,7 +63,10 @@ export function SentRequestsPanel({ requests }: { requests: SentRequestDto[] }) 
                       {request.age > 0 ? `${request.name}, ${request.age}` : request.name}
                     </h4>
                     <p className="font-body-sm text-body-sm text-secondary">{request.location}</p>
-                    <span className="mt-1 inline-flex items-center gap-1.5 font-label-md text-label-md text-secondary">
+                    <span
+                      className="mt-1 inline-flex items-center gap-1.5 font-label-md text-label-md text-secondary"
+                      suppressHydrationWarning
+                    >
                       <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary-container" />
                       {t("sentAgoAwaiting", {
                         time: format.relativeTime(new Date(request.createdAt), new Date()),

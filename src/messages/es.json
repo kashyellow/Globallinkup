@@ -84,7 +84,25 @@
         "inappropriate": "Contenido inapropiado",
         "other": "Otro motivo"
       }
-    }
+    },
+    "loading": "Cargando…",
+    "processing": "Procesando…",
+    "slow": "Sigue en curso…",
+    "retry": "Reintentar",
+    "retryTitle": "Algo salió mal",
+    "retryBody": "No pudimos cargar esta página. Revisa tu conexión e inténtalo de nuevo.",
+    "notFoundTitle": "Página no encontrada",
+    "notFoundBody": "La página que buscas no existe o se ha movido.",
+    "backHome": "Volver al inicio",
+    "actionError": "No funcionó. Inténtalo de nuevo.",
+    "saving": "Guardando…",
+    "uploading": "Subiendo…",
+    "confirmTitle": "¿Seguro?",
+    "confirmBody": "Esta acción no se puede deshacer.",
+    "confirmAction": "Confirmar",
+    "cancel": "Cancelar",
+    "required": "Obligatorio",
+    "dismiss": "Cerrar"
   },
   "Discover": {
     "eyebrow": "Curaduría Intercultural",
@@ -209,7 +227,11 @@
       "emptyPrompt": "Escribe una frase o elige una captura analógica...",
       "previewTitle": "CAPTURA ANALÓGICA ADJUNTA",
       "previewFileName": "barcelona_elborn_35mm.jpg",
-      "previewMeta": "2.4 MB · Preajuste Kodak Portra 400"
+      "previewMeta": "2.4 MB · Preajuste Kodak Portra 400",
+      "photoRequired": "Añade una foto antes de publicar.",
+      "captionTooLong": "El texto admite un máximo de 600 caracteres.",
+      "publishError": "No pudimos publicar esta publicación. Inténtalo de nuevo.",
+      "uploadError": "No pudimos subir esa imagen. Usa JPG, PNG o WEBP de menos de 10 MB."
     },
     "postMeta": {
       "hoursAgo": "hace {count} horas",

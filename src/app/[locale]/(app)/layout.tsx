@@ -3,6 +3,7 @@ import { BottomNav } from "@/components/layout/bottom-nav";
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
 import { getPendingRequestCount } from "@/features/connect/queries";
+import { RefreshProvider } from "@/features/shared/refresh-provider";
 import { getServerClient, requireApprovedUser } from "@/lib/auth";
 import { createSignedImageUrl } from "@/lib/storage";
 
@@ -13,19 +14,21 @@ import { createSignedImageUrl } from "@/lib/storage";
  */
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const { profile } = await requireApprovedUser();
-  const pendingRequests = await getPendingRequestCount(profile.id);
 
-  const supabase = await getServerClient();
-  const avatarPath = profile.avatar_url;
-  const viewerAvatar =
-    !avatarPath || !supabase
-      ? null
-      : avatarPath.startsWith("http")
+  const [pendingRequests, viewerAvatar] = await Promise.all([
+    getPendingRequestCount(profile.id),
+    (async () => {
+      const supabase = await getServerClient();
+      const avatarPath = profile.avatar_url;
+      if (!avatarPath || !supabase) return null;
+      return avatarPath.startsWith("http")
         ? avatarPath
-        : await createSignedImageUrl(supabase, "avatars", avatarPath);
+        : createSignedImageUrl(supabase, "avatars", avatarPath);
+    })(),
+  ]);
 
   return (
-    <>
+    <RefreshProvider>
       <Navbar
         isAdmin={profile.role === "admin"}
         viewerName={profile.display_name}
@@ -42,6 +45,6 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         <Footer />
       </div>
       <BottomNav pendingRequests={pendingRequests} />
-    </>
+    </RefreshProvider>
   );
 }

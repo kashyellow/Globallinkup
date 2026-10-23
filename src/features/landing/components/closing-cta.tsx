@@ -1,6 +1,4 @@
-"use client";
-
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Reveal } from "@/components/ui/reveal";
 import { Icon } from "@/components/ui/icon";
 import { Link } from "@/lib/i18n/navigation";
@@ -11,8 +9,8 @@ import { CTA_GOLD, CTA_ON_DARK, CtaIcon, Eyebrow } from "./styles";
  * slab with a warm gold wash, so the final ask reads as an endpoint rather than
  * another band of content.
  */
-export function ClosingCta() {
-  const t = useTranslations("Landing.cta");
+export async function ClosingCta() {
+  const t = await getTranslations("Landing.cta");
 
   return (
     <section className="w-full bg-marketing-base px-margin-mobile pb-section-mobile md:px-margin md:pb-section">

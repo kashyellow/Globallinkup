@@ -1,7 +1,9 @@
 import "server-only";
 
-import { createSignedImageUrl } from "@/lib/storage";
+import { createSignedImageUrls, resolveImageUrl } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
+import { unwrap } from "@/lib/supabase/unwrap";
+import type { Database } from "@/types/database";
 
 import type { ConnectState, Persona } from "./data";
 import { mapPersonaRow } from "./mappers";
@@ -9,25 +11,33 @@ import { mapPersonaRow } from "./mappers";
 /**
  * S3a — discovery reads. Approved profiles (via `profiles_public`, which keeps
  * `profiles` RLS in charge) plus the viewer's connect state per peer. Avatars
- * come from private storage as short-lived signed URLs.
+ * come from private storage as short-lived signed URLs, signed in one batch.
  */
+
+const LIST_COLUMNS =
+  "id, display_name, country_code, city, avatar_url, languages, interests, badge, approval_status, age";
+
 export async function getDiscoverPersonas(viewerId: string): Promise<Persona[]> {
   const supabase = await createClient();
 
-  const { data: rows } = await supabase
-    .from("profiles_public")
-    .select("*")
-    .eq("approval_status", "approved")
-    .eq("role", "user")
-    .neq("id", viewerId)
-    .order("display_name", { ascending: true });
+  const rows = unwrap(
+    await supabase
+      .from("profiles_public")
+      .select(LIST_COLUMNS)
+      .eq("approval_status", "approved")
+      .eq("role", "user")
+      .neq("id", viewerId)
+      .order("display_name", { ascending: true }),
+  );
 
   if (!rows || rows.length === 0) return [];
 
-  const { data: connections } = await supabase
-    .from("connections")
-    .select("id, requester_id, recipient_id, status")
-    .or(`requester_id.eq.${viewerId},recipient_id.eq.${viewerId}`);
+  const connections = unwrap(
+    await supabase
+      .from("connections")
+      .select("id, requester_id, recipient_id, status")
+      .or(`requester_id.eq.${viewerId},recipient_id.eq.${viewerId}`),
+  );
 
   const stateByPeer = new Map<string, { state: ConnectState; id: string }>();
   for (const connection of connections ?? []) {
@@ -44,20 +54,17 @@ export async function getDiscoverPersonas(viewerId: string): Promise<Persona[]> 
     stateByPeer.set(peer, { state, id: connection.id });
   }
 
-  return Promise.all(
-    rows.map(async (row) => {
-      const avatarPath = row.avatar_url;
-      const imageUrl = !avatarPath
-        ? null
-        : avatarPath.startsWith("http")
-          ? avatarPath
-          : await createSignedImageUrl(supabase, "avatars", avatarPath);
+  const signed = await createSignedImageUrls(
+    supabase,
+    "avatars",
+    rows.map((row) => row.avatar_url),
+  );
 
-      return mapPersonaRow(row, {
-        connectState: stateByPeer.get(row.id ?? "")?.state ?? "none",
-        connectionId: stateByPeer.get(row.id ?? "")?.id,
-        imageUrl,
-      });
+  return rows.map((row) =>
+    mapPersonaRow(row, {
+      connectState: stateByPeer.get(row.id ?? "")?.state ?? "none",
+      connectionId: stateByPeer.get(row.id ?? "")?.id,
+      imageUrl: resolveImageUrl(row.avatar_url, signed),
     }),
   );
 }
@@ -71,22 +78,33 @@ export async function getPersonaDetail(
 ): Promise<PersonaDetail | null> {
   const supabase = await createClient();
 
-  const { data: row } = await supabase
-    .from("profiles_public")
-    .select("*")
-    .eq("id", personaId)
-    .eq("approval_status", "approved")
-    .maybeSingle();
+  const row = unwrap<Database["public"]["Views"]["profiles_public"]["Row"]>(
+    await supabase
+      .from("profiles_public")
+      .select(
+        "id, display_name, country_code, city, avatar_url, languages, interests, badge, approval_status, age, bio_en, bio_es",
+      )
+      .eq("id", personaId)
+      .eq("approval_status", "approved")
+      .maybeSingle(),
+  );
 
   if (!row) return null;
 
-  const { data: connection } = await supabase
-    .from("connections")
-    .select("id, requester_id, recipient_id, status")
-    .or(
-      `and(requester_id.eq.${viewerId},recipient_id.eq.${personaId}),and(requester_id.eq.${personaId},recipient_id.eq.${viewerId})`,
-    )
-    .maybeSingle();
+  const connection = unwrap<{
+    id: string;
+    requester_id: string;
+    recipient_id: string;
+    status: "requested" | "accepted" | "declined";
+  }>(
+    await supabase
+      .from("connections")
+      .select("id, requester_id, recipient_id, status")
+      .or(
+        `and(requester_id.eq.${viewerId},recipient_id.eq.${personaId}),and(requester_id.eq.${personaId},recipient_id.eq.${viewerId})`,
+      )
+      .maybeSingle(),
+  );
 
   const state: ConnectState = !connection
     ? "none"
@@ -98,18 +116,13 @@ export async function getPersonaDetail(
           ? "received"
           : "requested";
 
-  const avatarPath = row.avatar_url;
-  const imageUrl = !avatarPath
-    ? null
-    : avatarPath.startsWith("http")
-      ? avatarPath
-      : await createSignedImageUrl(supabase, "avatars", avatarPath);
+  const signed = await createSignedImageUrls(supabase, "avatars", [row.avatar_url]);
 
   return {
     ...mapPersonaRow(row, {
       connectState: state,
       connectionId: connection?.id,
-      imageUrl,
+      imageUrl: resolveImageUrl(row.avatar_url, signed),
     }),
     bio: row.bio_en ?? row.bio_es ?? "",
   };

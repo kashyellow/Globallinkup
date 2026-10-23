@@ -109,6 +109,7 @@ export function LoginView() {
               {/* Invalid credentials */}
               {isInvalid ? (
                 <div
+                  id="login-error"
                   role="alert"
                   className="flex items-start gap-space-sm rounded-2xl border border-danger-border bg-danger-surface p-space-md"
                 >
@@ -153,8 +154,10 @@ export function LoginView() {
                       id="login-email"
                       name="email"
                       type="email"
+                      autoComplete="email"
                       required
                       aria-invalid={isInvalid || undefined}
+                      aria-describedby={isInvalid ? "login-error" : undefined}
                       value={email}
                       onChange={(event) => setEmail(event.target.value)}
                       placeholder={t("emailPlaceholder")}
@@ -193,8 +196,10 @@ export function LoginView() {
                       id="login-password"
                       name="password"
                       type={showPassword ? "text" : "password"}
+                      autoComplete="current-password"
                       required
                       aria-invalid={isInvalid || undefined}
+                      aria-describedby={isInvalid ? "login-error" : undefined}
                       value={password}
                       onChange={(event) => setPassword(event.target.value)}
                       className={cn(

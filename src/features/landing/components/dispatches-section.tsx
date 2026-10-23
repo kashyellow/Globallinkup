@@ -1,8 +1,7 @@
-"use client";
-
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Reveal } from "@/components/ui/reveal";
 import { Icon } from "@/components/ui/icon";
+import { MediaImage } from "@/components/ui/media-image";
 import { Link } from "@/lib/i18n/navigation";
 import { IMAGES } from "../data";
 import { Eyebrow } from "./styles";
@@ -17,8 +16,8 @@ const MINI_DISPATCHES = [
  * Field dispatches: one featured story on the left, three compact entries in a
  * column on the right. Every card links to the chronological feed.
  */
-export function DispatchesSection() {
-  const t = useTranslations("Landing.dispatches");
+export async function DispatchesSection() {
+  const t = await getTranslations("Landing.dispatches");
 
   return (
     <section
@@ -53,12 +52,11 @@ export function DispatchesSection() {
             >
               <article className="flex h-full flex-col">
                 <div className="relative aspect-[16/10] w-full overflow-hidden bg-marketing-raised">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    alt={t("featuredAlt")}
-                    className="h-full w-full object-cover transition-transform duration-[900ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.02]"
+                  <MediaImage
                     src={IMAGES.dispatchFeatured}
-                    loading="lazy"
+                    alt={t("featuredAlt")}
+                    wrapperClassName="h-full w-full"
+                    className="transition-transform duration-[900ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.02]"
                   />
                   <span className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-primary/90 px-3 py-1 font-label-md text-label-md text-white backdrop-blur-sm">
                     <Icon name="location_on" className="text-[14px] text-gold" />
@@ -113,12 +111,11 @@ export function DispatchesSection() {
                   className="group flex h-full gap-space-sm overflow-hidden rounded-2xl border border-outline-variant bg-marketing-core p-space-sm shadow-lift-sm transition-shadow duration-500 hover:shadow-lift-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 >
                   <div className="relative hidden w-28 shrink-0 overflow-hidden rounded-xl bg-marketing-raised sm:block">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      alt=""
-                      className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.04]"
+                    <MediaImage
                       src={item.image}
-                      loading="lazy"
+                      alt=""
+                      wrapperClassName="h-full w-full"
+                      className="transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.04]"
                     />
                   </div>
 

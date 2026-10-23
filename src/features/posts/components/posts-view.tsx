@@ -4,12 +4,15 @@ import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
+import { InlineAlert } from "@/components/ui/inline-alert";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Pagination } from "@/components/ui/pagination";
 import { acceptConnectionAction, sendConnectRequestAction } from "@/features/connect/actions";
 import { deletePostAction } from "@/features/posts/actions";
 import { ConnectDialog, type ConnectTarget } from "@/features/shared/connect-dialog";
+import { usePendingAction } from "@/features/shared/use-pending-action";
+import { useRefresh } from "@/features/shared/refresh-provider";
 import { usePagination } from "@/features/shared/use-pagination";
-import { useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { POST_FILTERS, type PostFilter } from "../data";
 import type { FeedPost } from "../queries";
@@ -38,10 +41,20 @@ export function PostsView({
   viewer: { id: string; name: string; avatar: string | null };
 }) {
   const t = useTranslations("Posts");
-  const router = useRouter();
+  const tCommon = useTranslations("Common");
+  const { refresh } = useRefresh();
+  const { isPending, run } = usePendingAction();
+
   const [filter, setFilter] = useState<PostFilter>("all");
   const [target, setTarget] = useState<ConnectTarget | null>(null);
-  const visiblePosts = posts.filter((post) => matchesFilter(post, filter));
+  const [requestedPeers, setRequestedPeers] = useState<ReadonlySet<string>>(() => new Set());
+  const [removedIds, setRemovedIds] = useState<ReadonlySet<string>>(() => new Set());
+  const [deleteTarget, setDeleteTarget] = useState<FeedPost | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const visiblePosts = posts.filter(
+    (post) => !removedIds.has(post.id) && matchesFilter(post, filter),
+  );
   const { page, totalPages, pageItems, setPage, resetPage } = usePagination(
     visiblePosts,
     PAGE_SIZE,
@@ -51,23 +64,72 @@ export function PostsView({
     setTarget(null);
   }
 
-  async function sendRequest(note: string) {
-    if (!target) return;
+  async function sendRequest(note: string): Promise<boolean> {
+    if (!target) return false;
     const recipientId = target.id;
-    setTarget(null);
-    const result = await sendConnectRequestAction({ recipientId, note });
-    if (result.ok) router.refresh();
+
+    const result = await run(`connect:${recipientId}`, async () => {
+      setError(null);
+      try {
+        const response = await sendConnectRequestAction({ recipientId, note });
+        if (!response.ok) {
+          setError(tCommon("actionError"));
+          return false;
+        }
+        setRequestedPeers((previous) => new Set(previous).add(recipientId));
+        refresh();
+        return true;
+      } catch {
+        setError(tCommon("actionError"));
+        return false;
+      }
+    });
+
+    return result ?? false;
   }
 
   async function remove(postId: string) {
-    const result = await deletePostAction({ postId });
-    if (result.ok) router.refresh();
+    const result = await run(`post:${postId}`, async () => {
+      setError(null);
+      try {
+        const response = await deletePostAction({ postId });
+        if (!response.ok) {
+          setError(tCommon("actionError"));
+          return false;
+        }
+        setRemovedIds((previous) => new Set(previous).add(postId));
+        refresh();
+        return true;
+      } catch {
+        setError(tCommon("actionError"));
+        return false;
+      }
+    });
+
+    if (result) setDeleteTarget(null);
   }
 
-  async function accept(connectionId: string | undefined) {
+  async function accept(connectionId: string | undefined, authorId: string) {
     if (!connectionId) return;
-    const result = await acceptConnectionAction({ id: connectionId });
-    if (result.ok) router.refresh();
+
+    await run(`accept:${connectionId}`, async () => {
+      setError(null);
+      try {
+        const response = await acceptConnectionAction({ id: connectionId });
+        if (!response.ok) {
+          setError(tCommon("actionError"));
+          return;
+        }
+        setRequestedPeers((previous) => {
+          const next = new Set(previous);
+          next.delete(authorId);
+          return next;
+        });
+        refresh();
+      } catch {
+        setError(tCommon("actionError"));
+      }
+    });
   }
 
   // Changing the filter changes the result set, so the old page index is
@@ -119,16 +181,20 @@ export function PostsView({
         </div>
       </div>
 
+      {error ? <InlineAlert className="mt-space-md">{error}</InlineAlert> : null}
+
       {/* Main grid */}
       <div className="mt-block-mobile grid grid-cols-1 items-start gap-space-lg md:mt-block lg:grid-cols-12">
         <div className="mx-auto flex w-full max-w-[700px] flex-col gap-space-lg lg:col-span-8 lg:mx-0 lg:max-w-none">
           <PostComposer viewerName={viewer.name} viewerAvatar={viewer.avatar} />
 
-          {pageItems.map((post, index) => (
+          {pageItems.map((post) => (
             <PostCard
-              key={`${post.id}-${page}-${index}`}
+              key={post.id}
               post={post}
               isAuthor={post.authorId === viewer.id}
+              requested={requestedPeers.has(post.authorId)}
+              busy={isPending(`accept:${post.connectionId ?? post.id}`)}
               onConnect={() =>
                 setTarget({
                   id: post.authorId,
@@ -138,8 +204,8 @@ export function PostsView({
                   imageAlt: post.author,
                 })
               }
-              onAccept={() => void accept(post.connectionId)}
-              onDelete={() => void remove(post.id)}
+              onAccept={() => void accept(post.connectionId, post.authorId)}
+              onDelete={() => setDeleteTarget(post)}
             />
           ))}
 
@@ -233,7 +299,21 @@ export function PostsView({
         target={target}
         open={target !== null}
         onClose={closeDialog}
-        onSend={(note) => void sendRequest(note)}
+        onSend={sendRequest}
+      />
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        title={t("postMeta.remove")}
+        body={tCommon("confirmBody")}
+        confirmLabel={tCommon("confirmAction")}
+        cancelLabel={tCommon("cancel")}
+        pendingLabel={tCommon("processing")}
+        pending={deleteTarget ? isPending(`post:${deleteTarget.id}`) : false}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => {
+          if (deleteTarget) void remove(deleteTarget.id);
+        }}
       />
     </div>
   );

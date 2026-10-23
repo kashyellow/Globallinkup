@@ -1,7 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState, type ElementType, type ReactNode } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ElementType,
+  type ReactNode,
+} from "react";
 import { cn } from "@/lib/utils";
+
+const useIsomorphicLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
 /**
  * Scroll reveal wrapper (shared by marketing and signed-in app surfaces).
@@ -30,13 +39,15 @@ export function Reveal({
   const [armed, setArmed] = useState(false);
   const [shown, setShown] = useState(false);
 
+  // Arm before the browser paints the hydrated tree, then observe on the next
+  // frame so arming and revealing never land in the same paint.
+  useIsomorphicLayoutEffect(() => {
+    setArmed(true);
+  }, []);
+
   useEffect(() => {
     const node = ref.current;
     if (!node) return;
-
-    // Arm first, then observe on the next frame, so arming and revealing never
-    // land in the same paint (which would skip the transition entirely).
-    setArmed(true);
 
     const observer = new IntersectionObserver(
       (entries) => {

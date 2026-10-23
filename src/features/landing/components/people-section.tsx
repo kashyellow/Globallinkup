@@ -1,8 +1,7 @@
-"use client";
-
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Reveal } from "@/components/ui/reveal";
 import { Icon } from "@/components/ui/icon";
+import { MediaImage } from "@/components/ui/media-image";
 import { Link } from "@/lib/i18n/navigation";
 import { IMAGES } from "../data";
 import { Eyebrow } from "./styles";
@@ -18,8 +17,8 @@ const PEOPLE = [
  * mockup treats these as dossiers, so the action is a full-width Connect button
  * rather than a bare text link.
  */
-export function PeopleSection() {
-  const t = useTranslations("Landing.people");
+export async function PeopleSection() {
+  const t = await getTranslations("Landing.people");
 
   return (
     <section id="people" className="w-full bg-marketing-base py-section-mobile md:py-section">
@@ -51,12 +50,10 @@ export function PeopleSection() {
             <Reveal as="li" key={person.key} delay={index * 80} className="h-full">
               <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-outline-variant bg-marketing-core shadow-lift-sm transition-shadow duration-500 hover:shadow-lift-md">
                 <div className="relative aspect-[4/5] w-full overflow-hidden bg-marketing-raised">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    alt={t(`${person.key}.alt`)}
-                    className="h-full w-full object-cover"
+                  <MediaImage
                     src={person.image}
-                    loading="lazy"
+                    alt={t(`${person.key}.alt`)}
+                    wrapperClassName="h-full w-full"
                   />
                   <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-primary/85 px-2.5 py-1 font-label-md text-label-md text-white backdrop-blur-sm">
                     <Icon name="location_on" className="text-[14px] text-gold" />

@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Icon } from "@/components/ui/icon";
+import { LinkPending } from "@/components/layout/link-pending";
 import { Link, usePathname } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -46,11 +47,12 @@ export function BottomNav({ pendingRequests = 0 }: { pendingRequests?: number })
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex min-h-12 flex-1 flex-col items-center justify-center gap-0.5 rounded-full px-1 transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                "relative flex min-h-12 flex-1 flex-col items-center justify-center gap-0.5 rounded-full px-1 transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                 EASE,
                 active ? "bg-surface-container-high" : "hover:bg-surface-container",
               )}
             >
+              <LinkPending />
               <span className="relative flex items-center justify-center">
                 <Icon
                   name={item.icon}

@@ -3,6 +3,7 @@
 import { useFormatter, useTranslations } from "next-intl";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
+import { MediaImage } from "@/components/ui/media-image";
 import { cn } from "@/lib/utils";
 import type { Dispatch } from "../data";
 
@@ -45,8 +46,12 @@ export function DispatchCard({ dispatch, index }: { dispatch: Dispatch; index: n
 
       {single ? (
         <div className="group mt-space-md h-72 w-full overflow-hidden border border-outline-variant bg-surface-low">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img alt={dispatch.images[0].alt} src={dispatch.images[0].src} className={MEDIA_IMG} />
+          <MediaImage
+            src={dispatch.images[0].src}
+            alt={dispatch.images[0].alt}
+            wrapperClassName="h-full w-full"
+            className={MEDIA_IMG}
+          />
         </div>
       ) : (
         <div className="mt-space-md grid grid-cols-1 gap-space-sm sm:grid-cols-2">
@@ -55,8 +60,12 @@ export function DispatchCard({ dispatch, index }: { dispatch: Dispatch; index: n
               key={image.src}
               className="group h-56 overflow-hidden border border-outline-variant bg-surface-low"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img alt={image.alt} src={image.src} className={MEDIA_IMG} />
+              <MediaImage
+                src={image.src}
+                alt={image.alt}
+                wrapperClassName="h-full w-full"
+                className={MEDIA_IMG}
+              />
             </div>
           ))}
         </div>

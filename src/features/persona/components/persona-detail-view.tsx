@@ -4,6 +4,9 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
+import { InlineAlert } from "@/components/ui/inline-alert";
+import { MediaImage } from "@/components/ui/media-image";
+import { Spinner } from "@/components/ui/spinner";
 import {
   acceptConnectionAction,
   declineConnectionAction,
@@ -13,13 +16,16 @@ import type { PersonaDetail } from "@/features/persona/queries";
 import type { ConnectState } from "@/features/persona/data";
 import { ReportDialog } from "@/features/reports/components/report-dialog";
 import { ConnectDialog } from "@/features/shared/connect-dialog";
-import { Link, useRouter } from "@/lib/i18n/navigation";
+import { usePendingAction } from "@/features/shared/use-pending-action";
+import { useRefresh } from "@/features/shared/refresh-provider";
+import { Link } from "@/lib/i18n/navigation";
 
 export function PersonaDetailView({ persona }: { persona: PersonaDetail }) {
   const t = useTranslations("Discover.detail");
   const tDiscover = useTranslations("Discover");
   const tCommon = useTranslations("Common");
-  const router = useRouter();
+  const { refresh } = useRefresh();
+  const { isPending, run } = usePendingAction();
 
   const [state, setState] = useState<ConnectState>(persona.state);
   const [connectionId, setConnectionId] = useState<string | undefined>(persona.connectionId);
@@ -27,27 +33,46 @@ export function PersonaDetailView({ persona }: { persona: PersonaDetail }) {
   const [reportOpen, setReportOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function send(note: string) {
-    setConnectOpen(false);
+  async function send(note: string): Promise<boolean> {
     setError(null);
-    const result = await sendConnectRequestAction({ recipientId: persona.id, note });
-    if (result.ok) setState("requested");
-    else setError(tDiscover("sendError"));
+    const result = await run(`connect:${persona.id}`, async () => {
+      try {
+        const response = await sendConnectRequestAction({ recipientId: persona.id, note });
+        if (!response.ok) {
+          setError(tDiscover("sendError"));
+          return false;
+        }
+        setState("requested");
+        refresh();
+        return true;
+      } catch {
+        setError(tDiscover("sendError"));
+        return false;
+      }
+    });
+    return result ?? false;
   }
 
   async function decide(accept: boolean) {
     if (!connectionId) return;
-    setError(null);
-    const result = accept
-      ? await acceptConnectionAction({ id: connectionId })
-      : await declineConnectionAction({ id: connectionId });
-    if (!result.ok) {
-      setError(tDiscover("sendError"));
-      return;
-    }
-    setState(accept ? "connected" : "declined");
-    if (!accept) setConnectionId(undefined);
-    router.refresh();
+
+    await run(`decision:${connectionId}`, async () => {
+      setError(null);
+      try {
+        const result = accept
+          ? await acceptConnectionAction({ id: connectionId })
+          : await declineConnectionAction({ id: connectionId });
+        if (!result.ok) {
+          setError(tDiscover("sendError"));
+          return;
+        }
+        setState(accept ? "connected" : "declined");
+        if (!accept) setConnectionId(undefined);
+        refresh();
+      } catch {
+        setError(tDiscover("sendError"));
+      }
+    });
   }
 
   return (
@@ -64,14 +89,12 @@ export function PersonaDetailView({ persona }: { persona: PersonaDetail }) {
         <div className="md:col-span-5">
           <div className="aspect-[4/5] w-full overflow-hidden rounded-[1.5rem] border border-outline-variant bg-surface-container">
             {persona.image ? (
-              <>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  alt={persona.imageAlt}
-                  src={persona.image}
-                  className="h-full w-full object-cover"
-                />
-              </>
+              <MediaImage
+                src={persona.image}
+                alt={persona.imageAlt}
+                wrapperClassName="h-full w-full"
+                loading="eager"
+              />
             ) : (
               <DefaultAvatar className="h-full w-full" />
             )}
@@ -138,11 +161,7 @@ export function PersonaDetailView({ persona }: { persona: PersonaDetail }) {
             {t("contactNote")}
           </p>
 
-          {error ? (
-            <p role="alert" className="mt-space-sm font-body-sm text-body-sm text-danger-text">
-              {error}
-            </p>
-          ) : null}
+          {error ? <InlineAlert className="mt-space-sm">{error}</InlineAlert> : null}
 
           <div className="mt-space-lg flex flex-wrap items-center gap-space-sm">
             {state === "connected" ? (
@@ -155,15 +174,23 @@ export function PersonaDetailView({ persona }: { persona: PersonaDetail }) {
                 <button
                   type="button"
                   onClick={() => void decide(true)}
-                  className="inline-flex min-h-11 items-center gap-2 rounded-full bg-primary px-4 font-label-lg text-label-lg font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
+                  disabled={isPending(`decision:${connectionId}`)}
+                  className="inline-flex min-h-11 items-center gap-2 rounded-full bg-primary px-4 font-label-lg text-label-lg font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-60"
                 >
-                  <Icon name="check" className="text-lg" />
-                  {tCommon("accept")}
+                  {isPending(`decision:${connectionId}`) ? (
+                    <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
+                  ) : (
+                    <Icon name="check" className="text-lg" />
+                  )}
+                  {isPending(`decision:${connectionId}`)
+                    ? tCommon("processing")
+                    : tCommon("accept")}
                 </button>
                 <button
                   type="button"
                   onClick={() => void decide(false)}
-                  className="inline-flex min-h-11 items-center rounded-full border border-outline-variant px-4 font-label-lg text-label-lg text-on-surface hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
+                  disabled={isPending(`decision:${connectionId}`)}
+                  className="inline-flex min-h-11 items-center rounded-full border border-outline-variant px-4 font-label-lg text-label-lg text-on-surface hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-60"
                 >
                   {tCommon("decline")}
                 </button>
@@ -207,7 +234,7 @@ export function PersonaDetailView({ persona }: { persona: PersonaDetail }) {
         }}
         open={connectOpen}
         onClose={() => setConnectOpen(false)}
-        onSend={(note) => void send(note)}
+        onSend={send}
       />
 
       <ReportDialog

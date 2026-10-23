@@ -84,7 +84,25 @@
         "inappropriate": "Inappropriate content",
         "other": "Something else"
       }
-    }
+    },
+    "loading": "Loading…",
+    "processing": "Working…",
+    "slow": "Still working…",
+    "retry": "Try again",
+    "retryTitle": "Something went wrong",
+    "retryBody": "We could not load this page. Check your connection and try again.",
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "The page you are looking for does not exist or has moved.",
+    "backHome": "Back to home",
+    "actionError": "That didn't work. Please try again.",
+    "saving": "Saving…",
+    "uploading": "Uploading…",
+    "confirmTitle": "Are you sure?",
+    "confirmBody": "This action cannot be undone.",
+    "confirmAction": "Confirm",
+    "cancel": "Cancel",
+    "required": "Required",
+    "dismiss": "Dismiss"
   },
   "Discover": {
     "eyebrow": "Cross-Cultural Curation",
@@ -209,7 +227,11 @@
       "emptyPrompt": "Please write a sentence or choose an analog capture...",
       "previewTitle": "ATTACHED ANALOG CAPTURE",
       "previewFileName": "barcelona_elborn_35mm.jpg",
-      "previewMeta": "2.4 MB · Kodak Portra 400 preset"
+      "previewMeta": "2.4 MB · Kodak Portra 400 preset",
+      "photoRequired": "Add a photo before publishing.",
+      "captionTooLong": "Captions are limited to 600 characters.",
+      "publishError": "We could not publish this post. Please try again.",
+      "uploadError": "We could not upload that image. Use a JPG, PNG or WEBP under 10 MB."
     },
     "postMeta": {
       "hoursAgo": "{count} hours ago",

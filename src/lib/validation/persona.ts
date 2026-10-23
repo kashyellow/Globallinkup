@@ -22,7 +22,10 @@ export const savePersonaSchema = z
     city: z.string().trim().min(1, "cityRequired").max(120),
     dateOfBirth: z
       .union([z.literal(""), z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "dobInvalid")])
-      .optional(),
+      .optional()
+      .refine((value) => !value || new Date(value).getTime() <= Date.now(), {
+        message: "dobFuture",
+      }),
     languages: z.array(personaLanguageSchema).min(1, "languagesRequired").max(10),
     interests: z.array(z.string().trim().min(1).max(60)).min(3, "interestsRequired").max(20),
     bio: z.string().trim().min(1, "bioRequired").max(160),
