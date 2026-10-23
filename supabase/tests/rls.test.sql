@@ -144,7 +144,7 @@ select throws_ok(
 
 -- A report filed by Elena, for the cross-reporter read test below.
 insert into public.reports (reporter_id, target_type, target_user_id, reason)
-values ('66666666-6666-6666-6666-666666666666', 'user', '33333333-3333-3333-3333-333333333333', 'seed report');
+values ('66666666-6666-6666-6666-666666666666', 'user', '33333333-3333-3333-3333-333333333333', 'other');
 
 -- 14. a reporter can read their own report.
 set local role authenticated;
