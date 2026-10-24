@@ -510,11 +510,6 @@
       "calloutTitle": "{count} Bilateral Connection Requests Awaiting Your Review",
       "calloutBody": "Daniel from Mexico City and Valentina from Bogotá requested direct contact channels. Your info remains securely hidden until you accept.",
       "reviewInquiries": "Review Inquiries",
-      "badges": {
-        "ambassador": "Verified Ambassador",
-        "resident": "Verified Resident",
-        "creator": "Verified Creator"
-      },
       "connectedSince": "Connected since {date}",
       "vaultTitle": "Direct Channels Unveiled",
       "vaultStatus": "Bilateral Consent Active",
@@ -528,7 +523,7 @@
       "settings": "Connection Settings & Consent Revocation",
       "emptyTitle": "No connections yet",
       "disconnect": "Disconnect",
-      "vaultEmpty": "No contact channels shared yet.",
+      "vaultNotShared": "Not shared",
       "channels": {
         "whatsapp": "WhatsApp",
         "telegram": "Telegram",

@@ -510,11 +510,6 @@
       "calloutTitle": "{count} Solicitudes de Conexión Bilaterales Esperan tu Revisión",
       "calloutBody": "Daniel de Ciudad de México y Valentina de Bogotá solicitaron canales de contacto directo. Tu información permanece oculta de forma segura hasta que aceptes.",
       "reviewInquiries": "Revisar Solicitudes",
-      "badges": {
-        "ambassador": "Embajador Verificado",
-        "resident": "Residente Verificado",
-        "creator": "Creador Verificado"
-      },
       "connectedSince": "Conectado desde {date}",
       "vaultTitle": "Canales Directos Revelados",
       "vaultStatus": "Consentimiento Bilateral Activo",
@@ -528,7 +523,7 @@
       "settings": "Ajustes de Conexión y Revocación de Consentimiento",
       "emptyTitle": "Aún no tienes conexiones",
       "disconnect": "Desconectar",
-      "vaultEmpty": "Aún no se han compartido canales de contacto.",
+      "vaultNotShared": "Sin compartir",
       "channels": {
         "whatsapp": "WhatsApp",
         "telegram": "Telegram",

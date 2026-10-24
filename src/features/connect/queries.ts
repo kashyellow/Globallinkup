@@ -24,7 +24,6 @@ export type ActiveConnectionDto = {
   neighborhood: string;
   avatar: string | null;
   languages: Language[];
-  badge: string | null;
   connectedSince: string;
   interests: string[];
   channels: ContactChannel[];
@@ -61,7 +60,7 @@ export type ConnectionsData = {
 const LEVELS = new Set(["native", "fluent", "advanced", "conversational", "proficient", "basic"]);
 
 const PROFILE_COLUMNS =
-  "id, display_name, age, city, country_code, neighborhood, avatar_url, languages, interests, badge";
+  "id, display_name, age, city, country_code, neighborhood, avatar_url, languages, interests";
 
 function parseLanguages(value: unknown): Language[] {
   if (!Array.isArray(value)) return [];
@@ -175,7 +174,6 @@ export async function getConnectionsData(viewerId: string): Promise<ConnectionsD
         id: row.id,
         ...shared,
         countryCode: profile.country_code ?? "",
-        badge: profile.badge ?? null,
         connectedSince: row.updated_at ?? row.created_at ?? "",
         interests: profile.interests ?? [],
         channels: buildChannels(contactById.get(peerId)),

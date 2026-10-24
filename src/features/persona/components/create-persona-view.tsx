@@ -2,6 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { useState, useEffect, useRef, type FormEvent } from "react";
+import { ChannelIcon } from "@/components/ui/channel-icon";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { InlineAlert } from "@/components/ui/inline-alert";
@@ -30,12 +31,12 @@ const LEVELS = ["native", "fluent", "learning", "basic"] as const;
  * enforced here for the button state and again in Zod + the `save_persona` RPC.
  */
 const CHANNELS = [
-  { key: "whatsapp", icon: "call", prefix: "", placeholderKey: "whatsappPlaceholder" },
-  { key: "telegram", icon: "send", prefix: "@", placeholderKey: "telegramPlaceholder" },
-  { key: "instagram", icon: "photo_camera", prefix: "@", placeholderKey: "instagramPlaceholder" },
-  { key: "facebook", icon: "public", prefix: "", placeholderKey: "facebookPlaceholder" },
-  { key: "tiktok", icon: "music_note", prefix: "@", placeholderKey: "tiktokPlaceholder" },
-  { key: "x", icon: "tag", prefix: "@", placeholderKey: "xPlaceholder" },
+  { key: "whatsapp", prefix: "", placeholderKey: "whatsappPlaceholder" },
+  { key: "telegram", prefix: "@", placeholderKey: "telegramPlaceholder" },
+  { key: "instagram", prefix: "@", placeholderKey: "instagramPlaceholder" },
+  { key: "facebook", prefix: "", placeholderKey: "facebookPlaceholder" },
+  { key: "tiktok", prefix: "@", placeholderKey: "tiktokPlaceholder" },
+  { key: "x", prefix: "@", placeholderKey: "xPlaceholder" },
 ] as const;
 
 type ChannelKey = (typeof CHANNELS)[number]["key"];
@@ -869,8 +870,8 @@ export function CreatePersonaView({
                           fieldErrors.contacts && "border-danger-border-strong",
                         )}
                       />
-                      <Icon
-                        name={channel.icon}
+                      <ChannelIcon
+                        channel={channel.key}
                         className="absolute top-3 right-3 text-[18px] text-secondary"
                       />
                     </div>

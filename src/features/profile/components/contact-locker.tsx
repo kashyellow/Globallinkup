@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormatter, useTranslations } from "next-intl";
+import { ChannelIcon, isChannelIconKey } from "@/components/ui/channel-icon";
 import { Icon } from "@/components/ui/icon";
 import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -17,15 +18,6 @@ const ROW = cn(
   "transition-colors duration-300 hover:border-outline-hover",
   EASE,
 );
-
-const CHANNEL_ICONS: Record<string, string> = {
-  whatsapp: "chat",
-  telegram: "send",
-  instagram: "photo_camera",
-  facebook: "public",
-  tiktok: "music_note",
-  x: "tag",
-};
 
 /** 04 — Contact locker: the member's own channels and who can see them. */
 export function ContactLocker({
@@ -60,10 +52,11 @@ export function ContactLocker({
           channels.map((channel) => (
             <div key={channel.key} className={ROW}>
               <div className="flex min-w-0 items-center gap-2.5">
-                <Icon
-                  name={CHANNEL_ICONS[channel.key] ?? "link"}
-                  className="shrink-0 text-lg text-text-muted"
-                />
+                {isChannelIconKey(channel.key) ? (
+                  <ChannelIcon channel={channel.key} className="text-lg text-text-muted" />
+                ) : (
+                  <Icon name="link" className="shrink-0 text-lg text-text-muted" />
+                )}
                 <div className="min-w-0">
                   <span className="block truncate font-label-md text-label-md text-on-surface">
                     {tChannels.has(`channels.${channel.key}`)

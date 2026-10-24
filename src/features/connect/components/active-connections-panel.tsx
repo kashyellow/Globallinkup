@@ -159,16 +159,8 @@ function ConnectionCard({
         style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
       >
         <div className="space-y-space-md p-space-lg">
-          {/* Verified stamp + tenure */}
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            {connection.badge && t.has(`badges.${connection.badge}`) ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-success-border bg-success-surface px-2.5 py-1 font-label-md text-label-md font-semibold text-success-text">
-                <Icon name="verified" className="text-xs" />
-                {t(`badges.${connection.badge}`)}
-              </span>
-            ) : (
-              <span />
-            )}
+          {/* Tenure */}
+          <div className="flex justify-end">
             <span className="font-label-md text-label-md text-secondary">
               {t("connectedSince", {
                 date: format.dateTime(new Date(connection.connectedSince), "monthYear"),

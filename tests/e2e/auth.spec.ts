@@ -142,6 +142,12 @@ test("@auth connections show accepted contact and pending requests", async ({ pa
   await expect(page.getByText(/Camila Osorio/)).toBeVisible();
   await expect(page.getByText(/\+57 312 849 2011/)).toBeVisible();
 
+  // All six persona channels render; the ones she left empty say so, and the
+  // card no longer carries a verification badge.
+  await expect(page.getByText(/not shared/i)).toHaveCount(4);
+  await expect(page.getByText("Telegram")).toBeVisible();
+  await expect(page.getByText(/verified ambassador/i)).toHaveCount(0);
+
   // Requests tab: Mateo's pending request with an Accept action.
   await page.getByRole("button", { name: /received requests/i }).click();
   await expect(page.getByText(/Mateo Silva/)).toBeVisible();

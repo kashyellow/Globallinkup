@@ -3,20 +3,22 @@
 import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { ChannelIcon } from "@/components/ui/channel-icon";
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import type { ContactChannel } from "../queries";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
-const CHANNEL_ICONS: Record<ContactChannel["key"], string> = {
-  whatsapp: "chat",
-  telegram: "send",
-  instagram: "photo_camera",
-  facebook: "public",
-  tiktok: "music_note",
-  x: "tag",
-};
+/** Persona-form order; every channel renders even when the member left it empty. */
+const CHANNEL_ORDER: ContactChannel["key"][] = [
+  "whatsapp",
+  "telegram",
+  "instagram",
+  "facebook",
+  "tiktok",
+  "x",
+];
 
 function channelHref(channel: ContactChannel): string | null {
   const handle = channel.value.replace(/^@/, "");
@@ -40,6 +42,7 @@ function channelHref(channel: ContactChannel): string | null {
 
 export function ContactVault({ channels }: { channels: ContactChannel[] }) {
   const t = useTranslations("Connections.active");
+  const byKey = new Map(channels.map((channel) => [channel.key, channel.value]));
 
   return (
     <div
@@ -54,29 +57,43 @@ export function ContactVault({ channels }: { channels: ContactChannel[] }) {
         <span className="font-label-md text-label-md text-success-text">{t("vaultStatus")}</span>
       </div>
 
-      {channels.length === 0 ? (
-        <p className="pt-1 font-body-sm text-body-sm text-secondary">{t("vaultEmpty")}</p>
-      ) : (
-        <div className="grid grid-cols-1 gap-space-xs pt-1 sm:grid-cols-2">
-          {channels.map((channel) => {
-            const href = channelHref(channel);
-            return (
-              <div
-                key={channel.key}
-                className="flex items-center justify-between gap-2 rounded-2xl border border-outline-variant bg-surface-low px-space-sm py-1.5"
-              >
-                <div className="flex min-w-0 items-center gap-1.5 text-on-surface">
-                  <Icon
-                    name={CHANNEL_ICONS[channel.key]}
-                    className="shrink-0 text-base text-primary"
-                  />
-                  <span className="truncate font-label-md text-label-md">{channel.value}</span>
-                  <span className="shrink-0 font-label-md text-label-md text-secondary">
-                    {t(`channels.${channel.key}`)}
+      <div className="grid grid-cols-1 gap-space-xs pt-1 sm:grid-cols-2">
+        {CHANNEL_ORDER.map((key) => {
+          const value = byKey.get(key) ?? "";
+          const href = value ? channelHref({ key, value }) : null;
+
+          return (
+            <div
+              key={key}
+              className={cn(
+                "flex items-center justify-between gap-2 rounded-2xl border px-space-sm py-1.5",
+                value
+                  ? "border-outline-variant bg-surface-low"
+                  : "border-dashed border-outline-variant bg-surface-low/50",
+              )}
+            >
+              <div className="flex min-w-0 items-center gap-2 text-on-surface">
+                <ChannelIcon
+                  channel={key}
+                  className={cn("text-base", value ? "text-primary" : "text-secondary")}
+                />
+                <div className="min-w-0">
+                  <span
+                    className={cn(
+                      "block truncate font-label-md text-label-md",
+                      !value && "text-secondary",
+                    )}
+                  >
+                    {value || t("vaultNotShared")}
+                  </span>
+                  <span className="block truncate font-label-md text-label-md text-secondary">
+                    {t(`channels.${key}`)}
                   </span>
                 </div>
+              </div>
+              {value ? (
                 <div className="flex shrink-0 items-center gap-1">
-                  <CopyButton value={channel.value} variant="icon" />
+                  <CopyButton value={value} variant="icon" />
                   {href ? (
                     <a
                       href={href}
@@ -89,11 +106,11 @@ export function ContactVault({ channels }: { channels: ContactChannel[] }) {
                     </a>
                   ) : null}
                 </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+              ) : null}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

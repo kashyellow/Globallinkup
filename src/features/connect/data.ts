@@ -15,8 +15,6 @@ export type ActiveConnection = {
   avatarAlt: string;
   /** Used by the region filter pills. */
   region: "latam" | "europe";
-  /** Resolved against `Connections.badges.*`. */
-  badge: "ambassador" | "resident" | "creator";
   /** ISO date — rendered locale-aware as e.g. "Oct 2024". */
   connectedSince: string;
   languages: ConnectionLanguage[];
@@ -41,7 +39,6 @@ export const ACTIVE_CONNECTIONS: ActiveConnection[] = [
     avatar: `${CDN}AB6AXuBMbq5c2u_SQesIqoYf_z4aGRjHuBuuZljtIf2qkYYY94vsOwEBMfD0syNnV2tjAIv9uMRD0CoP0NgSXpWYI5Co4D_m69pXhThO1pMgLhOYFBexzKuKqka4xUdDhKmWb7z7HBxLpD6kAsgOVLMCNYul3vBRqgwtg4fh8OItYEtJqWRVWK49iABL90wYlVHtq5w4GBqQTZTQ1Y7qwj4SxCkl1CLA1Q_3GX-zLzHM3OC_0khJqATg1Ok4iA`,
     avatarAlt: "Editorial close portrait of Camila, a 25-year-old Colombian creative in Medellín.",
     region: "latam",
-    badge: "ambassador",
     connectedSince: "2024-10-08T12:00:00Z",
     languages: [
       { code: "ES", level: "native" },
@@ -65,7 +62,6 @@ export const ACTIVE_CONNECTIONS: ActiveConnection[] = [
     avatarAlt:
       "Editorial portrait of Mateo, a 29-year-old Mexican architect in Roma Norte, Mexico City.",
     region: "latam",
-    badge: "ambassador",
     connectedSince: "2024-09-19T12:00:00Z",
     languages: [
       { code: "ES", level: "native" },
@@ -88,7 +84,6 @@ export const ACTIVE_CONNECTIONS: ActiveConnection[] = [
     avatar: `${CDN}AB6AXuAYP7JQ-ax-8I1BzUKI6v4W_dq-SyyVh3XFnQPtcuxc8-dm0TDCtxE67562EkETWymGlb7k5hKnjtM7YbSjACERS_HgIiGPNWLOhz3sWNVPJzWCGRyLsiXuTeT3C_iiKu2SzfHz90e1nAa5dgqG16hf2MbgvJPBQOM-fwkBXT3JKo3n8AoBu6k8DQLxhlOGL-EJNA4r_NHGwaROGHBd5lJfRDJYDS-xyQqhiQTbmyP6orB__Cp7IjsqTw`,
     avatarAlt: "Editorial portrait of Elena Ramos, a 28-year-old Spanish art curator in Madrid.",
     region: "europe",
-    badge: "resident",
     connectedSince: "2024-08-04T12:00:00Z",
     languages: [
       { code: "ES", level: "native" },
@@ -113,7 +108,6 @@ export const ACTIVE_CONNECTIONS: ActiveConnection[] = [
     avatarAlt:
       "Editorial portrait of Lucas Varela, a 31-year-old Argentine documentary filmmaker in Buenos Aires.",
     region: "latam",
-    badge: "creator",
     connectedSince: "2024-07-22T12:00:00Z",
     languages: [
       { code: "ES", level: "native" },
