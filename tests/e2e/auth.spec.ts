@@ -56,6 +56,25 @@ test("@auth a pending user is sent to the review screen", async ({ page }) => {
   await expect(page).toHaveURL(/\/en\/verify$/);
 });
 
+test("@auth a pending session can switch accounts from the login page", async ({ page }) => {
+  await signIn(page, "pending.user@example.com");
+  await expect(page).toHaveURL(/\/en\/verify$/);
+
+  // The parked session must not trap /login: the form stays reachable.
+  await page.goto("/en/login");
+  await expect(page).toHaveURL(/\/en\/login$/);
+  await expect(page.getByText(/already signed in/i)).toBeVisible();
+
+  await page.getByRole("button", { name: /sign out/i }).click();
+  await expect(page.getByText(/already signed in/i)).toHaveCount(0);
+
+  // Another account can now sign in from the same browser.
+  await page.fill("#login-email", "admin@globallinkup.test");
+  await page.fill("#login-password", PASSWORD);
+  await page.locator("form button[type=submit]").click();
+  await expect(page).toHaveURL(/\/en\/discover$/);
+});
+
 test("@auth a rejected user sees the resubmit path", async ({ page }) => {
   await signIn(page, "rejected.user@example.com");
   await expect(page).toHaveURL(/\/en\/verify$/);

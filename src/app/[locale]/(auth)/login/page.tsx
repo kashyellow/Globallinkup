@@ -16,9 +16,21 @@ export async function generateMetadata({
 
 export default async function LoginPage() {
   const user = await getCurrentUser();
+
   if (user) {
     const profile = await getCurrentProfile();
-    redirect({ href: postAuthPath(profile), locale: await getLocale() });
+
+    // Approved users and signed-in users without a persona already have a
+    // destination. A pending/rejected/suspended account is parked on /verify,
+    // so render the form anyway — otherwise its session traps the browser and
+    // nobody can sign in with another account.
+    if (!profile || profile.approval_status === "approved") {
+      return redirect({ href: postAuthPath(profile), locale: await getLocale() });
+    }
+
+    return (
+      <LoginView currentAccount={{ email: user.email ?? "", status: profile.approval_status }} />
+    );
   }
 
   return <LoginView />;

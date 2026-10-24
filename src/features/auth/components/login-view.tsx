@@ -4,12 +4,18 @@ import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import type { CSSProperties } from "react";
 import { Icon } from "@/components/ui/icon";
-import { signInAction } from "@/features/auth/actions";
+import { signInAction, signOutAction } from "@/features/auth/actions";
 import { AuthBackLink } from "@/features/auth/components/auth-back-link";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 type LoginState = "ready" | "invalid" | "loading";
+
+/** A signed-in account that cannot enter the app yet. */
+export type BlockedAccount = {
+  email: string;
+  status: "pending" | "rejected" | "suspended";
+};
 
 const BACKDROP =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuDGFyRgMDJc7aMfkwNEAgsrQK8vHotU1xDnVagJ6BFOfsajrn2yfQNXQrZwKTdQZ9zPIbmYz5FX7p8umTc5IcBOl3dVLtcBSpM3w0PDKhrmdcJJBQBy7K3tv0WEvSEXQ_dBAQFg_MIY1Q0cAvgnm9LPSEnWBmF_HrZAKLMoKm6kilYIe89uUloN94Fv9ISOufwUw0geNbllEDbKn2F1dHRewxCS-48cqTadhQHAITrepAtvznXLQaG2-g";
@@ -19,7 +25,7 @@ const EASE = "duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]";
 const FIELD_BASE =
   "w-full border bg-surface px-space-md py-3 font-body-md text-body-md text-on-surface transition-colors placeholder:text-placeholder focus-visible:outline-2 focus-visible:outline-offset-2";
 
-export function LoginView() {
+export function LoginView({ currentAccount }: { currentAccount?: BlockedAccount }) {
   const t = useTranslations("Auth.login");
   const router = useRouter();
   const [state, setState] = useState<LoginState>("ready");
@@ -27,6 +33,17 @@ export function LoginView() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+
+  async function signOut() {
+    setSigningOut(true);
+    try {
+      await signOutAction();
+      router.refresh();
+    } finally {
+      setSigningOut(false);
+    }
+  }
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -51,6 +68,14 @@ export function LoginView() {
   }
 
   const isInvalid = state === "invalid";
+
+  const notice = currentAccount
+    ? {
+        pending: { icon: "hourglass_top", body: "signedInBodyPending" },
+        rejected: { icon: "priority_high", body: "signedInBodyRejected" },
+        suspended: { icon: "block", body: "signedInBodySuspended" },
+      }[currentAccount.status]
+    : null;
 
   return (
     <section className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-space-md pb-page-mobile lg:px-margin lg:pt-space-xl lg:pb-page">
@@ -107,6 +132,40 @@ export function LoginView() {
                 </h1>
                 <p className="font-body-md text-body-md text-secondary">{t("subtitle")}</p>
               </div>
+
+              {/* Signed in but not approved: explain the state and offer a way
+                  out, so this session cannot lock the browser out of /login. */}
+              {currentAccount && notice ? (
+                <div className="flex flex-col gap-space-sm rounded-2xl border border-outline-variant bg-surface-container p-space-md">
+                  <div className="flex items-start gap-space-sm">
+                    <Icon name={notice.icon} className="mt-0.5 shrink-0 text-lg text-primary" />
+                    <div className="flex flex-col">
+                      <span className="font-label-lg text-label-lg font-semibold text-on-surface">
+                        {t("signedInTitle")}
+                      </span>
+                      <p className="mt-0.5 font-body-sm text-body-sm text-secondary">
+                        {t(notice.body, { email: currentAccount.email })}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-space-sm">
+                    <Link
+                      href="/verify"
+                      className="inline-flex min-h-11 items-center justify-center rounded-full border border-outline-variant bg-surface-dim px-4 font-label-md text-label-md text-on-surface transition-colors duration-300 hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    >
+                      {t("signedInReview")}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => void signOut()}
+                      disabled={signingOut}
+                      className="inline-flex min-h-11 items-center justify-center rounded-full px-4 font-label-md text-label-md font-semibold text-primary transition-colors duration-300 hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60"
+                    >
+                      {t("signedInSignOut")}
+                    </button>
+                  </div>
+                </div>
+              ) : null}
 
               {/* Invalid credentials */}
               {isInvalid ? (
