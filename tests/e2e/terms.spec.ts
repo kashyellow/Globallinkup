@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test("the register terms link opens the Terms of Service", async ({ page }) => {
   await page.goto("/en/register");
 
-  await page.getByRole("link", { name: "Terms of Service" }).click();
+  await page.getByRole("main").getByRole("link", { name: "Terms of Service" }).click();
 
   await expect(page).toHaveURL(/\/en\/terms$/);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Terms of Service");
