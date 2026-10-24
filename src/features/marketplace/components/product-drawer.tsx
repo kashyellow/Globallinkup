@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { MediaImage } from "@/components/ui/media-image";
 import { useDialogA11y } from "@/features/shared/use-dialog-a11y";
@@ -62,37 +61,17 @@ function DrawerContent({
   const t = useTranslations("Marketplace.drawer");
 
   const whatsappHref = `${contact.whatsappLink}?text=${encodeURIComponent(
-    t("whatsappMessage", { product: product.name, sku: product.sku }),
+    t("whatsappMessage", { product: product.name }),
   )}`;
-
-  const specRows = [
-    { label: t("specOrigin"), value: product.specs.origin, accent: false },
-    { label: t("specArtisan"), value: product.specs.artisan, accent: false },
-    { label: t("specMaterial"), value: product.specs.material, accent: false },
-    { label: t("specDimensions"), value: product.specs.dimensions, accent: false },
-    { label: t("specWeight"), value: product.specs.weight, accent: false },
-    {
-      label: t("specFulfillment"),
-      value: product.specs.fulfillment ? t(product.specs.fulfillment) : "",
-      accent: true,
-    },
-  ].filter((row) => row.value.length > 0);
 
   return (
     <>
       {/* Drawer header */}
       <div className="sticky top-0 z-10 flex items-center justify-between border-b border-outline-variant bg-surface-low/95 px-space-lg py-space-md backdrop-blur-md">
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1 rounded-full border border-success-border bg-success-surface px-2.5 py-0.5 font-label-md text-label-md font-semibold text-success-text">
-            <Icon name="verified" className="text-xs" />
-            {t("adminVerified")}
-          </span>
-          {product.sku ? (
-            <span className="font-label-md text-label-md text-secondary">
-              {t("sku", { sku: product.sku })}
-            </span>
-          ) : null}
-        </div>
+        <span className="inline-flex items-center gap-1 rounded-full border border-success-border bg-success-surface px-2.5 py-0.5 font-label-md text-label-md font-semibold text-success-text">
+          <Icon name="verified" className="text-xs" />
+          {t("adminVerified")}
+        </span>
         <button
           type="button"
           onClick={onClose}
@@ -104,10 +83,16 @@ function DrawerContent({
       </div>
 
       <div className="flex flex-col gap-space-lg p-space-lg">
-        {/* Keying by product id resets the gallery selection without an effect. */}
-        <DrawerGallery key={product.id} product={product} />
+        <div className="aspect-[4/3] w-full overflow-hidden rounded-[1.25rem] border border-outline-variant bg-surface-container">
+          <MediaImage
+            src={product.image}
+            alt={product.imageAlt}
+            wrapperClassName="h-full w-full"
+            loading="eager"
+          />
+        </div>
 
-        {/* Product identity */}
+        {/* Product identity — only the fields the admin form collects. */}
         <div className="flex flex-col gap-space-xs">
           <div className="flex items-center justify-between">
             <span className="font-label-lg text-label-lg font-semibold text-primary">
@@ -123,29 +108,16 @@ function DrawerContent({
           <h2 className="font-headline-md text-headline-md font-semibold text-on-surface">
             {product.name}
           </h2>
+          {product.originLabel ? (
+            <span className="inline-flex items-center gap-1 font-label-md text-label-md text-secondary">
+              <Icon name="location_on" className="text-sm text-tertiary" />
+              {product.originLabel}
+            </span>
+          ) : null}
           <p className="font-body-md text-body-md leading-relaxed text-on-surface-strong">
             {product.description}
           </p>
         </div>
-
-        {/* Specifications (only rows the admin actually filled in) */}
-        {specRows.length > 0 ? (
-          <div className="flex flex-col gap-space-sm rounded-[1.25rem] border border-outline-variant bg-surface p-space-md">
-            <span className="font-label-lg text-label-lg font-semibold text-on-surface">
-              {t("specsTitle")}
-            </span>
-            <div className="grid grid-cols-2 gap-x-space-md gap-y-3 text-body-sm">
-              {specRows.map((row) => (
-                <Spec
-                  key={row.label}
-                  label={row.label}
-                  value={row.value}
-                  valueClassName={row.accent ? "text-tertiary" : undefined}
-                />
-              ))}
-            </div>
-          </div>
-        ) : null}
 
         {/* How to order */}
         <div className="flex flex-col gap-space-sm rounded-[1.25rem] border border-outline-variant bg-surface-container p-space-md">
@@ -214,72 +186,5 @@ function DrawerContent({
         </div>
       </div>
     </>
-  );
-}
-
-function DrawerGallery({ product }: { product: MarketplaceProduct }) {
-  const [imageIndex, setImageIndex] = useState(0);
-  const hasMultiple = product.gallery.length > 1;
-
-  return (
-    <div className="flex flex-col gap-space-sm">
-      <div className="aspect-[4/3] w-full overflow-hidden rounded-[1.25rem] border border-outline-variant bg-surface-container">
-        <MediaImage
-          src={product.gallery[imageIndex]}
-          alt={product.galleryAlts[imageIndex] ?? product.name}
-          wrapperClassName="h-full w-full"
-          loading="eager"
-        />
-      </div>
-
-      {hasMultiple ? (
-        <div
-          className={cn(
-            "grid gap-space-sm",
-            product.gallery.length === 4 ? "grid-cols-4" : "grid-cols-3",
-          )}
-        >
-          {product.gallery.map((src, index) => (
-            <button
-              key={src}
-              type="button"
-              onClick={() => setImageIndex(index)}
-              aria-label={product.galleryAlts[index]}
-              className={cn(
-                "aspect-[4/3] overflow-hidden rounded-[0.75rem] transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-                index === imageIndex
-                  ? "border border-primary"
-                  : "border border-outline-variant hover:border-outline-hover",
-              )}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                alt={product.galleryAlts[index]}
-                className="h-full w-full object-cover"
-                src={src}
-                loading="lazy"
-              />{" "}
-            </button>
-          ))}
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
-function Spec({
-  label,
-  value,
-  valueClassName,
-}: {
-  label: string;
-  value: string;
-  valueClassName?: string;
-}) {
-  return (
-    <div>
-      <span className="block font-label-md text-label-md text-text-muted">{label}</span>
-      <span className={cn("font-medium text-on-surface", valueClassName)}>{value}</span>
-    </div>
   );
 }

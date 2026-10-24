@@ -194,7 +194,6 @@ export type Database = {
       };
       marketplace_products: {
         Row: {
-          badge: string | null;
           contact_information: string | null;
           created_at: string;
           created_by: string | null;
@@ -205,13 +204,9 @@ export type Database = {
           name: string;
           origin_label: string | null;
           price_cents: number;
-          sku: string | null;
-          specs: NonNullable<Json>;
-          summary: string | null;
           updated_at: string;
         };
         Insert: {
-          badge?: string | null;
           contact_information?: string | null;
           created_at?: string;
           created_by?: string | null;
@@ -222,13 +217,9 @@ export type Database = {
           name: string;
           origin_label?: string | null;
           price_cents?: number;
-          sku?: string | null;
-          specs?: NonNullable<Json>;
-          summary?: string | null;
           updated_at?: string;
         };
         Update: {
-          badge?: string | null;
           contact_information?: string | null;
           created_at?: string;
           created_by?: string | null;
@@ -239,9 +230,6 @@ export type Database = {
           name?: string;
           origin_label?: string | null;
           price_cents?: number;
-          sku?: string | null;
-          specs?: NonNullable<Json>;
-          summary?: string | null;
           updated_at?: string;
         };
         Relationships: [

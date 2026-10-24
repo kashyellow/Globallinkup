@@ -41,7 +41,6 @@ export function MarketplaceView({
       return (
         product.name.toLowerCase().includes(needle) ||
         product.originLabel.toLowerCase().includes(needle) ||
-        product.summary.toLowerCase().includes(needle) ||
         product.description.toLowerCase().includes(needle)
       );
     })
@@ -272,7 +271,7 @@ function ProductCard({
           <button
             type="button"
             onClick={onOpen}
-            aria-label={t("card.inspectSpecs")}
+            aria-label={t("card.viewDetails")}
             className="relative block w-full overflow-hidden bg-surface-container focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
           >
             <span className={cn("block w-full", featured ? "aspect-[16/11]" : "aspect-[4/3]")}>
@@ -309,7 +308,7 @@ function ProductCard({
                     : "line-clamp-2 font-body-sm text-body-sm",
                 )}
               >
-                {product.summary}
+                {product.description}
               </p>
             </div>
 
@@ -337,7 +336,7 @@ function ProductCard({
                   EASE,
                 )}
               >
-                {t("card.inspectSpecs")}
+                {t("card.viewDetails")}
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-on-surface/10 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-px">
                   <Icon name="arrow_forward" className="text-[15px]" />
                 </span>

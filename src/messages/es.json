@@ -310,16 +310,9 @@
       "localGoods": "Productos Locales",
       "travelGear": "Equipaje de Viaje"
     },
-    "badges": {
-      "artisanPartner": "Socio Artesano",
-      "adminCurated": "Curado por Admin",
-      "globalLinkupOriginal": "Original de GlobalLinkup",
-      "adminVerified": "Verificado por Admin",
-      "directTrade": "Comercio Directo"
-    },
     "card": {
       "priceLabel": "PRECIO",
-      "inspectSpecs": "Ver Detalles"
+      "viewDetails": "Ver Detalles"
     },
     "notice": {
       "title": "Cómo Funciona el Comercio Curado de GlobalLinkup",
@@ -328,25 +321,15 @@
     },
     "drawer": {
       "adminVerified": "Verificado por Admin",
-      "sku": "SKU DEL ARTÍCULO: {sku}",
       "close": "Cerrar panel de detalles",
       "artisanPartnerDirect": "Socio Artesano Directo",
       "currencyUsd": "USD",
-      "specsTitle": "Especificaciones y Procedencia",
-      "specOrigin": "ORIGEN",
-      "specArtisan": "ARTESANO",
-      "specMaterial": "MATERIAL",
-      "specDimensions": "DIMENSIONES",
-      "specWeight": "PESO",
-      "specFulfillment": "ENTREGA",
-      "fulfillmentCourier": "Mensajería Directa Asegurada",
-      "fulfillmentPostal": "Envío Postal con Seguimiento",
       "howToOrderTitle": "Cómo Pedir / Consultas Directas",
       "howToOrderBody": "GlobalLinkup gestiona los pedidos personalmente con nuestros makers regionales. Como las cantidades son limitadas y se producen en lotes pequeños, los pedidos se confirman directamente a través de nuestro conserje multilingüe. Sin pago mediante carrito ni reventa entre usuarios.",
       "contactCta": "Contactar al Conserje / Consultar Compra",
       "whatsappPrefix": "O escribe por WhatsApp:",
       "emailPrefix": "Correo Oficial:",
-      "whatsappMessage": "Hola Conserje de GlobalLinkup, quisiera consultar sobre pedir el {product} (SKU: {sku}).",
+      "whatsappMessage": "Hola Conserje de GlobalLinkup, quisiera consultar sobre pedir el {product}.",
       "trust": {
         "fairCompensation": "Compensación Justa",
         "customsInsured": "Aduana Asegurada",

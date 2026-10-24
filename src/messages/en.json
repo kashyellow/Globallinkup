@@ -310,16 +310,9 @@
       "localGoods": "Local Goods",
       "travelGear": "Travel Gear"
     },
-    "badges": {
-      "artisanPartner": "Artisan Partner",
-      "adminCurated": "Admin Curated",
-      "globalLinkupOriginal": "GlobalLinkup Original",
-      "adminVerified": "Admin Verified",
-      "directTrade": "Direct Trade"
-    },
     "card": {
       "priceLabel": "PRICE",
-      "inspectSpecs": "Inspect Specs"
+      "viewDetails": "View Details"
     },
     "notice": {
       "title": "How GlobalLinkup Curated Commerce Works",
@@ -328,25 +321,15 @@
     },
     "drawer": {
       "adminVerified": "Admin Verified",
-      "sku": "ITEM SKU: {sku}",
       "close": "Close detail panel",
       "artisanPartnerDirect": "Artisan Partner Direct",
       "currencyUsd": "USD",
-      "specsTitle": "Specifications & Provenance",
-      "specOrigin": "ORIGIN",
-      "specArtisan": "ARTISAN",
-      "specMaterial": "MATERIAL",
-      "specDimensions": "DIMENSIONS",
-      "specWeight": "WEIGHT",
-      "specFulfillment": "FULFILLMENT",
-      "fulfillmentCourier": "Direct Insured Courier",
-      "fulfillmentPostal": "Tracked Postal Dispatch",
       "howToOrderTitle": "How to Order / Direct Inquiries",
       "howToOrderBody": "GlobalLinkup facilitates orders personally with our regional makers. Because quantities are limited and made in small batches, orders are confirmed directly via our multilingual concierge. No shopping cart checkout or user reselling.",
       "contactCta": "Contact Concierge / Inquire to Buy",
       "whatsappPrefix": "Or message via WhatsApp:",
       "emailPrefix": "Official Email:",
-      "whatsappMessage": "Hello GlobalLinkup Concierge, I would like to inquire about ordering the {product} (SKU: {sku}).",
+      "whatsappMessage": "Hello GlobalLinkup Concierge, I would like to inquire about ordering the {product}.",
       "trust": {
         "fairCompensation": "Fair Compensation",
         "customsInsured": "Customs Insured",

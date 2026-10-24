@@ -144,7 +144,6 @@ const productSchema = z.object({
   name: z.string().trim().min(2).max(160),
   priceCents: z.number().int().min(0).max(100_000_000),
   currency: z.string().trim().length(3).default("USD"),
-  summary: z.string().trim().max(400).optional(),
   description: z.string().trim().max(2000).optional(),
   originLabel: z.string().trim().max(120).optional(),
   /** Phone for the seller contact line on the public catalog. */
@@ -167,7 +166,6 @@ export async function createProductAction(input: unknown): Promise<AdminResult> 
       name: data.name,
       price_cents: data.priceCents,
       currency: data.currency,
-      summary: data.summary ?? null,
       description: data.description ?? null,
       origin_label: data.originLabel ?? null,
       contact_information: data.sellerPhone ?? null,
@@ -206,7 +204,6 @@ export async function updateProductAction(input: unknown): Promise<AdminResult> 
       name: data.name,
       price_cents: data.priceCents,
       currency: data.currency,
-      summary: data.summary ?? null,
       description: data.description ?? null,
       origin_label: data.originLabel ?? null,
       contact_information: data.sellerPhone ?? null,

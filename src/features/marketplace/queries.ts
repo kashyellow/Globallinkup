@@ -8,27 +8,14 @@ import { unwrap } from "@/lib/supabase/unwrap";
 
 export type MarketplaceProduct = {
   id: string;
-  sku: string;
   name: string;
   originLabel: string;
   createdAt: string;
-  badge: string | null;
   price: number;
-  summary: string;
   description: string;
   sellerPhone: string;
-  specs: {
-    origin: string;
-    artisan: string;
-    material: string;
-    dimensions: string;
-    weight: string;
-    fulfillment: string;
-  };
   image: string | null;
   imageAlt: string;
-  gallery: string[];
-  galleryAlts: string[];
 };
 
 export type MarketplaceContact = {
@@ -43,9 +30,7 @@ export async function getPublishedProducts(): Promise<MarketplaceProduct[]> {
   const rows = unwrap(
     await supabase
       .from("marketplace_products")
-      .select(
-        "id, name, sku, price_cents, currency, summary, description, origin_label, badge, specs, contact_information, created_at",
-      )
+      .select("id, name, price_cents, description, origin_label, contact_information, created_at")
       .eq("is_published", true)
       .order("created_at", { ascending: false }),
   );
@@ -61,52 +46,28 @@ export async function getPublishedProducts(): Promise<MarketplaceProduct[]> {
       .order("sort", { ascending: true }),
   );
 
-  const pathsByProduct = new Map<string, string[]>();
+  const firstPathByProduct = new Map<string, string>();
   for (const image of images ?? []) {
-    const list = pathsByProduct.get(image.product_id) ?? [];
-    list.push(image.storage_path);
-    pathsByProduct.set(image.product_id, list);
+    if (!firstPathByProduct.has(image.product_id)) {
+      firstPathByProduct.set(image.product_id, image.storage_path);
+    }
   }
 
-  const signed = await createSignedImageUrls(
-    supabase,
-    "product-images",
-    (images ?? []).map((image) => image.storage_path),
-  );
+  const signed = await createSignedImageUrls(supabase, "product-images", [
+    ...firstPathByProduct.values(),
+  ]);
 
-  return rows.map((row) => {
-    const paths = pathsByProduct.get(row.id) ?? [];
-    const urls = paths
-      .map((path) => resolveImageUrl(path, signed))
-      .filter((url): url is string => Boolean(url));
-
-    const specs = (row.specs ?? {}) as Record<string, string>;
-
-    return {
-      id: row.id,
-      sku: row.sku ?? "",
-      name: row.name,
-      originLabel: row.origin_label ?? "",
-      createdAt: row.created_at ?? "",
-      badge: row.badge ?? null,
-      price: (row.price_cents ?? 0) / 100,
-      summary: row.summary ?? "",
-      description: row.description ?? "",
-      sellerPhone: row.contact_information ?? "",
-      specs: {
-        origin: specs.origin ?? "",
-        artisan: specs.artisan ?? "",
-        material: specs.material ?? "",
-        dimensions: specs.dimensions ?? "",
-        weight: specs.weight ?? "",
-        fulfillment: specs.fulfillment ?? "",
-      },
-      image: urls[0] ?? null,
-      imageAlt: row.name,
-      gallery: urls,
-      galleryAlts: urls.map(() => row.name),
-    };
-  });
+  return rows.map((row) => ({
+    id: row.id,
+    name: row.name,
+    originLabel: row.origin_label ?? "",
+    createdAt: row.created_at ?? "",
+    price: (row.price_cents ?? 0) / 100,
+    description: row.description ?? "",
+    sellerPhone: row.contact_information ?? "",
+    image: resolveImageUrl(firstPathByProduct.get(row.id), signed),
+    imageAlt: row.name,
+  }));
 }
 
 export async function getMarketplaceContact(): Promise<MarketplaceContact> {
