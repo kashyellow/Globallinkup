@@ -83,10 +83,13 @@ export function CreatePersonaView({
   initial,
   interestCatalog,
   isAuthenticated,
+  mode = "create",
 }: {
   initial?: PersonaInitial;
   interestCatalog: InterestCatalogItem[];
   isAuthenticated: boolean;
+  /** `edit` swaps the onboarding chrome for profile-editing copy. */
+  mode?: "create" | "edit";
 }) {
   const t = useTranslations("PersonaForm");
   const tRegister = useTranslations("Auth.register");
@@ -376,7 +379,7 @@ export function CreatePersonaView({
         <div className="flex flex-col gap-space-xs">
           <div className="flex flex-wrap items-center gap-space-sm">
             <span className="font-label-caps text-label-caps font-bold tracking-wider text-primary uppercase">
-              {t("eyebrow")}
+              {t(mode === "edit" ? "editEyebrow" : "eyebrow")}
             </span>
             <span className="h-1.5 w-1.5 rounded-full bg-outline-variant" />
             <span className="font-label-caps text-label-caps tracking-widest text-secondary uppercase">
@@ -384,28 +387,34 @@ export function CreatePersonaView({
             </span>
           </div>
           <h1 className="font-display-md text-display-md-mobile text-balance text-on-surface md:text-display-md">
-            {t("title")}
+            {t(mode === "edit" ? "editTitle" : "title")}
           </h1>
         </div>
 
-        <div className="flex flex-wrap items-center gap-space-sm rounded-xl border border-outline-variant bg-surface-low px-space-md py-space-sm">
-          <div className="flex items-center gap-space-xs text-tertiary">
-            <Icon name="check_circle" filled className="text-[18px]" />
-            <span className="font-label-md text-label-md font-semibold whitespace-nowrap">
-              {t("pipeStep1")}
-            </span>
+        {mode === "create" ? (
+          <div className="flex flex-wrap items-center gap-space-sm rounded-xl border border-outline-variant bg-surface-low px-space-md py-space-sm">
+            <div className="flex items-center gap-space-xs text-tertiary">
+              <Icon name="check_circle" filled className="text-[18px]" />
+              <span className="font-label-md text-label-md font-semibold whitespace-nowrap">
+                {t("pipeStep1")}
+              </span>
+            </div>
+            <span className="font-label-md text-label-md text-outline-variant">/</span>
+            <div className="flex items-center gap-space-xs font-semibold text-primary">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
+              <span className="font-label-md text-label-md whitespace-nowrap">
+                {t("pipeStep2")}
+              </span>
+            </div>
+            <span className="font-label-md text-label-md text-outline-variant">/</span>
+            <div className="flex items-center gap-space-xs text-secondary">
+              <span className="h-2 w-2 rounded-full bg-outline-strong" />
+              <span className="font-label-md text-label-md whitespace-nowrap">
+                {t("pipeStep3")}
+              </span>
+            </div>
           </div>
-          <span className="font-label-md text-label-md text-outline-variant">/</span>
-          <div className="flex items-center gap-space-xs font-semibold text-primary">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
-            <span className="font-label-md text-label-md whitespace-nowrap">{t("pipeStep2")}</span>
-          </div>
-          <span className="font-label-md text-label-md text-outline-variant">/</span>
-          <div className="flex items-center gap-space-xs text-secondary">
-            <span className="h-2 w-2 rounded-full bg-outline-strong" />
-            <span className="font-label-md text-label-md whitespace-nowrap">{t("pipeStep3")}</span>
-          </div>
-        </div>
+        ) : null}
       </div>
 
       <div className="mx-auto w-full max-w-3xl">
@@ -907,11 +916,13 @@ export function CreatePersonaView({
             {/* Actions */}
             <div className="flex flex-col items-center justify-between gap-space-md pt-space-md sm:flex-row">
               <Link
-                href={isAccount ? "/" : "/register"}
+                href={mode === "edit" ? "/profile" : isAccount ? "/" : "/register"}
                 className="flex w-full items-center justify-center gap-space-xs rounded-lg border border-outline-variant bg-surface-variant px-space-lg py-3 font-label-lg text-label-lg text-on-surface shadow-sm transition-colors hover:bg-surface-container-high sm:w-auto"
               >
                 <Icon name="arrow_back" className="text-[18px]" />
-                <span>{isAccount ? t("backHome") : t("back")}</span>
+                <span>
+                  {mode === "edit" ? t("editBack") : isAccount ? t("backHome") : t("back")}
+                </span>
               </Link>
               <button
                 type="submit"
@@ -924,9 +935,16 @@ export function CreatePersonaView({
                     : "bg-primary-container text-white hover:bg-primary-hover",
                 )}
               >
-                <span>{submitting ? t("submitting") : t("submit")}</span>
+                <span>
+                  {submitting
+                    ? t(mode === "edit" ? "editSubmitting" : "submitting")
+                    : t(mode === "edit" ? "editSubmit" : "submit")}
+                </span>
                 {submitting ? (
-                  <Spinner className="h-4 w-4 text-current" label={t("submitting")} />
+                  <Spinner
+                    className="h-4 w-4 text-current"
+                    label={t(mode === "edit" ? "editSubmitting" : "submitting")}
+                  />
                 ) : (
                   <Icon
                     name="arrow_forward"

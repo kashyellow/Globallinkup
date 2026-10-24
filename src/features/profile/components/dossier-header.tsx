@@ -1,13 +1,13 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Reveal } from "@/components/ui/reveal";
 import { Icon } from "@/components/ui/icon";
 import { Spinner } from "@/components/ui/spinner";
 import { signOutAction } from "@/features/auth/actions";
-import { Link, useRouter } from "@/lib/i18n/navigation";
+import { getPathname, Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import type { OwnProfile } from "../queries";
 import { SectionHead } from "./section-head";
@@ -39,13 +39,19 @@ function Sep() {
 export function DossierHeader({ profile }: { profile: OwnProfile }) {
   const t = useTranslations("Profile");
   const tCommon = useTranslations("Common");
+  const locale = useLocale();
   const router = useRouter();
   const [copied, setCopied] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
   async function share() {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      // The private /profile route is not shareable — send the public dossier.
+      const url = `${window.location.origin}${getPathname({
+        href: `/persona/${profile.id}`,
+        locale,
+      })}`;
+      await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     } catch {
@@ -72,21 +78,8 @@ export function DossierHeader({ profile }: { profile: OwnProfile }) {
   return (
     <section className="relative w-full">
       <div className="mx-auto max-w-[1240px] px-margin-mobile pt-block-mobile md:px-margin md:pt-block">
-        {/* Index bar */}
-        <div className="flex flex-wrap items-center justify-between gap-y-space-sm border-y border-outline-variant py-space-sm">
-          <div className="flex flex-wrap items-center gap-space-sm">
-            <span className="font-label-md text-label-md font-semibold tracking-[0.08em] text-text-muted uppercase">
-              {t("meta.dossier")}
-            </span>
-            <span className="font-label-md text-label-md font-semibold text-primary tabular-nums">
-              GL-{profile.id.slice(0, 8).toUpperCase()}
-            </span>
-            <span className="flex items-center gap-1.5 font-label-md text-label-md font-semibold tracking-[0.08em] text-success-text uppercase">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success-text" />
-              {t("meta.verifiedActive")}
-            </span>
-          </div>
-
+        {/* Action bar */}
+        <div className="flex flex-wrap items-center justify-end gap-y-space-sm border-y border-outline-variant py-space-sm">
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
             <button type="button" onClick={share} className={CONTROL}>
               <Icon
@@ -95,7 +88,7 @@ export function DossierHeader({ profile }: { profile: OwnProfile }) {
               />
               <span>{copied ? t("actions.shared") : t("actions.share")}</span>
             </button>
-            <Link href="/create-persona" className={CONTROL_PRIMARY}>
+            <Link href="/profile/edit" className={CONTROL_PRIMARY}>
               <Icon name="edit_square" className="text-base" />
               <span>{t("actions.edit")}</span>
             </Link>

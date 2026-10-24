@@ -202,6 +202,12 @@ test("@auth the profile shows the real dossier and unlocked channels", async ({ 
   await page.waitForTimeout(2500);
   await expect(page.getByRole("heading", { name: /Sofia Martinez/ })).toBeVisible();
   await expect(page.getByText(/\+34 612 849 201/)).toBeVisible();
+
+  // Editing opens the persona form in edit mode, not the onboarding flow.
+  await page.getByRole("link", { name: /edit profile/i }).click();
+  await expect(page).toHaveURL(/\/en\/profile\/edit$/);
+  await expect(page.getByRole("heading", { name: /edit your persona/i })).toBeVisible();
+  await expect(page.locator("#persona-fullname")).toHaveValue("Sofia Martinez");
 });
 
 test("@auth step 1 stays editable until the persona is submitted", async ({ page }) => {

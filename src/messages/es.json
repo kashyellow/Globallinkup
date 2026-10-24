@@ -833,6 +833,11 @@
     "eyebrow": "Fase de Registro • Paso 02",
     "eyebrowMeta": "Curaduría Editorial Bilingüe",
     "title": "Crea tu Persona",
+    "editEyebrow": "Perfil",
+    "editTitle": "Edita tu Persona",
+    "editBack": "Volver al perfil",
+    "editSubmit": "Guardar Cambios",
+    "editSubmitting": "Guardando…",
     "pipeStep1": "01 Cuenta",
     "pipeStep2": "02 Persona",
     "pipeStep3": "03 Revisión",
@@ -1105,10 +1110,6 @@
     }
   },
   "Profile": {
-    "meta": {
-      "dossier": "Expediente del Miembro",
-      "verifiedActive": "Verificado Activo"
-    },
     "actions": {
       "share": "Compartir Expediente",
       "shared": "Enlace copiado",

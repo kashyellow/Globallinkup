@@ -833,6 +833,11 @@
     "eyebrow": "Registration Phase • Step 02",
     "eyebrowMeta": "Bilingual Editorial Curation",
     "title": "Create Your Persona",
+    "editEyebrow": "Profile",
+    "editTitle": "Edit Your Persona",
+    "editBack": "Back to profile",
+    "editSubmit": "Save Changes",
+    "editSubmitting": "Saving…",
     "pipeStep1": "01 Account",
     "pipeStep2": "02 Persona",
     "pipeStep3": "03 Review",
@@ -1105,10 +1110,6 @@
     }
   },
   "Profile": {
-    "meta": {
-      "dossier": "Member Dossier",
-      "verifiedActive": "Verified Active"
-    },
     "actions": {
       "share": "Share Dossier",
       "shared": "Link copied",
