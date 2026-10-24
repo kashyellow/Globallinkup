@@ -127,6 +127,42 @@ export type Database = {
           },
         ];
       };
+      interest_catalog: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          label: string;
+          normalized: string;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          status: Database["public"]["Enums"]["interest_status"];
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          label: string;
+          normalized: string;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          status?: Database["public"]["Enums"]["interest_status"];
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          label?: string;
+          normalized?: string;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          status?: Database["public"]["Enums"]["interest_status"];
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       marketplace_product_images: {
         Row: {
           id: string;
@@ -618,7 +654,13 @@ export type Database = {
       are_connected: { Args: { a: string; b: string }; Returns: boolean };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_approved: { Args: Record<PropertyKey, never>; Returns: boolean };
+      normalize_interest_label: { Args: { value: string }; Returns: string };
       profile_age: { Args: { p_profile_id: string }; Returns: number };
+      register_custom_interests: { Args: { p_labels: string[] }; Returns: Json };
+      review_interest: {
+        Args: { p_decision: Database["public"]["Enums"]["interest_status"]; p_interest_id: string };
+        Returns: boolean;
+      };
       save_persona: {
         Args: {
           p_avatar_url?: string;
@@ -644,6 +686,7 @@ export type Database = {
       app_role: "user" | "admin";
       approval_status: "pending" | "approved" | "rejected" | "suspended";
       connection_status: "requested" | "accepted" | "declined";
+      interest_status: "pending" | "approved" | "rejected";
       moderation_status: "visible" | "removed";
       report_status: "open" | "resolved" | "dismissed";
       report_target_type: "user" | "post";
@@ -764,6 +807,7 @@ export const Constants = {
       app_role: ["user", "admin"],
       approval_status: ["pending", "approved", "rejected", "suspended"],
       connection_status: ["requested", "accepted", "declined"],
+      interest_status: ["pending", "approved", "rejected"],
       moderation_status: ["visible", "removed"],
       report_status: ["open", "resolved", "dismissed"],
       report_target_type: ["user", "post"],

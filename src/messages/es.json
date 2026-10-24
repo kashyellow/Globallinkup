@@ -363,14 +363,16 @@
       "pendingProfiles": "<b>{count}</b> Perfiles Pendientes",
       "reportedPosts": "<b>{count}</b> Publicaciones Reportadas",
       "curatedProducts": "<b>{count}</b> Productos Curados",
-      "openReports": "<b>{count}</b> Reportes Abiertos"
+      "openReports": "<b>{count}</b> Reportes Abiertos",
+      "pendingInterests": "<b>{count}</b> Afinidades Pendientes"
     },
     "eyebrow": "Mesa Administrativa · Monitoreo y Verificación",
     "title": "Gobernanza y Control de Contenido",
     "tabs": {
       "users": "Usuarios y Personas",
       "marketplace": "Catálogo del Mercado",
-      "moderation": "Reportes y Moderación"
+      "moderation": "Reportes y Moderación",
+      "interests": "Catálogo de Afinidades"
     },
     "users": {
       "searchLabel": "Buscar miembros",
@@ -475,6 +477,25 @@
       },
       "emptyTitle": "Nada que moderar",
       "resolve": "Resolver"
+    },
+    "interests": {
+      "title": "Revisión de Afinidades Culturales",
+      "body": "Las afinidades creadas por usuarios son sugerencias hasta que un administrador las aprueba.",
+      "needsReview": "{count} por revisar",
+      "pendingTitle": "Pendientes de revisión",
+      "publishedTitle": "Sugerencias publicadas",
+      "pendingBadge": "Pendiente",
+      "publishedBadge": "Publicada",
+      "createdBy": "Sugerida por {name}",
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "unpublish": "Retirar",
+      "emptyTitle": "No hay afinidades pendientes",
+      "rejectPendingTitle": "¿Rechazar esta afinidad?",
+      "rejectPendingBody": "“{label}” se eliminará del perfil de su creador y no aparecerá en las sugerencias. Puede que necesite elegir otra afinidad en su próxima edición.",
+      "unpublishTitle": "¿Retirar esta afinidad?",
+      "unpublishBody": "“{label}” dejará de aparecer en las sugerencias. Los perfiles que ya la usan conservan el texto.",
+      "platform": "GlobalLinkup"
     }
   },
   "Connections": {
@@ -687,7 +708,7 @@
       "title": "Crea tu cuenta",
       "subtitle": "Ingresa tu correo y una contraseña segura. Tu perfil público y dossier cultural se configurarán en el siguiente paso.",
       "bannerTitle": "Revisa los datos ingresados",
-      "bannerBody": "El correo electrónico ya tiene un dossier registrado o las contraseñas no coinciden. Por favor intenta de nuevo.",
+      "bannerBody": "Revisa los campos marcados e inténtalo de nuevo.",
       "emailLabel": "Correo electrónico",
       "emailHelper": "Correspondencia bilingüe",
       "emailPlaceholder": "elena.rostova@ejemplo.com",
@@ -708,14 +729,15 @@
       "toggleConfirm": "Mostrar u ocultar confirmación de contraseña",
       "confirmError": "Las contraseñas deben ser exactamente idénticas.",
       "terms": "Acepto los <terms>Términos del Servicio</terms> y la <privacy>Política de Privacidad</privacy> de GlobalLinkup. Entiendo que la verificación de identidad se completará tras la revisión de mi perfil.",
-      "submit": "Crear Cuenta y Continuar",
+      "submit": "Continuar a la Persona",
       "haveAccount": "¿Ya tienes una cuenta registrada?",
       "logIn": "Inicia sesión",
       "submitting": "Creando cuenta…",
       "errorEmailInUse": "Ese correo ya está registrado. Prueba iniciar sesión.",
       "errorWeakPassword": "Elige una contraseña más fuerte: 8+ caracteres con mayúscula, minúscula y número.",
       "errorRateLimited": "Demasiados intentos. Espera un momento e inténtalo de nuevo.",
-      "errorGeneric": "No pudimos crear tu cuenta. Inténtalo de nuevo."
+      "errorGeneric": "No pudimos crear tu cuenta. Inténtalo de nuevo.",
+      "errorConfirmEmail": "Revisa tu correo para confirmar la cuenta y luego inicia sesión para terminar tu persona."
     },
     "verify": {
       "progressLabel": "Progreso de Incorporación",
@@ -837,7 +859,7 @@
     "change": "Cambiar",
     "uploadImage": "Subir Imagen",
     "useCamera": "Usar Cámara",
-    "photoFormats": "JPG, WEBP o PNG de hasta 10MB. Se prefiere el grano natural a los filtros de estudio.",
+    "photoFormats": "JPG, WEBP o PNG de hasta 5MB. Se prefiere el grano natural a los filtros de estudio.",
     "fullName": "Nombre y Apellido",
     "fullNameMeta": "Público",
     "fullNamePlaceholder": "p. ej. Sofia Martínez",
@@ -894,7 +916,7 @@
     "dobMeta": "Opcional",
     "submitting": "Enviando…",
     "errorInvalid": "Revisa los campos marcados e inténtalo de nuevo.",
-    "errorUpload": "No pudimos subir esa foto. Prueba con un JPG, PNG o WEBP de menos de 10 MB.",
+    "errorUpload": "No pudimos subir esa foto. Prueba con un JPG, PNG o WEBP de menos de 5 MB.",
     "errorUnknown": "No pudimos guardar tu perfil. Inténtalo de nuevo.",
     "whatsapp": "WhatsApp",
     "whatsappPlaceholder": "+34 612 345 678",
@@ -906,7 +928,42 @@
     "tiktokPlaceholder": "sofia.arquitectura",
     "contactRequired": "Añade al menos un canal para que tus conexiones puedan contactarte cuando se acepten.",
     "x": "X",
-    "xPlaceholder": "sofia_bcn"
+    "xPlaceholder": "sofia_bcn",
+    "photoInvalid": "Elige una imagen JPG, PNG o WEBP de menos de 5 MB.",
+    "photoRequired": "Añade una foto de perfil para que los demás puedan reconocerte.",
+    "fullNameRequired": "Escribe tu nombre completo (mínimo 2 caracteres).",
+    "cityRequired": "Añade la ciudad donde vives.",
+    "bioRequired": "Escribe una semblanza breve antes de enviar.",
+    "languagesRequired": "Selecciona al menos un idioma.",
+    "interestsRequired": "Selecciona al menos 3 afinidades culturales.",
+    "interestsMax": "Puedes elegir hasta 20 afinidades.",
+    "interestsDuplicate": "Cada afinidad solo puede seleccionarse una vez.",
+    "interestInvalid": "Usa entre 2 y 40 letras, espacios, apóstrofos, guiones, ampersands o puntos.",
+    "interestSearchPlaceholder": "Busca o crea una afinidad…",
+    "interestSearchHint": "Busca en el catálogo o crea una nueva afinidad. Las nuevas se revisan antes de aparecer para todos (hasta 3 sugerencias nuevas al día).",
+    "interestEmpty": "Ninguna afinidad coincide con esa búsqueda.",
+    "interestCreate": "Crear “{label}”",
+    "interestNew": "Nueva",
+    "interestPending": "En revisión",
+    "interestPendingShort": "Pendiente",
+    "interestMax": "Puedes seleccionar hasta {max} afinidades.",
+    "interestRateLimit": "Puedes sugerir hasta 3 afinidades nuevas cada 24 horas. Inténtalo más tarde.",
+    "interestRejected": "Estas afinidades no fueron aprobadas: {labels}. Elimínalas o cámbialas antes de enviar.",
+    "interestRejectedGeneric": "Una de tus afinidades no fue aprobada. Elige otra.",
+    "missingTitle": "Faltan algunos datos obligatorios.",
+    "missingFields": "Completa: {fields}.",
+    "removeInterest": "Quitar {label}",
+    "missing": {
+      "photo": "Foto de perfil",
+      "fullName": "Nombre completo",
+      "city": "Ciudad",
+      "bio": "Semblanza breve",
+      "interests": "Afinidades culturales",
+      "languages": "Idiomas",
+      "contacts": "Un canal de contacto"
+    },
+    "requiredHint": "Los campos marcados con * son obligatorios.",
+    "backHome": "Volver al inicio"
   },
   "Landing": {
     "hero": {

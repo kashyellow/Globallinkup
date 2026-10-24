@@ -20,7 +20,12 @@ export default async function VerifyPage() {
   if (!user) redirect({ href: "/login", locale });
 
   const profile = await getCurrentProfile();
-  const status: VerifyState = profile?.approval_status ?? "pending";
+  if (!profile) {
+    redirect({ href: "/create-persona", locale });
+    return null;
+  }
+
+  const status: VerifyState = profile.approval_status;
 
   const languages = Array.isArray(profile?.languages)
     ? (profile?.languages as { code?: string }[])

@@ -112,6 +112,32 @@ export async function removePostAction(input: unknown): Promise<AdminResult> {
 }
 
 // ---------------------------------------------------------------------------
+// Cultural-interest review (S6)
+// ---------------------------------------------------------------------------
+const interestReviewSchema = z.object({
+  interestId: uuidSchema,
+  decision: z.enum(["approved", "rejected"]),
+});
+
+export async function reviewInterestAction(input: unknown): Promise<AdminResult> {
+  const ctx = await requireAdminClient();
+  if (!ctx) return { ok: false, error: "forbidden" };
+
+  const parsed = interestReviewSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid" };
+
+  const { data, error } = await ctx.supabase.rpc("review_interest", {
+    p_interest_id: parsed.data.interestId,
+    p_decision: parsed.data.decision,
+  });
+
+  if (error || data !== true) return { ok: false, error: "unknown" };
+
+  revalidatePath("/admin");
+  return { ok: true };
+}
+
+// ---------------------------------------------------------------------------
 // Marketplace CRUD
 // ---------------------------------------------------------------------------
 const productSchema = z.object({

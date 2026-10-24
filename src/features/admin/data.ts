@@ -7,15 +7,16 @@ export const ADMIN_METRICS = {
   openReports: 2,
 } as const;
 
-export type AdminTab = "users" | "marketplace" | "moderation";
+export type AdminTab = "users" | "marketplace" | "moderation" | "interests";
 
-export const ADMIN_TABS = ["users", "marketplace", "moderation"] as const;
+export const ADMIN_TABS = ["users", "marketplace", "moderation", "interests"] as const;
 
 /** Tab badge counts (mirrors the reference design). */
 export const ADMIN_TAB_COUNTS: Record<AdminTab, number> = {
   users: 14,
   marketplace: 18,
   moderation: 5,
+  interests: 0,
 };
 
 export type AdminUserStatus = "pending" | "flagged" | "approved";

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 import { RegisterView } from "@/features/auth/components/register-view";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentProfile, getCurrentUser, postAuthPath } from "@/lib/auth";
 import { redirect } from "@/lib/i18n/navigation";
 
 export async function generateMetadata({
@@ -16,7 +16,10 @@ export async function generateMetadata({
 
 export default async function RegisterPage() {
   const user = await getCurrentUser();
-  if (user) redirect({ href: "/discover", locale: await getLocale() });
+  if (user) {
+    const profile = await getCurrentProfile();
+    redirect({ href: postAuthPath(profile), locale: await getLocale() });
+  }
 
   return <RegisterView />;
 }

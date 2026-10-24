@@ -6,6 +6,7 @@ import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
 import { ADMIN_TABS, type AdminTab } from "../data";
 import type { AdminData } from "../queries";
+import { AdminInterestsTab } from "./interests-tab";
 import { AdminMarketplaceTab } from "./marketplace-tab";
 import { AdminModerationTab } from "./moderation-tab";
 import { AdminUsersTab } from "./users-tab";
@@ -14,6 +15,7 @@ const TAB_ICONS: Record<AdminTab, string> = {
   users: "how_to_reg",
   marketplace: "storefront",
   moderation: "gavel",
+  interests: "tag",
 };
 
 export function AdminView({ data }: { data: AdminData }) {
@@ -25,12 +27,14 @@ export function AdminView({ data }: { data: AdminData }) {
     { key: "reportedPosts", count: data.metrics.reportedPosts, dot: "bg-danger" },
     { key: "curatedProducts", count: data.metrics.curatedProducts, dot: "bg-success-bright" },
     { key: "openReports", count: data.metrics.openReports, dot: "bg-secondary" },
+    { key: "pendingInterests", count: data.metrics.pendingInterests, dot: "bg-primary" },
   ] as const;
 
   const tabCounts: Record<AdminTab, number> = {
     users: data.users.length,
     marketplace: data.products.length,
     moderation: data.reports.filter((report) => report.status === "open").length,
+    interests: data.interests.filter((interest) => interest.status === "pending").length,
   };
 
   return (
@@ -126,6 +130,7 @@ export function AdminView({ data }: { data: AdminData }) {
         {tab === "users" ? <AdminUsersTab users={data.users} /> : null}
         {tab === "marketplace" ? <AdminMarketplaceTab products={data.products} /> : null}
         {tab === "moderation" ? <AdminModerationTab reports={data.reports} /> : null}
+        {tab === "interests" ? <AdminInterestsTab interests={data.interests} /> : null}
       </div>
     </>
   );

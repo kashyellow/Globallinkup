@@ -176,7 +176,7 @@ values
     'Recién llegado y esperando que la mesa de revisión me dé paso.',
     'Photographer',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"basic"}]'::jsonb,
-    array['hikingNature', 'literature', 'architecture'],
+    array['hikingNature', 'literature', 'architecture', 'Bookbinding'],
     null, 'pending', 'user', now(), null, null
   ),
   (
@@ -237,6 +237,26 @@ values
   ('66666666-6666-6666-6666-666666666666', '+34 611 729 334', '@elena_curaduria', 'elena.ramos@curaduria.es', '{}'::jsonb),
   ('99999999-9999-9999-9999-999999999999', '+351 912 000 000', null, 'rejected@example.com', '{"telegram":"@rejected_pt"}'::jsonb),
   ('abababab-abab-abab-abab-abababababab', '+52 33 1234 5678', null, 'suspended@example.com', '{}'::jsonb);
+
+-- ----------------------------------------------------------------------------
+-- Cultural-interest catalog (S6)
+--
+-- One approved row gives the combobox a custom suggestion; one pending row
+-- exercises the admin review queue and its creator cleanup. The pending label
+-- is also on its creator's profile, as it would be after a real save.
+-- ----------------------------------------------------------------------------
+insert into public.interest_catalog (
+  id, label, status, created_by, reviewed_by, reviewed_at
+)
+values
+  (
+    'cdcdcdcd-cdcd-cdcd-cdcd-cdcdcdcdcdcd', 'Bookbinding', 'pending',
+    '77777777-7777-7777-7777-777777777777', null, null
+  ),
+  (
+    'efefefef-efef-efef-efef-efefefefefef', 'Storytelling', 'approved',
+    null, '11111111-1111-1111-1111-111111111111', now()
+  );
 
 -- ----------------------------------------------------------------------------
 -- Connections — one accepted, one pending inbound, one declined (re-request path)

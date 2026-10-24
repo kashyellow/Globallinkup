@@ -1,5 +1,14 @@
 import { z } from "zod";
 
+import {
+  CUSTOM_INTEREST_MAX,
+  CUSTOM_INTEREST_MIN,
+  INTEREST_MAX,
+  INTEREST_MIN,
+  isValidCustomInterest,
+  normalizeInterest,
+} from "@/lib/persona/interests";
+
 /**
  * Persona input schema (S2). The create/resubmit form collects these fields;
  * the Server Action validates before writing `profiles` + `profile_private` +
@@ -15,6 +24,13 @@ export const personaLanguageSchema = z.object({
 const contactText = (max: number) =>
   z.union([z.literal(""), z.string().trim().max(max)]).optional();
 
+const interestSchema = z
+  .string()
+  .trim()
+  .min(CUSTOM_INTEREST_MIN, "interestInvalid")
+  .max(CUSTOM_INTEREST_MAX, "interestInvalid")
+  .refine(isValidCustomInterest, "interestInvalid");
+
 export const savePersonaSchema = z
   .object({
     fullName: z.string().trim().min(2, "fullNameTooShort").max(120),
@@ -27,7 +43,14 @@ export const savePersonaSchema = z
         message: "dobFuture",
       }),
     languages: z.array(personaLanguageSchema).min(1, "languagesRequired").max(10),
-    interests: z.array(z.string().trim().min(1).max(60)).min(3, "interestsRequired").max(20),
+    interests: z
+      .array(interestSchema)
+      .min(INTEREST_MIN, "interestsRequired")
+      .max(INTEREST_MAX, "interestsMax")
+      .refine(
+        (values) => new Set(values.map((value) => normalizeInterest(value))).size === values.length,
+        "interestsDuplicate",
+      ),
     bio: z.string().trim().min(1, "bioRequired").max(160),
     /**
      * Storage path returned by `uploadImageAction` — `<user-id>/<uuid>.<ext>`.

@@ -20,6 +20,8 @@ export const signUpSchema = z
     email: emailSchema,
     password: passwordSchema,
     confirm: z.string(),
+    /** Checked in step 1; re-checked at the final sign-up boundary. */
+    acceptedTerms: z.literal(true, { message: "termsRequired" }),
   })
   .refine((value) => value.password === value.confirm, {
     path: ["confirm"],

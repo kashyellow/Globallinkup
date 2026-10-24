@@ -4,11 +4,17 @@ import { useLocale, useTranslations } from "next-intl";
 import { useState, useEffect, useRef, type FormEvent } from "react";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
+import { InlineAlert } from "@/components/ui/inline-alert";
 import { Spinner } from "@/components/ui/spinner";
+import { signUpAction, type AuthError } from "@/features/auth/actions";
+import { useRegistrationDraft } from "@/features/auth/components/registration-draft-provider";
 import { savePersonaAction, type PersonaError } from "@/features/persona/actions";
 import { uploadImageAction } from "@/features/media/actions";
-import { useRouter } from "@/lib/i18n/navigation";
+import { INTEREST_MAX } from "@/lib/persona/interests";
+import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
+
+import { InterestCombobox, type InterestCatalogItem } from "./interest-combobox";
 
 const COUNTRIES = ["ES", "MX", "CO", "AR", "US", "CR", "CL", "PE", "PT"] as const;
 
@@ -35,18 +41,30 @@ const CHANNELS = [
 type ChannelKey = (typeof CHANNELS)[number]["key"];
 type LanguageState = Record<string, { active: boolean; level: string }>;
 
-const INTERESTS = [
-  { key: "architecture", icon: "domain", initial: true },
-  { key: "analogPhotography", icon: "camera_roll", initial: true },
-  { key: "ceramicsCraft", icon: "handyman", initial: true },
-  { key: "independentCinema", icon: "movie", initial: false },
-  { key: "culinaryHeritage", icon: "restaurant", initial: false },
-  { key: "hikingNature", icon: "forest", initial: false },
-  { key: "literature", icon: "menu_book", initial: true },
-  { key: "latinMusic", icon: "music_note", initial: false },
-] as const;
-
 const BIO_MAX = 160;
+const AVATAR_MAX_BYTES = 5 * 1024 * 1024;
+
+type FormField = "photo" | "fullName" | "city" | "bio" | "interests" | "languages" | "contacts";
+
+const FIELD_ORDER: FormField[] = [
+  "photo",
+  "fullName",
+  "city",
+  "bio",
+  "interests",
+  "languages",
+  "contacts",
+];
+
+const FIELD_INPUT_ID: Record<FormField, string> = {
+  photo: "persona-photo",
+  fullName: "persona-fullname",
+  city: "persona-city",
+  bio: "persona-bio",
+  interests: "persona-interests",
+  languages: "persona-language-ES",
+  contacts: "persona-whatsapp",
+};
 
 export type PersonaInitial = {
   fullName: string;
@@ -60,10 +78,20 @@ export type PersonaInitial = {
   avatarUrl?: string | null;
 } & Record<ChannelKey, string>;
 
-export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
+export function CreatePersonaView({
+  initial,
+  interestCatalog,
+  isAuthenticated,
+}: {
+  initial?: PersonaInitial;
+  interestCatalog: InterestCatalogItem[];
+  isAuthenticated: boolean;
+}) {
   const t = useTranslations("PersonaForm");
+  const tRegister = useTranslations("Auth.register");
   const locale = useLocale();
   const router = useRouter();
+  const { draft, clearDraft } = useRegistrationDraft();
 
   const [languages, setLanguages] = useState<LanguageState>(() =>
     Object.fromEntries(
@@ -71,18 +99,15 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
         const saved = initial?.languages.find((entry) => entry.code === language.code);
         return [
           language.code,
-          { active: Boolean(saved) || !initial, level: saved?.level ?? language.defaultLevel },
+          { active: Boolean(saved), level: saved?.level ?? language.defaultLevel },
         ];
       }),
     ),
   );
-  const [interests, setInterests] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(
-      INTERESTS.map((interest) => [
-        interest.key,
-        initial ? initial.interests.includes(interest.key) : interest.initial,
-      ]),
-    ),
+  const [interests, setInterests] = useState<string[]>(() =>
+    initial
+      ? Array.from(new Set(initial.interests.map((interest) => interest.trim()).filter(Boolean)))
+      : [],
   );
   const [bio, setBio] = useState(initial?.bio ?? "");
   const [fullName, setFullName] = useState(initial?.fullName ?? "");
@@ -95,8 +120,13 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
     tiktok: initial?.tiktok ?? "",
     x: initial?.x ?? "",
   }));
-  const [error, setError] = useState<PersonaError | "upload" | null>(null);
+  const [error, setError] = useState<PersonaError | AuthError | "upload" | null>(null);
+  const [rejectedInterests, setRejectedInterests] = useState<string[]>([]);
+  const [interestError, setInterestError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<FormField, string>>>({});
+  const [showValidation, setShowValidation] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [accountCreated, setAccountCreated] = useState(false);
 
   /*
    * The file stays in memory until submit: it is uploaded to the `avatars`
@@ -115,54 +145,123 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
     };
   }, [photoPreview]);
 
+  // A direct visit or a refresh has no in-memory draft. Send the visitor back
+  // to step 1 instead of letting them fill a persona that cannot be submitted.
+  useEffect(() => {
+    if (!isAuthenticated && !accountCreated && !draft) {
+      router.replace("/register");
+    }
+  }, [accountCreated, draft, isAuthenticated, router]);
+
   function previewFile(file?: File) {
     if (!file) return;
     if (
       !["image/png", "image/jpeg", "image/webp"].includes(file.type) ||
-      file.size > 10 * 1024 * 1024
+      file.size > AVATAR_MAX_BYTES
     ) {
       setError("upload");
+      setFieldErrors((previous) => ({ ...previous, photo: t("photoInvalid") }));
       return;
     }
     setError(null);
     setPhotoFile(file);
     setPhotoPreview(URL.createObjectURL(file));
+    clearFieldError("photo");
   }
 
-  const selectedInterests = Object.values(interests).filter(Boolean).length;
+  const selectedInterests = interests.length;
   const selectedLanguages = Object.values(languages).filter((entry) => entry.active).length;
   const hasContact = Object.values(contacts).some((value) => value.trim().length > 0);
-  const canSubmit =
-    fullName.trim().length >= 2 &&
-    city.trim().length > 0 &&
-    bio.trim().length > 0 &&
-    selectedInterests >= 3 &&
-    hasContact &&
-    selectedLanguages >= 1;
+  const requiresPhoto = !initial?.avatarUrl;
+  const hasPhoto = Boolean(photoFile || initial?.avatarUrl);
+  const isAccount = isAuthenticated || accountCreated;
+
+  function clearFieldError(field: FormField) {
+    setFieldErrors((previous) => {
+      if (!previous[field]) return previous;
+      const next = { ...previous };
+      delete next[field];
+      return next;
+    });
+  }
+
+  function validateForm(): Partial<Record<FormField, string>> {
+    const errors: Partial<Record<FormField, string>> = {};
+
+    if (requiresPhoto && !hasPhoto) errors.photo = t("photoRequired");
+    if (fullName.trim().length < 2) errors.fullName = t("fullNameRequired");
+    if (city.trim().length === 0) errors.city = t("cityRequired");
+    if (bio.trim().length === 0) errors.bio = t("bioRequired");
+    if (selectedInterests < 3) errors.interests = t("interestsRequired");
+    if (selectedLanguages < 1) errors.languages = t("languagesRequired");
+    if (!hasContact) errors.contacts = t("contactRequired");
+
+    return errors;
+  }
+
+  function focusField(field: FormField) {
+    const element = document.getElementById(FIELD_INPUT_ID[field]);
+    const target =
+      element instanceof HTMLElement && /^(INPUT|BUTTON|SELECT|TEXTAREA)$/.test(element.tagName)
+        ? element
+        : element?.querySelector<HTMLElement>("input, button, select, textarea");
+    target?.focus();
+    (element ?? target)?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
 
   function toggleLanguage(code: string) {
     setLanguages((prev) => ({ ...prev, [code]: { ...prev[code], active: !prev[code].active } }));
+    clearFieldError("languages");
   }
 
   function setLanguageLevel(code: string, level: string) {
     setLanguages((prev) => ({ ...prev, [code]: { ...prev[code], level } }));
   }
 
-  function toggleInterest(key: string) {
-    setInterests((prev) => ({ ...prev, [key]: !prev[key] }));
-  }
-
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!canSubmit || submitting) return;
+    if (submitting) return;
+
+    setError(null);
+    setRejectedInterests([]);
+    setInterestError(null);
+
+    const nextErrors = validateForm();
+    setFieldErrors(nextErrors);
+    setShowValidation(true);
+
+    const firstInvalid = FIELD_ORDER.find((field) => nextErrors[field]);
+    if (firstInvalid) {
+      focusField(firstInvalid);
+      return;
+    }
+
+    if (!isAccount && !draft) {
+      router.replace("/register");
+      return;
+    }
 
     const formData = new FormData(event.currentTarget);
     const text = (name: string) => String(formData.get(name) ?? "");
 
-    setError(null);
     setSubmitting(true);
 
     try {
+      if (!isAccount && draft) {
+        const signup = await signUpAction({
+          email: draft.email,
+          password: draft.password,
+          confirm: draft.password,
+          acceptedTerms: draft.acceptedTerms,
+        });
+        if (!signup.ok) {
+          setError(signup.error);
+          setSubmitting(false);
+          return;
+        }
+        setAccountCreated(true);
+      }
+
       let avatarPath = "";
 
       if (photoFile) {
@@ -172,7 +271,9 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
         const uploaded = await uploadImageAction(upload);
         if (!uploaded.ok) {
           setError("upload");
+          setFieldErrors((previous) => ({ ...previous, photo: t("photoInvalid") }));
           setSubmitting(false);
+          focusField("photo");
           return;
         }
         avatarPath = uploaded.path;
@@ -190,9 +291,7 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
             level: languages[language.code].level,
           }),
         ),
-        interests: INTERESTS.filter((interest) => interests[interest.key]).map(
-          (interest) => interest.key,
-        ),
+        interests,
         bio,
         whatsapp: contacts.whatsapp,
         telegram: contacts.telegram,
@@ -205,16 +304,68 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
 
       // A successful save redirects; only errors return here.
       if (!result.ok) {
-        setError(result.error);
         setSubmitting(false);
+
+        if (result.error === "avatarRequired") {
+          setFieldErrors((previous) => ({ ...previous, photo: t("photoRequired") }));
+          setShowValidation(true);
+          focusField("photo");
+          return;
+        }
+
+        if (result.error === "interestRejected") {
+          setRejectedInterests(result.rejectedInterests ?? []);
+          setError("interestRejected");
+          setInterestError(t("interestRejectedGeneric"));
+          focusField("interests");
+          return;
+        }
+
+        if (result.error === "interestRateLimit") {
+          setError("interestRateLimit");
+          setInterestError(t("interestRateLimit"));
+          focusField("interests");
+          return;
+        }
+
+        setError(result.error);
         return;
       }
+      clearDraft();
       router.push(result.redirectTo);
     } catch {
       // A failed Server Action must not leave the form stuck.
       setError("unknown");
       setSubmitting(false);
     }
+  }
+
+  const missingLabels = FIELD_ORDER.filter((field) => fieldErrors[field]).map((field) =>
+    t(`missing.${field}`),
+  );
+
+  let errorMessage: string | null = null;
+  if (error === "interestRejected") {
+    errorMessage =
+      rejectedInterests.length > 0
+        ? t("interestRejected", { labels: rejectedInterests.join(", ") })
+        : t("interestRejectedGeneric");
+  } else if (error === "interestRateLimit") {
+    errorMessage = t("interestRateLimit");
+  } else if (error === "emailInUse") {
+    errorMessage = tRegister("errorEmailInUse");
+  } else if (error === "weakPassword") {
+    errorMessage = tRegister("errorWeakPassword");
+  } else if (error === "rateLimited") {
+    errorMessage = tRegister("errorRateLimited");
+  } else if (error === "confirmEmail") {
+    errorMessage = tRegister("errorConfirmEmail");
+  } else if (error === "invalid") {
+    errorMessage = t("errorInvalid");
+  } else if (error === "upload") {
+    errorMessage = t("errorUpload");
+  } else if (error) {
+    errorMessage = t("errorUnknown");
   }
 
   return (
@@ -258,22 +409,15 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
 
       <div className="mx-auto w-full max-w-3xl">
         <div className="flex flex-col gap-space-lg rounded-xl border border-outline-variant bg-surface-container p-space-lg shadow-sm md:gap-space-xl md:p-space-xl">
-          <form className="flex flex-col gap-space-lg md:gap-space-xl" onSubmit={submit}>
+          <form className="flex flex-col gap-space-lg md:gap-space-xl" noValidate onSubmit={submit}>
+            <p className="font-body-sm text-body-sm text-secondary">{t("requiredHint")}</p>
             {error ? (
               <div
                 role="alert"
                 className="flex items-start gap-space-sm rounded-2xl border border-danger-border bg-danger-surface p-space-md"
               >
                 <Icon name="error_outline" className="mt-0.5 shrink-0 text-lg text-danger-text" />
-                <span className="font-body-sm text-body-sm text-danger-text">
-                  {t(
-                    error === "invalid"
-                      ? "errorInvalid"
-                      : error === "upload"
-                        ? "errorUpload"
-                        : "errorUnknown",
-                  )}
-                </span>
+                <span className="font-body-sm text-body-sm text-danger-text">{errorMessage}</span>
               </div>
             ) : null}
             {/* 1. Profile photo */}
@@ -282,20 +426,39 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
                 <div>
                   <span className="block font-label-lg text-label-lg font-semibold text-on-surface">
                     {t("photoLabel")}
+                    {requiresPhoto ? (
+                      <span aria-hidden className="ml-0.5 text-danger-text">
+                        *
+                      </span>
+                    ) : null}
                   </span>
                   <p className="font-body-sm text-body-sm text-secondary">{t("photoHint")}</p>
                 </div>
-                <span className="rounded-lg border border-outline-variant bg-surface-variant px-2 py-0.5 font-label-caps text-label-caps font-bold text-secondary uppercase">
-                  {t("optional")}
+                <span
+                  className={cn(
+                    "rounded-lg border px-2 py-0.5 font-label-caps text-label-caps font-bold uppercase",
+                    requiresPhoto
+                      ? "border-primary/30 bg-admin-surface text-primary"
+                      : "border-outline-variant bg-surface-variant text-secondary",
+                  )}
+                >
+                  {requiresPhoto ? t("required") : t("optional")}
                 </span>
               </div>
 
-              <div className="flex flex-col items-center gap-space-lg rounded-xl border border-outline-variant bg-surface-low p-space-lg sm:flex-row">
+              <div
+                className={cn(
+                  "flex flex-col items-center gap-space-lg rounded-xl border bg-surface-low p-space-lg sm:flex-row",
+                  fieldErrors.photo ? "border-danger-border-strong" : "border-outline-variant",
+                )}
+              >
                 <div className="group relative shrink-0 cursor-pointer">
                   <button
+                    id="persona-photo"
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     aria-label={t("change")}
+                    aria-describedby={fieldErrors.photo ? "persona-photo-error" : undefined}
                     className="relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-2 border-outline-variant bg-surface-variant shadow-inner transition-transform duration-300 group-hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
                     {photoPreview ? (
@@ -365,20 +528,45 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
                   </p>
                 </div>
               </div>
+
+              {fieldErrors.photo ? (
+                <p
+                  id="persona-photo-error"
+                  role="alert"
+                  className="font-body-sm text-body-sm text-danger-text"
+                >
+                  {fieldErrors.photo}
+                </p>
+              ) : null}
             </section>
 
             {/* 2. Identity & location */}
             <section className="grid grid-cols-1 gap-space-md md:grid-cols-2">
-              <Field label={t("fullName")} meta={t("fullNameMeta")} htmlFor="persona-fullname">
+              <Field
+                label={t("fullName")}
+                meta={t("fullNameMeta")}
+                htmlFor="persona-fullname"
+                required
+                error={fieldErrors.fullName}
+              >
                 <div className="relative">
                   <input
                     id="persona-fullname"
                     name="fullname"
                     type="text"
+                    required
                     value={fullName}
-                    onChange={(event) => setFullName(event.target.value)}
+                    onChange={(event) => {
+                      setFullName(event.target.value);
+                      clearFieldError("fullName");
+                    }}
                     placeholder={t("fullNamePlaceholder")}
-                    className={inputClass}
+                    aria-invalid={Boolean(fieldErrors.fullName)}
+                    aria-describedby={fieldErrors.fullName ? "persona-fullname-error" : undefined}
+                    className={cn(
+                      inputClass,
+                      fieldErrors.fullName && "border-danger-border-strong",
+                    )}
                   />
                   <Icon
                     name="badge"
@@ -408,16 +596,28 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
                 </div>
               </Field>
 
-              <Field label={t("city")} meta={t("cityMeta")} htmlFor="persona-city">
+              <Field
+                label={t("city")}
+                meta={t("cityMeta")}
+                htmlFor="persona-city"
+                required
+                error={fieldErrors.city}
+              >
                 <div className="relative">
                   <input
                     id="persona-city"
                     name="city"
                     type="text"
+                    required
                     value={city}
-                    onChange={(event) => setCity(event.target.value)}
+                    onChange={(event) => {
+                      setCity(event.target.value);
+                      clearFieldError("city");
+                    }}
                     placeholder={t("cityPlaceholder")}
-                    className={inputClass}
+                    aria-invalid={Boolean(fieldErrors.city)}
+                    aria-describedby={fieldErrors.city ? "persona-city-error" : undefined}
+                    className={cn(inputClass, fieldErrors.city && "border-danger-border-strong")}
                   />
                   <Icon
                     name="location_on"
@@ -439,11 +639,19 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
 
             {/* 3. Languages */}
             <section className="flex flex-col gap-space-sm">
-              <div className="flex flex-col">
-                <span className="font-label-lg text-label-lg font-semibold text-on-surface">
-                  {t("languagesLabel")}
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex flex-col">
+                  <span className="font-label-lg text-label-lg font-semibold text-on-surface">
+                    {t("languagesLabel")}
+                    <span aria-hidden className="ml-0.5 text-danger-text">
+                      *
+                    </span>
+                  </span>
+                  <p className="font-body-sm text-body-sm text-secondary">{t("languagesHint")}</p>
+                </div>
+                <span className="rounded-lg border border-primary/30 bg-admin-surface px-2 py-0.5 font-label-caps text-label-caps font-bold text-primary uppercase">
+                  {t("required")}
                 </span>
-                <p className="font-body-sm text-body-sm text-secondary">{t("languagesHint")}</p>
               </div>
               <div className="mt-1 grid grid-cols-1 gap-space-xs sm:grid-cols-2">
                 {LANGUAGES.map((language) => {
@@ -459,6 +667,7 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
                       )}
                     >
                       <button
+                        id={`persona-language-${language.code}`}
                         type="button"
                         aria-pressed={state.active}
                         onClick={() => toggleLanguage(language.code)}
@@ -506,6 +715,11 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
                   );
                 })}
               </div>
+              {fieldErrors.languages ? (
+                <p role="alert" className="font-body-sm text-body-sm text-danger-text">
+                  {fieldErrors.languages}
+                </p>
+              ) : null}
             </section>
 
             {/* 4. Bio */}
@@ -516,6 +730,9 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
                   htmlFor="persona-bio"
                 >
                   {t("bioLabel")}
+                  <span aria-hidden className="ml-0.5 text-danger-text">
+                    *
+                  </span>
                 </label>
                 <span className="font-label-caps text-label-caps font-medium tracking-wider text-secondary">
                   {t("bioCounter", { count: bio.length, max: BIO_MAX })}
@@ -525,55 +742,75 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
                 id="persona-bio"
                 name="persona-bio"
                 rows={3}
+                required
                 maxLength={BIO_MAX}
                 value={bio}
-                onChange={(event) => setBio(event.target.value)}
+                onChange={(event) => {
+                  setBio(event.target.value);
+                  clearFieldError("bio");
+                }}
                 placeholder={t("bioPlaceholder")}
-                className={cn(inputClass, "resize-none leading-relaxed")}
+                aria-invalid={Boolean(fieldErrors.bio)}
+                aria-describedby={fieldErrors.bio ? "persona-bio-error" : "persona-bio-hint"}
+                className={cn(
+                  inputClass,
+                  "resize-none leading-relaxed",
+                  fieldErrors.bio && "border-danger-border-strong",
+                )}
               />
-              <p className="font-body-sm text-body-sm text-secondary italic">{t("bioHint")}</p>
+              {fieldErrors.bio ? (
+                <p
+                  id="persona-bio-error"
+                  role="alert"
+                  className="font-body-sm text-body-sm text-danger-text"
+                >
+                  {fieldErrors.bio}
+                </p>
+              ) : null}
+              <p id="persona-bio-hint" className="font-body-sm text-body-sm text-secondary italic">
+                {t("bioHint")}
+              </p>
             </section>
 
             {/* 5. Interests */}
             <section className="flex flex-col gap-space-sm">
-              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                <span className="font-label-lg text-label-lg font-semibold text-on-surface">
-                  {t("interestsLabel")}
-                </span>
-                <span
-                  className={cn(
-                    "font-label-caps text-label-caps",
-                    canSubmit ? "text-secondary" : "text-primary",
-                  )}
-                >
-                  {t("interestsHint", { count: selectedInterests })}
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <span className="font-label-lg text-label-lg font-semibold text-on-surface">
+                    {t("interestsLabel")}
+                    <span aria-hidden className="ml-0.5 text-danger-text">
+                      *
+                    </span>
+                  </span>
+                  <p className="font-body-sm text-body-sm text-secondary">
+                    {t("interestsHint", { count: selectedInterests })}
+                  </p>
+                </div>
+                <span className="self-start rounded-lg border border-primary/30 bg-admin-surface px-2 py-0.5 font-label-caps text-label-caps font-bold text-primary uppercase">
+                  {t("required")}
                 </span>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {INTERESTS.map((interest) => {
-                  const selected = interests[interest.key];
-                  return (
-                    <button
-                      key={interest.key}
-                      type="button"
-                      aria-pressed={selected}
-                      onClick={() => toggleInterest(interest.key)}
-                      className={cn(
-                        "flex min-h-11 items-center gap-1.5 rounded-lg px-space-md py-1.5 font-label-md text-label-md shadow-sm transition-all",
-                        selected
-                          ? "border border-primary/40 bg-admin-surface font-semibold text-on-surface"
-                          : "border border-outline-variant bg-surface-low text-secondary hover:bg-surface-variant hover:text-on-surface",
-                      )}
-                    >
-                      <Icon
-                        name={interest.icon}
-                        className={cn("text-[16px]", selected && "text-primary")}
-                      />
-                      <span>{t(`interests.${interest.key}`)}</span>
-                    </button>
-                  );
-                })}
-              </div>
+
+              <InterestCombobox
+                options={interestCatalog}
+                selected={interests}
+                onChange={(next) => {
+                  setInterests(next);
+                  setInterestError(null);
+                  if (error === "interestRejected" || error === "interestRateLimit") {
+                    setError(null);
+                    setRejectedInterests([]);
+                  }
+                  clearFieldError("interests");
+                }}
+                error={fieldErrors.interests ?? interestError ?? undefined}
+              />
+
+              {selectedInterests >= INTEREST_MAX ? (
+                <p className="font-body-sm text-body-sm text-secondary">
+                  {t("interestMax", { max: INTEREST_MAX })}
+                </p>
+              ) : null}
             </section>
 
             {/* 6. Private contact vault */}
@@ -585,6 +822,9 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
                   </div>
                   <h4 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
                     {t("vaultTitle")}
+                    <span aria-hidden className="ml-0.5 text-danger-text">
+                      *
+                    </span>
                   </h4>
                 </div>
                 <span className="shrink-0 rounded-lg bg-tertiary px-2 py-0.5 font-label-caps text-label-caps font-bold whitespace-nowrap text-white uppercase">
@@ -613,11 +853,21 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
                         name={channel.key}
                         type="text"
                         value={contacts[channel.key]}
-                        onChange={(event) =>
-                          setContacts((prev) => ({ ...prev, [channel.key]: event.target.value }))
-                        }
+                        onChange={(event) => {
+                          setContacts((prev) => ({ ...prev, [channel.key]: event.target.value }));
+                          clearFieldError("contacts");
+                        }}
                         placeholder={t(channel.placeholderKey)}
-                        className={cn(inputClass, channel.prefix && "pl-8", "pr-10")}
+                        aria-invalid={Boolean(fieldErrors.contacts)}
+                        aria-describedby={
+                          fieldErrors.contacts ? "persona-contacts-error" : undefined
+                        }
+                        className={cn(
+                          inputClass,
+                          channel.prefix && "pl-8",
+                          "pr-10",
+                          fieldErrors.contacts && "border-danger-border-strong",
+                        )}
                       />
                       <Icon
                         name={channel.icon}
@@ -629,14 +879,16 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
               </div>
 
               <div
+                id="persona-contacts-error"
+                role={fieldErrors.contacts ? "alert" : undefined}
                 className={cn(
                   "flex items-center gap-2 pt-1",
-                  hasContact ? "text-secondary" : "text-primary",
+                  hasContact ? "text-secondary" : "text-danger-text",
                 )}
               >
                 <Icon
                   name={hasContact ? "check_circle" : "error"}
-                  className={cn("text-[16px]", hasContact ? "text-tertiary" : "text-primary")}
+                  className={cn("text-[16px]", hasContact ? "text-tertiary" : "text-danger-text")}
                 />
                 <span className="font-body-sm text-body-sm">
                   {t(hasContact ? "vaultNote" : "contactRequired")}
@@ -644,24 +896,31 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
               </div>
             </section>
 
+            {showValidation && missingLabels.length > 0 ? (
+              <InlineAlert>
+                <strong className="font-semibold">{t("missingTitle")}</strong>{" "}
+                {t("missingFields", { fields: missingLabels.join(", ") })}
+              </InlineAlert>
+            ) : null}
+
             {/* Actions */}
             <div className="flex flex-col items-center justify-between gap-space-md pt-space-md sm:flex-row">
-              <button
-                type="button"
-                onClick={() => router.back()}
+              <Link
+                href={isAccount ? "/" : "/register"}
                 className="flex w-full items-center justify-center gap-space-xs rounded-lg border border-outline-variant bg-surface-variant px-space-lg py-3 font-label-lg text-label-lg text-on-surface shadow-sm transition-colors hover:bg-surface-container-high sm:w-auto"
               >
                 <Icon name="arrow_back" className="text-[18px]" />
-                <span>{t("back")}</span>
-              </button>
+                <span>{isAccount ? t("backHome") : t("back")}</span>
+              </Link>
               <button
                 type="submit"
-                disabled={!canSubmit || submitting}
+                disabled={submitting}
+                aria-busy={submitting}
                 className={cn(
                   "group flex w-full items-center justify-center gap-space-xs rounded-lg px-space-md py-3 text-center font-label-lg text-label-lg font-semibold shadow-md transition-colors sm:w-auto sm:px-space-xl",
-                  canSubmit && !submitting
-                    ? "bg-primary-container text-white hover:bg-primary-hover"
-                    : "cursor-not-allowed bg-surface-variant text-secondary",
+                  submitting
+                    ? "cursor-wait bg-surface-variant text-secondary"
+                    : "bg-primary-container text-white hover:bg-primary-hover",
                 )}
               >
                 <span>{submitting ? t("submitting") : t("submit")}</span>
@@ -689,11 +948,15 @@ function Field({
   label,
   meta,
   htmlFor,
+  required = false,
+  error,
   children,
 }: {
   label: string;
   meta: string;
   htmlFor: string;
+  required?: boolean;
+  error?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -702,10 +965,26 @@ function Field({
         className="flex items-center justify-between font-label-md text-label-md font-semibold text-on-surface"
         htmlFor={htmlFor}
       >
-        <span>{label}</span>
+        <span>
+          {label}
+          {required ? (
+            <span aria-hidden className="ml-0.5 text-danger-text">
+              *
+            </span>
+          ) : null}
+        </span>
         <span className="font-label-caps text-label-caps text-secondary">{meta}</span>
       </label>
       {children}
+      {error ? (
+        <p
+          id={`${htmlFor}-error`}
+          role="alert"
+          className="font-body-sm text-body-sm text-danger-text"
+        >
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

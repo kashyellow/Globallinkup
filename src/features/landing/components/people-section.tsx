@@ -49,7 +49,7 @@ export async function PeopleSection() {
           {PEOPLE.map((person, index) => (
             <Reveal as="li" key={person.key} delay={index * 80} className="h-full">
               <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-outline-variant bg-marketing-core shadow-lift-sm transition-shadow duration-500 hover:shadow-lift-md">
-                <div className="relative aspect-[4/5] w-full overflow-hidden bg-marketing-raised">
+                <div className="relative aspect-[4/5] w-full overflow-hidden bg-marketing-raised md:aspect-[4/3] lg:aspect-[4/5]">
                   <MediaImage
                     src={person.image}
                     alt={t(`${person.key}.alt`)}

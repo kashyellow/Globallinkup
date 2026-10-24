@@ -124,7 +124,7 @@ export function SiteHeader({ mode = "content" }: { mode?: "landing" | "content" 
 
               <Link
                 href="/login"
-                className="hidden min-h-9 items-center rounded-full px-3 font-label-lg text-label-lg font-medium text-on-surface-variant transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:inline-flex"
+                className="hidden min-h-9 items-center rounded-full px-3 font-label-lg text-label-lg font-medium text-on-surface-variant transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:inline-flex"
               >
                 {t("signIn")}
               </Link>
@@ -183,16 +183,9 @@ export function SiteHeader({ mode = "content" }: { mode?: "landing" | "content" 
             <Link
               href="/login"
               onClick={() => setMenuOpen(false)}
-              className="block rounded-xl px-3 py-3 font-label-lg text-label-lg text-on-surface-variant transition-colors duration-300 hover:bg-surface-container hover:text-on-surface"
+              className="block rounded-xl px-3 py-3 font-label-lg text-label-lg text-on-surface-variant transition-colors duration-300 hover:bg-surface-container hover:text-on-surface sm:hidden"
             >
               {t("signIn")}
-            </Link>
-            <Link
-              href="/register"
-              onClick={() => setMenuOpen(false)}
-              className="block rounded-xl px-3 py-3 font-label-lg text-label-lg font-semibold text-primary transition-colors duration-300 hover:bg-surface-container"
-            >
-              {t("join")}
             </Link>
           </nav>
         </div>

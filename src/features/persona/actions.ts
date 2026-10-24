@@ -1,6 +1,7 @@
 "use server";
 
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentProfile, getCurrentUser } from "@/lib/auth";
+import { SEEDED_INTEREST_KEYS } from "@/lib/persona/interests";
 import { createClient } from "@/lib/supabase/server";
 import { savePersonaSchema } from "@/lib/validation/persona";
 
@@ -13,9 +14,18 @@ import { savePersonaSchema } from "@/lib/validation/persona";
  * Locale arrives in the payload — never call `getLocale()` in a Server Action.
  */
 
-export type PersonaError = "invalid" | "unknown";
+export type PersonaError =
+  "invalid" | "unknown" | "avatarRequired" | "interestRateLimit" | "interestRejected";
 
-export type PersonaResult = { ok: true; redirectTo: string } | { ok: false; error: PersonaError };
+export type PersonaResult =
+  | { ok: true; redirectTo: string }
+  | { ok: false; error: PersonaError; rejectedInterests?: string[] };
+
+type RegisterInterestResult = {
+  status?: "ok" | "rate_limited";
+  accepted?: string[];
+  rejected?: string[];
+};
 
 const nonEmpty = (value?: string) => (value && value.length > 0 ? value : null);
 
@@ -35,7 +45,40 @@ export async function savePersonaAction(input: unknown): Promise<PersonaResult> 
     return { ok: false, error: "invalid" };
   }
 
+  // A profile photo is required for new personas, but editing an existing
+  // persona may keep its stored avatar. The RPC only overwrites when a new
+  // path is supplied, so the check is app-level rather than a nullable-column
+  // constraint (admins and legacy rows may still have no avatar).
+  const currentProfile = await getCurrentProfile();
+  if (!avatarPath && !currentProfile?.avatar_url) {
+    return { ok: false, error: "avatarRequired" };
+  }
+
   const supabase = await createClient();
+
+  // Custom labels are registered before the profile write so a rejected label
+  // or the 24-hour suggestion limit cannot leave a half-saved persona behind.
+  const customInterests = data.interests.filter((interest) => !SEEDED_INTEREST_KEYS.has(interest));
+  if (customInterests.length > 0) {
+    const { data: registered, error: registerError } = await supabase.rpc(
+      "register_custom_interests",
+      { p_labels: customInterests },
+    );
+    if (registerError) return { ok: false, error: "unknown" };
+
+    const interestResult = (registered ?? {}) as RegisterInterestResult;
+    if (interestResult.status === "rate_limited") {
+      return { ok: false, error: "interestRateLimit" };
+    }
+    if (interestResult.rejected && interestResult.rejected.length > 0) {
+      return {
+        ok: false,
+        error: "interestRejected",
+        rejectedInterests: interestResult.rejected,
+      };
+    }
+  }
+
   const { data: status, error } = await supabase.rpc("save_persona", {
     p_display_name: data.fullName,
     p_country_code: data.country,

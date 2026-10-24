@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import {
   CreatePersonaView,
   type PersonaInitial,
 } from "@/features/persona/components/create-persona-view";
+import { getInterestCatalog } from "@/features/persona/queries";
 import { getCurrentProfile, getCurrentUser, getServerClient } from "@/lib/auth";
-import { redirect } from "@/lib/i18n/navigation";
 import { createSignedImageUrl } from "@/lib/storage";
 import { unwrap } from "@/lib/supabase/unwrap";
 
@@ -90,13 +90,14 @@ async function loadInitial(): Promise<PersonaInitial | undefined> {
 }
 
 export default async function CreatePersonaPage() {
-  const user = await getCurrentUser();
-  if (!user) {
-    const locale = await getLocale();
-    redirect({ href: "/login", locale });
-  }
+  const [user, interestCatalog] = await Promise.all([getCurrentUser(), getInterestCatalog()]);
+  const initial = user ? await loadInitial() : undefined;
 
-  const initial = await loadInitial();
-
-  return <CreatePersonaView initial={initial} />;
+  return (
+    <CreatePersonaView
+      initial={initial}
+      interestCatalog={interestCatalog}
+      isAuthenticated={Boolean(user)}
+    />
+  );
 }

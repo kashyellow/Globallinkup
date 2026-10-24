@@ -2,6 +2,7 @@
 
 import { cookies, headers } from "next/headers";
 
+import { postAuthPath } from "@/lib/auth";
 import { getPublicEnv } from "@/lib/env";
 import { RESET_REQUEST_COOKIE, RESET_REQUEST_MAX_AGE } from "@/lib/auth-cookies";
 import { REMEMBER_COOKIE, REMEMBER_MAX_AGE } from "@/lib/supabase/cookies";
@@ -23,7 +24,8 @@ import {
  * `next/root-params`, which is not available inside a Server Action.
  */
 
-export type AuthError = "invalid" | "emailInUse" | "weakPassword" | "rateLimited" | "unknown";
+export type AuthError =
+  "invalid" | "emailInUse" | "weakPassword" | "rateLimited" | "confirmEmail" | "unknown";
 
 export type AuthResult = { ok: true; redirectTo: string } | { ok: false; error: AuthError };
 
@@ -80,11 +82,15 @@ export async function signUpAction(input: unknown): Promise<AuthResult> {
   if (!parsed.success) return { ok: false, error: "unknown" };
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
   });
   if (error) return { ok: false, error: mapAuthError(error) };
+
+  // Email confirmation is intentionally disabled (PRD OQ-1). If a deployment
+  // turns it on, there is no session yet and the persona cannot be written.
+  if (!data.session) return { ok: false, error: "confirmEmail" };
 
   return { ok: true, redirectTo: "/create-persona" };
 }
@@ -118,9 +124,7 @@ export async function signInAction(input: unknown): Promise<AuthResult> {
     .eq("id", data.user.id)
     .maybeSingle();
 
-  if (!profile) return { ok: true, redirectTo: "/create-persona" };
-  if (profile.approval_status !== "approved") return { ok: true, redirectTo: "/verify" };
-  return { ok: true, redirectTo: "/discover" };
+  return { ok: true, redirectTo: postAuthPath(profile) };
 }
 
 export async function signOutAction(): Promise<{ ok: true; redirectTo: string }> {

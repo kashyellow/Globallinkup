@@ -14,6 +14,7 @@ const ERROR_KEYS: Record<AuthError, string> = {
   emailInUse: "errorGeneric",
   weakPassword: "errorWeakPassword",
   rateLimited: "errorRateLimited",
+  confirmEmail: "errorGeneric",
   invalid: "errorGeneric",
   unknown: "errorGeneric",
 };

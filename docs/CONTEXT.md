@@ -70,6 +70,11 @@ implementation. Where this summary and the PRD disagree, the PRD wins.
   Only `APPROVED` users get platform access. `ADMIN` is always approved.
 - Auth email is private; contact info lives in a separate `contact_details` table
   gated by RLS on an accepted connection.
+- Custom cultural interests stay in `profiles.interests text[]`. New labels are
+  registered in `interest_catalog` as `pending` (max 3 new per member per 24h)
+  and only become suggestions after admin approval. Rejecting a pending label
+  removes it from the creator's profile; unpublishing an approved label keeps
+  existing profiles intact.
 
 ## Non-negotiable rules
 
@@ -88,6 +93,11 @@ These are confirmed and supersede the PRD where it disagrees:
 - Package manager is **npm**, not pnpm.
 - Foundational docs live under `docs/` (not the repo root).
 - Runtime pinned to the versions above (`src/` layout adopted per PRD §9.1).
+- **Signup is deferred to persona submit.** Step 1 (`/register`) keeps the
+  email/password in an in-memory client draft; the Supabase Auth user is created
+  only when step 2 is submitted, so abandoning persona setup leaves no
+  half-registered account. Email confirmation must stay disabled (PRD OQ-1);
+  a full page refresh at step 2 intentionally returns to step 1.
 
 ## Out of scope (do not build without asking)
 

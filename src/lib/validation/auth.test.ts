@@ -3,7 +3,12 @@ import { describe, expect, it } from "vitest";
 import { forgotPasswordSchema, resetPasswordSchema, signInSchema, signUpSchema } from "./auth";
 
 describe("signUpSchema", () => {
-  const valid = { email: "User@Example.com ", password: "Password123", confirm: "Password123" };
+  const valid = {
+    email: "User@Example.com ",
+    password: "Password123",
+    confirm: "Password123",
+    acceptedTerms: true,
+  };
 
   it("accepts a strong password and normalises the email", () => {
     const result = signUpSchema.safeParse(valid);
@@ -25,6 +30,11 @@ describe("signUpSchema", () => {
 
   it("rejects an invalid email", () => {
     expect(signUpSchema.safeParse({ ...valid, email: "not-an-email" }).success).toBe(false);
+  });
+
+  it("requires explicit terms acceptance", () => {
+    expect(signUpSchema.safeParse({ ...valid, acceptedTerms: false }).success).toBe(false);
+    expect(signUpSchema.safeParse({ ...valid, acceptedTerms: undefined }).success).toBe(false);
   });
 });
 

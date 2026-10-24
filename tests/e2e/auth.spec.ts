@@ -10,8 +10,31 @@ import { expect, test, type Page } from "@playwright/test";
 const AUTH_E2E = process.env.AUTH_E2E === "1";
 const PASSWORD = "Password123";
 
+// A valid 1×1 transparent PNG. The upload action checks MIME type and size,
+// not dimensions, so this is enough to exercise the required-photo flow.
+const AVATAR_PNG = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl2nK0AAAAASUVORK5CYII=",
+  "base64",
+);
+
 test.skip(!AUTH_E2E, "needs a seeded Supabase stack (AUTH_E2E=1)");
 test.describe.configure({ mode: "serial" });
+
+async function uploadAvatar(page: Page) {
+  // Wait for client hydration so the file input's React onChange is attached.
+  await page.waitForTimeout(750);
+  await page.locator('input[type="file"]').first().setInputFiles({
+    name: "avatar.png",
+    mimeType: "image/png",
+    buffer: AVATAR_PNG,
+  });
+  await expect(page.locator('img[alt*="portrait" i]')).toBeVisible();
+}
+
+async function addInterest(page: Page, value: string) {
+  await page.locator("#persona-interests input").click();
+  await page.locator(`#persona-interests [cmdk-item][data-value="${value}"]`).click();
+}
 
 async function signIn(page: Page, email: string, password = PASSWORD) {
   await page.goto("/en/login");
@@ -69,6 +92,8 @@ test("@auth a rejected user resubmits and returns to review", async ({ page }) =
   await signIn(page, "rejected.user@example.com");
   await page.goto("/en/create-persona");
   await expect(page.locator("#persona-fullname")).toHaveValue("Rejected Applicant");
+  // Rejected users have no stored avatar, so resubmitting requires a new one.
+  await uploadAvatar(page);
   await expect(page.locator("form button[type=submit]")).toBeEnabled();
   await page.locator("form button[type=submit]").click();
   await expect(page).toHaveURL(/\/en\/verify$/);
@@ -133,12 +158,47 @@ test("@auth an admin approves a pending persona", async ({ page }) => {
   await expect(card.getByText(/Approved/).first()).toBeVisible();
 });
 
+test("@auth an admin approves a pending cultural interest", async ({ page }) => {
+  await signIn(page, "admin@globallinkup.test");
+  await page.goto("/en/admin");
+  await page.getByRole("button", { name: /interest catalog/i }).click();
+
+  const card = page.locator("article", { hasText: "Bookbinding" });
+  await expect(card).toBeVisible();
+  await card.getByRole("button", { name: /^approve$/i }).click();
+  await page.waitForTimeout(1500);
+  await expect(card).toHaveCount(0);
+  await expect(page.getByText(/Published suggestions/i)).toBeVisible();
+});
+
 test("@auth the profile shows the real dossier and unlocked channels", async ({ page }) => {
   await signIn(page, "sofia.martinez@example.com");
   await page.goto("/en/profile");
   await page.waitForTimeout(2500);
   await expect(page.getByRole("heading", { name: /Sofia Martinez/ })).toBeVisible();
   await expect(page.getByText(/\+34 612 849 201/)).toBeVisible();
+});
+
+test("@auth step 1 stays editable until the persona is submitted", async ({ page }) => {
+  const email = `draft-${Date.now()}@example.com`;
+  await page.goto("/en/register");
+  await page.fill("#reg-email", email);
+  await page.fill("#reg-password", PASSWORD);
+  await page.fill("#reg-confirm", PASSWORD);
+  await page.check("#reg-terms");
+  await page.locator("form button[type=submit]").click();
+  await expect(page).toHaveURL(/\/en\/create-persona$/);
+
+  // No auth account exists yet, so step 1 can still be opened and edited.
+  await page.getByRole("link", { name: /back to step 1/i }).click();
+  await expect(page).toHaveURL(/\/en\/register$/);
+  await expect(page.locator("#reg-email")).toHaveValue(email);
+
+  // Going home and choosing Join starts step 1 again instead of looping
+  // through an orphan authenticated account.
+  await page.goto("/en");
+  await page.locator('header a[href="/en/register"]').click();
+  await expect(page).toHaveURL(/\/en\/register$/);
 });
 
 test("@auth onboarding creates a persona for a new account", async ({ page }) => {
@@ -154,8 +214,15 @@ test("@auth onboarding creates a persona for a new account", async ({ page }) =>
   await page.fill("#persona-fullname", "E2E Onboarding");
   await page.fill("#persona-city", "Lisbon");
   await page.fill("#persona-bio", "Created by the end-to-end onboarding spec.");
+  // Languages and interests no longer have defaults.
+  await page.locator("#persona-language-ES").click();
+  await addInterest(page, "architecture");
+  await addInterest(page, "literature");
+  await addInterest(page, "hikingNature");
   // The vault now requires at least one channel.
   await page.fill("#persona-whatsapp", "+351 900 000 000");
+  await uploadAvatar(page);
   await page.locator("form button[type=submit]").click();
-  await expect(page).toHaveURL(/\/en\/verify$/);
+  // Step 2 now signs up, uploads and saves in sequence on a cold dev server.
+  await expect(page).toHaveURL(/\/en\/verify$/, { timeout: 15_000 });
 });

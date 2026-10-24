@@ -53,7 +53,50 @@ describe("savePersonaSchema", () => {
   });
 
   it("requires at least three interests", () => {
-    expect(savePersonaSchema.safeParse({ ...valid, interests: ["a", "b"] }).success).toBe(false);
+    expect(
+      savePersonaSchema.safeParse({
+        ...valid,
+        interests: ["architecture", "photography"],
+      }).success,
+    ).toBe(false);
+  });
+
+  it("accepts user-created cultural interests", () => {
+    expect(
+      savePersonaSchema.safeParse({
+        ...valid,
+        interests: ["architecture", "pottery", "Afro-Caribbean dance"],
+      }).success,
+    ).toBe(true);
+  });
+
+  it("rejects links, handles and contact-like custom interests", () => {
+    expect(
+      savePersonaSchema.safeParse({
+        ...valid,
+        interests: ["architecture", "pottery", "visit www.example.com"],
+      }).success,
+    ).toBe(false);
+    expect(
+      savePersonaSchema.safeParse({
+        ...valid,
+        interests: ["architecture", "pottery", "@sofia"],
+      }).success,
+    ).toBe(false);
+  });
+
+  it("rejects case-insensitive duplicate interests", () => {
+    expect(
+      savePersonaSchema.safeParse({
+        ...valid,
+        interests: ["pottery", "Pottery", "architecture"],
+      }).success,
+    ).toBe(false);
+  });
+
+  it("caps interests at twenty", () => {
+    const interests = Array.from({ length: 21 }, (_, index) => `interest ${"a".repeat(index + 1)}`);
+    expect(savePersonaSchema.safeParse({ ...valid, interests }).success).toBe(false);
   });
 
   it("requires a two-letter country code", () => {

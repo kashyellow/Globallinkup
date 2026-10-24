@@ -23,6 +23,16 @@ import type { Database } from "@/types/database";
 
 export type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
+/**
+ * Where an authenticated user belongs next. Kept in one place so `/register`,
+ * `/login` and `signInAction` cannot disagree and bounce through `/discover`.
+ */
+export function postAuthPath(profile: Pick<Profile, "approval_status"> | null): string {
+  if (!profile) return "/create-persona";
+  if (profile.approval_status !== "approved") return "/verify";
+  return "/discover";
+}
+
 export const getServerClient = cache(async () => {
   try {
     return await createClient();

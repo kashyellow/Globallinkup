@@ -4,8 +4,8 @@ import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import type { CSSProperties } from "react";
 import { Icon } from "@/components/ui/icon";
-import { signUpAction, type AuthError } from "@/features/auth/actions";
 import { AuthBackLink } from "@/features/auth/components/auth-back-link";
+import { useRegistrationDraft } from "@/features/auth/components/registration-draft-provider";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -14,30 +14,21 @@ const PHOTO =
 
 const EASE = "duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]";
 
-const ERROR_KEYS: Record<AuthError, string> = {
-  emailInUse: "errorEmailInUse",
-  weakPassword: "errorWeakPassword",
-  rateLimited: "errorRateLimited",
-  invalid: "errorGeneric",
-  unknown: "errorGeneric",
-};
-
 const FIELD_BASE =
   "w-full border bg-surface px-space-md font-body-md text-body-md text-on-surface transition-colors placeholder:text-placeholder focus-visible:outline-2 focus-visible:outline-offset-2";
 
 export function RegisterView() {
   const t = useTranslations("Auth.register");
   const router = useRouter();
+  const { draft, saveDraft } = useRegistrationDraft();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [terms, setTerms] = useState(false);
+  const [email, setEmail] = useState(draft?.email ?? "");
+  const [password, setPassword] = useState(draft?.password ?? "");
+  const [confirm, setConfirm] = useState(draft?.password ?? "");
+  const [terms, setTerms] = useState(draft?.acceptedTerms ?? false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [serverError, setServerError] = useState<AuthError | null>(null);
 
   const rules = {
     length: password.length >= 8,
@@ -57,27 +48,18 @@ export function RegisterView() {
   const strengthKey =
     passed >= 3 ? "strengthStrong" : passed === 2 ? "strengthMedium" : "strengthWeak";
 
-  async function submit(event: FormEvent) {
+  function submit(event: FormEvent) {
     event.preventDefault();
     setSubmitted(true);
-    setServerError(null);
 
-    if (!formValid || submitting) return;
+    if (!formValid) return;
 
-    setSubmitting(true);
-    try {
-      const result = await signUpAction({ email, password, confirm });
-      if (!result.ok) {
-        setServerError(result.error);
-        setSubmitting(false);
-        return;
-      }
-
-      router.push(result.redirectTo);
-    } catch {
-      setServerError("unknown");
-      setSubmitting(false);
-    }
+    saveDraft({
+      email: email.trim().toLowerCase(),
+      password,
+      acceptedTerms: terms,
+    });
+    router.push("/create-persona");
   }
 
   return (
@@ -118,23 +100,6 @@ export function RegisterView() {
                     </span>
                     <span className="font-body-sm text-body-sm leading-snug text-secondary">
                       {t("bannerBody")}
-                    </span>
-                  </div>
-                </div>
-              ) : null}
-
-              {serverError ? (
-                <div
-                  role="alert"
-                  className="flex items-start gap-space-sm rounded-2xl border border-danger-border bg-danger-surface p-space-md"
-                >
-                  <Icon name="error_outline" className="mt-0.5 shrink-0 text-lg text-danger-text" />
-                  <div className="flex flex-col gap-0.5">
-                    <span className="font-label-lg text-label-lg font-semibold text-danger-text">
-                      {t("bannerTitle")}
-                    </span>
-                    <span className="font-body-sm text-body-sm leading-snug text-secondary">
-                      {t(ERROR_KEYS[serverError])}
                     </span>
                   </div>
                 </div>
@@ -375,24 +340,14 @@ export function RegisterView() {
                 <div className="flex flex-col gap-space-sm pt-space-xs">
                   <button
                     type="submit"
-                    disabled={submitting}
                     className={cn(
                       "flex min-h-12 w-full items-center justify-center gap-space-xs rounded-full bg-primary px-space-md text-center font-label-lg text-label-lg font-semibold text-on-primary transition-colors hover:bg-primary-hover",
                       EASE,
-                      "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:pointer-events-none disabled:opacity-70",
+                      "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
                     )}
                   >
-                    {submitting ? (
-                      <>
-                        <span className="h-5 w-5 animate-spin rounded-full border-2 border-on-primary/25 border-t-on-primary motion-reduce:animate-none" />
-                        <span>{t("submitting")}</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>{t("submit")}</span>
-                        <Icon name="arrow_forward" className="text-lg" />
-                      </>
-                    )}
+                    <span>{t("submit")}</span>
+                    <Icon name="arrow_forward" className="text-lg" />
                   </button>
                   <div className="pt-space-xs text-center">
                     <p className="font-body-sm text-body-sm text-secondary">
@@ -435,11 +390,11 @@ export function RegisterView() {
                 </div>
               </div>
 
-              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl border border-outline-variant bg-surface-low">
+              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-outline-variant bg-surface-low lg:aspect-[4/5]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   alt={t("photoAlt")}
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover object-[50%_30%] lg:object-center"
                   src={PHOTO}
                   loading="lazy"
                 />

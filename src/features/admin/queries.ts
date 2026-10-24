@@ -45,11 +45,20 @@ export type AdminProductDto = {
   image: string | null;
 };
 
+export type AdminInterestDto = {
+  id: string;
+  label: string;
+  status: "pending" | "approved" | "rejected";
+  createdByName: string;
+  createdAt: string;
+};
+
 export type AdminMetrics = {
   pendingProfiles: number;
   reportedPosts: number;
   curatedProducts: number;
   openReports: number;
+  pendingInterests: number;
 };
 
 export type AdminData = {
@@ -57,12 +66,13 @@ export type AdminData = {
   users: AdminProfileDto[];
   reports: AdminReportDto[];
   products: AdminProductDto[];
+  interests: AdminInterestDto[];
 };
 
 export async function getAdminData(): Promise<AdminData> {
   const supabase = await createClient();
 
-  const [profilesRes, reportsRes, productsRes, imagesRes] = await Promise.all([
+  const [profilesRes, reportsRes, productsRes, imagesRes, interestsRes] = await Promise.all([
     supabase
       .from("profiles")
       .select(
@@ -86,12 +96,18 @@ export async function getAdminData(): Promise<AdminData> {
       .from("marketplace_product_images")
       .select("product_id, storage_path, sort")
       .order("sort"),
+    supabase
+      .from("interest_catalog")
+      .select("id, label, status, created_by, created_at")
+      .in("status", ["pending", "approved"])
+      .order("created_at", { ascending: true }),
   ]);
 
   const profiles = unwrap(profilesRes) ?? [];
   const reports = unwrap(reportsRes) ?? [];
   const products = unwrap(productsRes) ?? [];
   const images = unwrap(imagesRes) ?? [];
+  const interests = unwrap(interestsRes) ?? [];
 
   const nameById = new Map(profiles.map((profile) => [profile.id, profile.display_name ?? ""]));
 
@@ -139,6 +155,14 @@ export async function getAdminData(): Promise<AdminData> {
     image: resolveImageUrl(firstImageByProduct.get(product.id), productImages),
   }));
 
+  const interestDtos: AdminInterestDto[] = interests.map((interest) => ({
+    id: interest.id,
+    label: interest.label,
+    status: interest.status,
+    createdByName: nameById.get(interest.created_by ?? "") ?? "",
+    createdAt: interest.created_at,
+  }));
+
   const reportDtos: AdminReportDto[] = reports.map((report) => ({
     id: report.id,
     reason: report.reason,
@@ -160,9 +184,11 @@ export async function getAdminData(): Promise<AdminData> {
       ).length,
       curatedProducts: products.filter((product) => product.is_published).length,
       openReports: reports.filter((report) => report.status === "open").length,
+      pendingInterests: interests.filter((interest) => interest.status === "pending").length,
     },
     users,
     reports: reportDtos,
     products: productDtos,
+    interests: interestDtos,
   };
 }

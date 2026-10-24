@@ -363,14 +363,16 @@
       "pendingProfiles": "<b>{count}</b> Pending Profiles",
       "reportedPosts": "<b>{count}</b> Reported Posts",
       "curatedProducts": "<b>{count}</b> Curated Products",
-      "openReports": "<b>{count}</b> Open Reports"
+      "openReports": "<b>{count}</b> Open Reports",
+      "pendingInterests": "<b>{count}</b> Pending Interests"
     },
     "eyebrow": "Administrative Desk · Monitoring & Verification",
     "title": "Governance & Content Control",
     "tabs": {
       "users": "Users & Personas",
       "marketplace": "Marketplace Catalog",
-      "moderation": "Reports & Moderation"
+      "moderation": "Reports & Moderation",
+      "interests": "Interest Catalog"
     },
     "users": {
       "searchLabel": "Search members",
@@ -475,6 +477,25 @@
       },
       "emptyTitle": "Nothing to moderate",
       "resolve": "Resolve"
+    },
+    "interests": {
+      "title": "Cultural Interest Review",
+      "body": "User-created interests are suggestions until an administrator approves them.",
+      "needsReview": "{count} awaiting review",
+      "pendingTitle": "Awaiting review",
+      "publishedTitle": "Published suggestions",
+      "pendingBadge": "Pending",
+      "publishedBadge": "Published",
+      "createdBy": "Suggested by {name}",
+      "approve": "Approve",
+      "reject": "Reject",
+      "unpublish": "Unpublish",
+      "emptyTitle": "No interests waiting for review",
+      "rejectPendingTitle": "Reject this interest?",
+      "rejectPendingBody": "“{label}” will be removed from its creator's profile and will not appear in suggestions. They may need to choose another interest on their next edit.",
+      "unpublishTitle": "Unpublish this interest?",
+      "unpublishBody": "“{label}” will stop appearing in suggestions. Profiles that already use it keep the text.",
+      "platform": "GlobalLinkup"
     }
   },
   "Connections": {
@@ -687,7 +708,7 @@
       "title": "Create your account",
       "subtitle": "Enter your email and a secure password. Your public profile and cultural dossier are set up in the next step.",
       "bannerTitle": "Check the details you entered",
-      "bannerBody": "This email already has a dossier registered, or the passwords don't match. Please try again.",
+      "bannerBody": "Check the highlighted fields and try again.",
       "emailLabel": "Email address",
       "emailHelper": "Bilingual correspondence",
       "emailPlaceholder": "elena.rostova@example.com",
@@ -708,14 +729,15 @@
       "toggleConfirm": "Show or hide password confirmation",
       "confirmError": "Passwords must be exactly identical.",
       "terms": "I accept GlobalLinkup's <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>. I understand that identity verification completes after my profile is reviewed.",
-      "submit": "Create Account & Continue",
+      "submit": "Continue to Persona",
       "haveAccount": "Already have an account?",
       "logIn": "Log in",
       "submitting": "Creating account…",
       "errorEmailInUse": "That email is already registered. Try signing in instead.",
       "errorWeakPassword": "Choose a stronger password: 8+ characters with upper, lower and a number.",
       "errorRateLimited": "Too many attempts. Please wait a moment and try again.",
-      "errorGeneric": "We could not create your account. Please try again."
+      "errorGeneric": "We could not create your account. Please try again.",
+      "errorConfirmEmail": "Check your email to confirm your account, then sign in to finish your persona."
     },
     "verify": {
       "progressLabel": "Onboarding Progress",
@@ -837,7 +859,7 @@
     "change": "Change",
     "uploadImage": "Upload Image",
     "useCamera": "Use Camera",
-    "photoFormats": "JPG, WEBP, or PNG up to 10MB. Natural grain favored over studio filters.",
+    "photoFormats": "JPG, WEBP, or PNG up to 5MB. Natural grain favored over studio filters.",
     "fullName": "Full Name",
     "fullNameMeta": "Public",
     "fullNamePlaceholder": "e.g. Sofia Martínez",
@@ -894,7 +916,7 @@
     "dobMeta": "Optional",
     "submitting": "Submitting…",
     "errorInvalid": "Please check the highlighted fields and try again.",
-    "errorUpload": "We could not upload that photo. Try a JPG, PNG or WEBP under 10 MB.",
+    "errorUpload": "We could not upload that photo. Try a JPG, PNG or WEBP under 5 MB.",
     "errorUnknown": "We could not save your persona. Please try again.",
     "whatsapp": "WhatsApp",
     "whatsappPlaceholder": "+34 612 345 678",
@@ -906,7 +928,42 @@
     "tiktokPlaceholder": "sofia.arquitectura",
     "contactRequired": "Add at least one channel so connections can reach you once they are accepted.",
     "x": "X",
-    "xPlaceholder": "sofia_bcn"
+    "xPlaceholder": "sofia_bcn",
+    "photoInvalid": "Choose a JPG, PNG, or WEBP image under 5 MB.",
+    "photoRequired": "Add a profile photo so members can recognise you.",
+    "fullNameRequired": "Enter your full name (at least 2 characters).",
+    "cityRequired": "Add the city you call home.",
+    "bioRequired": "Write a short bio before submitting.",
+    "languagesRequired": "Select at least one language.",
+    "interestsRequired": "Select at least 3 cultural interests.",
+    "interestsMax": "You can choose up to 20 interests.",
+    "interestsDuplicate": "Each interest can only be selected once.",
+    "interestInvalid": "Use 2–40 letters, spaces, apostrophes, hyphens, ampersands or periods.",
+    "interestSearchPlaceholder": "Search or create an interest…",
+    "interestSearchHint": "Search the catalog or create a new interest. New interests are reviewed before they appear for everyone (up to 3 new suggestions per day).",
+    "interestEmpty": "No interests match that search.",
+    "interestCreate": "Create “{label}”",
+    "interestNew": "New",
+    "interestPending": "Awaiting review",
+    "interestPendingShort": "Pending",
+    "interestMax": "You can select up to {max} interests.",
+    "interestRateLimit": "You can suggest up to 3 new interests every 24 hours. Try again later.",
+    "interestRejected": "These interests were not approved: {labels}. Remove or replace them before submitting.",
+    "interestRejectedGeneric": "One of your interests was not approved. Choose another.",
+    "missingTitle": "A few required details are missing.",
+    "missingFields": "Complete: {fields}.",
+    "removeInterest": "Remove {label}",
+    "missing": {
+      "photo": "Profile photo",
+      "fullName": "Full name",
+      "city": "City",
+      "bio": "Short bio",
+      "interests": "Cultural interests",
+      "languages": "Languages",
+      "contacts": "A contact channel"
+    },
+    "requiredHint": "Fields marked * are required.",
+    "backHome": "Back to home"
   },
   "Landing": {
     "hero": {
