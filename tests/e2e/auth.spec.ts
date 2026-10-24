@@ -123,6 +123,9 @@ test("@auth discover shows real personas and viewer connect state", async ({ pag
   await signIn(page, "sofia.martinez@example.com");
   await expect(page).toHaveURL(/\/en\/discover$/);
 
+  // The header count comes from the rows, not a hardcoded marketing number.
+  await expect(page.getByText(/^\d+ Active Personas Abroad$/).first()).toBeVisible();
+
   // Real rows, sorted by name — page 1 is Camila, Elena, Lucas, Mateo.
   await expect(page.getByRole("heading", { name: /Camila Osorio/ })).toBeVisible();
   // Camila is an accepted connection in the seed; Mateo sent Sofia a request,

@@ -119,7 +119,9 @@ export function PersonaFeed({ personas }: { personas: Persona[] }) {
         <h2 className="font-label-lg text-label-lg font-semibold text-on-surface">
           {t("feed.listTitle")}
         </h2>
-        <span className="font-label-lg text-label-lg text-text-muted">{t("activePersonas")}</span>
+        <span className="font-label-lg text-label-lg text-text-muted">
+          {t("activePersonas", { count: personas.length })}
+        </span>
       </div>
 
       {error ? <InlineAlert>{error}</InlineAlert> : null}
@@ -182,11 +184,6 @@ function PersonaCard({
           ) : (
             <DefaultAvatar className="h-full w-full" />
           )}
-
-          <div className="absolute top-3 left-3 flex items-center gap-1 rounded-full border border-outline-variant bg-surface-low/95 px-2.5 py-1 font-label-md text-label-md text-on-surface shadow-lift-sm">
-            <Icon name="verified" className="text-sm text-tertiary" />
-            <span>{tCommon("verified")}</span>
-          </div>
 
           {persona.badge === "directContact" ? (
             <div className="absolute bottom-3 left-3 flex items-center gap-1 rounded-full border border-success-border bg-success-surface px-2.5 py-1 font-label-md text-label-md text-success-text shadow-lift-sm">

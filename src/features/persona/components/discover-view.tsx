@@ -111,7 +111,7 @@ export async function DiscoverView({ personas }: { personas: Persona[] }) {
             <span className="relative inline-flex h-2 w-2 rounded-full bg-tertiary" />
           </span>
           <span className="font-label-lg text-label-lg font-semibold text-on-surface">
-            {t("activePersonas")}
+            {t("activePersonas", { count: personas.length })}
           </span>
         </div>
       </header>

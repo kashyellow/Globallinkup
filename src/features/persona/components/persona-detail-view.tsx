@@ -102,12 +102,7 @@ export function PersonaDetailView({ persona }: { persona: PersonaDetail }) {
         </div>
 
         <div className="md:col-span-7">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-success-border bg-success-surface px-2.5 py-0.5 font-label-caps text-label-caps text-success-text">
-            <Icon name="verified" className="text-sm" />
-            {tCommon("verified")}
-          </span>
-
-          <h1 className="mt-space-sm font-display-md text-display-md-mobile font-bold text-balance text-on-surface md:text-display-md">
+          <h1 className="font-display-md text-display-md-mobile font-bold text-balance text-on-surface md:text-display-md">
             {persona.age > 0 ? `${persona.name}, ${persona.age}` : persona.name}
           </h1>
           <p className="mt-1 flex items-center gap-1.5 font-body-md text-body-md text-secondary">

@@ -42,7 +42,6 @@
     "adminAccess": "Acceso Admin"
   },
   "Common": {
-    "verified": "Verificado",
     "connect": "Conectar",
     "connected": "Conectado",
     "requestSent": "Solicitud Enviada · Esperando",
@@ -116,7 +115,7 @@
     "eyebrow": "Curaduría Intercultural",
     "title": "Descubrir Personas",
     "intro": "Explora personas verificadas de todo el mundo e intercambia perspectivas interculturales. Conecta mutuamente para descubrir contactos sociales directos.",
-    "activePersonas": "1.482 Personas Activas en el Extranjero",
+    "activePersonas": "{count, plural, =0 {Sin personas activas en el extranjero} =1 {# Persona activa en el extranjero} other {# Personas activas en el extranjero}}",
     "searchPlaceholder": "Busca por nombre, ciudad, idioma o pasiones (p. ej. Barcelona, Historia de la Arquitectura, Español)...",
     "refineCriteria": "Refinar Criterios",
     "clearFilters": "Limpiar Filtros",
@@ -141,8 +140,7 @@
       "step4Body": "Contactos verificados y diálogo directo desbloqueados al instante."
     },
     "feed": {
-      "listTitle": "Embajadores Verificados · Lista Curada",
-      "resultsCount": "Mostrando 5 de 32 resultados",
+      "listTitle": "Lista Curada",
       "profilePreviewed": "Perfil Visto",
       "directContactVisible": "Contacto Directo Visible"
     },
