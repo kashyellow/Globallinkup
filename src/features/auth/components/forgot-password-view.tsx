@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import { Icon } from "@/components/ui/icon";
 import { requestPasswordResetAction } from "@/features/auth/actions";
-import { Link, useRouter } from "@/lib/i18n/navigation";
+import { useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { RecoveryShell } from "./recovery-shell";
 
@@ -42,7 +42,7 @@ export function ForgotPasswordView() {
   }
 
   return (
-    <RecoveryShell step={1}>
+    <RecoveryShell step={1} back={{ href: "/login", label: t("returnToLogin") }}>
       <div className="flex flex-col gap-space-lg">
         <div className="flex flex-col gap-space-xs">
           <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
@@ -129,25 +129,6 @@ export function ForgotPasswordView() {
             )}
           </button>
         </form>
-
-        <div className="flex flex-col gap-space-md">
-          <div className="flex items-center gap-space-md">
-            <span className="h-px flex-1 bg-outline-variant" />
-            <span className="font-label-md text-label-md text-text-muted">{t("or")}</span>
-            <span className="h-px flex-1 bg-outline-variant" />
-          </div>
-          <Link
-            href="/login"
-            className={cn(
-              "mx-auto inline-flex items-center gap-1.5 rounded-full px-space-md py-2 font-label-md text-label-md font-semibold text-on-surface transition-colors hover:text-primary",
-              EASE,
-              "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-            )}
-          >
-            <Icon name="arrow_back" className="text-lg" />
-            {t("returnToLogin")}
-          </Link>
-        </div>
       </div>
     </RecoveryShell>
   );

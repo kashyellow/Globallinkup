@@ -1,14 +1,14 @@
 import type { ReactNode } from "react";
-import { PublicFooter } from "@/components/layout/public-footer";
-import { PublicHeader } from "@/components/layout/public-header";
+import { SiteFooter } from "@/components/layout/site-footer";
+import { SiteHeader } from "@/components/layout/site-header";
 
-/** Unauthenticated shell: auth header + footer (login, register, verify, persona setup). */
+/** Public content shell for legal/resource pages. */
 export default function PublicLayout({ children }: { children: ReactNode }) {
   return (
     <>
-      <PublicHeader />
+      <SiteHeader mode="content" />
       <main className="w-full grow bg-background pt-20">{children}</main>
-      <PublicFooter />
+      <SiteFooter variant="public" />
     </>
   );
 }

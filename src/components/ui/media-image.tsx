@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
@@ -32,6 +32,16 @@ export function MediaImage({
 }) {
   const [loadedSrc, setLoadedSrc] = useState<string | null>(null);
   const [failedSrc, setFailedSrc] = useState<string | null>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  // The image can finish loading before React hydrates, in which case the
+  // onLoad handler never fires. Check the DOM node after mount as a fallback.
+  useEffect(() => {
+    const image = imgRef.current;
+    if (image?.complete && image.naturalWidth > 0 && src) {
+      setLoadedSrc(src);
+    }
+  }, [src]);
 
   const status: MediaStatus = !src
     ? "error"
@@ -52,6 +62,7 @@ export function MediaImage({
         // predictable and avoids the image optimiser re-fetching a dead URL.
         // eslint-disable-next-line @next/next/no-img-element
         <img
+          ref={imgRef}
           alt={alt}
           src={src}
           loading={loading}

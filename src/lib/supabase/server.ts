@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
 
 import { getPublicEnv } from "@/lib/env";
+import { applyRemember } from "@/lib/supabase/cookies";
 import type { Database } from "@/types/database";
 
 /**
@@ -11,7 +12,7 @@ import type { Database } from "@/types/database";
  * Create a **new client per request** — never cache it across requests.
  * In Next.js 16 `cookies()` is async.
  */
-export async function createClient() {
+export async function createClient(clientOptions: { remember?: boolean } = {}) {
   const cookieStore = await cookies();
   const env = getPublicEnv();
 
@@ -26,7 +27,7 @@ export async function createClient() {
         setAll(cookiesToSet) {
           try {
             for (const { name, value, options } of cookiesToSet) {
-              cookieStore.set(name, value, options);
+              cookieStore.set(name, value, applyRemember(options, clientOptions.remember));
             }
           } catch {
             // Called from a server component, where cookies are read-only.

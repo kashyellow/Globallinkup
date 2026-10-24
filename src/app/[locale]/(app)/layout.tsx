@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { BottomNav } from "@/components/layout/bottom-nav";
-import { Footer } from "@/components/layout/footer";
+import { SiteFooter } from "@/components/layout/site-footer";
 import { Navbar } from "@/components/layout/navbar";
 import { getPendingRequestCount } from "@/features/connect/queries";
 import { RefreshProvider } from "@/features/shared/refresh-provider";
@@ -42,7 +42,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
        * otherwise the bar floats on top of the footer's last row.
        */}
       <div className="pb-24 lg:pb-0">
-        <Footer />
+        <SiteFooter variant="app" />
       </div>
       <BottomNav pendingRequests={pendingRequests} />
     </RefreshProvider>

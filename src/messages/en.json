@@ -8,8 +8,16 @@
     "lastUpdated": "Last updated: {date}",
     "backToRegister": "Back to registration",
     "privacyPlaceholder": {
-      "label": "[INSERT PRIVACY POLICY LINK]",
+      "label": "Privacy Policy",
       "notice": "The Privacy Policy isn't published yet. It will be linked here once it is available."
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "metaDescription": "How GlobalLinkup collects, uses and protects your data.",
+      "lastUpdated": "Last updated: 24 October 2026",
+      "noticeTitle": "Privacy Policy is being finalized",
+      "noticeBody": "We are preparing the full policy. For any data-protection question, contact privacy@globallinkup.com.",
+      "backHome": "Back to home"
     }
   },
   "Nav": {
@@ -587,7 +595,9 @@
     "register": "Register",
     "safetyTrust": "Safety & Trust",
     "helpCenter": "Help Center",
-    "toggleMenu": "Toggle navigation menu"
+    "toggleMenu": "Toggle navigation menu",
+    "backHome": "Back to home",
+    "language": "Language"
   },
   "PublicFooter": {
     "badge": "Bilingual Community",
@@ -595,10 +605,16 @@
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
     "guidelines": "Community Guidelines",
-    "safety": "Safety Center",
+    "safety": "Safety & Trust Guide",
     "explore": "Explore the app",
-    "copyright": "© 2024 GlobalLinkup Inc. All rights reserved.",
-    "assurance": "End-to-End Encrypted Auth & Identity Assurance"
+    "copyright": "© 2026 GlobalLinkup Inc. All rights reserved.",
+    "assurance": "End-to-End Encrypted Auth & Identity Assurance",
+    "legal": "Legal",
+    "motto": "AUTHENTIC • DISCREET • CURATED",
+    "productTitle": "Product",
+    "resourcesTitle": "Resources",
+    "support": "Member Support Desk",
+    "standards": "Standards"
   },
   "MarketingNav": {
     "tagline": "People & Culture",
@@ -653,9 +669,7 @@
       "submit": "Log In",
       "submitting": "Verifying credentials...",
       "noAccount": "Don't have an account?",
-      "createAccount": "Create an account",
-      "trackers": "Zero third-party trackers or social SDKs.",
-      "policies": "Policies"
+      "createAccount": "Create an account"
     },
     "register": {
       "stepperLabel": "Initial Step / Onboarding",
@@ -1165,6 +1179,29 @@
         "declined": "You declined an inquiry from {name}",
         "ruleChanged": "Protocol rules updated"
       }
+    }
+  },
+  "Resources": {
+    "support": {
+      "eyebrow": "Support",
+      "title": "Member Support Desk",
+      "noticeTitle": "The support desk is being prepared",
+      "noticeBody": "We are setting up a bilingual support desk. For urgent help, email support@globallinkup.com.",
+      "backHome": "Back to home"
+    },
+    "safety": {
+      "eyebrow": "Safety",
+      "title": "Safety & Trust Guide",
+      "noticeTitle": "The safety guide is being finalized",
+      "noticeBody": "We are preparing the full safety and trust guide. If you are in immediate danger, contact your local emergency services.",
+      "backHome": "Back to home"
+    },
+    "standards": {
+      "eyebrow": "Community",
+      "title": "Standards",
+      "noticeTitle": "Community standards are being finalized",
+      "noticeBody": "The community standards will be published here. Until then, the Terms of Service and Privacy Policy remain in force.",
+      "backHome": "Back to home"
     }
   }
 }

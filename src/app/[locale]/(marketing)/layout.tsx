@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { MarketingFooter } from "@/components/layout/marketing-footer";
-import { MarketingHeader } from "@/components/layout/marketing-header";
+import { SiteFooter } from "@/components/layout/site-footer";
+import { SiteHeader } from "@/components/layout/site-header";
 
 /** Public marketing shell for the landing page. */
 export default function MarketingLayout({ children }: { children: ReactNode }) {
@@ -11,9 +11,9 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
      * its own decoration and the grain never repaints during scroll.
      */
     <div className="marketing-backdrop flex min-h-[100dvh] w-full flex-1 flex-col">
-      <MarketingHeader />
+      <SiteHeader mode="landing" />
       <main className="w-full flex-1 pt-20">{children}</main>
-      <MarketingFooter />
+      <SiteFooter variant="marketing" />
     </div>
   );
 }

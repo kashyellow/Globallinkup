@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import type { CSSProperties } from "react";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
+import { AuthBackLink } from "@/features/auth/components/auth-back-link";
 import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -65,6 +66,7 @@ export function VerifyView({ status, persona }: { status: VerifyState; persona: 
   return (
     <div className="flex w-full flex-col">
       <div className="mx-auto flex w-full max-w-[1100px] flex-col px-margin-mobile pt-space-md pb-page-mobile lg:px-margin lg:pt-space-xl lg:pb-page">
+        <AuthBackLink className="mb-space-sm" />
         {/* Progress milestone tracker */}
         <nav aria-label={t("progressLabel")} className="mb-space-lg w-full sm:mb-space-xl">
           <div className="relative flex items-start justify-between">

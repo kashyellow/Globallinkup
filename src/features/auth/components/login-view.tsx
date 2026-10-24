@@ -5,6 +5,7 @@ import { useState, type FormEvent } from "react";
 import type { CSSProperties } from "react";
 import { Icon } from "@/components/ui/icon";
 import { signInAction } from "@/features/auth/actions";
+import { AuthBackLink } from "@/features/auth/components/auth-back-link";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -25,7 +26,7 @@ export function LoginView() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [remember, setRemember] = useState(true);
+  const [remember, setRemember] = useState(false);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -37,7 +38,7 @@ export function LoginView() {
 
     setState("loading");
     try {
-      const result = await signInAction({ email, password });
+      const result = await signInAction({ email, password, remember });
       if (!result.ok) {
         setState("invalid");
         return;
@@ -99,6 +100,7 @@ export function LoginView() {
             style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
           >
             <div className="flex flex-col gap-space-lg">
+              <AuthBackLink />
               <div className="flex flex-col gap-space-xs">
                 <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
                   {t("title")}
@@ -226,7 +228,7 @@ export function LoginView() {
                 </div>
 
                 {/* Remember device */}
-                <div className="flex items-center justify-between gap-space-sm pt-space-xs">
+                <div className="flex items-center gap-space-sm pt-space-xs">
                   <label className="flex min-h-11 cursor-pointer items-center gap-space-sm select-none">
                     <input
                       type="checkbox"
@@ -238,10 +240,6 @@ export function LoginView() {
                       {t("remember")}
                     </span>
                   </label>
-                  <span className="hidden items-center gap-1 text-text-muted sm:flex">
-                    <Icon name="lock" className="text-base" />
-                    <span className="font-label-md text-label-md">TLS 1.3</span>
-                  </span>
                 </div>
 
                 {/* Submit */}
@@ -277,16 +275,6 @@ export function LoginView() {
                     {t("createAccount")}
                   </Link>
                 </p>
-              </div>
-
-              <div className="flex items-center justify-between gap-space-sm rounded-2xl border border-outline-variant bg-surface-container p-space-sm">
-                <span className="flex items-center gap-space-xs text-secondary">
-                  <Icon name="shield" className="text-base text-success-text" />
-                  <span className="font-body-sm text-body-sm">{t("trackers")}</span>
-                </span>
-                <span className="shrink-0 font-label-md text-label-md text-text-muted">
-                  {t("policies")}
-                </span>
               </div>
             </div>
           </div>

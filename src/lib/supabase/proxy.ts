@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { getPublicEnv } from "@/lib/env";
+import { applyRemember, readRemember, REMEMBER_COOKIE } from "@/lib/supabase/cookies";
 import type { Database } from "@/types/database";
 
 let warnedAboutMissingEnv = false;
@@ -46,6 +47,8 @@ export async function updateSession(request: NextRequest) {
         return request.cookies.getAll();
       },
       setAll(cookiesToSet, headers) {
+        const remember = readRemember(request.cookies.get(REMEMBER_COOKIE)?.value);
+
         for (const { name, value } of cookiesToSet) {
           request.cookies.set(name, value);
         }
@@ -53,7 +56,7 @@ export async function updateSession(request: NextRequest) {
         response = NextResponse.next({ request });
 
         for (const { name, value, options } of cookiesToSet) {
-          response.cookies.set(name, value, options);
+          response.cookies.set(name, value, applyRemember(options, remember));
         }
 
         // No-cache headers required so a CDN/reverse proxy never serves one

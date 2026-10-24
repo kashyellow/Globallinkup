@@ -8,8 +8,16 @@
     "lastUpdated": "Última actualización: {date}",
     "backToRegister": "Volver al registro",
     "privacyPlaceholder": {
-      "label": "[INSERTAR ENLACE A LA POLÍTICA DE PRIVACIDAD]",
+      "label": "Política de Privacidad",
       "notice": "La Política de Privacidad aún no está publicada. Se enlazará aquí en cuanto esté disponible."
+    },
+    "privacy": {
+      "title": "Política de Privacidad",
+      "metaDescription": "Cómo GlobalLinkup recopila, usa y protege tus datos.",
+      "lastUpdated": "Última actualización: 24 de octubre de 2026",
+      "noticeTitle": "La Política de Privacidad está en preparación",
+      "noticeBody": "Estamos preparando la política completa. Para cualquier consulta sobre protección de datos, escribe a privacy@globallinkup.com.",
+      "backHome": "Volver al inicio"
     }
   },
   "Nav": {
@@ -587,7 +595,9 @@
     "register": "Registrarse",
     "safetyTrust": "Seguridad y Confianza",
     "helpCenter": "Centro de Ayuda",
-    "toggleMenu": "Alternar menú de navegación"
+    "toggleMenu": "Alternar menú de navegación",
+    "backHome": "Volver al inicio",
+    "language": "Idioma"
   },
   "PublicFooter": {
     "badge": "Comunidad Bilingüe",
@@ -595,10 +605,16 @@
     "privacy": "Política de Privacidad",
     "terms": "Términos del Servicio",
     "guidelines": "Normas de la Comunidad",
-    "safety": "Centro de Seguridad",
+    "safety": "Guía de Seguridad y Confianza",
     "explore": "Explorar la app",
-    "copyright": "© 2024 GlobalLinkup Inc. Todos los derechos reservados.",
-    "assurance": "Autenticación Cifrada de Extremo a Extremo y Garantía de Identidad"
+    "copyright": "© 2026 GlobalLinkup Inc. Todos los derechos reservados.",
+    "assurance": "Autenticación Cifrada de Extremo a Extremo y Garantía de Identidad",
+    "legal": "Legal",
+    "motto": "AUTÉNTICO • DISCRETO • CURADO",
+    "productTitle": "Producto",
+    "resourcesTitle": "Recursos",
+    "support": "Mesa de Apoyo",
+    "standards": "Estándares"
   },
   "MarketingNav": {
     "tagline": "Personas y Cultura",
@@ -653,9 +669,7 @@
       "submit": "Iniciar Sesión",
       "submitting": "Verificando credenciales...",
       "noAccount": "¿No tienes una cuenta?",
-      "createAccount": "Crear una cuenta",
-      "trackers": "Cero rastreadores de terceros o SDKs sociales.",
-      "policies": "Políticas"
+      "createAccount": "Crear una cuenta"
     },
     "register": {
       "stepperLabel": "Paso Inicial / Onboarding",
@@ -1165,6 +1179,29 @@
         "declined": "Rechazaste una consulta de {name}",
         "ruleChanged": "Reglas del protocolo actualizadas"
       }
+    }
+  },
+  "Resources": {
+    "support": {
+      "eyebrow": "Apoyo",
+      "title": "Mesa de Apoyo al Miembro",
+      "noticeTitle": "La mesa de apoyo está en preparación",
+      "noticeBody": "Estamos preparando una mesa de apoyo bilingüe. Para ayuda urgente, escribe a support@globallinkup.com.",
+      "backHome": "Volver al inicio"
+    },
+    "safety": {
+      "eyebrow": "Seguridad",
+      "title": "Guía de Seguridad y Confianza",
+      "noticeTitle": "La guía de seguridad está en preparación",
+      "noticeBody": "Estamos preparando la guía completa de seguridad y confianza. Si estás en peligro inmediato, contacta a los servicios de emergencia locales.",
+      "backHome": "Volver al inicio"
+    },
+    "standards": {
+      "eyebrow": "Comunidad",
+      "title": "Estándares",
+      "noticeTitle": "Los estándares de la comunidad están en preparación",
+      "noticeBody": "Los estándares de la comunidad se publicarán aquí. Mientras tanto, siguen vigentes los Términos del Servicio y la Política de Privacidad.",
+      "backHome": "Volver al inicio"
     }
   }
 }

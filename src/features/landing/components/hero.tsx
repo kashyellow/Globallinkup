@@ -26,6 +26,7 @@ export async function Hero() {
       id="hero"
       className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-space-lg pb-section-mobile md:px-margin md:pt-section md:pb-section"
     >
+      <link rel="preload" as="image" href={IMAGES.hero} />
       <div className="grid grid-cols-1 items-center gap-space-xl lg:grid-cols-12 lg:gap-x-space-xl">
         <div className="flex flex-col items-start lg:col-span-7">
           <Eyebrow>{t("badge")}</Eyebrow>
@@ -64,7 +65,7 @@ export async function Hero() {
           </ul>
         </div>
 
-        <div className="mx-auto w-full max-w-xs sm:max-w-sm lg:col-span-5 lg:mx-0 lg:ml-auto lg:max-w-[26rem]">
+        <div className="mx-auto hidden w-full max-w-xs sm:max-w-sm lg:col-span-5 lg:mx-0 lg:ml-auto lg:block lg:max-w-[26rem]">
           <article className="relative overflow-hidden rounded-[1.5rem] border border-outline-variant bg-marketing-core shadow-lift-lg">
             <div className="relative aspect-[4/3] w-full overflow-hidden bg-marketing-raised lg:aspect-[4/5]">
               <MediaImage

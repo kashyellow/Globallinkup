@@ -13,7 +13,7 @@ Format: konteks → opsi → rekomendasi → alasan.
 **Status:** ✅ diputuskan sementara — subset `icon_names` sudah diimplementasikan.
 
 **Konteks:** Google Material Symbols penuh berukuran **4 MB** dan dimuat di setiap halaman.
-Subset `icon_names` + axes tetap berukuran **±24 KB** untuk 105 ikon.
+Subset `icon_names` + axes tetap berukuran **±24 KB** untuk 107 ikon.
 
 **Opsi:**
 
@@ -175,3 +175,66 @@ menambah provider dan urutan pengumuman screen reader.
 hapus post dari moderasi) memakai `ConfirmDialog` dengan pending state.
 
 **Alasan:** mencegah salah klik dan memberi kesempatan membaca konsekuensi.
+
+---
+
+## D10 · Auth shell minimal
+
+**Status:** ✅ diimplementasikan.
+
+**Keputusan:** route group `(auth)` (sibling `(public)`) dengan `SiteHeader mode="content"`
+(logo + locale) dan `SiteFooter variant="auth"`.
+
+**Alasan:** halaman login/register tidak perlu menampilkan tautan Sign in/Register
+atau ikon profil. URL tidak berubah; revert cukup memindahkan folder kembali ke
+`(public)` dan menghapus prop `variant`.
+
+## D11 · Legal links dan Privacy Policy
+
+**Status:** ✅ diimplementasikan.
+
+**Keputusan:** link Terms + Privacy di footer landing, login, register, dan terms;
+link consent inline di register tetap dipertahankan; `/[locale]/privacy`,
+`/[locale]/support`, `/[locale]/safety`, dan `/[locale]/standards` dibuat sebagai
+halaman placeholder sampai copy final tersedia.
+
+**Alasan:** consent harus dekat checkbox, sedangkan footer adalah navigasi global.
+Duplikasi di register disengaja dan dibuat ringkas.
+
+## D12 · Remember me
+
+**Status:** ✅ diimplementasikan.
+
+**Keputusan:** default unchecked; checked = cookie auth 30 hari, unchecked = session
+cookie; preferensi disimpan di cookie `gl-remember` agar proxy tidak mengubahnya
+menjadi persisten saat refresh.
+
+**Alasan:** sesuai copy “Remember this device for 30 days” dan tidak mengubah
+sesi yang sudah ada tanpa preferensi.
+
+---
+
+## D13 · Satu header dan satu footer
+
+**Status:** ✅ diimplementasikan.
+
+**Keputusan:** `SiteHeader` dengan mode `landing`/`content`; `SiteFooter` dengan variant
+`marketing`/`public`/`auth`/`app`. Locale switch memakai gaya switch yang sama di semua
+halaman; burger hanya di landing.
+
+**Alasan:** sebelumnya ada dua header dan tiga footer dengan layout berbeda. Shell yang
+sama membuat halaman auth/legal tidak terasa seperti aplikasi terpisah. Isi kolom footer
+tetap bisa berbeda per variant.
+
+## D14 · Recovery support links dan guard
+
+**Status:** ✅ diimplementasikan.
+
+**Keputusan:** “Member Support Desk”, “Safety & Trust Guide”, dan “Standards” menjadi link
+ke halaman placeholder; chip SSL dan baris “Bilingual Human Support” dihapus.
+`/forgot-password/sent` dilindungi cookie `gl-reset-requested` selama 30 menit; akses
+langsung tanpa cookie kembali ke `/forgot-password`.
+
+**Alasan:** placeholder mempertahankan UI/UX tanpa tombol mati; guard mencegah halaman
+konfirmasi palsu saat direct URL/refresh setelah state hilang, sementara anti-enumeration
+tetap terjaga.

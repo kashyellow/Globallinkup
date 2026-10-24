@@ -74,7 +74,7 @@ export function ResetPasswordView({ hasRecoverySession }: { hasRecoverySession: 
   }
 
   return (
-    <RecoveryShell>
+    <RecoveryShell back={{ href: "/login", label: t("backToLogin") }}>
       {linkState === "invalid" ? (
         <div className="flex flex-col items-center gap-space-md py-space-xs text-center">
           <span className="flex h-16 w-16 items-center justify-center rounded-full border border-danger-border bg-danger-surface text-danger-text">
@@ -277,18 +277,6 @@ export function ResetPasswordView({ hasRecoverySession }: { hasRecoverySession: 
               )}
             </button>
           </form>
-
-          <Link
-            href="/login"
-            className={cn(
-              "mx-auto inline-flex min-h-10 items-center gap-1.5 rounded-full px-space-md py-2 font-label-md text-label-md font-semibold text-on-surface transition-colors hover:text-primary",
-              EASE,
-              "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-            )}
-          >
-            <Icon name="arrow_back" className="text-lg" />
-            {t("backToLogin")}
-          </Link>
         </div>
       )}
     </RecoveryShell>

@@ -5,6 +5,7 @@ import { useState, type FormEvent } from "react";
 import type { CSSProperties } from "react";
 import { Icon } from "@/components/ui/icon";
 import { signUpAction, type AuthError } from "@/features/auth/actions";
+import { AuthBackLink } from "@/features/auth/components/auth-back-link";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -89,6 +90,7 @@ export function RegisterView() {
             style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
           >
             <div className="flex flex-col gap-space-md">
+              <AuthBackLink />
               <div className="inline-flex items-center gap-1.5 self-start rounded-full border border-outline-variant bg-surface-container px-space-sm py-1">
                 <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary motion-reduce:animate-none" />
                 <span className="font-label-md text-label-md text-on-surface">
@@ -350,9 +352,6 @@ export function RegisterView() {
                     htmlFor="reg-terms"
                   >
                     {t.rich("terms", {
-                      // Terms now has a real route (`/[locale]/terms`); the
-                      // Privacy Policy does not exist yet, so that chunk stays
-                      // styled text rather than a dead `href="#"` anchor.
                       terms: (chunks) => (
                         <Link
                           href="/terms"
@@ -362,9 +361,12 @@ export function RegisterView() {
                         </Link>
                       ),
                       privacy: (chunks) => (
-                        <span className="font-semibold text-on-surface underline decoration-primary/50 underline-offset-2">
+                        <Link
+                          href="/privacy"
+                          className="font-semibold text-on-surface underline decoration-primary/50 underline-offset-2 transition-colors hover:text-primary"
+                        >
                           {chunks}
-                        </span>
+                        </Link>
                       ),
                     })}
                   </label>

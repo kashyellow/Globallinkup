@@ -940,3 +940,35 @@ Item di bawah yang bertanda **butuh keputusan** sengaja belum diimplementasikan.
 - `npm run format:check` — pass.
 - Font ikon subset diukur ulang: **23.696 byte** untuk 105 ikon (sebelumnya 4.001.808).
 - E2E **belum dijalankan** pada iterasi ini (butuh Supabase lokal).
+
+---
+
+## 15. Follow-up UI (2026-10-24)
+
+Perbaikan setelah review landing/auth. Semua sudah diimplementasikan dan lolos gate.
+
+| ID    | Temuan                                                      | Status         | Perubahan                                                                 |
+| ----- | ----------------------------------------------------------- | -------------- | ------------------------------------------------------------------------- |
+| F2-26 | Burger landing tampil sebagai teks "MENU"                   | ✅ implemented | `menu` + `hourglass_top` ditambahkan ke subset ikon                       |
+| F2-27 | Foto hero lambat tampil / `onLoad` terlewat sebelum hydrate | ✅ implemented | cek `img.complete` di `MediaImage` + preload hero                         |
+| F2-28 | Card Sofia tampil di layar kecil                            | ✅ implemented | card disembunyikan di bawah `lg`                                          |
+| F2-29 | Posisi scroll EN/ES berbeda (cache/history per locale)      | ✅ implemented | `useLocaleSwitch` menyimpan hash + `scrollY`, restore setelah locale baru |
+| F2-30 | Header auth menampilkan Sign in/Register/profile            | ✅ implemented | `(auth)` + `SiteHeader mode="content"`                                    |
+| F2-31 | Footer auth penuh dan copyright 2024                        | ✅ implemented | `SiteFooter variant="auth"`, copyright 2026 + motto + legal links         |
+| F2-32 | Privacy Policy belum punya route                            | ✅ implemented | `/[locale]/privacy` + `/support`, `/safety`, `/standards` placeholder     |
+| F2-33 | Remember me tidak berfungsi, default checked                | ✅ implemented | default unchecked; cookie 30 hari vs session; preferensi `gl-remember`    |
+| F2-34 | Teks TLS 1.3 + chip tracker/policies di login               | ✅ implemented | dihapus                                                                   |
+| F2-35 | Dua header dan tiga footer dengan layout berbeda            | ✅ implemented | `SiteHeader` landing/content + `SiteFooter` 4 variant                     |
+| F2-36 | Back link login/register ada di kanan header                | ✅ implemented | `AuthBackLink` di kiri atas card; recovery di atas step tracker           |
+| F2-37 | Recovery support items tidak berfungsi                      | ✅ implemented | Support/Safety/Standards jadi link placeholder; SSL/support note dihapus  |
+| F2-38 | `/forgot-password/sent` bisa diakses langsung               | ✅ implemented | guard cookie `gl-reset-requested` 30 menit                                |
+
+### Verifikasi follow-up
+
+- `npm run typecheck` — pass.
+- `npm run lint` — pass.
+- `npm test` — 8 files / **34 tests** pass (termasuk tes cookie remember-me).
+- `npm run build` — pass; route `/[locale]/privacy`, `/support`, `/safety`, `/standards` terdaftar.
+- `npm run format:check` — pass.
+- Font ikon subset diukur ulang: **23.916 byte** untuk 107 ikon.
+- Uji manual yang masih disarankan: cookie `gl-remember` setelah login unchecked/checked, dan back/scroll behavior di browser nyata.

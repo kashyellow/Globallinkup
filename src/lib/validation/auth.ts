@@ -29,6 +29,7 @@ export const signUpSchema = z
 export const signInSchema = z.object({
   email: emailSchema,
   password: z.string().min(1, "passwordRequired"),
+  remember: z.boolean().default(false),
 });
 
 export const forgotPasswordSchema = z.object({

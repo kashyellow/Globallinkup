@@ -1,8 +1,10 @@
 "use server";
 
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 
 import { getPublicEnv } from "@/lib/env";
+import { RESET_REQUEST_COOKIE, RESET_REQUEST_MAX_AGE } from "@/lib/auth-cookies";
+import { REMEMBER_COOKIE, REMEMBER_MAX_AGE } from "@/lib/supabase/cookies";
 import { createClient } from "@/lib/supabase/server";
 import {
   forgotPasswordSchema,
@@ -91,12 +93,23 @@ export async function signInAction(input: unknown): Promise<AuthResult> {
   const parsed = signInSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
 
-  const supabase = await createClient();
+  const supabase = await createClient({ remember: parsed.data.remember });
   const { data, error } = await supabase.auth.signInWithPassword({
     email: parsed.data.email,
     password: parsed.data.password,
   });
   if (error || !data.user) return { ok: false, error: "invalid" };
+
+  // Keep the preference readable by the proxy so a refresh does not turn a
+  // session-only login into a persistent one.
+  const cookieStore = await cookies();
+  cookieStore.set(REMEMBER_COOKIE, parsed.data.remember ? "1" : "0", {
+    path: "/",
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    ...(parsed.data.remember ? { maxAge: REMEMBER_MAX_AGE } : {}),
+  });
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -112,6 +125,8 @@ export async function signInAction(input: unknown): Promise<AuthResult> {
 export async function signOutAction(): Promise<{ ok: true; redirectTo: string }> {
   const supabase = await createClient();
   await supabase.auth.signOut();
+  const cookieStore = await cookies();
+  cookieStore.delete(REMEMBER_COOKIE);
   return { ok: true, redirectTo: "/login" };
 }
 
@@ -145,6 +160,17 @@ export async function requestPasswordResetAction(
     }
   }
 
+  // Mark the confirmation step as reached. The page redirects direct/expired
+  // visits back to the request form instead of showing a fake "email sent".
+  const cookieStore = await cookies();
+  cookieStore.set(RESET_REQUEST_COOKIE, "1", {
+    path: "/",
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: RESET_REQUEST_MAX_AGE,
+  });
+
   return { ok: true, redirectTo: "/forgot-password/sent" };
 }
 
@@ -158,5 +184,7 @@ export async function updatePasswordAction(input: unknown): Promise<AuthResult> 
 
   // End the recovery session so the user signs in fresh with the new password.
   await supabase.auth.signOut();
+  const cookieStore = await cookies();
+  cookieStore.delete(RESET_REQUEST_COOKIE);
   return { ok: true, redirectTo: "/login" };
 }
