@@ -8,9 +8,9 @@ import { ContactLocker } from "./contact-locker";
 import { DossierHeader } from "./dossier-header";
 
 /**
- * Member dossier, typeset as a field register. Identity, bio and the contact
- * locker read real data; the activity archive is still fixture-driven (S3
- * follow-up).
+ * Member dossier, typeset as a field register. Identity, bio, the contact
+ * locker and the archive all read real rows; the archive only exposes tabs
+ * that have a backing table (posts + accepted connections).
  */
 export function ProfileView({ profile }: { profile: OwnProfile }) {
   return (
@@ -28,7 +28,7 @@ export function ProfileView({ profile }: { profile: OwnProfile }) {
             </Reveal>
           </div>
           <Reveal delay={380} className="lg:col-span-7">
-            <ProfileActivity />
+            <ProfileActivity dispatches={profile.dispatches} circles={profile.unveiled} />
           </Reveal>
         </div>
       </div>

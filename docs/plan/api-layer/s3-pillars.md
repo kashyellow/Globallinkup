@@ -147,11 +147,12 @@ All slices landed on `dev`, each green:
 
 Gate: `db:test` 38/38 · unit 25 · `@auth` e2e 15/15 · default e2e 9 · build clean.
 
-**Known follow-ups:** the profile _activity archive_ (`activity-panel.tsx`) is
-still fixture-driven; seeded rows have no storage objects, so avatars/post/
-product images render the neutral placeholder until files are uploaded;
-withdrawing a pending sent request has no policy yet; like counts are
-optimistic (no realtime).
+**Known follow-ups:** the profile _activity archive_ (`activity-panel.tsx`)
+reads real rows since 2026-10-25 (own posts + accepted connections; the Saved
+and Security tabs were removed — D2 option 1); seeded rows have no storage
+objects, so avatars/post/product images render the neutral placeholder until
+files are uploaded; withdrawing a pending sent request has no policy yet; like
+counts are optimistic (no realtime).
 
 ## S4 — Storage (2026-10-19)
 

@@ -1183,42 +1183,20 @@
     },
     "tabs": {
       "dispatches": "Dispatches & Photos ({count})",
-      "saved": "Saved Goods ({count})",
-      "circles": "Mutual Circles ({count})",
-      "security": "Security Log"
+      "circles": "Mutual Circles ({count})"
     },
     "dispatches": {
-      "title": "Curated Dispatches",
-      "body": "Field notebooks, architectural studies, and film essays from Barcelona & Andalusia.",
-      "visibility": "Public to Circles",
-      "circlesOnly": "Unveiled Circles Only",
+      "title": "Your Dispatches",
+      "body": "Photos and notes you have shared with the community, newest first.",
+      "visibility": "Visible to members",
       "appreciations": "{count, plural, =1 {# Appreciation} other {# Appreciations}}",
-      "notes": "{count, plural, =1 {# Cultural Note} other {# Cultural Notes}}",
-      "series": "Series: {name}",
-      "loadEarlier": "Load Earlier Field Dispatches",
-      "archiveEnd": "You have reached the start of your field archive."
-    },
-    "saved": {
-      "title": "Saved Artisan Goods",
-      "body": "Pieces you bookmarked from the curated marketplace catalog.",
-      "browse": "Browse Marketplace"
+      "empty": "You have not shared a dispatch yet."
     },
     "circles": {
       "title": "Mutual Circles",
       "body": "Members you have connected with. Contact channels unlock only after both sides consent.",
       "unveiled": "Contacts unveiled",
-      "awaiting": "Awaiting mutual consent",
-      "more": "{count} more members in your circle"
-    },
-    "security": {
-      "title": "Security Log",
-      "body": "Every consent event on your dossier, most recent first.",
-      "events": {
-        "unveiled": "Contact channels unveiled to {name}",
-        "revoked": "You revoked access for {name}",
-        "declined": "You declined an inquiry from {name}",
-        "ruleChanged": "Protocol rules updated"
-      }
+      "empty": "No connections yet. Accepted requests will appear here."
     }
   },
   "Resources": {

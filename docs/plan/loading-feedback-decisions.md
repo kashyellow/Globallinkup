@@ -31,7 +31,9 @@ dependency, tetapi menyentuh puluhan titik pemakaian.
 
 ## D2 · Arsip aktivitas profile
 
-**Status:** ⏳ **butuh keputusan** — belum diimplementasikan.
+**Status:** ✅ diputuskan — opsi 1 diimplementasikan 2026-10-25: tab Dispatches
+membaca post milik sendiri dan Circles membaca koneksi `accepted`; tab Saved dan
+Security disembunyikan karena belum ada tabelnya.
 
 **Konteks:** tab Dispatches, Saved, Circles, dan Security di `/profile` masih memakai fixture
 (`src/features/profile/data.ts`). Tab Security menampilkan riwayat "unveiled/revoked" palsu,

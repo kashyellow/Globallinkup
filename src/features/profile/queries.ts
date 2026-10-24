@@ -1,14 +1,21 @@
 import "server-only";
 
-import { createSignedImageUrl } from "@/lib/storage";
+import { createSignedImageUrl, createSignedImageUrls, resolveImageUrl } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
-import { unwrap, unwrapCount } from "@/lib/supabase/unwrap";
+import { unwrap } from "@/lib/supabase/unwrap";
 import type { Database } from "@/types/database";
 
-/** S3a (own profile) — identity, unlocked channels, counts and unveiled peers. */
+/** S3a (own profile) — identity, unlocked channels, archive and unveiled peers. */
 
 export type ProfileChannel = { key: string; value: string };
 export type UnveiledPeer = { id: string; name: string; city: string; unlockedAt: string };
+export type ProfileDispatch = {
+  id: string;
+  image: string | null;
+  caption: string;
+  createdAt: string;
+  likes: number;
+};
 
 export type OwnProfile = {
   id: string;
@@ -23,6 +30,8 @@ export type OwnProfile = {
   channels: ProfileChannel[];
   metrics: { connections: number; dispatches: number };
   unveiled: UnveiledPeer[];
+  /** The member's own visible posts, newest first. */
+  dispatches: ProfileDispatch[];
 };
 
 function ageFromDateOfBirth(dateOfBirth: string | null): number {
@@ -69,9 +78,10 @@ export async function getOwnProfile(viewerId: string): Promise<OwnProfile | null
       .eq("status", "accepted"),
     supabase
       .from("posts")
-      .select("id", { count: "exact", head: true })
+      .select("id, image_path, caption, created_at")
       .eq("author_id", viewerId)
-      .eq("moderation_status", "visible"),
+      .eq("moderation_status", "visible")
+      .order("created_at", { ascending: false }),
   ]);
 
   const avatarPath = profile.avatar_url;
@@ -126,6 +136,34 @@ export async function getOwnProfile(viewerId: string): Promise<OwnProfile | null
     };
   });
 
+  // The archive is the member's own visible posts. Like counts are read for
+  // those posts only, and images are signed in one batch.
+  const posts = unwrap(postsRes) ?? [];
+  const postIds = posts.map((post) => post.id);
+  const likes =
+    postIds.length > 0
+      ? unwrap(await supabase.from("post_likes").select("post_id").in("post_id", postIds))
+      : [];
+
+  const likeCount = new Map<string, number>();
+  for (const like of likes ?? []) {
+    likeCount.set(like.post_id, (likeCount.get(like.post_id) ?? 0) + 1);
+  }
+
+  const postImages = await createSignedImageUrls(
+    supabase,
+    "post-images",
+    posts.map((post) => post.image_path),
+  );
+
+  const dispatches: ProfileDispatch[] = posts.map((post) => ({
+    id: post.id,
+    image: resolveImageUrl(post.image_path, postImages),
+    caption: post.caption ?? "",
+    createdAt: post.created_at ?? "",
+    likes: likeCount.get(post.id) ?? 0,
+  }));
+
   const languages = Array.isArray(profile.languages)
     ? (profile.languages as { code?: string }[])
         .map((entry) => entry?.code ?? "")
@@ -144,7 +182,8 @@ export async function getOwnProfile(viewerId: string): Promise<OwnProfile | null
     bio: profile.bio_en ?? profile.bio_es ?? "",
     interests: profile.interests ?? [],
     channels,
-    metrics: { connections: connections.length, dispatches: unwrapCount(postsRes) },
+    metrics: { connections: connections.length, dispatches: dispatches.length },
     unveiled,
+    dispatches,
   };
 }

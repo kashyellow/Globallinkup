@@ -1183,42 +1183,20 @@
     },
     "tabs": {
       "dispatches": "Crónicas ({count})",
-      "saved": "Guardados ({count})",
-      "circles": "Círculos ({count})",
-      "security": "Registro de Seguridad"
+      "circles": "Círculos ({count})"
     },
     "dispatches": {
-      "title": "Crónicas Curadas",
-      "body": "Cuadernos de campo, estudios arquitectónicos y ensayos fílmicos desde Barcelona y Andalucía.",
-      "visibility": "Público para Círculos",
-      "circlesOnly": "Solo Círculos Revelados",
+      "title": "Tus Crónicas",
+      "body": "Fotos y notas que has compartido con la comunidad, de la más reciente a la más antigua.",
+      "visibility": "Visible para miembros",
       "appreciations": "{count, plural, =1 {# Apreciación} other {# Apreciaciones}}",
-      "notes": "{count, plural, =1 {# Nota Cultural} other {# Notas Culturales}}",
-      "series": "Serie: {name}",
-      "loadEarlier": "Cargar Crónicas Anteriores",
-      "archiveEnd": "Has llegado al inicio de tu archivo de campo."
-    },
-    "saved": {
-      "title": "Bienes Artesanales Guardados",
-      "body": "Piezas que marcaste del catálogo curado del mercado.",
-      "browse": "Explorar el Mercado"
+      "empty": "Todavía no has compartido ninguna crónica."
     },
     "circles": {
       "title": "Círculos Mutuos",
       "body": "Miembros con los que te has conectado. Los canales de contacto se desbloquean solo tras el consentimiento de ambas partes.",
       "unveiled": "Contactos revelados",
-      "awaiting": "Esperando consentimiento mutuo",
-      "more": "{count} miembros más en tu círculo"
-    },
-    "security": {
-      "title": "Registro de Seguridad",
-      "body": "Cada evento de consentimiento en tu expediente, del más reciente al más antiguo.",
-      "events": {
-        "unveiled": "Canales de contacto revelados a {name}",
-        "revoked": "Revocaste el acceso de {name}",
-        "declined": "Rechazaste una consulta de {name}",
-        "ruleChanged": "Reglas del protocolo actualizadas"
-      }
+      "empty": "Aún no tienes conexiones. Las solicitudes aceptadas aparecerán aquí."
     }
   },
   "Resources": {
