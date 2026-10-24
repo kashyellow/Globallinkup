@@ -110,6 +110,7 @@ export async function signInAction(input: unknown): Promise<AuthResult> {
     secure: process.env.NODE_ENV === "production",
     ...(parsed.data.remember ? { maxAge: REMEMBER_MAX_AGE } : {}),
   });
+  cookieStore.delete(RESET_REQUEST_COOKIE);
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -127,6 +128,7 @@ export async function signOutAction(): Promise<{ ok: true; redirectTo: string }>
   await supabase.auth.signOut();
   const cookieStore = await cookies();
   cookieStore.delete(REMEMBER_COOKIE);
+  cookieStore.delete(RESET_REQUEST_COOKIE);
   return { ok: true, redirectTo: "/login" };
 }
 

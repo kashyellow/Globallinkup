@@ -6,7 +6,6 @@ import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { Spinner } from "@/components/ui/spinner";
 import { savePersonaAction, type PersonaError } from "@/features/persona/actions";
-import { AuthBackLink } from "@/features/auth/components/auth-back-link";
 import { uploadImageAction } from "@/features/media/actions";
 import { useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -220,7 +219,6 @@ export function CreatePersonaView({ initial }: { initial?: PersonaInitial }) {
 
   return (
     <div className="mx-auto w-full max-w-[1240px] px-margin-mobile py-space-xl lg:px-margin">
-      <AuthBackLink className="mb-space-sm" />
       {/* Header */}
       <div className="mb-space-xl flex flex-col justify-between gap-space-md md:flex-row md:items-end">
         <div className="flex flex-col gap-space-xs">

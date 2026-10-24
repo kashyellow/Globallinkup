@@ -67,7 +67,7 @@ function LocaleSwitch({
  * (auth/legal pages) only needs the brand and the locale switch.
  */
 export function SiteHeader({ mode = "content" }: { mode?: "landing" | "content" }) {
-  const t = useTranslations(mode === "landing" ? "MarketingNav" : "PublicNav");
+  const t = useTranslations("MarketingNav");
   const { locale, pending: localePending, switchLocale } = useLocaleSwitch();
   const [menuOpen, setMenuOpen] = useState(false);
   const isLanding = mode === "landing";
@@ -82,7 +82,7 @@ export function SiteHeader({ mode = "content" }: { mode?: "landing" | "content" 
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-outline-variant bg-background/90 backdrop-blur-xl">
-      <div className="mx-auto flex h-20 w-full max-w-[1240px] items-center justify-between gap-space-sm px-margin-mobile md:px-margin">
+      <div className="gap-space-xsm mx-auto flex h-20 w-full max-w-[1240px] items-center justify-between px-margin-mobile md:px-margin">
         <Link
           href="/"
           className="flex min-h-11 min-w-0 items-center gap-2.5 rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"

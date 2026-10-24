@@ -238,3 +238,17 @@ langsung tanpa cookie kembali ke `/forgot-password`.
 **Alasan:** placeholder mempertahankan UI/UX tanpa tombol mati; guard mencegah halaman
 konfirmasi palsu saat direct URL/refresh setelah state hilang, sementara anti-enumeration
 tetap terjaga.
+
+---
+
+## D15 · Stale session handling
+
+**Status:** ✅ diimplementasikan.
+
+**Keputusan:** error `user_not_found`, `session_expired`, `bad_jwt`, dan sejenisnya
+diperlakukan sebagai “belum login”, bukan outage. Proxy juga menghapus cookie auth
+`sb-*-auth-token*` saat error tersebut muncul; cookie reset dibersihkan saat
+sign-in/sign-out.
+
+**Alasan:** cookie lama yang menunjuk user yang sudah dihapus tidak boleh memicu
+error boundary di `/login`, tetapi juga tidak boleh dibiarkan memicu 403 berulang.

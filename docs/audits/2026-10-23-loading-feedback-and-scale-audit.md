@@ -967,8 +967,9 @@ Perbaikan setelah review landing/auth. Semua sudah diimplementasikan dan lolos g
 
 - `npm run typecheck` — pass.
 - `npm run lint` — pass.
-- `npm test` — 8 files / **34 tests** pass (termasuk tes cookie remember-me).
+- `npm test` — 9 files / **37 tests** pass (termasuk cookie remember-me dan auth-error classification).
 - `npm run build` — pass; route `/[locale]/privacy`, `/support`, `/safety`, `/standards` terdaftar.
+- Catatan P3 terbuka: link Product di footer `public` masih mengarah ke route auth-gated.
 - `npm run format:check` — pass.
 - Font ikon subset diukur ulang: **23.916 byte** untuk 107 ikon.
 - Uji manual yang masih disarankan: cookie `gl-remember` setelah login unchecked/checked, dan back/scroll behavior di browser nyata.

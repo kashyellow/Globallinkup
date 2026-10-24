@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { getPublicEnv } from "@/lib/env";
+import { isMissingSessionError } from "@/lib/supabase/auth-errors";
 import { applyRemember, readRemember, REMEMBER_COOKIE } from "@/lib/supabase/cookies";
 import type { Database } from "@/types/database";
 
@@ -69,7 +70,17 @@ export async function updateSession(request: NextRequest) {
   });
 
   try {
-    await supabase.auth.getUser();
+    const { error } = await supabase.auth.getUser();
+
+    // A stale cookie can point at a deleted user. Drop the auth cookies so the
+    // next request starts clean instead of repeating a 403 on every page.
+    if (error && isMissingSessionError(error)) {
+      for (const cookie of request.cookies.getAll()) {
+        if (/^sb-.*-auth-token(\.\d+)?$/.test(cookie.name)) {
+          response.cookies.set(cookie.name, "", { path: "/", maxAge: 0 });
+        }
+      }
+    }
   } catch {
     // Auth/unreachable — keep whatever cookies already exist.
   }
