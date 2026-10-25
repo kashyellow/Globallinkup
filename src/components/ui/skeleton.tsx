@@ -76,12 +76,12 @@ export function FeedSkeleton() {
     <PageSkeleton>
       <div className="grid grid-cols-1 items-start gap-space-lg lg:grid-cols-12">
         <div className="flex flex-col gap-space-lg lg:col-span-8">
-          <div className="rounded-[1.25rem] border border-outline-variant bg-surface-low p-space-lg">
-            <div className="flex items-center gap-3">
-              <Skeleton className="h-9 w-9 rounded-full" />
-              <Skeleton className="h-4 w-32" />
+          <div className="rounded-[1.25rem] border border-outline-variant bg-surface-low p-space-md">
+            <div className="flex flex-wrap items-center gap-2">
+              <Skeleton className="h-11 w-28 rounded-full" />
+              <Skeleton className="h-11 w-36 rounded-full" />
+              <Skeleton className="h-11 w-32 rounded-full" />
             </div>
-            <Skeleton className="mt-space-md h-24 w-full rounded-2xl" />
           </div>
           {Array.from({ length: 2 }, (_, index) => (
             <div

@@ -1,7 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
@@ -9,14 +9,17 @@ import { MediaImage } from "@/components/ui/media-image";
 import { Spinner } from "@/components/ui/spinner";
 import { toggleLikeAction } from "@/features/posts/actions";
 import { ReportDialog } from "@/features/reports/components/report-dialog";
+import { getPathname, Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import type { FeedPost } from "../queries";
+import { PostCarousel } from "./post-carousel";
 
 export function PostCard({
   post,
   isAuthor,
   requested = false,
   busy = false,
+  showComments = true,
   onConnect,
   onAccept,
   onDelete,
@@ -25,6 +28,7 @@ export function PostCard({
   isAuthor: boolean;
   requested?: boolean;
   busy?: boolean;
+  showComments?: boolean;
   onConnect: () => void;
   onAccept: () => void;
   onDelete: () => void;
@@ -32,6 +36,7 @@ export function PostCard({
   const t = useTranslations("Posts");
   const tCommon = useTranslations("Common");
   const format = useFormatter();
+  const locale = useLocale();
   const state = requested && post.state !== "connected" ? "requested" : post.state;
   const [liked, setLiked] = useState(post.likedByViewer);
   const [likes, setLikes] = useState(post.likes);
@@ -39,6 +44,11 @@ export function PostCard({
   const [likeError, setLikeError] = useState(false);
   const [shared, setShared] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
+
+  const authorHref = isAuthor ? "/profile" : `/persona/${post.authorId}`;
+  const previewComments = post.comments
+    .filter((comment) => comment.parentId === null && comment.deletedAt === null)
+    .slice(-2);
 
   async function like() {
     if (liking) return;
@@ -65,7 +75,10 @@ export function PostCard({
   }
 
   async function share() {
-    const url = `${window.location.origin}/posts`;
+    const url = `${window.location.origin}${getPathname({
+      href: `/posts/${post.id}`,
+      locale,
+    })}`;
     try {
       if (navigator.share) {
         await navigator.share({ title: post.caption, url });
@@ -88,18 +101,28 @@ export function PostCard({
         {/* Author header */}
         <div className="flex flex-wrap items-center justify-between gap-x-space-md gap-y-space-sm p-space-lg">
           <div className="flex min-w-0 flex-1 items-center gap-space-md">
-            {post.avatar ? (
-              <MediaImage
-                src={post.avatar}
-                alt={post.author}
-                wrapperClassName="h-12 w-12 shrink-0 rounded-full ring-1 ring-outline-variant"
-              />
-            ) : (
-              <DefaultAvatar className="h-12 w-12 shrink-0 rounded-full ring-1 ring-outline-variant" />
-            )}
+            <Link
+              href={authorHref}
+              className="shrink-0 rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              {post.avatar ? (
+                <MediaImage
+                  src={post.avatar}
+                  alt={post.author}
+                  wrapperClassName="h-12 w-12 rounded-full ring-1 ring-outline-variant"
+                />
+              ) : (
+                <DefaultAvatar className="h-12 w-12 rounded-full ring-1 ring-outline-variant" />
+              )}
+            </Link>
             <div className="flex min-w-0 flex-col">
-              <h2 className="font-label-lg text-label-lg font-semibold text-on-surface">
-                {post.author}
+              <h2 className="truncate font-label-lg text-label-lg font-semibold text-on-surface">
+                <Link
+                  href={authorHref}
+                  className="rounded transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                >
+                  {post.author}
+                </Link>
               </h2>
               <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-secondary">
                 <span className="flex items-center gap-1.5">
@@ -176,15 +199,7 @@ export function PostCard({
           )}
         </div>
 
-        {/* Editorial photography frame */}
-        <div className="group relative aspect-[4/3] w-full overflow-hidden border-y border-outline-variant bg-surface">
-          <MediaImage
-            src={post.image}
-            alt={post.caption}
-            wrapperClassName="h-full w-full"
-            className="transition-transform duration-700 ease-out group-hover:scale-[1.02]"
-          />
-        </div>
+        <PostCarousel images={post.images} caption={post.caption} />
 
         {/* Content & reactions */}
         <div className="flex flex-col gap-space-md p-space-lg">
@@ -212,7 +227,7 @@ export function PostCard({
               <button
                 type="button"
                 onClick={() => void share()}
-                title={shared ? t("postMeta.share") : t("postMeta.share")}
+                title={t("postMeta.share")}
                 aria-label={t("postMeta.share")}
                 className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               >
@@ -235,12 +250,53 @@ export function PostCard({
           </div>
 
           <p className="font-body-md text-body-md leading-relaxed text-on-surface-strong">
-            <span className="font-semibold text-on-surface">{post.author}</span> {post.caption}
+            <Link
+              href={authorHref}
+              className="font-semibold text-on-surface transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              {post.author}
+            </Link>{" "}
+            {post.caption}
           </p>
           {likeError ? (
             <span role="alert" className="sr-only">
               {tCommon("actionError")}
             </span>
+          ) : null}
+
+          {showComments && post.commentCount > 0 ? (
+            <div className="flex flex-col gap-space-xs border-t border-outline-variant pt-space-sm">
+              {previewComments.map((comment) => (
+                <div key={comment.id} className="flex items-start gap-2">
+                  {comment.avatar ? (
+                    <MediaImage
+                      src={comment.avatar}
+                      alt={comment.author}
+                      wrapperClassName="h-7 w-7 shrink-0 rounded-full ring-1 ring-outline-variant"
+                    />
+                  ) : (
+                    <DefaultAvatar className="h-7 w-7 shrink-0 rounded-full ring-1 ring-outline-variant" />
+                  )}
+                  <p className="min-w-0 font-body-sm text-body-sm leading-relaxed text-on-surface-strong">
+                    <span className="font-semibold text-on-surface">{comment.author}</span>{" "}
+                    {comment.body}
+                  </p>
+                </div>
+              ))}
+              <Link
+                href={`/posts/${post.id}`}
+                className="self-start font-label-md text-label-md font-semibold text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              >
+                {t("postMeta.viewComments", { count: post.commentCount })}
+              </Link>
+            </div>
+          ) : showComments ? (
+            <Link
+              href={`/posts/${post.id}`}
+              className="self-start font-label-md text-label-md font-semibold text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              {t("postMeta.addComment")}
+            </Link>
           ) : null}
         </div>
       </div>

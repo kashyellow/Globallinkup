@@ -12,7 +12,7 @@ export type PostResult = { ok: true; id?: string } | { ok: false; error: string 
 
 const createSchema = z.object({
   caption: z.string().trim().min(1, "captionRequired").max(600),
-  imagePath: z.string().trim().min(1, "imageRequired").max(400),
+  imagePaths: z.array(z.string().trim().min(1).max(400)).min(1).max(6),
 });
 
 export async function createPostAction(input: unknown): Promise<PostResult> {
@@ -24,24 +24,21 @@ export async function createPostAction(input: unknown): Promise<PostResult> {
 
   const parsed = createSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
-  // The author may only attach an object from their own storage folder.
-  if (!parsed.data.imagePath.startsWith(`${user.id}/`)) {
+
+  // The author may only attach objects from their own storage folder.
+  if (parsed.data.imagePaths.some((path) => !path.startsWith(`${user.id}/`))) {
     return { ok: false, error: "invalid" };
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("posts")
-    .insert({
-      author_id: user.id,
-      image_path: parsed.data.imagePath,
-      caption: parsed.data.caption,
-    })
-    .select("id")
-    .single();
+  // Post + gallery are written atomically by the RPC.
+  const { data, error } = await supabase.rpc("create_post", {
+    p_caption: parsed.data.caption,
+    p_image_paths: parsed.data.imagePaths,
+  });
 
-  if (error) return { ok: false, error: "unknown" };
-  return { ok: true, id: data.id };
+  if (error || !data) return { ok: false, error: "unknown" };
+  return { ok: true, id: data };
 }
 
 const likeSchema = z.object({ postId: uuidSchema, liked: z.boolean() });

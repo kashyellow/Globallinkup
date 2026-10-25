@@ -866,6 +866,7 @@ export type Database = {
     };
     Functions: {
       are_connected: { Args: { a: string; b: string }; Returns: boolean };
+      create_post: { Args: { p_caption: string; p_image_paths: string[] }; Returns: string };
       discover_personas: {
         Args: {
           p_countries?: string[];

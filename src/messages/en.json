@@ -228,12 +228,12 @@
     "title": "Community Posts",
     "intro": "Moments, travels, and glimpses into daily life across borders. Pure photography without algorithmic noise.",
     "filters": {
-      "all": "All Dispatches",
+      "all": "All Posts",
       "connectionsOnly": "Connections Only",
       "spainLatam": "Spain & LatAm",
-      "emptyTitle": "No dispatches match this view",
+      "emptyTitle": "No posts match this view",
       "emptyBody": "Nothing has been published in this selection yet. Try another filter.",
-      "showAll": "Show all dispatches"
+      "showAll": "Show all posts"
     },
     "composer": {
       "placeholder": "Share a moment, photo, or travel update with the community...",
@@ -249,19 +249,30 @@
       "photoRequired": "Add a photo before publishing.",
       "captionTooLong": "Captions are limited to 600 characters.",
       "publishError": "We could not publish this post. Please try again.",
-      "uploadError": "We could not upload that image. Use a JPG, PNG or WEBP under 10 MB."
+      "uploadError": "We could not upload that image. Use a JPG, PNG or WEBP under 10 MB.",
+      "newPost": "New post",
+      "eyebrow": "NEW POST",
+      "dialogTitle": "Share a post",
+      "close": "Close composer",
+      "dialogBody": "Add up to six photos and a short note. Approved members will see it in the community feed.",
+      "maxPhotos": "You can attach up to {count} photos.",
+      "photosCount": "{count} / {max} photos",
+      "photoAlt": "Photo {number}",
+      "removePhoto": "Remove photo {number}",
+      "privacyNote": "Posts are visible to approved members. Keep captions and photos respectful."
     },
     "postMeta": {
       "hoursAgo": "{count} hours ago",
       "yesterday": "Yesterday",
       "likes": "{count} likes",
       "notes": "{count} notes",
-      "share": "Share Dispatch",
+      "share": "Share post",
       "save": "Save to collection",
       "requested": "Requested",
-      "viewComments": "View all {count} reflections & comments →",
+      "viewComments": "View all {count} comments →",
       "remove": "Remove post",
-      "report": "Report post"
+      "report": "Report post",
+      "addComment": "Add a comment"
     },
     "captions": {
       "sofia": "Golden hour after a long walk through El Born. Exploring new perspectives through analog film this week ☕️📷",
@@ -279,11 +290,26 @@
       "sofiaTime": "1h",
       "mateoAuthor": "Camila Ortiz",
       "mateoBody": "Plaza Santa Catarina in the afternoon, no question. A coffee at El Jarocho and sitting down to read.",
-      "mateoTime": "3h"
+      "mateoTime": "3h",
+      "title": "Comments ({count})",
+      "body": "Keep the conversation warm, specific, and respectful.",
+      "emptyTitle": "No comments yet",
+      "emptyBody": "Be the first to leave a thoughtful note.",
+      "loadMore": "Show {count} more comments",
+      "replyingTo": "Replying to {name}",
+      "cancelReply": "Cancel",
+      "replyPlaceholder": "Reply to {name}…",
+      "placeholder": "Write a comment…",
+      "submit": "Post comment",
+      "reply": "Post reply",
+      "deletedAuthor": "Deleted member",
+      "deletedBody": "This comment was removed.",
+      "replyAction": "Reply",
+      "deleteAction": "Delete"
     },
     "end": {
       "caughtUp": "You are caught up with recent community moments",
-      "checkBack": "Check back later or post your own dispatch above"
+      "checkBack": "Check back later or share your own post."
     },
     "sidebar": {
       "aboutTitle": "About GlobalLinkup Posts",
@@ -294,6 +320,26 @@
       "readGuidelines": "Read Community Guidelines →",
       "feedLanguage": "FEED LANGUAGE: ENGLISH",
       "change": "Change"
+    },
+    "carousel": {
+      "label": "Post photos",
+      "previous": "Previous photo",
+      "next": "Next photo",
+      "slides": "Photo slides",
+      "slide": "Photo {number} of {total}"
+    },
+    "feed": {
+      "loading": "Loading posts…",
+      "showing": "Showing {shown} of {total}",
+      "loadMore": "Load more posts",
+      "loadingMore": "Loading more…",
+      "loadError": "We could not load more posts. Please try again."
+    },
+    "detail": {
+      "metaTitle": "Post",
+      "back": "Back to posts",
+      "removeTitle": "Remove this post?",
+      "removeBody": "The post will disappear from the community feed. This cannot be undone from the feed."
     }
   },
   "Marketplace": {

@@ -249,19 +249,30 @@
       "photoRequired": "Añade una foto antes de publicar.",
       "captionTooLong": "El texto admite un máximo de 600 caracteres.",
       "publishError": "No pudimos publicar esta publicación. Inténtalo de nuevo.",
-      "uploadError": "No pudimos subir esa imagen. Usa JPG, PNG o WEBP de menos de 10 MB."
+      "uploadError": "No pudimos subir esa imagen. Usa JPG, PNG o WEBP de menos de 10 MB.",
+      "newPost": "Nueva publicación",
+      "eyebrow": "NUEVA PUBLICACIÓN",
+      "dialogTitle": "Compartir una publicación",
+      "close": "Cerrar el compositor",
+      "dialogBody": "Añade hasta seis fotos y una nota breve. Los miembros aprobados la verán en el feed de la comunidad.",
+      "maxPhotos": "Puedes adjuntar hasta {count} fotos.",
+      "photosCount": "{count} / {max} fotos",
+      "photoAlt": "Foto {number}",
+      "removePhoto": "Quitar la foto {number}",
+      "privacyNote": "Las publicaciones son visibles para miembros aprobados. Mantén el texto y las fotos respetuosos."
     },
     "postMeta": {
       "hoursAgo": "hace {count} horas",
       "yesterday": "Ayer",
       "likes": "{count} me gusta",
       "notes": "{count} notas",
-      "share": "Compartir",
+      "share": "Compartir publicación",
       "save": "Guardar en colección",
       "requested": "Solicitado",
-      "viewComments": "Ver los {count} comentarios y reflexiones →",
+      "viewComments": "Ver los {count} comentarios →",
       "remove": "Eliminar publicación",
-      "report": "Reportar publicación"
+      "report": "Reportar publicación",
+      "addComment": "Añadir un comentario"
     },
     "captions": {
       "sofia": "Hora dorada tras un largo paseo por El Born. Esta semana explorando nuevas perspectivas con película analógica ☕️📷",
@@ -279,11 +290,26 @@
       "sofiaTime": "1h",
       "mateoAuthor": "Camila Ortiz",
       "mateoBody": "Plaza Santa Catarina por la tarde, sin duda. Un café en El Jarocho y sentarse a leer.",
-      "mateoTime": "3h"
+      "mateoTime": "3h",
+      "title": "Comentarios ({count})",
+      "body": "Mantén la conversación cálida, concreta y respetuosa.",
+      "emptyTitle": "Todavía no hay comentarios",
+      "emptyBody": "Sé la primera persona en dejar una nota reflexiva.",
+      "loadMore": "Mostrar {count} comentarios más",
+      "replyingTo": "Respondiendo a {name}",
+      "cancelReply": "Cancelar",
+      "replyPlaceholder": "Responder a {name}…",
+      "placeholder": "Escribe un comentario…",
+      "submit": "Publicar comentario",
+      "reply": "Publicar respuesta",
+      "deletedAuthor": "Miembro eliminado",
+      "deletedBody": "Este comentario fue eliminado.",
+      "replyAction": "Responder",
+      "deleteAction": "Eliminar"
     },
     "end": {
       "caughtUp": "Estás al día con los momentos recientes de la comunidad",
-      "checkBack": "Vuelve más tarde o publica tu propio mensaje arriba"
+      "checkBack": "Vuelve más tarde o comparte tu propia publicación."
     },
     "sidebar": {
       "aboutTitle": "Acerca de las Publicaciones de GlobalLinkup",
@@ -294,6 +320,26 @@
       "readGuidelines": "Leer las Normas de la Comunidad →",
       "feedLanguage": "IDIOMA DEL FEED: ESPAÑOL",
       "change": "Cambiar"
+    },
+    "carousel": {
+      "label": "Fotos de la publicación",
+      "previous": "Foto anterior",
+      "next": "Foto siguiente",
+      "slides": "Fotos de la publicación",
+      "slide": "Foto {number} de {total}"
+    },
+    "feed": {
+      "loading": "Cargando publicaciones…",
+      "showing": "Mostrando {shown} de {total}",
+      "loadMore": "Cargar más publicaciones",
+      "loadingMore": "Cargando más…",
+      "loadError": "No pudimos cargar más publicaciones. Inténtalo de nuevo."
+    },
+    "detail": {
+      "metaTitle": "Publicación",
+      "back": "Volver a las publicaciones",
+      "removeTitle": "¿Eliminar esta publicación?",
+      "removeBody": "La publicación desaparecerá del feed de la comunidad. No se puede deshacer desde el feed."
     }
   },
   "Marketplace": {

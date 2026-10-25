@@ -220,7 +220,65 @@ test("@auth the feed shows real posts and a composer", async ({ page }) => {
 
   // Seeded post caption proves the feed reads real rows.
   await expect(page.getByText(/Gothic Quarter, shot on expired Portra/)).toBeVisible();
-  await expect(page.getByRole("button", { name: /publish/i })).toBeVisible();
+  await page.getByRole("button", { name: /new post/i }).click();
+  await expect(page.getByRole("dialog", { name: /share a post/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /^publish$/i })).toBeVisible();
+  await page.getByRole("button", { name: /cancel/i }).click();
+});
+
+test("@auth creates a post with multiple images", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await page.goto("/en/posts");
+  await page.waitForTimeout(1500);
+
+  await page.getByRole("button", { name: /new post/i }).click();
+  const dialog = page.getByRole("dialog", { name: /share a post/i });
+  await expect(dialog).toBeVisible();
+
+  await dialog.locator('input[type="file"]').setInputFiles([
+    { name: "one.png", mimeType: "image/png", buffer: AVATAR_PNG },
+    { name: "two.png", mimeType: "image/png", buffer: AVATAR_PNG },
+    { name: "three.png", mimeType: "image/png", buffer: AVATAR_PNG },
+  ]);
+  await dialog.locator("textarea").fill("E2E multi-image dispatch");
+  await dialog.getByRole("button", { name: /^publish$/i }).click();
+
+  await expect(page.getByText("E2E multi-image dispatch")).toBeVisible({
+    timeout: 20_000,
+  });
+});
+
+test("@auth comments and replies on a post", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await page.goto("/en/posts/a0000000-0000-0000-0000-000000000004");
+  await page.waitForTimeout(1200);
+
+  const composer = page.getByPlaceholder(/write a comment/i);
+  await composer.fill("E2E root comment");
+  await page.getByRole("button", { name: /post comment/i }).click();
+  await expect(page.getByText("E2E root comment")).toBeVisible();
+
+  await page
+    .getByRole("button", { name: /^reply$/i })
+    .first()
+    .click();
+  const replyBox = page.getByPlaceholder(/reply to/i);
+  await replyBox.fill("E2E reply comment");
+  await page.getByRole("button", { name: /post reply/i }).click();
+  await expect(page.getByText("E2E reply comment")).toBeVisible();
+});
+
+test("@auth the feed loads more and filters server-side", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await page.goto("/en/posts");
+  await page.waitForTimeout(1500);
+
+  await expect(page.getByRole("button", { name: /load more posts/i })).toBeVisible();
+  await page.getByRole("button", { name: /load more posts/i }).click();
+  await expect(page.locator("article")).toHaveCount(10);
+
+  await page.getByRole("button", { name: /connections only/i }).click();
+  await expect(page.getByText(/^Showing 5 of /i)).toBeVisible();
 });
 
 test("@auth the marketplace lists real products", async ({ page }) => {

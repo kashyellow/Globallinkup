@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { PostsView } from "@/features/posts/components/posts-view";
-import { getFeed } from "@/features/posts/queries";
+import { POSTS_PAGE_SIZE } from "@/features/posts/data";
+import { getFeedPage } from "@/features/posts/queries";
 import { getServerClient, requireApprovedUser } from "@/lib/auth";
 import { createSignedImageUrl } from "@/lib/storage";
 
@@ -20,8 +21,13 @@ export default async function PostsPage() {
   const supabase = await getServerClient();
   const avatarPath = profile.avatar_url;
 
-  const [posts, avatar] = await Promise.all([
-    getFeed(user.id),
+  const [feed, avatar] = await Promise.all([
+    getFeedPage({
+      viewerId: user.id,
+      filter: "all",
+      limit: POSTS_PAGE_SIZE,
+      offset: 0,
+    }),
     !avatarPath || !supabase
       ? Promise.resolve(null)
       : avatarPath.startsWith("http")
@@ -29,5 +35,11 @@ export default async function PostsPage() {
         : createSignedImageUrl(supabase, "avatars", avatarPath),
   ]);
 
-  return <PostsView posts={posts} viewer={{ id: user.id, name: profile.display_name, avatar }} />;
+  return (
+    <PostsView
+      initialPosts={feed.posts}
+      initialTotal={feed.total}
+      viewer={{ id: user.id, name: profile.display_name, avatar }}
+    />
+  );
 }

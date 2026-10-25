@@ -603,7 +603,7 @@ If any default changes, update this file before implementation.
 ## 12. Progress log
 
 - [x] Phase 0 — DB, seeds, RLS
-- [ ] Phase 1 — Posts
+- [x] Phase 1 — Posts
 - [ ] Phase 2 — Marketplace
 - [ ] Phase 3 — Connections, Discover, Profile
 - [ ] Phase 4 — Admin
