@@ -932,6 +932,7 @@ export type Database = {
           p_date_of_birth?: string;
           p_display_name: string;
           p_facebook?: string;
+          p_headline?: string;
           p_instagram?: string;
           p_interests?: string[];
           p_languages?: Json;

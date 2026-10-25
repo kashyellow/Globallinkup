@@ -70,7 +70,7 @@ export function PostCarousel({
         alt={caption}
         wrapperClassName="h-full w-full"
         className={cn(
-          "transition-transform duration-700 ease-out group-hover:scale-[1.02] motion-reduce:transform-none",
+          "object-contain transition-transform duration-700 ease-out group-hover:scale-[1.02] motion-reduce:transform-none",
         )}
         loading={eager ? "eager" : "lazy"}
       />

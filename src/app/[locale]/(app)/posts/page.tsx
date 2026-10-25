@@ -39,7 +39,12 @@ export default async function PostsPage() {
     <PostsView
       initialPosts={feed.posts}
       initialTotal={feed.total}
-      viewer={{ id: user.id, name: profile.display_name, avatar }}
+      viewer={{
+        id: user.id,
+        name: profile.display_name,
+        avatar,
+        isAdmin: profile.role === "admin",
+      }}
     />
   );
 }

@@ -69,6 +69,7 @@ export async function loadPersonaInitial(): Promise<PersonaInitial | undefined> 
 
   return {
     fullName: profile.display_name,
+    headline: profile.headline ?? "",
     country: profile.country_code ?? "ES",
     city: profile.city ?? "",
     dateOfBirth,
@@ -76,6 +77,7 @@ export async function loadPersonaInitial(): Promise<PersonaInitial | undefined> 
     interests: profile.interests ?? [],
     bio: profile.bio_en ?? profile.bio_es ?? "",
     avatarUrl,
+    hasStoredAvatar: Boolean(profile.avatar_url),
     ...contacts,
   };
 }

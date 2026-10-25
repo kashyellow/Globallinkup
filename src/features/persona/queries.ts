@@ -121,7 +121,7 @@ export async function getDiscoverPersonas({
 }
 
 /** FR-4.3 — one approved persona plus the viewer's connection state. */
-export type PersonaDetail = Persona & { bio: string };
+export type PersonaDetail = Persona & { bio: string; headline: string };
 
 export async function getPersonaDetail(
   viewerId: string,
@@ -134,7 +134,7 @@ export async function getPersonaDetail(
     await supabase
       .from("profiles_public")
       .select(
-        "id, display_name, country_code, city, avatar_url, languages, interests, badge, approval_status, age, bio_en, bio_es",
+        "id, display_name, country_code, city, avatar_url, languages, interests, badge, approval_status, age, bio_en, bio_es, headline",
       )
       .eq("id", personaId)
       .eq("approval_status", "approved")
@@ -177,5 +177,6 @@ export async function getPersonaDetail(
       imageUrl: resolveImageUrl(row.avatar_url, signed),
     }),
     bio: locale === "es" ? (row.bio_es ?? row.bio_en ?? "") : (row.bio_en ?? row.bio_es ?? ""),
+    headline: row.headline ?? "",
   };
 }

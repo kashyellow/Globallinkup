@@ -207,7 +207,7 @@
     "searchEmpty": "Ninguna persona coincide con estos filtros.",
     "sendError": "No se pudo enviar la solicitud. Inténtalo de nuevo.",
     "detail": {
-      "back": "Volver al descubrimiento",
+      "back": "Volver",
       "about": "Sobre la persona",
       "contactNote": "Los datos de contacto siguen ocultos hasta que la conexión sea mutua.",
       "report": "Reportar persona",
@@ -490,7 +490,8 @@
       "reasonBody": "Da a {name} una explicación clara. Se guarda con esta decisión y aparece en su pantalla de revisión.",
       "reasonLabel": "Motivo",
       "reasonPlaceholder": "Explica qué debe cambiar o por qué se restringe la cuenta…",
-      "reasonHint": "Mínimo 10 caracteres."
+      "reasonHint": "Mínimo 10 caracteres.",
+      "bioLabel": "Bio"
     },
     "marketplace": {
       "restrictedAccess": "Acceso Restringido",
@@ -547,7 +548,22 @@
       "restoreBody": "Devuelve esta pieza al catálogo como despublicada.",
       "formEyebrow": "Editor de catálogo",
       "errorImages": "Puedes adjuntar hasta {count} imágenes.",
-      "errorImageRequired": "Añade al menos una imagen antes de publicar."
+      "errorImageRequired": "Añade al menos una imagen antes de publicar.",
+      "previewAction": "Vista previa",
+      "preview": {
+        "eyebrow": "VISTA PREVIA ADMIN",
+        "close": "Cerrar vista previa",
+        "price": "Precio",
+        "origin": "Origen",
+        "description": "Descripción",
+        "phone": "Teléfono del vendedor",
+        "created": "Creado",
+        "published": "Publicado",
+        "previousImage": "Imagen anterior",
+        "nextImage": "Imagen siguiente",
+        "imageOf": "Imagen {number} de {total}",
+        "edit": "Editar pieza"
+      }
     },
     "moderation": {
       "title": "Confianza Comunitaria y Cola de Moderación",
@@ -717,7 +733,13 @@
       "emptyBody": "Todas las invitaciones que has enviado han sido respondidas. Las nuevas solicitudes aparecerán aquí mientras esperas.",
       "sentAgoAwaiting": "Enviada hace {time} · Esperando revisión",
       "viewNote": "Ver Nota Enviada",
-      "withdraw": "Retirar"
+      "withdraw": "Retirar",
+      "awaiting": "Esperando respuesta",
+      "yourNote": "Tu nota",
+      "sentOn": "Enviada {date}",
+      "readNote": "Leer nota completa",
+      "viewPersona": "Ver persona",
+      "closeNote": "Cerrar nota"
     },
     "tags": {
       "textiles": "Textiles",
@@ -1111,7 +1133,19 @@
       "contacts": "Un canal de contacto"
     },
     "requiredHint": "Los campos marcados con * son obligatorios.",
-    "backHome": "Volver al inicio"
+    "backHome": "Volver al inicio",
+    "crop": {
+      "eyebrow": "ENCUADRE DEL RETRATO",
+      "title": "Ajusta tu retrato",
+      "body": "Arrastra la foto y ajusta el zoom. El círculo es cómo te verán los miembros en publicaciones, descubrimiento y tu dossier.",
+      "zoom": "Zoom",
+      "apply": "Usar este recorte",
+      "error": "No pudimos recortar esa imagen. Prueba con otra foto."
+    },
+    "headlineLabel": "Titular",
+    "headlineMeta": "Opcional",
+    "headlinePlaceholder": "p. ej. Arquitecta y documentalista cultural",
+    "headlineHint": "Una línea breve que aparece bajo tu nombre en descubrimiento, publicaciones y tu dossier."
   },
   "Landing": {
     "hero": {
@@ -1351,13 +1385,21 @@
       "body": "Fotos y notas que has compartido con la comunidad, de la más reciente a la más antigua.",
       "visibility": "Visible para miembros",
       "appreciations": "{count, plural, =1 {# Apreciación} other {# Apreciaciones}}",
-      "empty": "Todavía no has compartido ninguna crónica."
+      "empty": "Todavía no has compartido ninguna crónica.",
+      "textOnly": "Publicación de texto",
+      "openPost": "Abrir publicación",
+      "delete": "Eliminar publicación",
+      "loadMore": "Mostrar {count} publicaciones más",
+      "deleteTitle": "¿Eliminar esta publicación?",
+      "deleteBody": "La publicación desaparecerá del feed y de tu archivo. No se puede deshacer."
     },
     "circles": {
       "title": "Círculos Mutuos",
       "body": "Miembros con los que te has conectado. Los canales de contacto se desbloquean solo tras el consentimiento de ambas partes.",
       "unveiled": "Contactos revelados",
-      "empty": "Aún no tienes conexiones. Las solicitudes aceptadas aparecerán aquí."
+      "empty": "Aún no tienes conexiones. Las solicitudes aceptadas aparecerán aquí.",
+      "connectedSince": "Conectado {date}",
+      "loadMore": "Mostrar {count} conexiones más"
     }
   },
   "Resources": {

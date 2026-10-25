@@ -33,6 +33,14 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
         : await createSignedImageUrl(supabase, "avatars", avatarPath);
 
   return (
-    <PostDetailView post={post} viewer={{ id: user.id, name: profile.display_name, avatar }} />
+    <PostDetailView
+      post={post}
+      viewer={{
+        id: user.id,
+        name: profile.display_name,
+        avatar,
+        isAdmin: profile.role === "admin",
+      }}
+    />
   );
 }

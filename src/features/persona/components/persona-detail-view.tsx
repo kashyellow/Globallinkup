@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { BackLink } from "@/components/layout/back-link";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { InlineAlert } from "@/components/ui/inline-alert";
@@ -83,13 +84,7 @@ export function PersonaDetailView({
 
   return (
     <div className="mx-auto w-full max-w-[1000px] px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
-      <Link
-        href="/discover"
-        className="inline-flex min-h-11 items-center gap-1.5 font-label-md text-label-md text-secondary transition-colors hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-      >
-        <Icon name="arrow_back" className="text-base" />
-        {t("back")}
-      </Link>
+      <BackLink label={t("back")} fallbackHref="/discover" />
 
       <div className="mt-space-md grid grid-cols-1 gap-space-lg md:grid-cols-12">
         <div className="md:col-span-5">
@@ -111,6 +106,9 @@ export function PersonaDetailView({
           <h1 className="font-display-md text-display-md-mobile font-bold text-balance text-on-surface md:text-display-md">
             {persona.age > 0 ? `${persona.name}, ${persona.age}` : persona.name}
           </h1>
+          {persona.headline ? (
+            <p className="mt-1 font-body-lg text-body-lg text-primary">{persona.headline}</p>
+          ) : null}
           <p className="mt-1 flex items-center gap-1.5 font-body-md text-body-md text-secondary">
             <Icon name="location_on" className="text-base text-primary" />
             {persona.location}

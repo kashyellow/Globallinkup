@@ -8,7 +8,13 @@ import type { Database } from "@/types/database";
 /** S3a (own profile) — identity, unlocked channels, archive and unveiled peers. */
 
 export type ProfileChannel = { key: string; value: string };
-export type UnveiledPeer = { id: string; name: string; city: string; unlockedAt: string };
+export type UnveiledPeer = {
+  id: string;
+  name: string;
+  city: string;
+  avatar: string | null;
+  unlockedAt: string;
+};
 export type ProfileDispatch = {
   id: string;
   image: string | null;
@@ -123,10 +129,18 @@ export async function getOwnProfile(
   const peers =
     peerIds.length > 0
       ? unwrap(
-          await supabase.from("profiles_public").select("id, display_name, city").in("id", peerIds),
+          await supabase
+            .from("profiles_public")
+            .select("id, display_name, city, avatar_url")
+            .in("id", peerIds),
         )
       : [];
   const peerById = new Map((peers ?? []).map((peer) => [peer.id, peer]));
+  const peerAvatars = await createSignedImageUrls(
+    supabase,
+    "avatars",
+    (peers ?? []).map((peer) => peer.avatar_url),
+  );
 
   const unveiled: UnveiledPeer[] = connections.map((row) => {
     const peerId = row.requester_id === viewerId ? row.recipient_id : row.requester_id;
@@ -135,6 +149,7 @@ export async function getOwnProfile(
       id: peerId,
       name: peer?.display_name ?? "",
       city: peer?.city ?? "",
+      avatar: resolveImageUrl(peer?.avatar_url, peerAvatars),
       unlockedAt: row.updated_at ?? "",
     };
   });

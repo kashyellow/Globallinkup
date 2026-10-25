@@ -36,6 +36,10 @@ export const savePersonaSchema = z
     fullName: z.string().trim().min(2, "fullNameTooShort").max(120),
     country: z.string().trim().length(2, "countryInvalid"),
     city: z.string().trim().min(1, "cityRequired").max(120),
+    headline: z
+      .union([z.literal(""), z.string().trim().max(120)])
+      .optional()
+      .default(""),
     dateOfBirth: z
       .union([z.literal(""), z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "dobInvalid")])
       .optional()

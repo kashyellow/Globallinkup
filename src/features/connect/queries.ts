@@ -17,6 +17,7 @@ export type ContactChannel = { key: ChannelKey; value: string };
 
 export type ActiveConnectionDto = {
   id: string;
+  profileId: string;
   name: string;
   age: number;
   location: string;
@@ -31,6 +32,7 @@ export type ActiveConnectionDto = {
 
 export type ReceivedRequestDto = {
   id: string;
+  profileId: string;
   name: string;
   age: number;
   location: string;
@@ -43,6 +45,7 @@ export type ReceivedRequestDto = {
 
 export type SentRequestDto = {
   id: string;
+  profileId: string;
   name: string;
   age: number;
   location: string;
@@ -161,6 +164,7 @@ export async function getConnectionsData(viewerId: string): Promise<ConnectionsD
     if (!profile) continue;
 
     const shared = {
+      profileId: peerId,
       name: profile.display_name ?? "",
       age: profile.age ?? 0,
       location: [profile.city, profile.country_code].filter(Boolean).join(", "),
@@ -188,6 +192,7 @@ export async function getConnectionsData(viewerId: string): Promise<ConnectionsD
     } else if (row.status === "requested" && row.requester_id === viewerId) {
       sent.push({
         id: row.id,
+        profileId: peerId,
         name: shared.name,
         age: shared.age,
         location: shared.location,

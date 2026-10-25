@@ -8,6 +8,7 @@ import { InlineAlert } from "@/components/ui/inline-alert";
 import { BackLink } from "@/components/layout/back-link";
 import { acceptConnectionAction, sendConnectRequestAction } from "@/features/connect/actions";
 import { deletePostAction } from "@/features/posts/actions";
+import { removePostAction } from "@/features/admin/actions";
 import type { PostDetail } from "@/features/posts/queries";
 import { ConnectDialog, type ConnectTarget } from "@/features/shared/connect-dialog";
 import { usePendingAction } from "@/features/shared/use-pending-action";
@@ -21,7 +22,7 @@ export function PostDetailView({
   viewer,
 }: {
   post: PostDetail;
-  viewer: { id: string; name: string; avatar: string | null };
+  viewer: { id: string; name: string; avatar: string | null; isAdmin: boolean };
 }) {
   const t = useTranslations("Posts.detail");
   const tCommon = useTranslations("Common");
@@ -79,7 +80,9 @@ export function PostDetailView({
     const result = await run(`post:${post.id}`, async () => {
       setError(null);
       try {
-        const response = await deletePostAction({ postId: post.id });
+        const response = viewer.isAdmin
+          ? await removePostAction({ postId: post.id })
+          : await deletePostAction({ postId: post.id });
         if (!response.ok) {
           setError(tCommon("actionError"));
           return false;
@@ -109,6 +112,8 @@ export function PostDetailView({
         <PostCard
           post={post}
           isAuthor={isAuthor}
+          isAdmin={viewer.isAdmin}
+          canDelete={viewer.isAdmin}
           requested={requested}
           busy={isPending(`accept:${post.connectionId ?? post.id}`)}
           showComments={false}

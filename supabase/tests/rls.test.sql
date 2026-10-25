@@ -9,7 +9,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(92);
+select plan(93);
 
 -- Fixed ids from the seed.
 --   admin   11111111-…  sofia 22222222-…  mateo 33333333-…
@@ -750,14 +750,27 @@ select throws_ok(
 );
 reset role;
 
--- 62. the author can soft-delete their own comment.
+-- 62. authors cannot delete their own comment; admins can.
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"33333333-3333-3333-3333-333333333333","role":"authenticated"}';
+update public.post_comments
+  set deleted_at = now()
+  where id = 'd0000000-0000-0000-0000-000000000010';
+reset role;
+select is(
+  (select deleted_at from public.post_comments
+    where id = 'd0000000-0000-0000-0000-000000000010'),
+  null,
+  'author cannot soft-delete their own comment'
+);
+
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated"}';
 select lives_ok(
   $$ update public.post_comments
      set deleted_at = now()
      where id = 'd0000000-0000-0000-0000-000000000010' $$,
-  'author soft-deletes their own comment'
+  'admin soft-deletes a comment'
 );
 reset role;
 select isnt_empty(

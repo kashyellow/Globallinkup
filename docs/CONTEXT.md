@@ -100,7 +100,11 @@ These are confirmed and supersede the PRD where it disagrees:
   a full page refresh at step 2 intentionally returns to step 1.
 - **Posts support up to six images** and one level of threaded comments. Comments
   are post engagement, not chat: no inbox, realtime delivery, mentions, or
-  comment notifications.
+  comment notifications. Comment deletion is admin-only; authors remove their
+  own posts from the profile archive, not from the public feed.
+- **Personas have an optional Headline** in addition to the short bio, and profile
+  photos are cropped to a 1:1 circle-friendly image before upload. Post photos
+  render fitted rather than cropped.
 - **Marketplace products have a lifecycle** (`draft`, `live`, `unpublished`,
   `trashed`). Delete is a soft delete so an admin can restore a piece from Trash.
 - **Admin reject/suspend decisions require a reason** stored in

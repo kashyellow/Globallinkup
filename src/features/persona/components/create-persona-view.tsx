@@ -16,6 +16,7 @@ import { INTEREST_MAX } from "@/lib/persona/interests";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
+import { AvatarCropDialog } from "./avatar-crop-dialog";
 import { InterestCombobox, type InterestCatalogItem } from "./interest-combobox";
 
 const LANGUAGES = [
@@ -68,6 +69,7 @@ const FIELD_INPUT_ID: Record<FormField, string> = {
 
 export type PersonaInitial = {
   fullName: string;
+  headline?: string;
   country: string;
   city: string;
   dateOfBirth: string;
@@ -76,6 +78,8 @@ export type PersonaInitial = {
   bio: string;
   /** Signed URL of the stored avatar, for the edit/resubmit preview. */
   avatarUrl?: string | null;
+  /** True when the row has an avatar path even if signing it failed. */
+  hasStoredAvatar?: boolean;
 } & Record<ChannelKey, string>;
 
 export function CreatePersonaView({
@@ -113,6 +117,7 @@ export function CreatePersonaView({
       : [],
   );
   const [bio, setBio] = useState(initial?.bio ?? "");
+  const [headline, setHeadline] = useState(initial?.headline ?? "");
   const [fullName, setFullName] = useState(initial?.fullName ?? "");
   const [city, setCity] = useState(initial?.city ?? "");
   const [contacts, setContacts] = useState<Record<ChannelKey, string>>(() => ({
@@ -141,12 +146,20 @@ export function CreatePersonaView({
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(initial?.avatarUrl ?? null);
+  const [cropSource, setCropSource] = useState<string | null>(null);
+  const [cropOpen, setCropOpen] = useState(false);
 
   useEffect(() => {
     return () => {
       if (photoPreview) URL.revokeObjectURL(photoPreview);
     };
   }, [photoPreview]);
+
+  useEffect(() => {
+    return () => {
+      if (cropSource) URL.revokeObjectURL(cropSource);
+    };
+  }, [cropSource]);
 
   // A direct visit or a refresh has no in-memory draft. Send the visitor back
   // to step 1 instead of letting them fill a persona that cannot be submitted.
@@ -167,16 +180,33 @@ export function CreatePersonaView({
       return;
     }
     setError(null);
+    setCropSource(URL.createObjectURL(file));
+    setCropOpen(true);
+  }
+
+  function closeCropSource() {
+    if (cropSource) URL.revokeObjectURL(cropSource);
+    setCropSource(null);
+  }
+
+  function confirmCrop(file: File) {
     setPhotoFile(file);
     setPhotoPreview(URL.createObjectURL(file));
+    setCropOpen(false);
+    closeCropSource();
     clearFieldError("photo");
+  }
+
+  function cancelCrop() {
+    setCropOpen(false);
+    closeCropSource();
   }
 
   const selectedInterests = interests.length;
   const selectedLanguages = Object.values(languages).filter((entry) => entry.active).length;
   const hasContact = Object.values(contacts).some((value) => value.trim().length > 0);
-  const requiresPhoto = !initial?.avatarUrl;
-  const hasPhoto = Boolean(photoFile || initial?.avatarUrl);
+  const requiresPhoto = !initial?.hasStoredAvatar;
+  const hasPhoto = Boolean(photoFile || initial?.hasStoredAvatar);
   const isAccount = isAuthenticated || accountCreated;
 
   function clearFieldError(field: FormField) {
@@ -284,6 +314,7 @@ export function CreatePersonaView({
 
       const result = await savePersonaAction({
         fullName: text("fullname"),
+        headline,
         country: text("country"),
         city: text("city"),
         dateOfBirth: text("date-of-birth"),
@@ -583,6 +614,32 @@ export function CreatePersonaView({
                   />
                 </div>
               </Field>
+
+              <div className="md:col-span-2">
+                <Field
+                  label={t("headlineLabel")}
+                  meta={t("headlineMeta")}
+                  htmlFor="persona-headline"
+                >
+                  <div className="relative">
+                    <input
+                      id="persona-headline"
+                      name="headline"
+                      type="text"
+                      maxLength={120}
+                      value={headline}
+                      onChange={(event) => setHeadline(event.target.value)}
+                      placeholder={t("headlinePlaceholder")}
+                      className={cn(inputClass, "pr-10")}
+                    />
+                    <Icon
+                      name="edit_note"
+                      className="absolute top-3 right-3 text-[18px] text-secondary"
+                    />
+                  </div>
+                  <p className="font-body-sm text-body-sm text-secondary">{t("headlineHint")}</p>
+                </Field>
+              </div>
 
               <Field label={t("country")} meta={t("countryMeta")} htmlFor="persona-country">
                 <div className="relative">
@@ -955,6 +1012,13 @@ export function CreatePersonaView({
           </form>
         </div>
       </div>
+
+      <AvatarCropDialog
+        image={cropSource}
+        open={cropOpen}
+        onCancel={cancelCrop}
+        onConfirm={confirmCrop}
+      />
     </div>
   );
 }

@@ -11,6 +11,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { acceptConnectionAction, sendConnectRequestAction } from "@/features/connect/actions";
 import { loadFeedPageAction } from "@/features/posts/feed-actions";
 import { deletePostAction } from "@/features/posts/actions";
+import { removePostAction } from "@/features/admin/actions";
 import { ConnectDialog, type ConnectTarget } from "@/features/shared/connect-dialog";
 import { usePendingAction } from "@/features/shared/use-pending-action";
 import { useRefresh } from "@/features/shared/refresh-provider";
@@ -30,7 +31,7 @@ export function PostsView({
 }: {
   initialPosts: FeedPost[];
   initialTotal: number;
-  viewer: { id: string; name: string; avatar: string | null };
+  viewer: { id: string; name: string; avatar: string | null; isAdmin: boolean };
 }) {
   const t = useTranslations("Posts");
   const tCommon = useTranslations("Common");
@@ -128,7 +129,9 @@ export function PostsView({
     const result = await run(`post:${postId}`, async () => {
       setError(null);
       try {
-        const response = await deletePostAction({ postId });
+        const response = viewer.isAdmin
+          ? await removePostAction({ postId })
+          : await deletePostAction({ postId });
         if (!response.ok) {
           setError(tCommon("actionError"));
           return false;
@@ -241,6 +244,8 @@ export function PostsView({
               key={post.id}
               post={post}
               isAuthor={post.authorId === viewer.id}
+              isAdmin={viewer.isAdmin}
+              canDelete={viewer.isAdmin}
               requested={requestedPeers.has(post.authorId)}
               busy={isPending(`accept:${post.connectionId ?? post.id}`)}
               onConnect={() =>

@@ -26,7 +26,7 @@ export async function DiscoverView({
   const tCommon = await getTranslations("Common");
 
   const privacy = (
-    <section className="mt-block-mobile bezel-tray md:mt-block">
+    <section key="privacy" className="mt-block-mobile bezel-tray md:mt-block">
       <div
         className="flex flex-col gap-space-xl bezel-core p-space-lg md:p-space-xl"
         style={{ "--bezel-core-bg": "var(--color-surface-container)" } as CSSProperties}
@@ -54,7 +54,7 @@ export async function DiscoverView({
           />
           <ol className="grid grid-cols-1 gap-space-lg md:grid-cols-2 md:gap-y-space-xl lg:grid-cols-4">
             {STEPS.map((step, index) => (
-              <li key={step.label} className="relative">
+              <li key={index} className="relative">
                 <div className="flex items-center gap-space-sm">
                   <span
                     className={cn(

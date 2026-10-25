@@ -11,6 +11,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { acceptConnectionAction, declineConnectionAction } from "@/features/connect/actions";
 import { usePendingAction } from "@/features/shared/use-pending-action";
 import { useRefresh } from "@/features/shared/refresh-provider";
+import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import type { ReceivedRequestDto } from "../queries";
 
@@ -129,7 +130,10 @@ function RequestCard({
       >
         <div className="space-y-space-md">
           <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="flex items-center gap-space-md">
+            <Link
+              href={`/persona/${request.profileId}`}
+              className="group flex items-center gap-space-md rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
               {request.avatar ? (
                 <MediaImage
                   src={request.avatar}
@@ -140,7 +144,7 @@ function RequestCard({
                 <DefaultAvatar className="h-16 w-16 shrink-0 rounded-full ring-1 ring-outline-variant" />
               )}
               <div className="min-w-0">
-                <h3 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
+                <h3 className="font-headline-sm text-headline-sm font-semibold text-on-surface transition-colors group-hover:text-primary">
                   {request.age > 0 ? `${request.name}, ${request.age}` : request.name}
                 </h3>
                 <p className="flex items-center gap-1 font-body-sm text-body-sm text-secondary">
@@ -161,7 +165,7 @@ function RequestCard({
                   ))}
                 </div>
               </div>
-            </div>
+            </Link>
             <span
               className="shrink-0 rounded-full border border-outline-variant bg-surface-container px-2.5 py-1 font-label-md text-label-md text-secondary"
               suppressHydrationWarning

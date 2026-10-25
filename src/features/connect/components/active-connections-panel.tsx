@@ -11,6 +11,7 @@ import { MediaImage } from "@/components/ui/media-image";
 import { disconnectConnectionAction } from "@/features/connect/actions";
 import { usePendingAction } from "@/features/shared/use-pending-action";
 import { useRefresh } from "@/features/shared/refresh-provider";
+import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import type { ActiveConnectionDto } from "../queries";
 import { ContactVault } from "./contact-vault";
@@ -184,7 +185,10 @@ function ConnectionCard({
           </div>
 
           {/* Profile snapshot */}
-          <div className="flex items-start gap-space-md">
+          <Link
+            href={`/persona/${connection.profileId}`}
+            className="group flex items-start gap-space-md rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
             {connection.avatar ? (
               <MediaImage
                 src={connection.avatar}
@@ -196,7 +200,7 @@ function ConnectionCard({
             )}
             <div className="flex min-w-0 flex-col">
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
+                <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface transition-colors group-hover:text-primary">
                   {connection.name}
                 </h2>
                 {connection.age > 0 ? (
@@ -221,7 +225,7 @@ function ConnectionCard({
                 ))}
               </div>
             </div>
-          </div>
+          </Link>
 
           {/* Cultural tags */}
           {connection.interests.length > 0 ? (

@@ -23,7 +23,7 @@ export function PostComments({
 }: {
   postId: string;
   comments: FeedComment[];
-  viewer: { id: string; name: string; avatar: string | null };
+  viewer: { id: string; name: string; avatar: string | null; isAdmin: boolean };
 }) {
   const t = useTranslations("Posts.comments");
   const tCommon = useTranslations("Common");
@@ -250,7 +250,7 @@ function CommentItem({
 }: {
   comment: FeedComment;
   replies: FeedComment[];
-  viewer: { id: string; name: string; avatar: string | null };
+  viewer: { id: string; name: string; avatar: string | null; isAdmin: boolean };
   pending: boolean;
   sentAgo: string;
   onReply: (comment: FeedComment) => void;
@@ -308,7 +308,7 @@ function CommentItem({
                 {t("replyAction")}
               </button>
             ) : null}
-            {!deleted && comment.authorId === viewer.id ? (
+            {!deleted && viewer.isAdmin ? (
               <button
                 type="button"
                 onClick={() => onDelete(comment)}
@@ -370,7 +370,7 @@ function CommentItem({
                     >
                       {replyDeleted ? t("deletedBody") : reply.body}
                     </p>
-                    {!replyDeleted && reply.authorId === viewer.id ? (
+                    {!replyDeleted && viewer.isAdmin ? (
                       <button
                         type="button"
                         onClick={() => onDelete(reply)}

@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
+
 import { getCurrentProfile, getCurrentUser } from "@/lib/auth";
 import { SEEDED_INTEREST_KEYS } from "@/lib/persona/interests";
 import { createClient } from "@/lib/supabase/server";
@@ -89,6 +91,7 @@ export async function savePersonaAction(input: unknown): Promise<PersonaResult> 
     p_interests: data.interests,
     p_date_of_birth: nonEmpty(data.dateOfBirth) ?? undefined,
     p_avatar_url: avatarPath ?? undefined,
+    p_headline: data.headline ?? "",
     p_whatsapp: nonEmpty(data.whatsapp) ?? undefined,
     p_telegram: nonEmpty(data.telegram) ?? undefined,
     p_instagram: nonEmpty(data.instagram) ?? undefined,
@@ -97,6 +100,10 @@ export async function savePersonaAction(input: unknown): Promise<PersonaResult> 
     p_x: nonEmpty(data.x) ?? undefined,
   });
   if (error) return { ok: false, error: "unknown" };
+
+  revalidatePath("/profile");
+  revalidatePath("/discover");
+  revalidatePath("/verify");
 
   const redirectTo = status === "approved" ? "/profile" : "/verify";
   return { ok: true, redirectTo };

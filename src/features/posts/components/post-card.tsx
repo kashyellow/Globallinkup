@@ -17,6 +17,8 @@ import { PostCarousel } from "./post-carousel";
 export function PostCard({
   post,
   isAuthor,
+  isAdmin = false,
+  canDelete = false,
   requested = false,
   busy = false,
   showComments = true,
@@ -26,6 +28,8 @@ export function PostCard({
 }: {
   post: FeedPost;
   isAuthor: boolean;
+  isAdmin?: boolean;
+  canDelete?: boolean;
   requested?: boolean;
   busy?: boolean;
   showComments?: boolean;
@@ -139,7 +143,7 @@ export function PostCard({
             </div>
           </div>
 
-          {isAuthor ? (
+          {canDelete ? (
             <button
               type="button"
               onClick={onDelete}
@@ -235,7 +239,7 @@ export function PostCard({
               </button>
             </div>
             <div className="flex items-center gap-1">
-              {!isAuthor ? (
+              {!isAuthor && !isAdmin ? (
                 <button
                   type="button"
                   onClick={() => setReportOpen(true)}

@@ -47,7 +47,10 @@ const deleteSchema = z.object({ commentId: uuidSchema });
 
 export async function deleteCommentAction(input: unknown): Promise<CommentResult> {
   const user = await getCurrentUser();
-  if (!user) return { ok: false, error: "forbidden" };
+  const profile = await getCurrentProfile();
+  if (!user || !profile || profile.role !== "admin") {
+    return { ok: false, error: "forbidden" };
+  }
 
   const parsed = deleteSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
@@ -57,7 +60,6 @@ export async function deleteCommentAction(input: unknown): Promise<CommentResult
     .from("post_comments")
     .update({ deleted_at: new Date().toISOString() })
     .eq("id", parsed.data.commentId)
-    .eq("author_id", user.id)
     .is("deleted_at", null)
     .select("id");
 

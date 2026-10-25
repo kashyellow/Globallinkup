@@ -28,6 +28,10 @@ async function uploadAvatar(page: Page) {
     mimeType: "image/png",
     buffer: AVATAR_PNG,
   });
+  const crop = page.getByRole("dialog", { name: /fit your portrait/i });
+  if (await crop.isVisible().catch(() => false)) {
+    await crop.getByRole("button", { name: /use this crop/i }).click();
+  }
   await expect(page.locator('img[alt*="portrait" i]')).toBeVisible();
 }
 
@@ -287,6 +291,103 @@ test("@auth comments and replies on a post", async ({ page }) => {
   await expect(page.getByText("E2E reply comment")).toBeVisible();
 });
 
+test("@auth authors delete posts from the archive, not the feed", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await page.goto("/en/posts");
+  await page.waitForTimeout(1200);
+  await expect(page.getByRole("button", { name: /remove post/i })).toHaveCount(0);
+
+  await page.goto("/en/profile");
+  await page.waitForTimeout(1000);
+  const deletePost = page.getByRole("button", { name: /delete post/i }).first();
+  await expect(deletePost).toBeVisible();
+  await deletePost.click();
+  await expect(page.getByRole("alertdialog")).toBeVisible();
+  await page
+    .getByRole("alertdialog")
+    .getByRole("button", { name: /cancel/i })
+    .click();
+});
+
+test("@auth admins can moderate posts and comments inline", async ({ page }) => {
+  await signIn(page, "admin@globallinkup.test");
+  await page.goto("/en/posts");
+  await page.waitForTimeout(1200);
+  await expect(page.getByRole("button", { name: /remove post/i }).first()).toBeVisible();
+
+  await page.goto("/en/posts/a0000000-0000-0000-0000-000000000004");
+  await page.waitForTimeout(800);
+  await expect(page.getByRole("button", { name: /^delete$/i }).first()).toBeVisible();
+});
+
+test("@auth persona back returns to the originating post", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await page.goto("/en/posts/a0000000-0000-0000-0000-000000000004");
+  await page.waitForTimeout(800);
+  await page.getByRole("link", { name: "Valentina Gomez" }).first().click();
+  await expect(page).toHaveURL(/\/en\/persona\//);
+  await page
+    .getByRole("button", { name: /^back$/i })
+    .first()
+    .click();
+  await expect(page).toHaveURL(/\/en\/posts\/a0000000-0000-0000-0000-000000000004$/);
+});
+
+test("@auth sent request notes open as a readable letter", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await page.goto("/en/connections");
+  await page.waitForTimeout(1000);
+  await page.getByRole("button", { name: /sent requests/i }).click();
+  await expect(page.getByText(/Reset Flow User/)).toBeVisible();
+  await page.getByRole("button", { name: /read full note/i }).click();
+  await expect(page.getByRole("dialog", { name: /Reset Flow User/ })).toBeVisible();
+});
+
+test("@auth connection cards open the member persona", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await page.goto("/en/connections");
+  await page.waitForTimeout(1000);
+  await page.locator('a[href^="/en/persona/"]').first().click();
+  await expect(page).toHaveURL(/\/en\/persona\//);
+});
+
+test("@auth discover renders without react key warnings", async ({ page }) => {
+  const warnings: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error" && message.text().includes('unique "key"')) {
+      warnings.push(message.text());
+    }
+  });
+  await signIn(page, "sofia.martinez@example.com");
+  await page.waitForTimeout(1000);
+  expect(warnings).toEqual([]);
+});
+
+test("@auth profile edit saves a headline", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await page.goto("/en/profile/edit");
+  await page.waitForTimeout(1000);
+  await page.fill("#persona-headline", "Architect & Cultural Documentary Filmmaker");
+  await page.getByRole("button", { name: /save changes/i }).click();
+  await expect(page).toHaveURL(/\/en\/profile$/, { timeout: 15_000 });
+  await expect(page.getByText("Architect & Cultural Documentary Filmmaker")).toBeVisible();
+});
+
+test("@auth profile photo opens the circular cropper", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await page.goto("/en/profile/edit");
+  await page.waitForTimeout(1000);
+  await page.locator('input[type="file"]').first().setInputFiles({
+    name: "avatar.png",
+    mimeType: "image/png",
+    buffer: AVATAR_PNG,
+  });
+  const crop = page.getByRole("dialog", { name: /fit your portrait/i });
+  await expect(crop).toBeVisible();
+  await crop.getByRole("button", { name: /use this crop/i }).click();
+  await expect(crop).toHaveCount(0);
+});
+
 test("@auth the feed loads more and filters server-side", async ({ page }) => {
   await signIn(page, "sofia.martinez@example.com");
   await page.goto("/en/posts");
@@ -359,6 +460,23 @@ test("@auth an admin reviews a dossier and approves a pending persona", async ({
   await expect(page.getByRole("heading", { name: /Pending Applicant/ })).toBeVisible();
 });
 
+test("@auth an admin previews a product with its gallery", async ({ page }) => {
+  await signIn(page, "admin@globallinkup.test");
+  await page.goto("/en/admin/marketplace");
+  await page.waitForTimeout(1200);
+  await page
+    .getByRole("button", { name: /^preview$/i })
+    .first()
+    .click();
+  const preview = page.getByRole("dialog");
+  await expect(preview).toBeVisible();
+  await expect(preview.getByText(/ADMIN PREVIEW/i)).toBeVisible();
+  await preview
+    .getByRole("button", { name: /close preview/i })
+    .first()
+    .click();
+});
+
 test("@auth an admin creates, trashes, and restores a draft product", async ({ page }) => {
   await signIn(page, "admin@globallinkup.test");
   await page.goto("/en/admin/marketplace");
@@ -427,7 +545,7 @@ test("@auth the profile shows the real dossier and unlocked channels", async ({ 
 });
 
 test("@auth a shared dossier has no owner actions for another member", async ({ page }) => {
-  await signIn(page, "reset.user@example.com");
+  await signIn(page, "lucas.varela@example.com");
   await page.goto("/en/persona/22222222-2222-2222-2222-222222222222");
   await page.waitForTimeout(1200);
 

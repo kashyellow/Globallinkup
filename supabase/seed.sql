@@ -390,7 +390,9 @@ values
   ('c0000000-0000-0000-0000-000000000010', '22222222-2222-2222-2222-222222222222', 'b6b6b6b6-b6b6-b6b6-b6b6-b6b6b6b6b6b6', 'accepted',
    'Tomás, the edges of Santiago series is incredible. Would love to see the full edit.', 'photography', now() - interval '21 days', now() - interval '20 days'),
   ('c0000000-0000-0000-0000-000000000011', '22222222-2222-2222-2222-222222222222', 'b7b7b7b7-b7b7-b7b7-b7b7-b7b7b7b7b7b7', 'accepted',
-   'Lucía, natural dyes and slow fashion are exactly my kind of conversation.', 'textiles', now() - interval '14 days', now() - interval '13 days');
+   'Lucía, natural dyes and slow fashion are exactly my kind of conversation.', 'textiles', now() - interval '14 days', now() - interval '13 days'),
+  ('c0000000-0000-0000-0000-000000000012', '22222222-2222-2222-2222-222222222222', '88888888-8888-8888-8888-888888888888', 'requested',
+   'Hola, I would love to compare notes on product testing and bilingual launch flows. Your Santiago perspective would be valuable.', 'productTesting', now() - interval '3 days', now() - interval '3 days');
 
 -- ----------------------------------------------------------------------------
 -- Posts + likes

@@ -207,7 +207,7 @@
     "searchEmpty": "No personas match these filters.",
     "sendError": "That request could not be sent. Please try again.",
     "detail": {
-      "back": "Back to discovery",
+      "back": "Back",
       "about": "About",
       "contactNote": "Contact details stay hidden until you are mutually connected.",
       "report": "Report persona",
@@ -318,7 +318,7 @@
       "humanCurated": "Human-curated community",
       "etiquetteTitle": "Community Etiquette",
       "etiquetteBody": "Respectful, intentional, and culturally curious. We celebrate photography that captures local context, real travel reflections, and cross-cultural friendship.",
-      "readGuidelines": "Read Community Guidelines →",
+      "readGuidelines": "Read Community Guidelines",
       "feedLanguage": "FEED LANGUAGE: ENGLISH",
       "change": "Change"
     },
@@ -490,7 +490,8 @@
       "reasonBody": "Give {name} a clear explanation. It is stored with this decision and shown on their review screen.",
       "reasonLabel": "Reason",
       "reasonPlaceholder": "Explain what needs to change or why the account is being restricted…",
-      "reasonHint": "At least 10 characters."
+      "reasonHint": "At least 10 characters.",
+      "bioLabel": "Bio"
     },
     "marketplace": {
       "restrictedAccess": "Restricted Access",
@@ -547,7 +548,22 @@
       "restoreBody": "Return this piece to the catalog as an unpublished item.",
       "formEyebrow": "Catalog editor",
       "errorImages": "You can attach up to {count} images.",
-      "errorImageRequired": "Add at least one image before publishing."
+      "errorImageRequired": "Add at least one image before publishing.",
+      "previewAction": "Preview",
+      "preview": {
+        "eyebrow": "ADMIN PREVIEW",
+        "close": "Close preview",
+        "price": "Price",
+        "origin": "Origin",
+        "description": "Description",
+        "phone": "Seller phone",
+        "created": "Created",
+        "published": "Published",
+        "previousImage": "Previous image",
+        "nextImage": "Next image",
+        "imageOf": "Image {number} of {total}",
+        "edit": "Edit listing"
+      }
     },
     "moderation": {
       "title": "Community Trust & Moderation Queue",
@@ -717,7 +733,13 @@
       "emptyBody": "Every invitation you have sent has been answered. New requests will appear here while you wait.",
       "sentAgoAwaiting": "Sent {time} ago · Awaiting review",
       "viewNote": "View Sent Note",
-      "withdraw": "Withdraw"
+      "withdraw": "Withdraw",
+      "awaiting": "Awaiting reply",
+      "yourNote": "Your note",
+      "sentOn": "Sent {date}",
+      "readNote": "Read full note",
+      "viewPersona": "View persona",
+      "closeNote": "Close note"
     },
     "tags": {
       "textiles": "Textiles",
@@ -1111,7 +1133,19 @@
       "contacts": "A contact channel"
     },
     "requiredHint": "Fields marked * are required.",
-    "backHome": "Back to home"
+    "backHome": "Back to home",
+    "crop": {
+      "eyebrow": "PORTRAIT FRAME",
+      "title": "Fit your portrait",
+      "body": "Drag the photo and adjust the zoom. The circle is how members will see you across posts, discovery and your dossier.",
+      "zoom": "Zoom",
+      "apply": "Use this crop",
+      "error": "We could not crop that image. Try another photo."
+    },
+    "headlineLabel": "Headline",
+    "headlineMeta": "Optional",
+    "headlinePlaceholder": "e.g. Architect & Cultural Documentary Filmmaker",
+    "headlineHint": "A short line that appears under your name across discovery, posts, and your dossier."
   },
   "Landing": {
     "hero": {
@@ -1351,13 +1385,21 @@
       "body": "Photos and notes you have shared with the community, newest first.",
       "visibility": "Visible to members",
       "appreciations": "{count, plural, =1 {# Appreciation} other {# Appreciations}}",
-      "empty": "You have not shared a dispatch yet."
+      "empty": "You have not shared a dispatch yet.",
+      "textOnly": "Text dispatch",
+      "openPost": "Open post",
+      "delete": "Delete post",
+      "loadMore": "Show {count} more dispatches",
+      "deleteTitle": "Delete this post?",
+      "deleteBody": "The post will disappear from the feed and your archive. This cannot be undone."
     },
     "circles": {
       "title": "Mutual Circles",
       "body": "Members you have connected with. Contact channels unlock only after both sides consent.",
       "unveiled": "Contacts unveiled",
-      "empty": "No connections yet. Accepted requests will appear here."
+      "empty": "No connections yet. Accepted requests will appear here.",
+      "connectedSince": "Connected {date}",
+      "loadMore": "Show {count} more connections"
     }
   },
   "Resources": {

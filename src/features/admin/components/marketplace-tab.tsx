@@ -23,6 +23,7 @@ import { usePendingAction } from "@/features/shared/use-pending-action";
 import { useRefresh } from "@/features/shared/refresh-provider";
 import { cn } from "@/lib/utils";
 import type { AdminProductDto, AdminProductFilter, AdminProductStatus } from "../queries";
+import { AdminProductPreview } from "./admin-product-preview";
 
 const INPUT =
   "h-11 w-full rounded-full border border-outline-variant bg-surface-dim px-space-md font-body-sm text-body-sm text-on-surface transition-colors duration-300 placeholder:text-text-muted hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
@@ -61,6 +62,7 @@ export function AdminMarketplaceTab({
   const [editing, setEditing] = useState<AdminProductDto | null>(null);
   const [confirmTarget, setConfirmTarget] = useState<AdminProductDto | null>(null);
   const [restoreTarget, setRestoreTarget] = useState<AdminProductDto | null>(null);
+  const [previewTarget, setPreviewTarget] = useState<AdminProductDto | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const statusOptions = [
@@ -203,6 +205,7 @@ export function AdminMarketplaceTab({
                 isPending(`restore:${product.id}`)
               }
               onEdit={() => openEdit(product)}
+              onPreview={() => setPreviewTarget(product)}
               onToggle={() => void togglePublished(product)}
               onTrash={() => setConfirmTarget(product)}
               onRestore={() => setRestoreTarget(product)}
@@ -218,6 +221,18 @@ export function AdminMarketplaceTab({
         query={query}
         status={status}
       />
+
+      {previewTarget ? (
+        <AdminProductPreview
+          product={previewTarget}
+          open
+          onClose={() => setPreviewTarget(null)}
+          onEdit={() => {
+            setPreviewTarget(null);
+            openEdit(previewTarget);
+          }}
+        />
+      ) : null}
 
       {formOpen ? (
         <ProductFormDialog
@@ -287,6 +302,7 @@ function ProductRow({
   product,
   pending,
   onEdit,
+  onPreview,
   onToggle,
   onTrash,
   onRestore,
@@ -294,6 +310,7 @@ function ProductRow({
   product: AdminProductDto;
   pending: boolean;
   onEdit: () => void;
+  onPreview: () => void;
   onToggle: () => void;
   onTrash: () => void;
   onRestore: () => void;
@@ -353,6 +370,14 @@ function ProductRow({
             </button>
           ) : (
             <>
+              <button
+                type="button"
+                onClick={onPreview}
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-outline-variant bg-surface-dim px-4 font-label-md text-label-md text-on-surface transition-colors hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
+              >
+                <Icon name="visibility" className="text-base" />
+                {t("previewAction")}
+              </button>
               <button
                 type="button"
                 onClick={onEdit}

@@ -608,3 +608,15 @@ If any default changes, update this file before implementation.
 - [x] Phase 3 — Connections, Discover, Profile
 - [x] Phase 4 — Admin
 - [x] Phase 5 — QA and regression (automated coverage; final manual visual pass recommended)
+
+### Final touch-up pass
+
+- [x] Register every Material Symbols name used by `<Icon>` and test the subset.
+- [x] Render post photos fitted and add the circular avatar cropper.
+- [x] Add the optional persona Headline and simplify the admin dossier bio.
+- [x] Make comment deletion admin-only and move author post deletion to the profile archive.
+- [x] Rebuild the archive and Mutual Circles as load-more card grids.
+- [x] Return from a persona via history so a post comment comes back to that post.
+- [x] Make connection cards link to personas and redesign sent-note reading.
+- [x] Add the admin product gallery preview.
+- [x] Remove the Discover privacy-section key warning and guard it in e2e.

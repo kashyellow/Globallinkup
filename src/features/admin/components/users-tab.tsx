@@ -447,24 +447,14 @@ function PersonaDossierDialog({
             </p>
           ) : null}
 
-          <div className="grid grid-cols-1 gap-space-md md:grid-cols-2">
-            <section className="space-y-1.5">
-              <h3 className="font-label-md text-label-md font-semibold tracking-[0.08em] text-text-muted uppercase">
-                {t("bioEn")}
-              </h3>
-              <p className="font-body-sm text-body-sm leading-relaxed text-on-surface-strong">
-                {user.bioEn || "—"}
-              </p>
-            </section>
-            <section className="space-y-1.5">
-              <h3 className="font-label-md text-label-md font-semibold tracking-[0.08em] text-text-muted uppercase">
-                {t("bioEs")}
-              </h3>
-              <p className="font-body-sm text-body-sm leading-relaxed text-on-surface-strong">
-                {user.bioEs || "—"}
-              </p>
-            </section>
-          </div>
+          <section className="space-y-1.5">
+            <h3 className="font-label-md text-label-md font-semibold tracking-[0.08em] text-text-muted uppercase">
+              {t("bioLabel")}
+            </h3>
+            <p className="font-body-sm text-body-sm leading-relaxed text-on-surface-strong">
+              {user.bioEn || user.bioEs || "—"}
+            </p>
+          </section>
 
           <div className="grid grid-cols-1 gap-space-md md:grid-cols-2">
             <section className="space-y-1.5">
