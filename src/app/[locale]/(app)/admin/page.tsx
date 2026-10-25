@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
+import { LinkPending } from "@/components/layout/link-pending";
 import { Icon } from "@/components/ui/icon";
 import { getAdminMetrics } from "@/features/admin/queries";
 import { Link } from "@/lib/i18n/navigation";
@@ -65,8 +66,9 @@ export default async function AdminDashboardPage() {
           <Link
             key={card.key}
             href={card.href}
-            className="group bezel-tray focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="group relative bezel-tray focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
+            <LinkPending className="rounded-[1.25rem]" />
             <div className="flex h-full flex-col justify-between gap-space-lg bezel-core p-space-lg">
               <div className="flex items-start justify-between gap-space-sm">
                 <span

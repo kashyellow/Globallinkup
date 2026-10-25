@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import type { CSSProperties } from "react";
 import { Icon } from "@/components/ui/icon";
+import { MediaImage } from "@/components/ui/media-image";
 import { AuthBackLink } from "@/features/auth/components/auth-back-link";
 import { useRegistrationDraft } from "@/features/auth/components/registration-draft-provider";
 import { Link, useRouter } from "@/lib/i18n/navigation";
@@ -391,11 +392,11 @@ export function RegisterView() {
               </div>
 
               <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-outline-variant bg-surface-low lg:aspect-[4/5]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <MediaImage
                   alt={t("photoAlt")}
-                  className="h-full w-full object-cover object-[50%_30%] lg:object-center"
                   src={PHOTO}
+                  wrapperClassName="h-full w-full"
+                  className="object-[50%_30%] lg:object-center"
                   loading="lazy"
                 />
                 {/* The badge rides the top edge, clear of the subjects; the caption

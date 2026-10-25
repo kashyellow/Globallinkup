@@ -1,11 +1,11 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useState, type FormEvent } from "react";
+import { useState, useTransition, type FormEvent } from "react";
 
 import { Icon } from "@/components/ui/icon";
+import { Spinner } from "@/components/ui/spinner";
 import { useRouter } from "@/lib/i18n/navigation";
-import { cn } from "@/lib/utils";
 
 export function AdminSearchForm({
   basePath,
@@ -21,14 +21,18 @@ export function AdminSearchForm({
   extra?: Record<string, string>;
 }) {
   const t = useTranslations("Admin.common");
+  const tCommon = useTranslations("Common");
   const router = useRouter();
   const [draft, setDraft] = useState(query);
+  const [pending, startTransition] = useTransition();
 
   function navigate(nextQuery: string) {
     const params = new URLSearchParams(extra);
     if (nextQuery.trim()) params.set("q", nextQuery.trim());
     if (status && status !== "all") params.set("status", status);
-    router.push(params.size > 0 ? `${basePath}?${params.toString()}` : basePath);
+    startTransition(() => {
+      router.push(params.size > 0 ? `${basePath}?${params.toString()}` : basePath);
+    });
   }
 
   function submit(event: FormEvent) {
@@ -37,7 +41,11 @@ export function AdminSearchForm({
   }
 
   return (
-    <form onSubmit={submit} className="flex min-w-0 flex-1 flex-col gap-space-xs sm:flex-row">
+    <form
+      onSubmit={submit}
+      aria-busy={pending || undefined}
+      className="flex min-w-0 flex-1 flex-col gap-space-xs sm:flex-row"
+    >
       <div className="relative min-w-0 flex-1">
         <Icon
           name="search"
@@ -55,21 +63,26 @@ export function AdminSearchForm({
       <div className="flex items-center gap-space-xs">
         <button
           type="submit"
-          className={cn(
-            "inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-primary px-4 font-label-md text-label-md font-semibold text-on-primary transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
-          )}
+          disabled={pending}
+          aria-busy={pending || undefined}
+          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-primary px-4 font-label-md text-label-md font-semibold text-on-primary transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:cursor-wait disabled:opacity-60"
         >
-          <Icon name="search" className="text-base" />
+          {pending ? (
+            <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
+          ) : (
+            <Icon name="search" className="text-base" />
+          )}
           {t("search")}
         </button>
         {query ? (
           <button
             type="button"
+            disabled={pending}
             onClick={() => {
               setDraft("");
               navigate("");
             }}
-            className="inline-flex min-h-11 items-center justify-center rounded-full border border-outline-variant bg-surface-container px-4 font-label-md text-label-md text-secondary transition-colors hover:border-outline-hover hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="inline-flex min-h-11 items-center justify-center rounded-full border border-outline-variant bg-surface-container px-4 font-label-md text-label-md text-secondary transition-colors hover:border-outline-hover hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-60"
           >
             {t("clear")}
           </button>

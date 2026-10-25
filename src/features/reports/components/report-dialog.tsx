@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { InlineAlert } from "@/components/ui/inline-alert";
+import { Spinner } from "@/components/ui/spinner";
 import { createReportAction } from "@/features/reports/actions";
 import { useDialogA11y } from "@/features/shared/use-dialog-a11y";
 import { cn } from "@/lib/utils";
@@ -32,10 +33,11 @@ export function ReportDialog({
 
   const targetId = target?.id ?? "";
   const current: Draft = draft.id === targetId ? draft : { ...EMPTY, id: targetId };
+  const sending = current.state === "sending";
   const update = (patch: Partial<Draft>) => setDraft({ ...current, ...patch });
 
   async function submit() {
-    if (!target || current.state === "sending") return;
+    if (!target || sending) return;
     update({ state: "sending" });
     try {
       const result = await createReportAction({
@@ -66,6 +68,7 @@ export function ReportDialog({
         ref={containerRef}
         role="dialog"
         aria-modal="true"
+        aria-busy={sending || undefined}
         aria-labelledby="report-dialog-title"
         tabIndex={-1}
         className="w-full max-w-md rounded-t-[1.5rem] border border-outline-variant bg-surface-low p-space-lg shadow-lift-lg outline-none sm:rounded-[1.5rem]"
@@ -101,13 +104,14 @@ export function ReportDialog({
           </div>
         ) : (
           <form
+            aria-busy={sending || undefined}
             className="mt-space-md flex flex-col gap-space-md"
             onSubmit={(event) => {
               event.preventDefault();
               void submit();
             }}
           >
-            <fieldset className="flex flex-col gap-2">
+            <fieldset className="flex flex-col gap-2" disabled={sending}>
               <legend className="font-label-md text-label-md font-semibold text-on-surface">
                 {t("reasonLabel")}
               </legend>
@@ -142,9 +146,10 @@ export function ReportDialog({
                 rows={3}
                 maxLength={1000}
                 value={current.details}
+                disabled={sending}
                 onChange={(event) => update({ details: event.target.value })}
                 placeholder={t("detailsPlaceholder")}
-                className="w-full resize-none rounded-2xl border border-outline-variant bg-surface-dim p-space-md font-body-sm text-body-sm text-on-surface placeholder:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                className="w-full resize-none rounded-2xl border border-outline-variant bg-surface-dim p-space-md font-body-sm text-body-sm text-on-surface placeholder:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-70"
               />
             </label>
 
@@ -160,10 +165,12 @@ export function ReportDialog({
               </button>
               <button
                 type="submit"
-                disabled={current.state === "sending"}
-                className="min-h-11 rounded-full bg-primary px-4 font-label-md text-label-md font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
+                disabled={sending}
+                aria-busy={sending || undefined}
+                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-primary px-4 font-label-md text-label-md font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:cursor-wait disabled:opacity-70"
               >
-                {current.state === "sending" ? t("sending") : t("submit")}
+                {sending ? <Spinner className="h-4 w-4 text-current" label={t("sending")} /> : null}
+                {sending ? t("sending") : t("submit")}
               </button>
             </div>
           </form>

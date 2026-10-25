@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { InlineAlert } from "@/components/ui/inline-alert";
+import { MediaImage } from "@/components/ui/media-image";
 import { Spinner } from "@/components/ui/spinner";
 import { useDialogA11y } from "@/features/shared/use-dialog-a11y";
 import { cn } from "@/lib/utils";
@@ -108,14 +109,11 @@ export function ConnectDialog({
             <div className="flex items-start justify-between gap-space-sm border-b border-outline-variant p-space-lg">
               <div className="flex min-w-0 items-center gap-space-md">
                 {target.image ? (
-                  <>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      alt={target.imageAlt}
-                      src={target.image}
-                      className="h-12 w-12 shrink-0 rounded-full border border-outline-variant object-cover"
-                    />
-                  </>
+                  <MediaImage
+                    alt={target.imageAlt}
+                    src={target.image}
+                    wrapperClassName="h-12 w-12 shrink-0 rounded-full border border-outline-variant"
+                  />
                 ) : (
                   <DefaultAvatar className="h-12 w-12 shrink-0 rounded-full border border-outline-variant" />
                 )}

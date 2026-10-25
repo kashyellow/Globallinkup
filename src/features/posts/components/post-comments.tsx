@@ -166,11 +166,10 @@ export function PostComments({
         <div className="flex flex-col gap-space-sm rounded-2xl border border-outline-variant bg-surface-container p-space-md">
           <div className="flex items-center gap-space-sm">
             {viewer.avatar ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <MediaImage
                 alt={viewer.name}
                 src={viewer.avatar}
-                className="h-8 w-8 shrink-0 rounded-full object-cover ring-1 ring-outline-variant"
+                wrapperClassName="h-8 w-8 shrink-0 rounded-full ring-1 ring-outline-variant"
               />
             ) : (
               <DefaultAvatar className="h-8 w-8 shrink-0 rounded-full ring-1 ring-outline-variant" />

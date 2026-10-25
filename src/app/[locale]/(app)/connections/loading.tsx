@@ -1,10 +1,10 @@
-import { PageSkeleton, CardGridSkeleton } from "@/components/ui/skeleton";
+import { PageSkeleton, CardGridSkeleton, Skeleton } from "@/components/ui/skeleton";
 
 export default function ConnectionsLoading() {
   return (
     <PageSkeleton>
       <div className="flex flex-col gap-space-lg">
-        <div className="h-20 w-full rounded-[1.25rem] bg-surface-container-highest/70" />
+        <Skeleton className="h-20 w-full rounded-[1.25rem]" />
         <CardGridSkeleton count={4} />
       </div>
     </PageSkeleton>

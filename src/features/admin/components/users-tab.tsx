@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { InlineAlert } from "@/components/ui/inline-alert";
+import { MediaImage } from "@/components/ui/media-image";
 import { Spinner } from "@/components/ui/spinner";
 import { reviewPersonaAction } from "@/features/admin/actions";
 import { AdminSearchForm } from "@/features/admin/components/admin-search-form";
@@ -242,11 +243,10 @@ function UserCard({
         <div className="flex w-full flex-col items-start gap-space-md sm:flex-row sm:items-center lg:w-auto">
           <div className="relative shrink-0">
             {user.avatar ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <MediaImage
                 alt={user.name}
-                className="h-24 w-20 rounded-2xl border border-outline-variant object-cover"
                 src={user.avatar}
+                wrapperClassName="h-24 w-20 rounded-2xl border border-outline-variant"
                 loading="lazy"
               />
             ) : (
@@ -398,11 +398,10 @@ function PersonaDossierDialog({
         <div className="flex items-start justify-between gap-space-md border-b border-outline-variant p-space-lg">
           <div className="flex min-w-0 items-start gap-space-md">
             {user.avatar ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <MediaImage
                 alt={user.name}
                 src={user.avatar}
-                className="h-20 w-16 shrink-0 rounded-xl border border-outline-variant object-cover"
+                wrapperClassName="h-20 w-16 shrink-0 rounded-xl border border-outline-variant"
               />
             ) : (
               <DefaultAvatar className="h-20 w-16 shrink-0 rounded-xl border border-outline-variant" />

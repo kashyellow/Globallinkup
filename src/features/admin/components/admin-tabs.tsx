@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
+import { LinkPending } from "@/components/layout/link-pending";
 import { Icon } from "@/components/ui/icon";
 import { Link, usePathname } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -32,12 +33,13 @@ export function AdminTabs() {
             href={tab.href}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full px-space-md py-2 font-label-md text-label-md whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+              "relative inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full px-space-md py-2 font-label-md text-label-md whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
               active
                 ? "bg-surface-container-high font-semibold text-on-surface"
                 : "text-secondary hover:bg-surface-container hover:text-on-surface",
             )}
           >
+            <LinkPending />
             <Icon name={tab.icon} className={cn("text-lg", active && "text-primary")} />
             {t(tab.key)}
           </Link>

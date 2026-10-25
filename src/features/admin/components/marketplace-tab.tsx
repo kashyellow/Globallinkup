@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Icon } from "@/components/ui/icon";
 import { InlineAlert } from "@/components/ui/inline-alert";
+import { MediaImage } from "@/components/ui/media-image";
 import { Spinner } from "@/components/ui/spinner";
 import {
   createProductAction,
@@ -322,11 +323,10 @@ function ProductRow({
       <div className="flex flex-col items-start justify-between gap-space-md bezel-core p-space-md sm:flex-row sm:items-center">
         <div className="flex min-w-0 items-center gap-space-md">
           {product.image ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <MediaImage
               alt={product.name}
-              className="h-16 w-16 shrink-0 rounded-xl border border-outline-variant object-cover"
               src={product.image}
+              wrapperClassName="h-16 w-16 shrink-0 rounded-xl border border-outline-variant"
               loading="lazy"
             />
           ) : (
@@ -672,8 +672,12 @@ function ProductFormDialog({
                     className="relative aspect-square overflow-hidden rounded-xl border border-outline-variant bg-surface-variant"
                   >
                     {image.url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img alt="" src={image.url} className="h-full w-full object-cover" />
+                      <MediaImage
+                        alt=""
+                        src={image.url}
+                        wrapperClassName="h-full w-full"
+                        className="object-cover"
+                      />
                     ) : (
                       <span className="flex h-full w-full items-center justify-center text-secondary">
                         <Icon name="image" />

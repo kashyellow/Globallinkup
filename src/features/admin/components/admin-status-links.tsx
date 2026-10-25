@@ -1,5 +1,6 @@
 "use client";
 
+import { LinkPending } from "@/components/layout/link-pending";
 import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -38,12 +39,13 @@ export function AdminStatusLinks({
             href={href}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 font-label-md text-label-md whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+              "relative inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 font-label-md text-label-md whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
               active
                 ? "bg-primary font-semibold text-on-primary"
                 : "border border-outline-variant bg-surface-container text-secondary hover:border-outline-hover hover:text-on-surface",
             )}
           >
+            <LinkPending />
             {option.label}
             {typeof option.count === "number" ? (
               <span

@@ -6,6 +6,7 @@ import { ChannelIcon } from "@/components/ui/channel-icon";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { InlineAlert } from "@/components/ui/inline-alert";
+import { MediaImage } from "@/components/ui/media-image";
 import { Spinner } from "@/components/ui/spinner";
 import { signUpAction, type AuthError } from "@/features/auth/actions";
 import { useRegistrationDraft } from "@/features/auth/components/registration-draft-provider";
@@ -502,11 +503,10 @@ export function CreatePersonaView({
                     className="relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border-2 border-outline-variant bg-surface-variant shadow-inner transition-transform duration-300 group-hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                   >
                     {photoPreview ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <MediaImage
                         alt={t("avatarAlt")}
-                        className="h-full w-full object-cover"
                         src={photoPreview}
+                        wrapperClassName="h-full w-full"
                       />
                     ) : (
                       <DefaultAvatar className="h-full w-full" />

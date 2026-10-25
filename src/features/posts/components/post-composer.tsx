@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { InlineAlert } from "@/components/ui/inline-alert";
+import { MediaImage } from "@/components/ui/media-image";
 import { Spinner } from "@/components/ui/spinner";
 import { uploadImageAction } from "@/features/media/actions";
 import { createPostAction } from "@/features/posts/actions";
@@ -233,11 +234,10 @@ export function PostComposerDialog({
         <div className="flex flex-col gap-space-md p-space-lg">
           <div className="flex min-w-0 items-center gap-space-sm">
             {viewerAvatar ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <MediaImage
                 alt={viewerName}
-                className="h-9 w-9 shrink-0 rounded-full object-cover ring-1 ring-outline-variant"
                 src={viewerAvatar}
+                wrapperClassName="h-9 w-9 shrink-0 rounded-full ring-1 ring-outline-variant"
               />
             ) : (
               <DefaultAvatar className="h-9 w-9 shrink-0 rounded-full ring-1 ring-outline-variant" />

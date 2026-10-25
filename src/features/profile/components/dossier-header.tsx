@@ -5,6 +5,7 @@ import { useState } from "react";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Reveal } from "@/components/ui/reveal";
 import { Icon } from "@/components/ui/icon";
+import { MediaImage } from "@/components/ui/media-image";
 import { Spinner } from "@/components/ui/spinner";
 import { signOutAction } from "@/features/auth/actions";
 import { getPathname, Link, useRouter } from "@/lib/i18n/navigation";
@@ -158,14 +159,12 @@ export function DossierHeader({ profile }: { profile: OwnProfile }) {
                 <div className="group relative mx-auto w-full max-w-[19rem] lg:mx-0 lg:ml-auto lg:max-w-none">
                   <div className="aspect-[4/5] w-full overflow-hidden border border-outline-variant bg-surface-low">
                     {profile.avatar ? (
-                      <>
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          alt={profile.name}
-                          src={profile.avatar}
-                          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 motion-reduce:transform-none"
-                        />
-                      </>
+                      <MediaImage
+                        alt={profile.name}
+                        src={profile.avatar}
+                        wrapperClassName="h-full w-full"
+                        className="transition-transform duration-700 group-hover:scale-105 motion-reduce:transform-none"
+                      />
                     ) : (
                       <DefaultAvatar className="h-full w-full" />
                     )}

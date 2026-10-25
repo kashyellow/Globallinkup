@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 
+import { LinkPending } from "@/components/layout/link-pending";
 import { Icon } from "@/components/ui/icon";
 import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -41,12 +42,13 @@ export function AdminPagination({
         href={href(page - 1)}
         aria-disabled={page <= 1}
         className={cn(
-          "flex h-11 items-center gap-1.5 rounded-full px-3 font-label-lg text-label-lg font-semibold transition-colors sm:px-4",
+          "relative flex h-11 items-center gap-1.5 rounded-full px-3 font-label-lg text-label-lg font-semibold transition-colors sm:px-4",
           page <= 1
             ? "pointer-events-none border border-outline-variant text-text-muted opacity-50"
             : "border border-outline-variant bg-surface-container text-on-surface hover:border-outline-hover hover:bg-surface-container-high",
         )}
       >
+        <LinkPending />
         <Icon name="arrow_back" className="text-base" />
         <span className="hidden sm:inline">{t("prevShort")}</span>
       </Link>
@@ -58,12 +60,13 @@ export function AdminPagination({
               href={href(number)}
               aria-current={number === page ? "page" : undefined}
               className={cn(
-                "flex h-11 w-11 items-center justify-center rounded-full font-label-lg text-label-lg tabular-nums transition-colors",
+                "relative flex h-11 w-11 items-center justify-center rounded-full font-label-lg text-label-lg tabular-nums transition-colors",
                 number === page
                   ? "bg-primary font-semibold text-on-primary"
                   : "border border-outline-variant bg-surface-container text-secondary hover:border-outline-hover hover:text-on-surface",
               )}
             >
+              <LinkPending />
               {number}
             </Link>
           </li>
@@ -74,12 +77,13 @@ export function AdminPagination({
         href={href(page + 1)}
         aria-disabled={page >= totalPages}
         className={cn(
-          "flex h-11 items-center gap-1.5 rounded-full px-3 font-label-lg text-label-lg font-semibold transition-colors sm:px-4",
+          "relative flex h-11 items-center gap-1.5 rounded-full px-3 font-label-lg text-label-lg font-semibold transition-colors sm:px-4",
           page >= totalPages
             ? "pointer-events-none border border-outline-variant text-text-muted opacity-50"
             : "bg-primary text-on-primary hover:bg-primary-hover",
         )}
       >
+        <LinkPending />
         <span className="hidden sm:inline">{t("nextShort")}</span>
         <Icon name="arrow_forward" className="text-base" />
       </Link>

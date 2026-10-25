@@ -8,6 +8,7 @@ import { LinkPending } from "@/components/layout/link-pending";
 import { BrandMark } from "@/components/ui/brand-mark";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
+import { MediaImage } from "@/components/ui/media-image";
 import { useLocaleSwitch } from "@/features/shared/use-locale-switch";
 import { Link, usePathname } from "@/lib/i18n/navigation";
 import { routing } from "@/lib/i18n/routing";
@@ -133,17 +134,15 @@ export function Navbar({
             )}
           >
             {viewerAvatar ? (
-              <>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  alt={t("profileAlt")}
-                  className={cn(
-                    "h-7 w-7 rounded-full object-cover",
-                    isActive("/profile") ? "ring-2 ring-primary" : "ring-1 ring-outline-variant",
-                  )}
-                  src={viewerAvatar}
-                />
-              </>
+              <MediaImage
+                alt={t("profileAlt")}
+                src={viewerAvatar}
+                wrapperClassName={cn(
+                  "h-7 w-7 rounded-full",
+                  isActive("/profile") ? "ring-2 ring-primary" : "ring-1 ring-outline-variant",
+                )}
+                loading="eager"
+              />
             ) : (
               <DefaultAvatar
                 className={cn(
@@ -193,12 +192,11 @@ export function Navbar({
             >
               {t("profile")}
               {viewerAvatar ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <MediaImage
                   alt=""
-                  aria-hidden
-                  className="h-6 w-6 rounded-full object-cover ring-1 ring-outline-variant"
                   src={viewerAvatar}
+                  wrapperClassName="h-6 w-6 rounded-full ring-1 ring-outline-variant"
+                  loading="eager"
                 />
               ) : (
                 <DefaultAvatar className="h-6 w-6 rounded-full ring-1 ring-outline-variant" />
