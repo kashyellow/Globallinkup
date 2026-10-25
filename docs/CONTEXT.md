@@ -98,6 +98,15 @@ These are confirmed and supersede the PRD where it disagrees:
   only when step 2 is submitted, so abandoning persona setup leaves no
   half-registered account. Email confirmation must stay disabled (PRD OQ-1);
   a full page refresh at step 2 intentionally returns to step 1.
+- **Posts support up to six images** and one level of threaded comments. Comments
+  are post engagement, not chat: no inbox, realtime delivery, mentions, or
+  comment notifications.
+- **Marketplace products have a lifecycle** (`draft`, `live`, `unpublished`,
+  `trashed`). Delete is a soft delete so an admin can restore a piece from Trash.
+- **Admin reject/suspend decisions require a reason** stored in
+  `profile_moderation_events`; the member can read their latest reason.
+- **Discover order is a seeded shuffle**, stable across load-more for one search
+  session and reshuffled on a new search.
 
 ## Out of scope (do not build without asking)
 
