@@ -436,7 +436,9 @@
       "users": "Users & Personas",
       "marketplace": "Marketplace Catalog",
       "moderation": "Reports & Moderation",
-      "interests": "Interest Catalog"
+      "interests": "Interest Catalog",
+      "label": "Admin sections",
+      "dashboard": "Dashboard"
     },
     "users": {
       "searchLabel": "Search members",
@@ -446,7 +448,7 @@
       "noResultsTitle": "No members match that search",
       "clearSearch": "Clear search",
       "filterLabel": "Filter:",
-      "filterAll": "All Pending (14)",
+      "filterAll": "All members",
       "filterPhoto": "Requires Photo Inspection (3)",
       "filterVerifiedToday": "Verified Today (8)",
       "registeredAgo": "Registered {time} ago",
@@ -474,13 +476,27 @@
       "statusRejected": "Rejected",
       "statusSuspended": "Suspended",
       "suspend": "Suspend",
-      "emptyTitle": "No member profiles yet"
+      "emptyTitle": "No member profiles yet",
+      "eyebrow": "People desk",
+      "title": "Users & Personas",
+      "body": "Review identities, inspect the full bilingual dossier, and record a reason when an account is rejected or suspended.",
+      "bioEn": "English bio",
+      "bioEs": "Spanish bio",
+      "contactChannels": "Protected contact channels",
+      "noChannels": "No contact channels submitted.",
+      "moderationHistory": "Moderation history",
+      "noHistory": "No moderation decisions yet.",
+      "dossierEyebrow": "Persona dossier",
+      "reasonBody": "Give {name} a clear explanation. It is stored with this decision and shown on their review screen.",
+      "reasonLabel": "Reason",
+      "reasonPlaceholder": "Explain what needs to change or why the account is being restricted…",
+      "reasonHint": "At least 10 characters."
     },
     "marketplace": {
       "restrictedAccess": "Restricted Access",
       "curatedCatalog": "Curated Catalog",
-      "title": "Curated Artisan Marketplace",
-      "body": "Only platform administrators can publish and manage artisanal listings.",
+      "title": "Curated Marketplace",
+      "body": "Create drafts, publish finished pieces, unpublish a live item, or keep a retired piece in Trash.",
       "statusLive": "Live",
       "statusReserved": "Draft",
       "origin": "Origin (e.g. Oaxaca, MX)",
@@ -505,14 +521,33 @@
         "saveDraft": "Save as Draft",
         "publish": "Publish Product to Marketplace",
         "phone": "Phone Number (Seller Contact)",
-        "phonePlaceholder": "+52 55 1234 5678"
+        "phonePlaceholder": "+52 55 1234 5678",
+        "images": "Product images",
+        "imageCount": "{count} / {max} images",
+        "removeImage": "Remove image {number}",
+        "draftHint": "Drafts can be saved without an image; publishing requires at least one."
       },
       "edit": "Edit",
       "editTitle": "Edit marketplace piece",
       "editBody": "Update the listing; the public catalog refreshes on save.",
       "cancelEdit": "Cancel editing",
       "update": "Save changes",
-      "errorInvalid": "Check the fields — the product was not saved."
+      "errorInvalid": "Check the fields — the product was not saved.",
+      "eyebrow": "Catalog desk",
+      "newProduct": "New product",
+      "searchPlaceholder": "Search products by name, origin or description…",
+      "resultsCount": "Showing {shown} of {total} pieces",
+      "filterAll": "All pieces",
+      "statusDraft": "Draft",
+      "statusUnpublished": "Unpublished",
+      "statusTrash": "Trash",
+      "trash": "Move to Trash",
+      "trashBody": "The piece leaves the public catalog but stays recoverable in Trash.",
+      "restore": "Restore",
+      "restoreBody": "Return this piece to the catalog as an unpublished item.",
+      "formEyebrow": "Catalog editor",
+      "errorImages": "You can attach up to {count} images.",
+      "errorImageRequired": "Add at least one image before publishing."
     },
     "moderation": {
       "title": "Community Trust & Moderation Queue",
@@ -540,7 +575,16 @@
         "impersonationReporter": "Admin Auto-Flag"
       },
       "emptyTitle": "Nothing to moderate",
-      "resolve": "Resolve"
+      "resolve": "Resolve",
+      "eyebrow": "Trust & safety desk",
+      "filterOpen": "Open",
+      "filterResolved": "Resolved",
+      "filterDismissed": "Dismissed",
+      "filterAll": "All reports",
+      "targetAll": "All targets",
+      "targetUser": "Members",
+      "targetPost": "Posts",
+      "searchPlaceholder": "Search report reason or details…"
     },
     "interests": {
       "title": "Cultural Interest Review",
@@ -559,7 +603,45 @@
       "rejectPendingBody": "“{label}” will be removed from its creator's profile and will not appear in suggestions. They may need to choose another interest on their next edit.",
       "unpublishTitle": "Unpublish this interest?",
       "unpublishBody": "“{label}” will stop appearing in suggestions. Profiles that already use it keep the text.",
-      "platform": "GlobalLinkup"
+      "platform": "GlobalLinkup",
+      "eyebrow": "Taxonomy desk",
+      "filterAll": "All interests",
+      "rejectedBadge": "Rejected",
+      "resultsCount": "Showing {shown} of {total} interests",
+      "searchPlaceholder": "Search the interest catalog…"
+    },
+    "common": {
+      "search": "Search",
+      "clear": "Clear"
+    },
+    "dashboard": {
+      "eyebrow": "Administrative desk",
+      "title": "Control room overview",
+      "body": "Review the queues that need a human decision, then jump straight into the relevant desk.",
+      "cards": {
+        "pendingProfiles": {
+          "title": "Pending personas",
+          "body": "Profiles waiting for identity and portrait review."
+        },
+        "openReports": {
+          "title": "Open reports",
+          "body": "Member flags still needing a moderation decision."
+        },
+        "pendingInterests": {
+          "title": "Pending interests",
+          "body": "Custom cultural labels awaiting publication."
+        },
+        "liveProducts": {
+          "title": "Live products",
+          "body": "Curated pieces currently visible in the marketplace."
+        }
+      },
+      "stats": {
+        "approvedProfiles": "Approved members",
+        "rejectedProfiles": "Rejected members",
+        "suspendedProfiles": "Suspended members",
+        "reportedPosts": "Reported posts"
+      }
     }
   },
   "Connections": {

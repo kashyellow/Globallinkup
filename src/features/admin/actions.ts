@@ -30,6 +30,7 @@ async function requireAdminClient() {
 const reviewSchema = z.object({
   profileId: uuidSchema,
   decision: z.enum(["approved", "rejected", "suspended"]),
+  reason: z.string().trim().max(500).optional(),
 });
 
 export async function reviewPersonaAction(input: unknown): Promise<AdminResult> {
@@ -39,19 +40,15 @@ export async function reviewPersonaAction(input: unknown): Promise<AdminResult> 
   const parsed = reviewSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
 
-  const { data: updated, error } = await ctx.supabase
-    .from("profiles")
-    .update({
-      approval_status: parsed.data.decision,
-      reviewed_at: new Date().toISOString(),
-      reviewed_by: ctx.user.id,
-    })
-    .eq("id", parsed.data.profileId)
-    .select("id");
+  const { data, error } = await ctx.supabase.rpc("review_persona", {
+    p_profile_id: parsed.data.profileId,
+    p_decision: parsed.data.decision,
+    p_reason: parsed.data.reason ?? undefined,
+  });
 
-  if (error) return { ok: false, error: "unknown" };
-  if (!updated || updated.length === 0) return { ok: false, error: "forbidden" };
+  if (error || data !== true) return { ok: false, error: "unknown" };
   revalidatePath("/admin");
+  revalidatePath("/admin/users");
   return { ok: true };
 }
 
@@ -83,6 +80,7 @@ export async function resolveReportAction(input: unknown): Promise<AdminResult> 
   if (error) return { ok: false, error: "unknown" };
   if (!updated || updated.length === 0) return { ok: false, error: "forbidden" };
   revalidatePath("/admin");
+  revalidatePath("/admin/moderation");
   return { ok: true };
 }
 
@@ -108,6 +106,7 @@ export async function removePostAction(input: unknown): Promise<AdminResult> {
   if (error) return { ok: false, error: "unknown" };
   if (!updated || updated.length === 0) return { ok: false, error: "forbidden" };
   revalidatePath("/admin");
+  revalidatePath("/admin/moderation");
   return { ok: true };
 }
 
@@ -134,6 +133,7 @@ export async function reviewInterestAction(input: unknown): Promise<AdminResult>
   if (error || data !== true) return { ok: false, error: "unknown" };
 
   revalidatePath("/admin");
+  revalidatePath("/admin/interests");
   return { ok: true };
 }
 
@@ -149,7 +149,7 @@ const productSchema = z.object({
   /** Phone for the seller contact line on the public catalog. */
   sellerPhone: z.string().trim().max(60).optional(),
   isPublished: z.boolean().default(false),
-  imagePath: z.string().trim().max(400).optional(),
+  imagePaths: z.array(z.string().trim().min(1).max(400)).max(10).default([]),
 });
 
 export async function createProductAction(input: unknown): Promise<AdminResult> {
@@ -159,6 +159,9 @@ export async function createProductAction(input: unknown): Promise<AdminResult> 
   const parsed = productSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
   const data = parsed.data;
+  if (data.isPublished && data.imagePaths.length === 0) {
+    return { ok: false, error: "invalid" };
+  }
 
   const { data: created, error } = await ctx.supabase
     .from("marketplace_products")
@@ -177,13 +180,18 @@ export async function createProductAction(input: unknown): Promise<AdminResult> 
 
   if (error || !created) return { ok: false, error: "unknown" };
 
-  if (data.imagePath) {
-    await ctx.supabase
-      .from("marketplace_product_images")
-      .insert({ product_id: created.id, storage_path: data.imagePath, sort: 0 });
+  if (data.imagePaths.length > 0) {
+    await ctx.supabase.from("marketplace_product_images").insert(
+      data.imagePaths.map((storagePath, sort) => ({
+        product_id: created.id,
+        storage_path: storagePath,
+        sort,
+      })),
+    );
   }
 
   revalidatePath("/admin");
+  revalidatePath("/admin/marketplace");
   revalidatePath("/marketplace");
   return { ok: true };
 }
@@ -197,6 +205,9 @@ export async function updateProductAction(input: unknown): Promise<AdminResult> 
   const parsed = updateSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
   const data = parsed.data;
+  if (data.isPublished && data.imagePaths.length === 0) {
+    return { ok: false, error: "invalid" };
+  }
 
   const { data: updated, error } = await ctx.supabase
     .from("marketplace_products")
@@ -215,14 +226,19 @@ export async function updateProductAction(input: unknown): Promise<AdminResult> 
   if (error) return { ok: false, error: "unknown" };
   if (!updated || updated.length === 0) return { ok: false, error: "forbidden" };
 
-  if (data.imagePath) {
-    await ctx.supabase.from("marketplace_product_images").delete().eq("product_id", data.productId);
-    await ctx.supabase
-      .from("marketplace_product_images")
-      .insert({ product_id: data.productId, storage_path: data.imagePath, sort: 0 });
+  await ctx.supabase.from("marketplace_product_images").delete().eq("product_id", data.productId);
+  if (data.imagePaths.length > 0) {
+    await ctx.supabase.from("marketplace_product_images").insert(
+      data.imagePaths.map((storagePath, sort) => ({
+        product_id: data.productId,
+        storage_path: storagePath,
+        sort,
+      })),
+    );
   }
 
   revalidatePath("/admin");
+  revalidatePath("/admin/marketplace");
   revalidatePath("/marketplace");
   return { ok: true };
 }
@@ -245,6 +261,7 @@ export async function setProductPublishedAction(input: unknown): Promise<AdminRe
   if (error) return { ok: false, error: "unknown" };
   if (!updated || updated.length === 0) return { ok: false, error: "forbidden" };
   revalidatePath("/admin");
+  revalidatePath("/admin/marketplace");
   revalidatePath("/marketplace");
   return { ok: true };
 }
@@ -262,7 +279,7 @@ export async function deleteProductAction(input: unknown): Promise<AdminResult> 
   // the admin Trash view. Public queries exclude `deleted_at is not null`.
   const { data: deleted, error } = await ctx.supabase
     .from("marketplace_products")
-    .update({ deleted_at: new Date().toISOString() })
+    .update({ deleted_at: new Date().toISOString(), is_published: false })
     .eq("id", parsed.data.productId)
     .is("deleted_at", null)
     .select("id");
@@ -270,6 +287,31 @@ export async function deleteProductAction(input: unknown): Promise<AdminResult> 
   if (error) return { ok: false, error: "unknown" };
   if (!deleted || deleted.length === 0) return { ok: false, error: "forbidden" };
   revalidatePath("/admin");
+  revalidatePath("/admin/marketplace");
+  revalidatePath("/marketplace");
+  return { ok: true };
+}
+
+const restoreSchema = z.object({ productId: uuidSchema });
+
+export async function restoreProductAction(input: unknown): Promise<AdminResult> {
+  const ctx = await requireAdminClient();
+  if (!ctx) return { ok: false, error: "forbidden" };
+
+  const parsed = restoreSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid" };
+
+  const { data, error } = await ctx.supabase
+    .from("marketplace_products")
+    .update({ deleted_at: null })
+    .eq("id", parsed.data.productId)
+    .not("deleted_at", "is", null)
+    .select("id");
+
+  if (error) return { ok: false, error: "unknown" };
+  if (!data || data.length === 0) return { ok: false, error: "forbidden" };
+  revalidatePath("/admin");
+  revalidatePath("/admin/marketplace");
   revalidatePath("/marketplace");
   return { ok: true };
 }

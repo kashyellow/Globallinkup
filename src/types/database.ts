@@ -822,6 +822,7 @@ export type Database = {
           neighborhood: string | null;
           role: Database["public"]["Enums"]["app_role"] | null;
           search_text: string | null;
+          submitted_at: string | null;
         };
         Insert: {
           age?: never;
@@ -841,6 +842,7 @@ export type Database = {
           neighborhood?: string | null;
           role?: Database["public"]["Enums"]["app_role"] | null;
           search_text?: string | null;
+          submitted_at?: string | null;
         };
         Update: {
           age?: never;
@@ -860,6 +862,7 @@ export type Database = {
           neighborhood?: string | null;
           role?: Database["public"]["Enums"]["app_role"] | null;
           search_text?: string | null;
+          submitted_at?: string | null;
         };
         Relationships: [];
       };
@@ -909,6 +912,14 @@ export type Database = {
       register_custom_interests: { Args: { p_labels: string[] }; Returns: Json };
       review_interest: {
         Args: { p_decision: Database["public"]["Enums"]["interest_status"]; p_interest_id: string };
+        Returns: boolean;
+      };
+      review_persona: {
+        Args: {
+          p_decision: Database["public"]["Enums"]["approval_status"];
+          p_profile_id: string;
+          p_reason?: string;
+        };
         Returns: boolean;
       };
       save_persona: {

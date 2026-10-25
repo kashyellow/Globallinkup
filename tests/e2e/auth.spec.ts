@@ -100,6 +100,9 @@ test("@auth an admin can reach the admin portal", async ({ page }) => {
   await expect(page.getByRole("link", { name: /admin portal/i })).toBeVisible();
   await page.goto("/en/admin");
   await expect(page).toHaveURL(/\/en\/admin$/);
+  await expect(page.getByRole("heading", { name: /Control room overview/i })).toBeVisible();
+  await page.getByRole("link", { name: /users & personas/i }).click();
+  await expect(page).toHaveURL(/\/en\/admin\/users$/);
 });
 
 test("@auth an anonymous visitor is bounced from the app", async ({ page }) => {
@@ -327,29 +330,86 @@ test("@auth the marketplace paginates, filters, and opens details", async ({ pag
   await expect(page.getByText(/Artisanal Ceramic Espresso Set/)).toBeVisible();
 });
 
-test("@auth an admin approves a pending persona", async ({ page }) => {
+test("@auth an admin reviews a dossier and approves a pending persona", async ({ page }) => {
   await signIn(page, "admin@globallinkup.test");
-  await page.goto("/en/admin");
-  await page.waitForTimeout(2500);
+  await page.goto("/en/admin/users?status=pending");
+  await page.waitForTimeout(1500);
 
   const card = page.locator("article", { hasText: "Pending Applicant" });
   await expect(card).toBeVisible();
+  await card.getByRole("button", { name: /inspect dossier/i }).click();
+  const dossier = page.getByRole("dialog");
+  await expect(dossier).toBeVisible();
+  await expect(dossier.getByText(/Photographer/i)).toBeVisible();
+  await dossier.getByRole("button", { name: /close/i }).click();
+
+  await card.getByRole("button", { name: /^reject$/i }).click();
+  const reasonDialog = page.getByRole("alertdialog");
+  await expect(reasonDialog).toBeVisible();
+  await reasonDialog
+    .getByLabel(/Reason/i)
+    .fill("The portrait did not match the submitted persona.");
+  await expect(reasonDialog.getByRole("button", { name: /^reject$/i })).toBeEnabled();
+  await reasonDialog.getByRole("button", { name: /cancel/i }).click();
+
   await card.getByRole("button", { name: /approve/i }).click();
-  await page.waitForTimeout(1500);
-  await expect(card.getByText(/Approved/).first()).toBeVisible();
+  await expect(card).toHaveCount(0, { timeout: 10_000 });
+
+  await page.getByRole("link", { name: /^approved$/i }).click();
+  await expect(page.getByRole("heading", { name: /Pending Applicant/ })).toBeVisible();
+});
+
+test("@auth an admin creates, trashes, and restores a draft product", async ({ page }) => {
+  await signIn(page, "admin@globallinkup.test");
+  await page.goto("/en/admin/marketplace");
+  await page.waitForTimeout(1200);
+
+  await page.getByRole("button", { name: /new product/i }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await dialog.getByLabel(/Product Title/i).fill("E2E Draft Piece");
+  await dialog.getByLabel(/Price/i).fill("18");
+  await dialog.getByLabel(/Origin/i).fill("Barcelona, ES");
+  await dialog.getByLabel(/Phone Number/i).fill("+34 600 000 000");
+  await dialog.getByRole("button", { name: /save as draft/i }).click();
+
+  const row = page.locator('[data-product-name="E2E Draft Piece"]');
+  await expect(row).toBeVisible({ timeout: 10_000 });
+  await expect(row.getByText("Draft", { exact: true })).toBeVisible();
+
+  await row.getByRole("button", { name: /delete product/i }).click();
+  await page
+    .getByRole("alertdialog")
+    .getByRole("button", { name: /move to trash/i })
+    .click();
+  await expect(row.getByText("Trash", { exact: true })).toBeVisible({ timeout: 10_000 });
+
+  await row.getByRole("button", { name: /restore/i }).click();
+  await page
+    .getByRole("alertdialog")
+    .getByRole("button", { name: /restore/i })
+    .click();
+  await expect(row.getByText("Draft", { exact: true })).toBeVisible({ timeout: 10_000 });
+});
+
+test("@auth the admin moderation desk shows seeded reports", async ({ page }) => {
+  await signIn(page, "admin@globallinkup.test");
+  await page.goto("/en/admin/moderation");
+  await page.waitForTimeout(1000);
+  await expect(page.locator("article").first()).toBeVisible();
+  await expect(page.getByText(/Reported by/i).first()).toBeVisible();
 });
 
 test("@auth an admin approves a pending cultural interest", async ({ page }) => {
   await signIn(page, "admin@globallinkup.test");
-  await page.goto("/en/admin");
-  await page.getByRole("button", { name: /interest catalog/i }).click();
+  await page.goto("/en/admin/interests");
+  await page.waitForTimeout(1200);
 
-  const card = page.locator("article", { hasText: "Bookbinding" });
-  await expect(card).toBeVisible();
-  await card.getByRole("button", { name: /^approve$/i }).click();
+  const row = page.locator('[data-interest-label="Bookbinding"]');
+  await expect(row).toBeVisible();
+  await row.getByRole("button", { name: /^approve$/i }).click();
   await page.waitForTimeout(1500);
-  await expect(card).toHaveCount(0);
-  await expect(page.getByText(/Published suggestions/i)).toBeVisible();
+  await expect(row).toHaveCount(0);
 });
 
 test("@auth the profile shows the real dossier and unlocked channels", async ({ page }) => {

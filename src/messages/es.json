@@ -436,7 +436,9 @@
       "users": "Usuarios y Personas",
       "marketplace": "Catálogo del Mercado",
       "moderation": "Reportes y Moderación",
-      "interests": "Catálogo de Afinidades"
+      "interests": "Catálogo de Afinidades",
+      "label": "Secciones de administración",
+      "dashboard": "Panel"
     },
     "users": {
       "searchLabel": "Buscar miembros",
@@ -446,7 +448,7 @@
       "noResultsTitle": "Ningún miembro coincide con esa búsqueda",
       "clearSearch": "Borrar búsqueda",
       "filterLabel": "Filtro:",
-      "filterAll": "Todos Pendientes (14)",
+      "filterAll": "Todos los miembros",
       "filterPhoto": "Requiere Inspección de Foto (3)",
       "filterVerifiedToday": "Verificados Hoy (8)",
       "registeredAgo": "Registrado hace {time}",
@@ -474,13 +476,27 @@
       "statusRejected": "Rechazado",
       "statusSuspended": "Suspendido",
       "suspend": "Suspender",
-      "emptyTitle": "Aún no hay perfiles"
+      "emptyTitle": "Aún no hay perfiles",
+      "eyebrow": "Mesa de personas",
+      "title": "Usuarios y Personas",
+      "body": "Revisa identidades, inspecciona el dossier bilingüe completo y registra un motivo cuando rechaces o suspendas una cuenta.",
+      "bioEn": "Bio en inglés",
+      "bioEs": "Bio en español",
+      "contactChannels": "Canales de contacto protegidos",
+      "noChannels": "No se enviaron canales de contacto.",
+      "moderationHistory": "Historial de moderación",
+      "noHistory": "Todavía no hay decisiones de moderación.",
+      "dossierEyebrow": "Dossier de la persona",
+      "reasonBody": "Da a {name} una explicación clara. Se guarda con esta decisión y aparece en su pantalla de revisión.",
+      "reasonLabel": "Motivo",
+      "reasonPlaceholder": "Explica qué debe cambiar o por qué se restringe la cuenta…",
+      "reasonHint": "Mínimo 10 caracteres."
     },
     "marketplace": {
       "restrictedAccess": "Acceso Restringido",
       "curatedCatalog": "Catálogo Curado",
-      "title": "Mercado Artesanal Curado",
-      "body": "Solo los administradores de la plataforma pueden publicar y gestionar los anuncios artesanales.",
+      "title": "Marketplace Curado",
+      "body": "Crea borradores, publica piezas terminadas, retira un producto publicado o conserva una pieza retirada en Papelera.",
       "statusLive": "Publicado",
       "statusReserved": "Borrador",
       "origin": "Origen (p. ej. Oaxaca, MX)",
@@ -505,14 +521,33 @@
         "saveDraft": "Guardar como Borrador",
         "publish": "Publicar Producto en el Mercado",
         "phone": "Teléfono (Contacto del Vendedor)",
-        "phonePlaceholder": "+52 55 1234 5678"
+        "phonePlaceholder": "+52 55 1234 5678",
+        "images": "Imágenes del producto",
+        "imageCount": "{count} / {max} imágenes",
+        "removeImage": "Quitar la imagen {number}",
+        "draftHint": "Los borradores se pueden guardar sin imagen; publicar requiere al menos una."
       },
       "edit": "Editar",
       "editTitle": "Editar pieza del marketplace",
       "editBody": "Actualiza la ficha; el catálogo público se refresca al guardar.",
       "cancelEdit": "Cancelar edición",
       "update": "Guardar cambios",
-      "errorInvalid": "Revisa los campos — el producto no se guardó."
+      "errorInvalid": "Revisa los campos — el producto no se guardó.",
+      "eyebrow": "Mesa de catálogo",
+      "newProduct": "Nuevo producto",
+      "searchPlaceholder": "Busca productos por nombre, origen o descripción…",
+      "resultsCount": "Mostrando {shown} de {total} piezas",
+      "filterAll": "Todas las piezas",
+      "statusDraft": "Borrador",
+      "statusUnpublished": "Despublicado",
+      "statusTrash": "Papelera",
+      "trash": "Mover a la papelera",
+      "trashBody": "La pieza sale del catálogo público pero se puede recuperar desde la papelera.",
+      "restore": "Restaurar",
+      "restoreBody": "Devuelve esta pieza al catálogo como despublicada.",
+      "formEyebrow": "Editor de catálogo",
+      "errorImages": "Puedes adjuntar hasta {count} imágenes.",
+      "errorImageRequired": "Añade al menos una imagen antes de publicar."
     },
     "moderation": {
       "title": "Confianza Comunitaria y Cola de Moderación",
@@ -540,7 +575,16 @@
         "impersonationReporter": "Marca Automática del Admin"
       },
       "emptyTitle": "Nada que moderar",
-      "resolve": "Resolver"
+      "resolve": "Resolver",
+      "eyebrow": "Mesa de confianza y seguridad",
+      "filterOpen": "Abiertos",
+      "filterResolved": "Resueltos",
+      "filterDismissed": "Descartados",
+      "filterAll": "Todos los reportes",
+      "targetAll": "Todos los objetivos",
+      "targetUser": "Miembros",
+      "targetPost": "Publicaciones",
+      "searchPlaceholder": "Buscar motivo o detalles del reporte…"
     },
     "interests": {
       "title": "Revisión de Afinidades Culturales",
@@ -559,7 +603,45 @@
       "rejectPendingBody": "“{label}” se eliminará del perfil de su creador y no aparecerá en las sugerencias. Puede que necesite elegir otra afinidad en su próxima edición.",
       "unpublishTitle": "¿Retirar esta afinidad?",
       "unpublishBody": "“{label}” dejará de aparecer en las sugerencias. Los perfiles que ya la usan conservan el texto.",
-      "platform": "GlobalLinkup"
+      "platform": "GlobalLinkup",
+      "eyebrow": "Mesa de taxonomía",
+      "filterAll": "Todos los intereses",
+      "rejectedBadge": "Rechazado",
+      "resultsCount": "Mostrando {shown} de {total} intereses",
+      "searchPlaceholder": "Buscar en el catálogo de intereses…"
+    },
+    "common": {
+      "search": "Buscar",
+      "clear": "Limpiar"
+    },
+    "dashboard": {
+      "eyebrow": "Mesa administrativa",
+      "title": "Resumen de la sala de control",
+      "body": "Revisa las colas que necesitan una decisión humana y entra directamente en la mesa correspondiente.",
+      "cards": {
+        "pendingProfiles": {
+          "title": "Personas pendientes",
+          "body": "Perfiles esperando revisión de identidad y retrato."
+        },
+        "openReports": {
+          "title": "Reportes abiertos",
+          "body": "Reportes de miembros que aún necesitan moderación."
+        },
+        "pendingInterests": {
+          "title": "Intereses pendientes",
+          "body": "Etiquetas culturales personalizadas esperando publicación."
+        },
+        "liveProducts": {
+          "title": "Productos publicados",
+          "body": "Piezas curadas visibles ahora en el marketplace."
+        }
+      },
+      "stats": {
+        "approvedProfiles": "Miembros aprobados",
+        "rejectedProfiles": "Miembros rechazados",
+        "suspendedProfiles": "Miembros suspendidos",
+        "reportedPosts": "Publicaciones reportadas"
+      }
     }
   },
   "Connections": {

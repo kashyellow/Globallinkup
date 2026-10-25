@@ -9,7 +9,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(88);
+select plan(92);
 
 -- Fixed ids from the seed.
 --   admin   11111111-…  sofia 22222222-…  mateo 33333333-…
@@ -973,6 +973,56 @@ select is_empty(
   'seeded discover pages do not overlap'
 );
 reset role;
+
+-- 81. a non-admin cannot review a persona through the RPC.
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"22222222-2222-2222-2222-222222222222","role":"authenticated"}';
+select throws_ok(
+  $$ select public.review_persona(
+       'b4b4b4b4-b4b4-b4b4-b4b4-b4b4b4b4b4b4',
+       'suspended',
+       'A non-admin attempt to suspend a member.') $$,
+  42501,
+  null,
+  'non-admin cannot review a persona through the RPC'
+);
+reset role;
+
+-- 82. reject/suspend requires a reason.
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated"}';
+select throws_ok(
+  $$ select public.review_persona(
+       'b4b4b4b4-b4b4-b4b4-b4b4-b4b4b4b4b4b4',
+       'suspended',
+       null) $$,
+  22023,
+  null,
+  'suspend requires a reason'
+);
+reset role;
+
+-- 83. an admin suspend writes status and audit together.
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated"}';
+select lives_ok(
+  $$ select public.review_persona(
+       'b4b4b4b4-b4b4-b4b4-b4b4-b4b4b4b4b4b4',
+       'suspended',
+       'A clear audit reason for the suspension.') $$,
+  'admin can suspend a persona with a reason'
+);
+reset role;
+select results_eq(
+  $$ select p.approval_status::text, e.reason
+     from public.profiles p
+     join public.profile_moderation_events e on e.profile_id = p.id
+     where p.id = 'b4b4b4b4-b4b4-b4b4-b4b4-b4b4b4b4b4b4'
+     order by e.created_at desc
+     limit 1 $$,
+  $$ values ('suspended', 'A clear audit reason for the suspension.') $$,
+  'persona status and moderation reason are stored together'
+);
 
 select * from finish();
 

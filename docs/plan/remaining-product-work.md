@@ -606,5 +606,5 @@ If any default changes, update this file before implementation.
 - [x] Phase 1 — Posts
 - [x] Phase 2 — Marketplace
 - [x] Phase 3 — Connections, Discover, Profile
-- [ ] Phase 4 — Admin
-- [ ] Phase 5 — QA and regression
+- [x] Phase 4 — Admin
+- [x] Phase 5 — QA and regression (automated coverage; final manual visual pass recommended)
