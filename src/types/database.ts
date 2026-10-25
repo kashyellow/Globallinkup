@@ -194,42 +194,51 @@ export type Database = {
       };
       marketplace_products: {
         Row: {
+          catalog_status: Database["public"]["Enums"]["marketplace_status"] | null;
           contact_information: string | null;
           created_at: string;
           created_by: string | null;
           currency: string;
+          deleted_at: string | null;
           description: string | null;
           id: string;
           is_published: boolean;
           name: string;
           origin_label: string | null;
           price_cents: number;
+          published_at: string | null;
           updated_at: string;
         };
         Insert: {
+          catalog_status?: never;
           contact_information?: string | null;
           created_at?: string;
           created_by?: string | null;
           currency?: string;
+          deleted_at?: string | null;
           description?: string | null;
           id?: string;
           is_published?: boolean;
           name: string;
           origin_label?: string | null;
           price_cents?: number;
+          published_at?: string | null;
           updated_at?: string;
         };
         Update: {
+          catalog_status?: never;
           contact_information?: string | null;
           created_at?: string;
           created_by?: string | null;
           currency?: string;
+          deleted_at?: string | null;
           description?: string | null;
           id?: string;
           is_published?: boolean;
           name?: string;
           origin_label?: string | null;
           price_cents?: number;
+          published_at?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -267,6 +276,114 @@ export type Database = {
         };
         Relationships: [];
       };
+      post_comments: {
+        Row: {
+          author_id: string;
+          body: string;
+          created_at: string;
+          deleted_at: string | null;
+          id: string;
+          parent_id: string | null;
+          post_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          author_id: string;
+          body: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          parent_id?: string | null;
+          post_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          author_id?: string;
+          body?: string;
+          created_at?: string;
+          deleted_at?: string | null;
+          id?: string;
+          parent_id?: string | null;
+          post_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "post_comments_author_id_fkey";
+            columns: ["author_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "post_comments_author_id_fkey";
+            columns: ["author_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "post_comments_parent_id_fkey";
+            columns: ["parent_id"];
+            isOneToOne: false;
+            referencedRelation: "post_comments";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "post_comments_post_id_fkey";
+            columns: ["post_id"];
+            isOneToOne: false;
+            referencedRelation: "posts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "post_comments_post_id_fkey";
+            columns: ["post_id"];
+            isOneToOne: false;
+            referencedRelation: "posts_feed";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      post_images: {
+        Row: {
+          created_at: string;
+          id: string;
+          post_id: string;
+          sort: number;
+          storage_path: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          post_id: string;
+          sort?: number;
+          storage_path: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          post_id?: string;
+          sort?: number;
+          storage_path?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "post_images_post_id_fkey";
+            columns: ["post_id"];
+            isOneToOne: false;
+            referencedRelation: "posts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "post_images_post_id_fkey";
+            columns: ["post_id"];
+            isOneToOne: false;
+            referencedRelation: "posts_feed";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       post_likes: {
         Row: {
           created_at: string;
@@ -289,6 +406,13 @@ export type Database = {
             columns: ["post_id"];
             isOneToOne: false;
             referencedRelation: "posts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "post_likes_post_id_fkey";
+            columns: ["post_id"];
+            isOneToOne: false;
+            referencedRelation: "posts_feed";
             referencedColumns: ["id"];
           },
           {
@@ -366,6 +490,62 @@ export type Database = {
           {
             foreignKeyName: "posts_removed_by_fkey";
             columns: ["removed_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      profile_moderation_events: {
+        Row: {
+          admin_id: string | null;
+          created_at: string;
+          decision: Database["public"]["Enums"]["approval_status"];
+          id: string;
+          profile_id: string;
+          reason: string | null;
+        };
+        Insert: {
+          admin_id?: string | null;
+          created_at?: string;
+          decision: Database["public"]["Enums"]["approval_status"];
+          id?: string;
+          profile_id: string;
+          reason?: string | null;
+        };
+        Update: {
+          admin_id?: string | null;
+          created_at?: string;
+          decision?: Database["public"]["Enums"]["approval_status"];
+          id?: string;
+          profile_id?: string;
+          reason?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "profile_moderation_events_admin_id_fkey";
+            columns: ["admin_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "profile_moderation_events_admin_id_fkey";
+            columns: ["admin_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "profile_moderation_events_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "profile_moderation_events_profile_id_fkey";
+            columns: ["profile_id"];
             isOneToOne: false;
             referencedRelation: "profiles_public";
             referencedColumns: ["id"];
@@ -566,6 +746,13 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
+            foreignKeyName: "reports_target_post_id_fkey";
+            columns: ["target_post_id"];
+            isOneToOne: false;
+            referencedRelation: "posts_feed";
+            referencedColumns: ["id"];
+          },
+          {
             foreignKeyName: "reports_target_user_id_fkey";
             columns: ["target_user_id"];
             isOneToOne: false;
@@ -583,6 +770,39 @@ export type Database = {
       };
     };
     Views: {
+      posts_feed: {
+        Row: {
+          author_avatar_url: string | null;
+          author_city: string | null;
+          author_country_code: string | null;
+          author_id: string | null;
+          author_name: string | null;
+          caption: string | null;
+          comment_count: number | null;
+          created_at: string | null;
+          id: string | null;
+          image_path: string | null;
+          like_count: number | null;
+          moderation_status: Database["public"]["Enums"]["moderation_status"] | null;
+          updated_at: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "posts_author_id_fkey";
+            columns: ["author_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "posts_author_id_fkey";
+            columns: ["author_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       profiles_public: {
         Row: {
           age: number | null;
@@ -646,6 +866,28 @@ export type Database = {
     };
     Functions: {
       are_connected: { Args: { a: string; b: string }; Returns: boolean };
+      discover_personas: {
+        Args: {
+          p_countries?: string[];
+          p_limit?: number;
+          p_offset?: number;
+          p_query?: string;
+          p_seed?: string;
+        };
+        Returns: {
+          age: number;
+          approval_status: Database["public"]["Enums"]["approval_status"];
+          avatar_url: string;
+          badge: string;
+          city: string;
+          country_code: string;
+          display_name: string;
+          id: string;
+          interests: string[];
+          languages: Json;
+          total_count: number;
+        }[];
+      };
       interest_search_text: { Args: { p_interests: string[] }; Returns: string };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_approved: { Args: Record<PropertyKey, never>; Returns: boolean };
@@ -694,6 +936,7 @@ export type Database = {
       approval_status: "pending" | "approved" | "rejected" | "suspended";
       connection_status: "requested" | "accepted" | "declined";
       interest_status: "pending" | "approved" | "rejected";
+      marketplace_status: "draft" | "live" | "unpublished" | "trashed";
       moderation_status: "visible" | "removed";
       report_status: "open" | "resolved" | "dismissed";
       report_target_type: "user" | "post";
@@ -815,6 +1058,7 @@ export const Constants = {
       approval_status: ["pending", "approved", "rejected", "suspended"],
       connection_status: ["requested", "accepted", "declined"],
       interest_status: ["pending", "approved", "rejected"],
+      marketplace_status: ["draft", "live", "unpublished", "trashed"],
       moderation_status: ["visible", "removed"],
       report_status: ["open", "resolved", "dismissed"],
       report_target_type: ["user", "post"],

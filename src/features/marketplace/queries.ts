@@ -32,6 +32,7 @@ export async function getPublishedProducts(): Promise<MarketplaceProduct[]> {
       .from("marketplace_products")
       .select("id, name, price_cents, description, origin_label, contact_information, created_at")
       .eq("is_published", true)
+      .is("deleted_at", null)
       .order("created_at", { ascending: false }),
   );
 
@@ -87,9 +88,11 @@ export async function getMarketplaceContact(): Promise<MarketplaceContact> {
     email?: string;
   };
 
+  // The admin-editable settings row wins; env is the easy-to-find fallback for
+  // local/staging environments where settings have not been seeded yet.
   return {
-    whatsappNumber: value.whatsapp ?? "",
-    whatsappLink: value.whatsappLink ?? "",
-    email: value.email ?? "",
+    whatsappNumber: value.whatsapp ?? process.env.NEXT_PUBLIC_MARKETPLACE_WHATSAPP ?? "",
+    whatsappLink: value.whatsappLink ?? process.env.NEXT_PUBLIC_MARKETPLACE_WHATSAPP_LINK ?? "",
+    email: value.email ?? process.env.NEXT_PUBLIC_MARKETPLACE_EMAIL ?? "",
   };
 }

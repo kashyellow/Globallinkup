@@ -258,10 +258,13 @@ export async function deleteProductAction(input: unknown): Promise<AdminResult> 
   const parsed = productIdSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
 
+  // Soft delete (Phase 0 schema): the row and its images stay recoverable from
+  // the admin Trash view. Public queries exclude `deleted_at is not null`.
   const { data: deleted, error } = await ctx.supabase
     .from("marketplace_products")
-    .delete()
+    .update({ deleted_at: new Date().toISOString() })
     .eq("id", parsed.data.productId)
+    .is("deleted_at", null)
     .select("id");
 
   if (error) return { ok: false, error: "unknown" };

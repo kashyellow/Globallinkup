@@ -89,8 +89,9 @@ export async function getAdminData(): Promise<AdminData> {
     supabase
       .from("marketplace_products")
       .select(
-        "id, name, origin_label, price_cents, currency, description, contact_information, is_published",
+        "id, name, origin_label, price_cents, currency, description, contact_information, is_published, published_at, deleted_at, catalog_status",
       )
+      .is("deleted_at", null)
       .order("created_at", { ascending: false }),
     supabase
       .from("marketplace_product_images")
