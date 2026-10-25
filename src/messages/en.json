@@ -31,7 +31,8 @@
     "language": "Language",
     "profileAlt": "Your profile",
     "toggleMenu": "Toggle navigation menu",
-    "profile": "Profile"
+    "profile": "Profile",
+    "tagline": "People & Culture"
   },
   "Footer": {
     "logoAlt": "GlobalLinkup brand logo",
@@ -116,7 +117,7 @@
     "title": "Discover People",
     "intro": "Explore verified personas across the globe and exchange cross-cultural perspectives. Connect mutually to unveil direct social contacts.",
     "activePersonas": "{count, plural, =0 {No active personas abroad} =1 {# Active Persona Abroad} other {# Active Personas Abroad}}",
-    "searchPlaceholder": "Search by name, city, language, or passions (e.g. Barcelona, Architectural History, Spanish)...",
+    "searchPlaceholder": "Search by name, city, language, or interest (e.g. Barcelona, Architecture, Spanish)...",
     "refineCriteria": "Refine Criteria",
     "clearFilters": "Clear Filters",
     "allRegions": "All Regions",
@@ -142,7 +143,8 @@
     "feed": {
       "listTitle": "Curated List",
       "profilePreviewed": "Profile Previewed",
-      "directContactVisible": "Direct Contact Visible"
+      "directContactVisible": "Direct Contact Visible",
+      "showing": "Showing {shown} of {total}"
     },
     "fluency": {
       "label": "Language Fluency",
@@ -209,7 +211,16 @@
       "contactNote": "Contact details stay hidden until you are mutually connected.",
       "report": "Report persona",
       "metaTitle": "Persona"
-    }
+    },
+    "regionsButton": "Regions",
+    "filterRegions": "Filter by regions",
+    "regionSearchPlaceholder": "Search regions…",
+    "noRegionResults": "No regions match that search.",
+    "searching": "Searching…",
+    "loadError": "We could not load personas. Please try again.",
+    "loadMore": "Load more personas",
+    "loadingMore": "Loading more…",
+    "allCaughtUp": "You have seen everyone matching these filters."
   },
   "Posts": {
     "eyebrowPrimary": "Visual Chronology",

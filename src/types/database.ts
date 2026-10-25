@@ -424,6 +424,7 @@ export type Database = {
           reviewed_at: string | null;
           reviewed_by: string | null;
           role: Database["public"]["Enums"]["app_role"];
+          search_text: string;
           submitted_at: string | null;
           updated_at: string;
         };
@@ -445,6 +446,7 @@ export type Database = {
           reviewed_at?: string | null;
           reviewed_by?: string | null;
           role?: Database["public"]["Enums"]["app_role"];
+          search_text?: string;
           submitted_at?: string | null;
           updated_at?: string;
         };
@@ -466,6 +468,7 @@ export type Database = {
           reviewed_at?: string | null;
           reviewed_by?: string | null;
           role?: Database["public"]["Enums"]["app_role"];
+          search_text?: string;
           submitted_at?: string | null;
           updated_at?: string;
         };
@@ -598,6 +601,7 @@ export type Database = {
           languages: Json | null;
           neighborhood: string | null;
           role: Database["public"]["Enums"]["app_role"] | null;
+          search_text: string | null;
         };
         Insert: {
           age?: never;
@@ -616,6 +620,7 @@ export type Database = {
           languages?: Json | null;
           neighborhood?: string | null;
           role?: Database["public"]["Enums"]["app_role"] | null;
+          search_text?: string | null;
         };
         Update: {
           age?: never;
@@ -634,16 +639,30 @@ export type Database = {
           languages?: Json | null;
           neighborhood?: string | null;
           role?: Database["public"]["Enums"]["app_role"] | null;
+          search_text?: string | null;
         };
         Relationships: [];
       };
     };
     Functions: {
       are_connected: { Args: { a: string; b: string }; Returns: boolean };
+      interest_search_text: { Args: { p_interests: string[] }; Returns: string };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_approved: { Args: Record<PropertyKey, never>; Returns: boolean };
+      language_search_text: { Args: { p_languages: Json }; Returns: string };
       normalize_interest_label: { Args: { value: string }; Returns: string };
       profile_age: { Args: { p_profile_id: string }; Returns: number };
+      profile_search_text: {
+        Args: {
+          p_city: string;
+          p_country_code: string;
+          p_display_name: string;
+          p_headline: string;
+          p_interests: string[];
+          p_languages: Json;
+        };
+        Returns: string;
+      };
       register_custom_interests: { Args: { p_labels: string[] }; Returns: Json };
       review_interest: {
         Args: { p_decision: Database["public"]["Enums"]["interest_status"]; p_interest_id: string };

@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import { getTranslations } from "next-intl/server";
 import { Icon } from "@/components/ui/icon";
+import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import type { Persona } from "../data";
 import { DiscoverWorkspace } from "./discover-workspace";
@@ -12,7 +13,7 @@ const STEPS = [
   { label: "step4", accent: true },
 ] as const;
 
-export async function DiscoverView({ personas }: { personas: Persona[] }) {
+export async function DiscoverView({ personas, total }: { personas: Persona[]; total: number }) {
   const t = await getTranslations("Discover");
   const tCommon = await getTranslations("Common");
 
@@ -72,20 +73,19 @@ export async function DiscoverView({ personas }: { personas: Persona[] }) {
     </section>
   );
 
-  const aside = (
-    <div className="bezel-tray">
-      <div
-        className="flex items-center justify-between gap-space-sm bezel-core px-space-md py-space-sm"
-        style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
-      >
-        <div className="flex items-center gap-space-xs">
-          <Icon name="verified_user" className="text-base text-tertiary" />
-          <span className="font-body-sm text-body-sm text-secondary">{t("trustSeal")}</span>
-        </div>
-        <span className="font-label-lg text-label-lg font-semibold text-text-muted">
-          {tCommon("guidelines")}
-        </span>
+  const trustStrip = (
+    <div className="flex flex-col justify-between gap-space-sm rounded-2xl border border-outline-variant bg-surface-low px-space-md py-space-sm sm:flex-row sm:items-center">
+      <div className="flex items-center gap-space-xs">
+        <Icon name="verified_user" className="text-base text-tertiary" />
+        <span className="font-body-sm text-body-sm text-secondary">{t("trustSeal")}</span>
       </div>
+      <Link
+        href="/standards"
+        className="inline-flex w-fit items-center gap-1 font-label-md text-label-md font-semibold text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      >
+        {tCommon("guidelines")}
+        <Icon name="arrow_forward" className="text-sm" />
+      </Link>
     </div>
   );
 
@@ -111,12 +111,17 @@ export async function DiscoverView({ personas }: { personas: Persona[] }) {
             <span className="relative inline-flex h-2 w-2 rounded-full bg-tertiary" />
           </span>
           <span className="font-label-lg text-label-lg font-semibold text-on-surface">
-            {t("activePersonas", { count: personas.length })}
+            {t("activePersonas", { count: total })}
           </span>
         </div>
       </header>
 
-      <DiscoverWorkspace personas={personas} privacy={privacy} aside={aside} />
+      <DiscoverWorkspace
+        initialPersonas={personas}
+        initialTotal={total}
+        privacy={privacy}
+        trustStrip={trustStrip}
+      />
     </div>
   );
 }

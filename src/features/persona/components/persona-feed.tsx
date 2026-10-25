@@ -6,7 +6,6 @@ import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { InlineAlert } from "@/components/ui/inline-alert";
 import { MediaImage } from "@/components/ui/media-image";
-import { Pagination } from "@/components/ui/pagination";
 import { Spinner } from "@/components/ui/spinner";
 import {
   acceptConnectionAction,
@@ -16,15 +15,11 @@ import {
 import { ConnectDialog } from "@/features/shared/connect-dialog";
 import { usePendingAction } from "@/features/shared/use-pending-action";
 import { useRefresh } from "@/features/shared/refresh-provider";
-import { usePagination } from "@/features/shared/use-pagination";
 import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import type { ConnectState, Persona } from "../data";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
-
-/** Cards per page. Two rows of the 2-up grid, keeping the CTA tile last. */
-const PAGE_SIZE = 4;
 
 /**
  * A local override may be ahead of the server (request just sent) but must never
@@ -36,7 +31,19 @@ function effectiveState(override: ConnectState | undefined, server: ConnectState
   return override;
 }
 
-export function PersonaFeed({ personas }: { personas: Persona[] }) {
+export function PersonaFeed({
+  personas,
+  total,
+  hasMore,
+  loadingMore,
+  onLoadMore,
+}: {
+  personas: Persona[];
+  total: number;
+  hasMore: boolean;
+  loadingMore: boolean;
+  onLoadMore: () => void;
+}) {
   const t = useTranslations("Discover");
   const { refresh } = useRefresh();
   const { isPending, run } = usePendingAction();
@@ -46,7 +53,6 @@ export function PersonaFeed({ personas }: { personas: Persona[] }) {
   const [states, setStates] = useState<Record<string, ConnectState>>({});
   const [target, setTarget] = useState<Persona | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { page, totalPages, pageItems, setPage } = usePagination(personas, PAGE_SIZE);
 
   function closeDialog() {
     setTarget(null);
@@ -102,7 +108,7 @@ export function PersonaFeed({ personas }: { personas: Persona[] }) {
 
   if (personas.length === 0) {
     return (
-      <section className="space-y-space-md lg:col-span-7">
+      <section className="space-y-space-md">
         <div className="flex flex-col items-center gap-2 rounded-[1.25rem] border border-outline-variant bg-surface-low py-space-xl text-center">
           <Icon name="search_off" className="text-3xl text-secondary" />
           <p className="font-label-lg text-label-lg font-semibold text-on-surface">
@@ -114,20 +120,20 @@ export function PersonaFeed({ personas }: { personas: Persona[] }) {
   }
 
   return (
-    <section className="space-y-space-md lg:col-span-7">
-      <div className="flex flex-col gap-1 px-space-xs sm:flex-row sm:items-center sm:justify-between sm:gap-space-sm">
-        <h2 className="font-label-lg text-label-lg font-semibold text-on-surface">
+    <section className="space-y-space-md">
+      <div className="flex flex-col gap-1 px-space-xs sm:flex-row sm:items-end sm:justify-between sm:gap-space-sm">
+        <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
           {t("feed.listTitle")}
         </h2>
-        <span className="font-label-lg text-label-lg text-text-muted">
-          {t("activePersonas", { count: personas.length })}
+        <span aria-live="polite" className="font-body-sm text-body-sm text-text-muted">
+          {t("feed.showing", { shown: personas.length, total })}
         </span>
       </div>
 
       {error ? <InlineAlert>{error}</InlineAlert> : null}
 
-      <div className="grid grid-cols-1 gap-space-md sm:grid-cols-2">
-        {pageItems.map((persona) => (
+      <div className="grid grid-cols-1 gap-space-md sm:grid-cols-2 xl:grid-cols-3">
+        {personas.map((persona) => (
           <PersonaCard
             key={persona.id}
             persona={persona}
@@ -140,7 +146,28 @@ export function PersonaFeed({ personas }: { personas: Persona[] }) {
         ))}
       </div>
 
-      <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+      <div className="flex flex-col items-center gap-space-xs pt-space-sm">
+        {hasMore ? (
+          <button
+            type="button"
+            onClick={onLoadMore}
+            disabled={loadingMore}
+            className={cn(
+              "inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-outline-variant bg-surface-low px-space-lg font-label-lg text-label-lg font-semibold text-on-surface shadow-lift-sm transition-colors duration-300 hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:cursor-wait disabled:opacity-60",
+              EASE,
+            )}
+          >
+            {loadingMore ? (
+              <Spinner className="text-current" label={t("loadingMore")} />
+            ) : (
+              <Icon name="expand_more" className="text-lg" />
+            )}
+            {loadingMore ? t("loadingMore") : t("loadMore")}
+          </button>
+        ) : (
+          <p className="font-body-sm text-body-sm text-text-muted">{t("allCaughtUp")}</p>
+        )}
+      </div>
 
       <ConnectDialog
         target={target}

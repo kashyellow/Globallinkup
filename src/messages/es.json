@@ -31,7 +31,8 @@
     "language": "Idioma",
     "profileAlt": "Tu perfil",
     "toggleMenu": "Alternar menú de navegación",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "tagline": "Personas y Cultura"
   },
   "Footer": {
     "logoAlt": "Logotipo de GlobalLinkup",
@@ -116,7 +117,7 @@
     "title": "Descubrir Personas",
     "intro": "Explora personas verificadas de todo el mundo e intercambia perspectivas interculturales. Conecta mutuamente para descubrir contactos sociales directos.",
     "activePersonas": "{count, plural, =0 {Sin personas activas en el extranjero} =1 {# Persona activa en el extranjero} other {# Personas activas en el extranjero}}",
-    "searchPlaceholder": "Busca por nombre, ciudad, idioma o pasiones (p. ej. Barcelona, Historia de la Arquitectura, Español)...",
+    "searchPlaceholder": "Busca por nombre, ciudad, idioma o interés (p. ej. Barcelona, Arquitectura, Español)...",
     "refineCriteria": "Refinar Criterios",
     "clearFilters": "Limpiar Filtros",
     "allRegions": "Todas las Regiones",
@@ -142,7 +143,8 @@
     "feed": {
       "listTitle": "Lista Curada",
       "profilePreviewed": "Perfil Visto",
-      "directContactVisible": "Contacto Directo Visible"
+      "directContactVisible": "Contacto Directo Visible",
+      "showing": "Mostrando {shown} de {total}"
     },
     "fluency": {
       "label": "Fluidez Lingüística",
@@ -209,7 +211,16 @@
       "contactNote": "Los datos de contacto siguen ocultos hasta que la conexión sea mutua.",
       "report": "Reportar persona",
       "metaTitle": "Persona"
-    }
+    },
+    "regionsButton": "Regiones",
+    "filterRegions": "Filtrar por regiones",
+    "regionSearchPlaceholder": "Buscar regiones…",
+    "noRegionResults": "Ninguna región coincide con esa búsqueda.",
+    "searching": "Buscando…",
+    "loadError": "No pudimos cargar las personas. Inténtalo de nuevo.",
+    "loadMore": "Cargar más personas",
+    "loadingMore": "Cargando más…",
+    "allCaughtUp": "Has visto a todas las personas que coinciden con estos filtros."
   },
   "Posts": {
     "eyebrowPrimary": "Cronología Visual",

@@ -17,6 +17,23 @@ import { mapPersonaRow } from "./mappers";
 const LIST_COLUMNS =
   "id, display_name, country_code, city, avatar_url, languages, interests, badge, approval_status, age";
 
+function escapeLike(value: string) {
+  return value.replace(/[\\%_]/g, "\\$&");
+}
+
+export type DiscoverQuery = {
+  viewerId: string;
+  query: string;
+  countries: string[];
+  limit: number;
+  offset: number;
+};
+
+export type DiscoverResult = {
+  personas: Persona[];
+  total: number;
+};
+
 /** S6 — approved suggestions plus the viewer's own pending labels (RLS-gated). */
 export type InterestCatalogItem = {
   label: string;
@@ -43,20 +60,42 @@ export async function getInterestCatalog(): Promise<InterestCatalogItem[]> {
   }));
 }
 
-export async function getDiscoverPersonas(viewerId: string): Promise<Persona[]> {
+export async function getDiscoverPersonas({
+  viewerId,
+  query,
+  countries,
+  limit,
+  offset,
+}: DiscoverQuery): Promise<DiscoverResult> {
   const supabase = await createClient();
 
-  const rows = unwrap(
-    await supabase
-      .from("profiles_public")
-      .select(LIST_COLUMNS)
-      .eq("approval_status", "approved")
-      .eq("role", "user")
-      .neq("id", viewerId)
-      .order("display_name", { ascending: true }),
-  );
+  let request = supabase
+    .from("profiles_public")
+    .select(LIST_COLUMNS, { count: "exact" })
+    .eq("approval_status", "approved")
+    .eq("role", "user")
+    .neq("id", viewerId);
 
-  if (!rows || rows.length === 0) return [];
+  if (countries.length > 0) {
+    request = request.in("country_code", countries);
+  }
+
+  const needle = query.trim();
+  if (needle.length > 0) {
+    request = request.ilike("search_text", `%${escapeLike(needle)}%`);
+  }
+
+  const response = await request
+    .order("display_name", { ascending: true })
+    .order("id", { ascending: true })
+    .range(offset, offset + limit - 1);
+
+  const rows = unwrap(response) ?? [];
+  const total = response.count ?? rows.length;
+
+  if (rows.length === 0) {
+    return { personas: [], total };
+  }
 
   const connections = unwrap(
     await supabase
@@ -86,13 +125,16 @@ export async function getDiscoverPersonas(viewerId: string): Promise<Persona[]> 
     rows.map((row) => row.avatar_url),
   );
 
-  return rows.map((row) =>
-    mapPersonaRow(row, {
-      connectState: stateByPeer.get(row.id ?? "")?.state ?? "none",
-      connectionId: stateByPeer.get(row.id ?? "")?.id,
-      imageUrl: resolveImageUrl(row.avatar_url, signed),
-    }),
-  );
+  return {
+    personas: rows.map((row) =>
+      mapPersonaRow(row, {
+        connectState: stateByPeer.get(row.id ?? "")?.state ?? "none",
+        connectionId: stateByPeer.get(row.id ?? "")?.id,
+        imageUrl: resolveImageUrl(row.avatar_url, signed),
+      }),
+    ),
+    total,
+  };
 }
 
 /** FR-4.3 — one approved persona plus the viewer's connection state. */

@@ -11,13 +11,12 @@ import { signUpAction, type AuthError } from "@/features/auth/actions";
 import { useRegistrationDraft } from "@/features/auth/components/registration-draft-provider";
 import { savePersonaAction, type PersonaError } from "@/features/persona/actions";
 import { uploadImageAction } from "@/features/media/actions";
+import { PLATFORM_COUNTRIES } from "@/lib/persona/countries";
 import { INTEREST_MAX } from "@/lib/persona/interests";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 import { InterestCombobox, type InterestCatalogItem } from "./interest-combobox";
-
-const COUNTRIES = ["ES", "MX", "CO", "AR", "US", "CR", "CL", "PE", "PT"] as const;
 
 const LANGUAGES = [
   { code: "ES", defaultLevel: "native" },
@@ -593,7 +592,7 @@ export function CreatePersonaView({
                     defaultValue={initial?.country ?? "ES"}
                     className={cn(inputClass, "cursor-pointer appearance-none pr-10")}
                   >
-                    {COUNTRIES.map((code) => (
+                    {PLATFORM_COUNTRIES.map((code) => (
                       <option key={code} value={code}>
                         {t(`countries.${code}`)}
                       </option>

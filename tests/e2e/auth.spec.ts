@@ -136,6 +136,28 @@ test("@auth discover shows real personas and viewer connect state", async ({ pag
   await expect(page.getByRole("button", { name: /^connect$/i }).first()).toBeVisible();
 });
 
+test("@auth discover search and region filters run server-side", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await expect(page).toHaveURL(/\/en\/discover$/);
+  await expect(page.getByRole("banner").getByText("People & Culture")).toBeVisible();
+
+  const search = page.getByRole("searchbox", { name: /search by name/i });
+  await search.fill("Madrid");
+  await expect(page.getByText(/Showing 1 of 1/i)).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Elena Ramos/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Camila Osorio/ })).toHaveCount(0);
+
+  await page.getByRole("button", { name: /clear filters/i }).click();
+  await expect(page.getByRole("heading", { name: /Camila Osorio/ })).toBeVisible();
+
+  await page.getByRole("button", { name: /^regions$/i }).click();
+  await page.getByRole("option", { name: /spain/i }).click();
+  await page.keyboard.press("Escape");
+  await expect(page.getByText(/Showing 1 of 1/i)).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Elena Ramos/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Camila Osorio/ })).toHaveCount(0);
+});
+
 test("@auth connections show accepted contact and pending requests", async ({ page }) => {
   await signIn(page, "sofia.martinez@example.com");
   await page.goto("/en/connections");
