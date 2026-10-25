@@ -110,7 +110,8 @@
     "confirmAction": "Confirmar",
     "cancel": "Cancelar",
     "required": "Obligatorio",
-    "dismiss": "Cerrar"
+    "dismiss": "Cerrar",
+    "back": "Volver"
   },
   "Discover": {
     "eyebrow": "Curaduría Intercultural",

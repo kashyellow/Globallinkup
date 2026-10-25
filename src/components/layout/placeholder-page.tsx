@@ -1,5 +1,4 @@
-import { Icon } from "@/components/ui/icon";
-import { Link } from "@/lib/i18n/navigation";
+import { BackLink } from "@/components/layout/back-link";
 
 /** Shared layout for not-yet-published resource pages (support/safety/standards). */
 export function PlaceholderPage({
@@ -17,13 +16,7 @@ export function PlaceholderPage({
 }) {
   return (
     <div className="mx-auto w-full max-w-[820px] px-margin-mobile py-space-lg lg:px-margin lg:py-space-xl">
-      <Link
-        href="/"
-        className="inline-flex min-h-11 items-center gap-1.5 font-label-md text-label-md font-semibold text-secondary transition-colors hover:text-primary"
-      >
-        <Icon name="arrow_back" className="text-lg" />
-        {backLabel}
-      </Link>
+      <BackLink label={backLabel} />
 
       <header className="mt-space-md flex flex-col gap-space-xs">
         <p className="font-label-caps text-label-caps tracking-[0.16em] text-primary uppercase">

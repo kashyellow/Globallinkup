@@ -127,7 +127,7 @@ export function Navbar({
             href="/profile"
             aria-current={isActive("/profile") ? "page" : undefined}
             className={cn(
-              "flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full py-0.5 pr-2.5 pl-0.5 transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+              "hidden min-h-11 min-w-11 items-center justify-center gap-2 rounded-full py-0.5 pr-2.5 pl-0.5 transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:flex",
               EASE,
               isActive("/profile") ? "bg-surface-container-high" : "hover:bg-surface-container",
             )}
@@ -208,7 +208,7 @@ export function Navbar({
               <Link
                 href="/admin"
                 onClick={() => setMenuOpen(false)}
-                className="flex min-h-12 items-center justify-between rounded-[0.75rem] px-3 py-2.5 font-label-lg text-label-lg text-secondary transition-colors duration-200 hover:bg-surface-container hover:text-on-surface"
+                className="flex min-h-12 items-center justify-between rounded-[0.75rem] px-3 py-2.5 font-label-lg text-label-lg text-secondary transition-colors duration-200 hover:bg-surface-container hover:text-on-surface md:hidden"
               >
                 {t("adminPortal")}
               </Link>

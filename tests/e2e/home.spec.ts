@@ -17,6 +17,12 @@ test("landing page renders in Spanish", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toContainText("fronteras.");
 });
 
+test("standards back falls back to landing on a direct visit", async ({ page }) => {
+  await page.goto("/en/standards");
+  await page.getByRole("button", { name: "Back" }).click();
+  await expect(page).toHaveURL(/\/en\/?$/);
+});
+
 test("landing header keeps a single copy of each auth action", async ({ page }) => {
   const header = page.locator("header");
 

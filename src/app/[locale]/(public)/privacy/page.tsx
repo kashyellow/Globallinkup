@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import { Icon } from "@/components/ui/icon";
-import { Link } from "@/lib/i18n/navigation";
+import { BackLink } from "@/components/layout/back-link";
 
 export async function generateMetadata({
   params,
@@ -18,16 +17,11 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Legal.privacy" });
   const tLegal = await getTranslations({ locale, namespace: "Legal" });
+  const tCommon = await getTranslations({ locale, namespace: "Common" });
 
   return (
     <div className="mx-auto w-full max-w-[820px] px-margin-mobile py-space-lg lg:px-margin lg:py-space-xl">
-      <Link
-        href="/"
-        className="inline-flex min-h-11 items-center gap-1.5 font-label-md text-label-md font-semibold text-secondary transition-colors hover:text-primary"
-      >
-        <Icon name="arrow_back" className="text-lg" />
-        {t("backHome")}
-      </Link>
+      <BackLink label={tCommon("back")} />
 
       <header className="mt-space-md flex flex-col gap-space-xs">
         <p className="font-label-caps text-label-caps tracking-[0.16em] text-primary uppercase">

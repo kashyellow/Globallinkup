@@ -16,6 +16,7 @@ export async function generateMetadata({
 export default async function StandardsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Resources.standards" });
+  const tCommon = await getTranslations({ locale, namespace: "Common" });
 
   return (
     <PlaceholderPage
@@ -23,7 +24,7 @@ export default async function StandardsPage({ params }: { params: Promise<{ loca
       title={t("title")}
       noticeTitle={t("noticeTitle")}
       noticeBody={t("noticeBody")}
-      backLabel={t("backHome")}
+      backLabel={tCommon("back")}
     />
   );
 }

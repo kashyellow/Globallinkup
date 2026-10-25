@@ -158,6 +158,38 @@ test("@auth discover search and region filters run server-side", async ({ page }
   await expect(page.getByRole("heading", { name: /Camila Osorio/ })).toHaveCount(0);
 });
 
+test("@auth guidelines return to the previous app page", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await expect(page).toHaveURL(/\/en\/discover$/);
+
+  await page
+    .getByRole("main")
+    .getByRole("link", { name: /guidelines/i })
+    .click();
+  await expect(page).toHaveURL(/\/en\/standards$/);
+  await page.getByRole("button", { name: /^back$/i }).click();
+  await expect(page).toHaveURL(/\/en\/discover$/);
+});
+
+test("@auth app nav moves the profile into the burger below lg", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await page.setViewportSize({ width: 375, height: 900 });
+  await page.goto("/en/discover");
+
+  const header = page.getByRole("banner");
+  const topProfile = header.locator('a[href="/en/profile"]').first();
+  await expect(topProfile).toBeHidden();
+  await expect(page.locator('nav[aria-label="Primary navigation"]').last()).toBeVisible();
+
+  await header.getByRole("button", { name: /toggle navigation menu/i }).click();
+  await expect(header.locator('a[href="/en/profile"]').last()).toBeVisible();
+
+  await page.setViewportSize({ width: 1024, height: 900 });
+  await expect(topProfile).toBeVisible();
+  await expect(header.getByRole("button", { name: /toggle navigation menu/i })).toBeHidden();
+  await expect(page.locator('nav[aria-label="Primary navigation"]').last()).toBeHidden();
+});
+
 test("@auth connections show accepted contact and pending requests", async ({ page }) => {
   await signIn(page, "sofia.martinez@example.com");
   await page.goto("/en/connections");
