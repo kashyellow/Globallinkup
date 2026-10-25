@@ -2,6 +2,7 @@ import "server-only";
 
 import { createSignedImageUrls, resolveImageUrl } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
+import { type MarketplaceSort } from "./constants";
 import { unwrap } from "@/lib/supabase/unwrap";
 
 /** S3d — the official catalog (admin-authored). Approved users read published rows. */
@@ -14,7 +15,7 @@ export type MarketplaceProduct = {
   price: number;
   description: string;
   sellerPhone: string;
-  image: string | null;
+  images: string[];
   imageAlt: string;
 };
 
@@ -24,19 +25,61 @@ export type MarketplaceContact = {
   email: string;
 };
 
-export async function getPublishedProducts(): Promise<MarketplaceProduct[]> {
+export type MarketplacePage = {
+  products: MarketplaceProduct[];
+  total: number;
+};
+
+const PAGE_COLUMNS =
+  "id, name, price_cents, description, origin_label, contact_information, created_at";
+
+function safeNeedle(value: string) {
+  // PostgREST's `or` expression is comma/parenthesis-delimited; keep the search
+  // term from changing the filter shape.
+  return value
+    .trim()
+    .replace(/[%,()]/g, " ")
+    .replace(/\s+/g, " ");
+}
+
+export async function getMarketplacePage({
+  query,
+  sort,
+  limit,
+  offset,
+}: {
+  query: string;
+  sort: MarketplaceSort;
+  limit: number;
+  offset: number;
+}): Promise<MarketplacePage> {
   const supabase = await createClient();
 
-  const rows = unwrap(
-    await supabase
-      .from("marketplace_products")
-      .select("id, name, price_cents, description, origin_label, contact_information, created_at")
-      .eq("is_published", true)
-      .is("deleted_at", null)
-      .order("created_at", { ascending: false }),
-  );
+  let request = supabase
+    .from("marketplace_products")
+    .select(PAGE_COLUMNS, { count: "exact" })
+    .eq("is_published", true)
+    .is("deleted_at", null);
 
-  if (!rows || rows.length === 0) return [];
+  const needle = safeNeedle(query);
+  if (needle.length > 0) {
+    request = request.or(
+      `name.ilike.%${needle}%,description.ilike.%${needle}%,origin_label.ilike.%${needle}%`,
+    );
+  }
+
+  if (sort === "price-low") {
+    request = request.order("price_cents", { ascending: true });
+  } else if (sort === "price-high") {
+    request = request.order("price_cents", { ascending: false });
+  } else {
+    request = request.order("created_at", { ascending: false });
+  }
+
+  const response = await request.range(offset, offset + limit - 1);
+  const rows = unwrap(response) ?? [];
+  const total = response.count ?? rows.length;
+  if (rows.length === 0) return { products: [], total };
 
   const ids = rows.map((row) => row.id);
   const images = unwrap(
@@ -47,28 +90,39 @@ export async function getPublishedProducts(): Promise<MarketplaceProduct[]> {
       .order("sort", { ascending: true }),
   );
 
-  const firstPathByProduct = new Map<string, string>();
+  const pathsByProduct = new Map<string, string[]>();
   for (const image of images ?? []) {
-    if (!firstPathByProduct.has(image.product_id)) {
-      firstPathByProduct.set(image.product_id, image.storage_path);
-    }
+    const list = pathsByProduct.get(image.product_id) ?? [];
+    list.push(image.storage_path);
+    pathsByProduct.set(image.product_id, list);
   }
 
-  const signed = await createSignedImageUrls(supabase, "product-images", [
-    ...firstPathByProduct.values(),
-  ]);
+  const signed = await createSignedImageUrls(
+    supabase,
+    "product-images",
+    (images ?? []).map((image) => image.storage_path),
+  );
 
-  return rows.map((row) => ({
-    id: row.id,
-    name: row.name,
-    originLabel: row.origin_label ?? "",
-    createdAt: row.created_at ?? "",
-    price: (row.price_cents ?? 0) / 100,
-    description: row.description ?? "",
-    sellerPhone: row.contact_information ?? "",
-    image: resolveImageUrl(firstPathByProduct.get(row.id), signed),
-    imageAlt: row.name,
-  }));
+  return {
+    products: rows.map((row) => {
+      const paths = pathsByProduct.get(row.id) ?? [];
+      const urls = paths
+        .map((path) => resolveImageUrl(path, signed))
+        .filter((url): url is string => url !== null);
+      return {
+        id: row.id,
+        name: row.name,
+        originLabel: row.origin_label ?? "",
+        createdAt: row.created_at ?? "",
+        price: (row.price_cents ?? 0) / 100,
+        description: row.description ?? "",
+        sellerPhone: row.contact_information ?? "",
+        images: urls,
+        imageAlt: row.name,
+      } satisfies MarketplaceProduct;
+    }),
+    total,
+  };
 }
 
 export async function getMarketplaceContact(): Promise<MarketplaceContact> {

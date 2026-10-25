@@ -116,12 +116,20 @@ export function FeedSkeleton() {
 export function BentoGridSkeleton() {
   return (
     <PageSkeleton>
-      <div className="grid grid-cols-1 gap-space-md sm:grid-cols-2 lg:grid-cols-6">
-        <Skeleton className="aspect-[16/11] w-full rounded-[1.25rem] sm:col-span-2 lg:col-span-4 lg:row-span-2" />
-        <Skeleton className="aspect-[4/3] w-full rounded-[1.25rem] lg:col-span-2" />
-        <Skeleton className="aspect-[4/3] w-full rounded-[1.25rem] lg:col-span-2" />
-        <Skeleton className="aspect-[4/3] w-full rounded-[1.25rem] lg:col-span-3" />
-        <Skeleton className="aspect-[4/3] w-full rounded-[1.25rem] lg:col-span-3" />
+      <div className="grid grid-cols-1 gap-space-md sm:grid-cols-2 xl:grid-cols-3">
+        {Array.from({ length: 6 }, (_, index) => (
+          <div
+            key={index}
+            className="overflow-hidden rounded-[1.25rem] border border-outline-variant bg-surface-low"
+          >
+            <Skeleton className="aspect-[4/3] w-full rounded-none" />
+            <div className="flex flex-col gap-space-sm p-space-md">
+              <Skeleton className="h-5 w-2/3" />
+              <Skeleton className="h-3 w-1/2" />
+              <Skeleton className="h-9 w-full rounded-full" />
+            </div>
+          </div>
+        ))}
       </div>
     </PageSkeleton>
   );

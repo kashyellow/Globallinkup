@@ -357,7 +357,15 @@
       "sortFeatured": "Featured Curations",
       "sortPriceLow": "Price: Low to High",
       "sortPriceHigh": "Price: High to Low",
-      "sortNewest": "Newest Arrivals"
+      "sortNewest": "Newest Arrivals",
+      "loadError": "We could not load the catalog. Please try again.",
+      "loading": "Loading catalog…",
+      "showing": "Showing {shown} of {total}",
+      "emptyTitle": "No pieces match that search",
+      "emptyBody": "Try a different word or clear the search.",
+      "loadMore": "Load more pieces",
+      "loadingMore": "Loading more…",
+      "allCaughtUp": "You have seen the full catalog"
     },
     "categories": {
       "artisanCrafts": "Artisan Crafts",
@@ -391,7 +399,23 @@
         "customsInsured": "Customs Insured",
         "directMaker": "Direct Maker Trace"
       },
-      "sellerPhone": "Seller contact"
+      "sellerPhone": "Seller contact",
+      "openImage": "Open product image",
+      "previousImage": "Previous product image",
+      "nextImage": "Next product image",
+      "imageOf": "Product image {number} of {total}",
+      "imageLightbox": "Product image preview",
+      "closeImage": "Close image preview"
+    },
+    "inquiry": {
+      "eyebrow": "CONCIERGE DESK",
+      "title": "Talk to the GlobalLinkup concierge",
+      "body": "Ask about a piece, artisan partnerships, shipping, or a custom request. We reply personally.",
+      "close": "Close inquiry dialog",
+      "emailCta": "Email the concierge",
+      "whatsappCta": "Message on WhatsApp",
+      "emailSubject": "GlobalLinkup concierge inquiry",
+      "contactHint": "You can also reach us at {email} or {phone}."
     }
   },
   "Admin": {

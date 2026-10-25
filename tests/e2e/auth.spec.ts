@@ -281,11 +281,34 @@ test("@auth the feed loads more and filters server-side", async ({ page }) => {
   await expect(page.getByText(/^Showing 5 of /i)).toBeVisible();
 });
 
-test("@auth the marketplace lists real products", async ({ page }) => {
+test("@auth the marketplace paginates, filters, and opens details", async ({ page }) => {
   await signIn(page, "sofia.martinez@example.com");
   await page.goto("/en/marketplace");
   await page.waitForTimeout(2500);
   await expect(page.getByText(/Handmade Oaxacan Leather Travel Bag/)).toBeVisible();
+  await expect(page.getByText(/Showing 9 of 10/i)).toBeVisible();
+
+  await page.getByRole("button", { name: /load more pieces/i }).click();
+  await expect(page.getByText(/Showing 10 of 10/i)).toBeVisible();
+
+  const card = page.locator('[role="button"][aria-label*="Handmade Oaxacan"]');
+  await card.click();
+  const detail = page.getByRole("dialog", { name: /Handmade Oaxacan/i });
+  await expect(detail).toBeVisible();
+  await expect(detail.getByText(/Artisan Partner Direct/i)).toBeVisible();
+  await detail.getByRole("button", { name: /close detail panel/i }).click();
+
+  await page.getByRole("button", { name: /artisan partner inquiries/i }).click();
+  await expect(page.getByRole("dialog", { name: /concierge/i })).toBeVisible();
+  await page
+    .getByRole("dialog", { name: /concierge/i })
+    .getByRole("button", { name: /close/i })
+    .click();
+
+  const search = page.getByRole("searchbox", { name: /search products/i });
+  await search.fill("espresso");
+  await expect(page.getByText(/Showing 1 of 1/i)).toBeVisible();
+  await expect(page.getByText(/Artisanal Ceramic Espresso Set/)).toBeVisible();
 });
 
 test("@auth an admin approves a pending persona", async ({ page }) => {

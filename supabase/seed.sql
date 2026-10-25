@@ -535,6 +535,25 @@ values
    'Madrid, ES',
    '+34 612 345 680', true, '11111111-1111-1111-1111-111111111111');
 
+-- A few more live pieces give the public grid a second page.
+insert into public.marketplace_products (
+  id, name, price_cents, currency, description,
+  origin_label, contact_information, is_published, created_by
+)
+values
+  ('b0000000-0000-0000-0000-000000000010', 'Hand-Thrown Clay Vase', 5800, 'USD',
+   'A tall stoneware vase with a soft ash glaze from a family workshop in Oaxaca.',
+   'Oaxaca, MX', '+52 951 100 2210', true, '11111111-1111-1111-1111-111111111111'),
+  ('b0000000-0000-0000-0000-000000000011', 'Linen & Cotton Market Tote', 4200, 'USD',
+   'A sturdy everyday tote woven and finished in a small Barcelona atelier.',
+   'Barcelona, ES', '+34 612 345 682', true, '11111111-1111-1111-1111-111111111111'),
+  ('b0000000-0000-0000-0000-000000000012', 'Bilingual Letterpress Notebook', 2800, 'USD',
+   'A pocket notebook printed in Lisbon with a linen cover and warm cream pages.',
+   'Lisbon, PT', '+351 913 440 221', true, '11111111-1111-1111-1111-111111111111'),
+  ('b0000000-0000-0000-0000-000000000013', 'Woven Palm Market Basket', 4900, 'USD',
+   'A lightweight market basket braided by hand in the Antioquian highlands.',
+   'Medellín, CO', '+57 310 440 2290', true, '11111111-1111-1111-1111-111111111111');
+
 -- Draft, unpublished and soft-deleted pieces exercise the admin lifecycle
 -- filters. Public reads must only resolve the live rows above.
 insert into public.marketplace_products (
@@ -567,7 +586,11 @@ values
   ('b0000000-0000-0000-0000-000000000007', 'product-images/seed/market-tote-draft-01.jpg', 0),
   ('b0000000-0000-0000-0000-000000000008', 'product-images/seed/serving-bowl-01.jpg', 0),
   ('b0000000-0000-0000-0000-000000000008', 'product-images/seed/serving-bowl-02.jpg', 1),
-  ('b0000000-0000-0000-0000-000000000009', 'product-images/seed/linen-runner-01.jpg', 0);
+  ('b0000000-0000-0000-0000-000000000009', 'product-images/seed/linen-runner-01.jpg', 0),
+  ('b0000000-0000-0000-0000-000000000010', 'product-images/seed/clay-vase-01.jpg', 0),
+  ('b0000000-0000-0000-0000-000000000011', 'product-images/seed/market-tote-01.jpg', 0),
+  ('b0000000-0000-0000-0000-000000000012', 'product-images/seed/letterpress-01.jpg', 0),
+  ('b0000000-0000-0000-0000-000000000013', 'product-images/seed/palm-basket-01.jpg', 0);
 
 -- ----------------------------------------------------------------------------
 -- Reports — open, resolved and dismissed queues

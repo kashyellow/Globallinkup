@@ -357,7 +357,15 @@
       "sortFeatured": "Curadurías Destacadas",
       "sortPriceLow": "Precio: Menor a Mayor",
       "sortPriceHigh": "Precio: Mayor a Menor",
-      "sortNewest": "Novedades"
+      "sortNewest": "Novedades",
+      "loadError": "No pudimos cargar el catálogo. Inténtalo de nuevo.",
+      "loading": "Cargando catálogo…",
+      "showing": "Mostrando {shown} de {total}",
+      "emptyTitle": "Ninguna pieza coincide con esa búsqueda",
+      "emptyBody": "Prueba otra palabra o borra la búsqueda.",
+      "loadMore": "Cargar más piezas",
+      "loadingMore": "Cargando más…",
+      "allCaughtUp": "Has visto el catálogo completo"
     },
     "categories": {
       "artisanCrafts": "Artesanías",
@@ -391,7 +399,23 @@
         "customsInsured": "Aduana Asegurada",
         "directMaker": "Trazabilidad Directa"
       },
-      "sellerPhone": "Contacto del vendedor"
+      "sellerPhone": "Contacto del vendedor",
+      "openImage": "Abrir imagen del producto",
+      "previousImage": "Imagen anterior del producto",
+      "nextImage": "Imagen siguiente del producto",
+      "imageOf": "Imagen {number} de {total} del producto",
+      "imageLightbox": "Vista previa de la imagen",
+      "closeImage": "Cerrar la vista previa"
+    },
+    "inquiry": {
+      "eyebrow": "MESA DE CONCIERGE",
+      "title": "Habla con el concierge de GlobalLinkup",
+      "body": "Pregunta por una pieza, colaboraciones artesanas, envíos o un encargo especial. Respondemos personalmente.",
+      "close": "Cerrar el diálogo de consulta",
+      "emailCta": "Escribir al concierge",
+      "whatsappCta": "Mensaje por WhatsApp",
+      "emailSubject": "Consulta al concierge de GlobalLinkup",
+      "contactHint": "También puedes escribirnos a {email} o al {phone}."
     }
   },
   "Admin": {
