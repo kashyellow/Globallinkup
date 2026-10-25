@@ -15,12 +15,16 @@ export async function generateMetadata({
   return { title: t("metaTitle") };
 }
 
-export default async function PersonaDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function PersonaDetailPage({
+  params,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+}) {
+  const { locale, id } = await params;
   const { user } = await requireApprovedUser();
-  const { id } = await params;
-  const persona = await getPersonaDetail(user.id, id);
+  const persona = await getPersonaDetail(user.id, id, locale);
 
   if (!persona) notFound();
 
-  return <PersonaDetailView persona={persona} />;
+  return <PersonaDetailView persona={persona} isSelf={persona.id === user.id} />;
 }

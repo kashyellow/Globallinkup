@@ -3,13 +3,15 @@
 import type { CSSProperties } from "react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+
 import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/utils";
-import { CONNECTION_TABS, REGION_FILTERS, type ConnectionTab, type RegionFilter } from "../data";
+import { RegionFilter } from "@/features/persona/components/region-filter";
+import { CONNECTION_TABS, type ConnectionTab } from "../data";
 import type { ConnectionsData } from "../queries";
 import { ActiveConnectionsPanel } from "./active-connections-panel";
 import { ReceivedRequestsPanel } from "./received-requests-panel";
-import { ArchivedPanel, SentRequestsPanel } from "./sent-requests-panel";
+import { SentRequestsPanel } from "./sent-requests-panel";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
@@ -50,27 +52,20 @@ function StatChip({
   );
 }
 
-const LATAM = new Set(["MX", "CO", "AR", "CL", "PE", "CR", "UY", "EC"]);
-const EUROPE = new Set(["ES", "PT", "FR", "IT", "DE"]);
-
 export function ConnectionsView({ data }: { data: ConnectionsData }) {
   const t = useTranslations("Connections");
+  const tCountries = useTranslations("PersonaForm");
   const [tab, setTab] = useState<ConnectionTab>("active");
-  const [region, setRegion] = useState<RegionFilter>("all");
+  const [countries, setCountries] = useState<string[]>([]);
   const [query, setQuery] = useState("");
-  // Snapshot once so the render stays pure; "recent" is relative to page load.
-  const [now] = useState(() => Date.now());
 
   const needle = query.trim().toLowerCase();
+  const availableCountries = [...new Set(data.active.map((connection) => connection.countryCode))]
+    .filter(Boolean)
+    .sort((a, b) => tCountries(`countries.${a}`).localeCompare(tCountries(`countries.${b}`)));
+
   const visibleActive = data.active.filter((connection) => {
-    if (region === "latam" && !LATAM.has(connection.countryCode)) return false;
-    if (region === "europe" && !EUROPE.has(connection.countryCode)) return false;
-    if (
-      region === "recent" &&
-      now - new Date(connection.connectedSince).getTime() > 30 * 24 * 60 * 60 * 1000
-    ) {
-      return false;
-    }
+    if (countries.length > 0 && !countries.includes(connection.countryCode)) return false;
     if (!needle) return true;
     return (
       connection.name.toLowerCase().includes(needle) ||
@@ -84,14 +79,6 @@ export function ConnectionsView({ data }: { data: ConnectionsData }) {
     active: data.active.length,
     requests: data.received.length,
     sent: data.sent.length,
-    archived: null,
-  };
-
-  const regionCounts: Record<RegionFilter, number | null> = {
-    all: null,
-    latam: data.active.filter((connection) => LATAM.has(connection.countryCode)).length,
-    europe: data.active.filter((connection) => EUROPE.has(connection.countryCode)).length,
-    recent: null,
   };
 
   return (
@@ -168,7 +155,7 @@ export function ConnectionsView({ data }: { data: ConnectionsData }) {
             </div>
           </div>
 
-          {/* Search + region pills */}
+          {/* Search + country filter */}
           <div className="flex flex-col items-stretch justify-between gap-space-md md:flex-row md:items-center">
             <div className="relative max-w-lg flex-1">
               <Icon
@@ -180,35 +167,26 @@ export function ConnectionsView({ data }: { data: ConnectionsData }) {
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder={t("search.placeholder")}
+                aria-label={t("search.placeholder")}
                 className="h-11 w-full rounded-full border border-outline-variant bg-surface-container pr-space-md pl-11 font-body-sm text-body-sm text-on-surface transition-colors duration-300 placeholder:text-text-muted hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
               />
             </div>
 
-            <div className="-mx-space-md no-scrollbar flex items-center gap-space-xs overflow-x-auto px-space-md py-1 md:mx-0 md:px-0 md:py-0">
-              {REGION_FILTERS.map((key) => {
-                const selected = region === key;
-                const count = regionCounts[key];
-                return (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => setRegion(key)}
-                    aria-pressed={selected}
-                    className={cn(
-                      "min-h-11 shrink-0 rounded-full px-space-md py-2 font-label-md text-label-md whitespace-nowrap",
-                      "transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
-                      EASE,
-                      selected
-                        ? "bg-surface-container-highest font-semibold text-on-surface"
-                        : "border border-outline-variant bg-surface-container text-secondary hover:border-outline-hover hover:text-on-surface",
-                    )}
-                  >
-                    {count === null
-                      ? t(`regionFilters.${key}`)
-                      : t(`regionFilters.${key}`, { count })}
-                  </button>
-                );
-              })}
+            <div className="flex items-center gap-space-xs">
+              <RegionFilter
+                selected={countries}
+                onChange={setCountries}
+                options={availableCountries}
+              />
+              {countries.length > 0 ? (
+                <button
+                  type="button"
+                  onClick={() => setCountries([])}
+                  className="min-h-12 shrink-0 rounded-full border border-outline-variant bg-surface-low px-space-md font-label-lg text-label-lg text-secondary transition-colors duration-300 hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
+                >
+                  {t("regionFilters.all")}
+                </button>
+              ) : null}
             </div>
           </div>
         </div>
@@ -225,7 +203,6 @@ export function ConnectionsView({ data }: { data: ConnectionsData }) {
         ) : null}
         {tab === "requests" ? <ReceivedRequestsPanel requests={data.received} /> : null}
         {tab === "sent" ? <SentRequestsPanel requests={data.sent} /> : null}
-        {tab === "archived" ? <ArchivedPanel /> : null}
       </div>
     </div>
   );

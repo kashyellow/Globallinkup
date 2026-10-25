@@ -215,8 +215,5 @@ export const SENT_REQUESTS: SentRequest[] = [
   },
 ];
 
-export const CONNECTION_TABS = ["active", "requests", "sent", "archived"] as const;
+export const CONNECTION_TABS = ["active", "requests", "sent"] as const;
 export type ConnectionTab = (typeof CONNECTION_TABS)[number];
-
-export const REGION_FILTERS = ["all", "latam", "europe", "recent"] as const;
-export type RegionFilter = (typeof REGION_FILTERS)[number];

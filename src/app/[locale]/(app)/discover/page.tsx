@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { DiscoverView } from "@/features/persona/components/discover-view";
@@ -17,13 +18,15 @@ export async function generateMetadata({
 
 export default async function DiscoverPage() {
   const { user } = await requireApprovedUser();
+  const seed = randomUUID();
   const initial = await getDiscoverPersonas({
     viewerId: user.id,
     query: "",
     countries: [],
     limit: DISCOVER_PAGE_SIZE,
     offset: 0,
+    seed,
   });
 
-  return <DiscoverView personas={initial.personas} total={initial.total} />;
+  return <DiscoverView personas={initial.personas} total={initial.total} seed={seed} />;
 }

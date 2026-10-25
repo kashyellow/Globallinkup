@@ -605,6 +605,6 @@ If any default changes, update this file before implementation.
 - [x] Phase 0 — DB, seeds, RLS
 - [x] Phase 1 — Posts
 - [ ] Phase 2 — Marketplace
-- [ ] Phase 3 — Connections, Discover, Profile
+- [x] Phase 3 — Connections, Discover, Profile
 - [ ] Phase 4 — Admin
 - [ ] Phase 5 — QA and regression

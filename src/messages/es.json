@@ -211,7 +211,8 @@
       "about": "Sobre la persona",
       "contactNote": "Los datos de contacto siguen ocultos hasta que la conexión sea mutua.",
       "report": "Reportar persona",
-      "metaTitle": "Persona"
+      "metaTitle": "Persona",
+      "editProfile": "Editar perfil"
     },
     "regionsButton": "Regiones",
     "filterRegions": "Filtrar por regiones",
@@ -573,8 +574,7 @@
     "tabs": {
       "active": "Conexiones Activas",
       "requests": "Solicitudes Recibidas",
-      "sent": "Solicitudes Enviadas",
-      "archived": "Diálogos Archivados"
+      "sent": "Solicitudes Enviadas"
     },
     "privacyChip": "Cero Compartición Sin Consentimiento",
     "search": {
@@ -611,7 +611,8 @@
         "facebook": "Facebook",
         "tiktok": "TikTok",
         "x": "X"
-      }
+      },
+      "loadMore": "Cargar más conexiones ({count})"
     },
     "requests": {
       "guidanceTitle": "Garantía de Confidencialidad Sin Presión",
@@ -635,10 +636,6 @@
       "sentAgoAwaiting": "Enviada hace {time} · Esperando revisión",
       "viewNote": "Ver Nota Enviada",
       "withdraw": "Retirar"
-    },
-    "archived": {
-      "title": "No Hay Diálogos Archivados",
-      "body": "Cuando un ciclo de diálogo sin intermediarios termina o eliges silenciar las notificaciones, las conexiones pueden guardarse aquí de forma segura sin revocar la confianza."
     },
     "tags": {
       "textiles": "Textiles",

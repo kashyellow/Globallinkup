@@ -125,15 +125,22 @@ test("@auth discover shows real personas and viewer connect state", async ({ pag
 
   // The header count comes from the rows, not a hardcoded marketing number.
   await expect(page.getByText(/^\d+ Active Personas Abroad$/).first()).toBeVisible();
+  await expect(page.getByText(/Showing 10 of 12/i)).toBeVisible();
 
-  // Real rows, sorted by name — page 1 is Camila, Elena, Lucas, Mateo.
+  const search = page.getByRole("searchbox", { name: /search by name/i });
+
+  // Random order is fine; use search to assert the viewer-specific states.
+  await search.fill("Camila");
   await expect(page.getByRole("heading", { name: /Camila Osorio/ })).toBeVisible();
-  // Camila is an accepted connection in the seed; Mateo sent Sofia a request,
-  // so the viewer must see the RECEIVED state (Accept), not "Request Sent".
   await expect(page.getByText(/^Connected$/i).first()).toBeVisible();
-  await expect(page.getByRole("button", { name: /^accept$/i }).first()).toBeVisible();
-  // Elena has no connection yet, so the card offers Connect.
-  await expect(page.getByRole("button", { name: /^connect$/i }).first()).toBeVisible();
+
+  await search.fill("Mateo");
+  await expect(page.getByRole("heading", { name: /Mateo Silva/ })).toBeVisible();
+  await expect(page.getByRole("button", { name: /^accept$/i })).toBeVisible();
+
+  await search.fill("Lucas");
+  await expect(page.getByRole("heading", { name: /Lucas Varela/ })).toBeVisible();
+  await expect(page.getByRole("button", { name: /^connect$/i })).toBeVisible();
 });
 
 test("@auth discover search and region filters run server-side", async ({ page }) => {
@@ -148,7 +155,7 @@ test("@auth discover search and region filters run server-side", async ({ page }
   await expect(page.getByRole("heading", { name: /Camila Osorio/ })).toHaveCount(0);
 
   await page.getByRole("button", { name: /clear filters/i }).click();
-  await expect(page.getByRole("heading", { name: /Camila Osorio/ })).toBeVisible();
+  await expect(page.getByText(/Showing 10 of 12/i)).toBeVisible();
 
   await page.getByRole("button", { name: /^regions$/i }).click();
   await page.getByRole("option", { name: /spain/i }).click();
@@ -195,6 +202,9 @@ test("@auth connections show accepted contact and pending requests", async ({ pa
   await signIn(page, "sofia.martinez@example.com");
   await page.goto("/en/connections");
   await page.waitForTimeout(2500);
+
+  // Active tab: the seed has nine accepted connections, so load the second batch.
+  await page.getByRole("button", { name: /load more connections/i }).click();
 
   // Active tab: Camila is an accepted connection, so her channel is unlocked.
   await expect(page.getByText(/Camila Osorio/)).toBeVisible();
@@ -257,14 +267,20 @@ test("@auth comments and replies on a post", async ({ page }) => {
   await composer.fill("E2E root comment");
   await page.getByRole("button", { name: /post comment/i }).click();
   await expect(page.getByText("E2E root comment")).toBeVisible();
+  // Wait for the composer to clear before starting a reply; the visible text
+  // above can still be the textarea value for one render.
+  await expect(composer).toHaveValue("");
 
   await page
     .getByRole("button", { name: /^reply$/i })
     .first()
     .click();
+  await expect(page.getByText(/Replying to/i)).toBeVisible();
   const replyBox = page.getByPlaceholder(/reply to/i);
   await replyBox.fill("E2E reply comment");
-  await page.getByRole("button", { name: /post reply/i }).click();
+  const postReply = page.getByRole("button", { name: /post reply/i });
+  await expect(postReply).toBeVisible();
+  await postReply.click();
   await expect(page.getByText("E2E reply comment")).toBeVisible();
 });
 
@@ -348,6 +364,26 @@ test("@auth the profile shows the real dossier and unlocked channels", async ({ 
   await expect(page).toHaveURL(/\/en\/profile\/edit$/);
   await expect(page.getByRole("heading", { name: /edit your persona/i })).toBeVisible();
   await expect(page.locator("#persona-fullname")).toHaveValue("Sofia Martinez");
+});
+
+test("@auth a shared dossier has no owner actions for another member", async ({ page }) => {
+  await signIn(page, "reset.user@example.com");
+  await page.goto("/en/persona/22222222-2222-2222-2222-222222222222");
+  await page.waitForTimeout(1200);
+
+  await expect(page.getByRole("heading", { name: /Sofia Martinez/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /edit profile/i })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /log out/i })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /share/i })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /^connect$/i })).toBeVisible();
+
+  // The owner sees the edit path instead of Connect/Report on the same page.
+  await page.context().clearCookies();
+  await signIn(page, "sofia.martinez@example.com");
+  await page.goto("/en/persona/22222222-2222-2222-2222-222222222222");
+  await page.waitForTimeout(1000);
+  await expect(page.getByRole("link", { name: /edit profile/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /^connect$/i })).toHaveCount(0);
 });
 
 test("@auth step 1 stays editable until the persona is submitted", async ({ page }) => {

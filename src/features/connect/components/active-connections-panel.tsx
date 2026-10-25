@@ -33,8 +33,10 @@ export function ActiveConnectionsPanel({
   const [removedIds, setRemovedIds] = useState<ReadonlySet<string>>(() => new Set());
   const [disconnectTarget, setDisconnectTarget] = useState<ActiveConnectionDto | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(8);
 
   const visible = connections.filter((connection) => !removedIds.has(connection.id));
+  const paged = visible.slice(0, visibleCount);
 
   async function disconnect(connection: ActiveConnectionDto) {
     const result = await run(`disconnect:${connection.id}`, async () => {
@@ -114,7 +116,7 @@ export function ActiveConnectionsPanel({
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-space-lg md:grid-cols-2">
-          {visible.map((connection) => (
+          {paged.map((connection) => (
             <ConnectionCard
               key={connection.id}
               connection={connection}
@@ -123,6 +125,19 @@ export function ActiveConnectionsPanel({
           ))}
         </div>
       )}
+
+      {visible.length > visibleCount ? (
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={() => setVisibleCount((count) => count + 8)}
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-outline-variant bg-surface-low px-space-lg font-label-lg text-label-lg font-semibold text-on-surface shadow-lift-sm transition-colors duration-300 hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
+          >
+            <Icon name="expand_more" className="text-lg" />
+            {t("loadMore", { count: visible.length - visibleCount })}
+          </button>
+        </div>
+      ) : null}
 
       <ConfirmDialog
         open={disconnectTarget !== null}

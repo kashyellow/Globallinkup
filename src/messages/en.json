@@ -211,7 +211,8 @@
       "about": "About",
       "contactNote": "Contact details stay hidden until you are mutually connected.",
       "report": "Report persona",
-      "metaTitle": "Persona"
+      "metaTitle": "Persona",
+      "editProfile": "Edit profile"
     },
     "regionsButton": "Regions",
     "filterRegions": "Filter by regions",
@@ -573,8 +574,7 @@
     "tabs": {
       "active": "Active Connections",
       "requests": "Received Requests",
-      "sent": "Sent Requests",
-      "archived": "Archived Dialogues"
+      "sent": "Sent Requests"
     },
     "privacyChip": "Zero Unconsented Sharing Enforced",
     "search": {
@@ -611,7 +611,8 @@
         "facebook": "Facebook",
         "tiktok": "TikTok",
         "x": "X"
-      }
+      },
+      "loadMore": "Load more connections ({count})"
     },
     "requests": {
       "guidanceTitle": "Zero-Pressure Confidentiality Guarantee",
@@ -635,10 +636,6 @@
       "sentAgoAwaiting": "Sent {time} ago · Awaiting review",
       "viewNote": "View Sent Note",
       "withdraw": "Withdraw"
-    },
-    "archived": {
-      "title": "No Past Dialogues Archived",
-      "body": "When an unmediated dialogue cycle finishes or you choose to mute notifications, connections can be kept in safe storage here without revoking trust."
     },
     "tags": {
       "textiles": "Textiles",

@@ -16,9 +16,12 @@ import { cn } from "@/lib/utils";
 export function RegionFilter({
   selected,
   onChange,
+  options: optionCodes,
 }: {
   selected: string[];
   onChange: (countries: string[]) => void;
+  /** Omit to show every platform country. Connections narrows this list. */
+  options?: readonly string[];
 }) {
   const t = useTranslations("Discover");
   const tCountries = useTranslations("PersonaForm");
@@ -49,7 +52,8 @@ export function RegionFilter({
   }, [open]);
 
   const needle = query.trim().toLowerCase();
-  const options = PLATFORM_COUNTRIES.filter((code) => {
+  const countries = optionCodes ?? PLATFORM_COUNTRIES;
+  const options = countries.filter((code) => {
     if (!needle) return true;
     return tCountries(`countries.${code}`).toLowerCase().includes(needle);
   });

@@ -51,7 +51,11 @@ export function DossierHeader({ profile }: { profile: OwnProfile }) {
         href: `/persona/${profile.id}`,
         locale,
       })}`;
-      await navigator.clipboard.writeText(url);
+      if (navigator.share) {
+        await navigator.share({ title: profile.name, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+      }
       setCopied(true);
       setTimeout(() => setCopied(false), 1800);
     } catch {

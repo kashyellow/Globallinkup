@@ -105,22 +105,3 @@ export function SentRequestsPanel({ requests }: { requests: SentRequestDto[] }) 
     </div>
   );
 }
-
-export function ArchivedPanel() {
-  const t = useTranslations("Connections.archived");
-
-  return (
-    <div className="bezel-tray">
-      <div
-        className="flex flex-col items-center justify-center gap-space-sm bezel-core p-space-xl text-center"
-        style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
-      >
-        <Icon name="inventory_2" className="text-4xl text-secondary" />
-        <h3 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
-          {t("title")}
-        </h3>
-        <p className="max-w-[46ch] font-body-md text-body-md text-secondary">{t("body")}</p>
-      </div>
-    </div>
-  );
-}

@@ -14,6 +14,7 @@ const discoverQuerySchema = z.object({
   countries: z.array(z.enum(PLATFORM_COUNTRIES)).max(PLATFORM_COUNTRIES.length).default([]),
   offset: z.number().int().min(0).max(10_000).default(0),
   limit: z.number().int().min(1).max(20).default(DISCOVER_PAGE_SIZE),
+  seed: z.string().trim().min(1).max(64).default("default"),
 });
 
 export type DiscoverActionError = "forbidden" | "invalid" | "unknown";
@@ -44,6 +45,7 @@ export async function loadDiscoverPersonasAction(input: unknown): Promise<Discov
       countries: [...new Set(parsed.data.countries)],
       limit: parsed.data.limit,
       offset: parsed.data.offset,
+      seed: parsed.data.seed,
     });
 
     return { ok: true, ...result };

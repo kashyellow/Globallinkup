@@ -45,7 +45,10 @@ function ageFromDateOfBirth(dateOfBirth: string | null): number {
   return Math.max(age, 0);
 }
 
-export async function getOwnProfile(viewerId: string): Promise<OwnProfile | null> {
+export async function getOwnProfile(
+  viewerId: string,
+  locale: string = "en",
+): Promise<OwnProfile | null> {
   const supabase = await createClient();
 
   const profile = unwrap<Database["public"]["Tables"]["profiles"]["Row"]>(
@@ -179,7 +182,10 @@ export async function getOwnProfile(viewerId: string): Promise<OwnProfile | null
     location: [profile.city, profile.country_code].filter(Boolean).join(", "),
     languages,
     avatar,
-    bio: profile.bio_en ?? profile.bio_es ?? "",
+    bio:
+      locale === "es"
+        ? (profile.bio_es ?? profile.bio_en ?? "")
+        : (profile.bio_en ?? profile.bio_es ?? ""),
     interests: profile.interests ?? [],
     channels,
     metrics: { connections: connections.length, dispatches: dispatches.length },

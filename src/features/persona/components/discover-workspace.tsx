@@ -18,17 +18,20 @@ import { SearchRibbon } from "./search-ribbon";
 export function DiscoverWorkspace({
   initialPersonas,
   initialTotal,
+  initialSeed,
   privacy,
   trustStrip,
 }: {
   initialPersonas: Persona[];
   initialTotal: number;
+  initialSeed: string;
   privacy: ReactNode;
   trustStrip: ReactNode;
 }) {
   const t = useTranslations("Discover");
   const [query, setQuery] = useState("");
   const [countries, setCountries] = useState<string[]>([]);
+  const [seed, setSeed] = useState(initialSeed);
   const [personas, setPersonas] = useState<Persona[]>(initialPersonas);
   const [total, setTotal] = useState(initialTotal);
   const [hasMore, setHasMore] = useState(initialPersonas.length < initialTotal);
@@ -49,6 +52,7 @@ export function DiscoverWorkspace({
     nextQuery: string,
     nextCountries: string[],
     offset: number,
+    nextSeed: string,
   ): Promise<void> {
     const id = requestId.current + 1;
     requestId.current = id;
@@ -60,6 +64,7 @@ export function DiscoverWorkspace({
       countries: nextCountries,
       offset,
       limit: DISCOVER_PAGE_SIZE,
+      seed: nextSeed,
     }).catch(() => null);
 
     // A newer search/filter request won; drop this page.
@@ -85,7 +90,7 @@ export function DiscoverWorkspace({
     setLoading(false);
   }
 
-  function schedule(nextQuery: string, nextCountries: string[], delay = 300) {
+  function schedule(nextQuery: string, nextCountries: string[], nextSeed: string, delay = 300) {
     if (timerRef.current) clearTimeout(timerRef.current);
     // Invalidate an in-flight request immediately, not just when the debounced
     // fetch starts, so an older result cannot flash while the user is typing.
@@ -93,33 +98,43 @@ export function DiscoverWorkspace({
     setLoading(true);
     setError(null);
     timerRef.current = setTimeout(() => {
-      void fetchPage(nextQuery, nextCountries, 0);
+      void fetchPage(nextQuery, nextCountries, 0, nextSeed);
     }, delay);
   }
 
+  function nextSeed() {
+    return crypto.randomUUID();
+  }
+
   function handleQueryChange(value: string) {
+    const freshSeed = nextSeed();
     setQuery(value);
-    schedule(value, countries);
+    setSeed(freshSeed);
+    schedule(value, countries, freshSeed);
   }
 
   function handleCountriesChange(nextCountries: string[]) {
+    const freshSeed = nextSeed();
     setCountries(nextCountries);
+    setSeed(freshSeed);
     if (timerRef.current) clearTimeout(timerRef.current);
     // Toggling a checkbox is deliberate; do not wait for a full search debounce.
-    schedule(query, nextCountries, 120);
+    schedule(query, nextCountries, freshSeed, 120);
   }
 
   function clearFilters() {
     if (timerRef.current) clearTimeout(timerRef.current);
     requestId.current += 1;
+    const freshSeed = nextSeed();
     setQuery("");
     setCountries([]);
-    void fetchPage("", [], 0);
+    setSeed(freshSeed);
+    void fetchPage("", [], 0, freshSeed);
   }
 
   function loadMore() {
     if (loading || !hasMore) return;
-    void fetchPage(query, countries, personas.length);
+    void fetchPage(query, countries, personas.length, seed);
   }
 
   return (

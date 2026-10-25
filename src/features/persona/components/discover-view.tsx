@@ -13,7 +13,15 @@ const STEPS = [
   { label: "step4", accent: true },
 ] as const;
 
-export async function DiscoverView({ personas, total }: { personas: Persona[]; total: number }) {
+export async function DiscoverView({
+  personas,
+  total,
+  seed,
+}: {
+  personas: Persona[];
+  total: number;
+  seed: string;
+}) {
   const t = await getTranslations("Discover");
   const tCommon = await getTranslations("Common");
 
@@ -118,6 +126,7 @@ export async function DiscoverView({ personas, total }: { personas: Persona[]; t
 
       <DiscoverWorkspace
         initialPersonas={personas}
+        initialSeed={seed}
         initialTotal={total}
         privacy={privacy}
         trustStrip={trustStrip}

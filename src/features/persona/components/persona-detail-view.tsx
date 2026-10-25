@@ -20,7 +20,13 @@ import { usePendingAction } from "@/features/shared/use-pending-action";
 import { useRefresh } from "@/features/shared/refresh-provider";
 import { Link } from "@/lib/i18n/navigation";
 
-export function PersonaDetailView({ persona }: { persona: PersonaDetail }) {
+export function PersonaDetailView({
+  persona,
+  isSelf = false,
+}: {
+  persona: PersonaDetail;
+  isSelf?: boolean;
+}) {
   const t = useTranslations("Discover.detail");
   const tDiscover = useTranslations("Discover");
   const tCommon = useTranslations("Common");
@@ -159,7 +165,15 @@ export function PersonaDetailView({ persona }: { persona: PersonaDetail }) {
           {error ? <InlineAlert className="mt-space-sm">{error}</InlineAlert> : null}
 
           <div className="mt-space-lg flex flex-wrap items-center gap-space-sm">
-            {state === "connected" ? (
+            {isSelf ? (
+              <Link
+                href="/profile/edit"
+                className="inline-flex min-h-11 items-center gap-2 rounded-full bg-primary px-4 font-label-lg text-label-lg font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
+              >
+                <Icon name="edit_square" className="text-lg" />
+                {t("editProfile")}
+              </Link>
+            ) : state === "connected" ? (
               <span className="inline-flex min-h-11 items-center gap-2 rounded-full border border-success-border bg-success-surface px-4 font-label-lg text-label-lg font-semibold text-success-text">
                 <Icon name="check_circle" className="text-lg" />
                 {tCommon("connected")}
@@ -206,14 +220,16 @@ export function PersonaDetailView({ persona }: { persona: PersonaDetail }) {
               </button>
             )}
 
-            <button
-              type="button"
-              onClick={() => setReportOpen(true)}
-              className="inline-flex min-h-11 items-center gap-2 rounded-full px-4 font-label-md text-label-md text-secondary transition-colors hover:bg-surface-container hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              <Icon name="flag" className="text-base" />
-              {t("report")}
-            </button>
+            {!isSelf ? (
+              <button
+                type="button"
+                onClick={() => setReportOpen(true)}
+                className="inline-flex min-h-11 items-center gap-2 rounded-full px-4 font-label-md text-label-md text-secondary transition-colors hover:bg-surface-container hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              >
+                <Icon name="flag" className="text-base" />
+                {t("report")}
+              </button>
+            ) : null}
           </div>
         </div>
       </div>

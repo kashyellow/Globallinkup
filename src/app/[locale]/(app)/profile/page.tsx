@@ -15,9 +15,10 @@ export async function generateMetadata({
   return { title: t("profile") };
 }
 
-export default async function ProfilePage() {
+export default async function ProfilePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const { user } = await requireApprovedUser();
-  const profile = await getOwnProfile(user.id);
+  const profile = await getOwnProfile(user.id, locale);
 
   if (!profile) {
     notFound();
