@@ -40,12 +40,25 @@ async function addInterest(page: Page, value: string) {
   await page.locator(`#persona-interests [cmdk-item][data-value="${value}"]`).click();
 }
 
-async function signIn(page: Page, email: string, password = PASSWORD) {
+// Sign-in finishes on one of the three post-auth destinations. Waiting for the
+// navigation beats a fixed sleep: a cold dev server can take seconds to compile
+// `/en/login` and the redirect, which is what made this suite flaky.
+const POST_AUTH_URL = /\/(discover|verify|create-persona)$/;
+const POST_AUTH_TIMEOUT = 20_000;
+
+async function signIn(
+  page: Page,
+  email: string,
+  password = PASSWORD,
+  { expectRedirect = true }: { expectRedirect?: boolean } = {},
+) {
   await page.goto("/en/login");
   await page.fill("#login-email", email);
   await page.fill("#login-password", password);
   await page.locator("form button[type=submit]").click();
-  await page.waitForTimeout(1500);
+  if (expectRedirect) {
+    await page.waitForURL(POST_AUTH_URL, { timeout: POST_AUTH_TIMEOUT });
+  }
 }
 
 test("@auth an approved user lands in the app", async ({ page }) => {
@@ -91,7 +104,9 @@ test("@auth a suspended user sees the suspended notice", async ({ page }) => {
 });
 
 test("@auth a wrong password shows the invalid banner", async ({ page }) => {
-  await signIn(page, "sofia.martinez@example.com", "WrongPassword1");
+  await signIn(page, "sofia.martinez@example.com", "WrongPassword1", {
+    expectRedirect: false,
+  });
   await expect(
     page.getByRole("alert").filter({ hasText: /incorrect|credenciales/i }),
   ).toBeVisible();
@@ -490,9 +505,12 @@ test("@auth an admin creates, trashes, and restores a draft product", async ({ p
   await dialog.getByLabel(/Origin/i).fill("Barcelona, ES");
   await dialog.getByLabel(/Phone Number/i).fill("+34 600 000 000");
   await dialog.getByRole("button", { name: /save as draft/i }).click();
+  // The dialog closes only after the Server Action succeeds; waiting for that
+  // avoids racing the list refresh that renders the new row.
+  await expect(dialog).toBeHidden({ timeout: 20_000 });
 
   const row = page.locator('[data-product-name="E2E Draft Piece"]');
-  await expect(row).toBeVisible({ timeout: 10_000 });
+  await expect(row).toBeVisible({ timeout: 15_000 });
   await expect(row.getByText("Draft", { exact: true })).toBeVisible();
 
   await row.getByRole("button", { name: /delete product/i }).click();
