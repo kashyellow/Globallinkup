@@ -7,4 +7,4 @@ if [ "$BRANCH" != "main" ]; then
   exit 1
 fi
 
-# vercel --prod
+vercel --prod
