@@ -137,6 +137,9 @@ hardcode `admin@globallinkup.test`.
 
 - [x] Nyatakan seed lokal hardcode admin, dan `ADMIN_EMAIL` hanya untuk bootstrap
       cloud; perbarui `.env.example`, README §4, s0 doc.
+- [x] Bootstrap cloud diimplementasikan sebagai `scripts/bootstrap-admin.mjs`
+      (`npm run admin:bootstrap`, 2026-10-26): promote-only, butuh akun + baris
+      `profiles` hasil persona submit.
 
 ### F-6 — `date_of_birth` ter-expose ke semua user approved
 
@@ -196,7 +199,7 @@ Keputusan (detail di [`api-layer-decisions.md`](./api-layer-decisions.md) §4b):
 | ---- | ---------------------------------------------------------------------------------- |
 | CA-1 | **(b)** pisah `date_of_birth` ke `public.profile_private` + `public.profile_age()` |
 | CA-2 | **(a)** job CI untuk RLS, dengan path filter `supabase/**` + `package*.json`       |
-| CA-3 | **(b)** rekonsiliasi docs; implementasi bootstrap cloud ditunda ke cutover         |
+| CA-3 | **(b)** rekonsiliasi docs; `npm run admin:bootstrap` (2026-10-26)                  |
 | CA-4 | **locked** — kolom/derive/drop seperti F-8                                         |
 
 ---

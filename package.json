@@ -26,6 +26,7 @@
     "db:push": "supabase db push",
     "db:test": "supabase test db",
     "db:types": "supabase gen types typescript --local > src/types/database.ts && prettier --write src/types/database.ts",
+    "admin:bootstrap": "node --env-file-if-exists=.env scripts/bootstrap-admin.mjs",
     "commitlint": "commitlint --edit",
     "prepare": "husky",
     "deploy": "./scripts/deploy.sh"
