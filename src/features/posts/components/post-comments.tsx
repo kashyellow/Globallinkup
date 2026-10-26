@@ -10,8 +10,8 @@ import { MediaImage } from "@/components/ui/media-image";
 import { Spinner } from "@/components/ui/spinner";
 import { createCommentAction, deleteCommentAction } from "@/features/posts/comment-actions";
 import type { FeedComment } from "@/features/posts/queries";
-import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
+import { AuthorName } from "./author-name";
 
 const MAX_BODY = 1000;
 const ROOT_PAGE = 5;
@@ -26,6 +26,7 @@ export function PostComments({
   viewer: { id: string; name: string; avatar: string | null; isAdmin: boolean };
 }) {
   const t = useTranslations("Posts.comments");
+  const tPosts = useTranslations("Posts");
   const tCommon = useTranslations("Common");
   const format = useFormatter();
   const [comments, setComments] = useState(initialComments);
@@ -180,7 +181,7 @@ export function PostComments({
               </p>
               {replyTo ? (
                 <p className="truncate font-body-sm text-body-sm text-secondary">
-                  {t("replyingTo", { name: replyTo.author })}{" "}
+                  {t("replyingTo", { name: replyTo.author || tPosts("platformAuthor") })}{" "}
                   <button
                     type="button"
                     onClick={() => setReplyTo(null)}
@@ -204,7 +205,9 @@ export function PostComments({
             }}
             disabled={pending}
             placeholder={
-              replyTo ? t("replyPlaceholder", { name: replyTo.author }) : t("placeholder")
+              replyTo
+                ? t("replyPlaceholder", { name: replyTo.author || tPosts("platformAuthor") })
+                : t("placeholder")
             }
             className="w-full resize-none rounded-2xl border border-outline-variant bg-surface-low p-space-md font-body-md text-body-md text-on-surface transition-colors duration-300 placeholder:text-text-muted hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
           />
@@ -256,8 +259,18 @@ function CommentItem({
   onDelete: (comment: FeedComment) => void;
 }) {
   const t = useTranslations("Posts.comments");
+  const tPosts = useTranslations("Posts");
   const format = useFormatter();
   const deleted = comment.deletedAt !== null;
+  // Hidden (admin) authors arrive without a name: fall back to the platform
+  // label and drop the persona link, which would 404.
+  const commentName = comment.author || tPosts("platformAuthor");
+  const commentHref =
+    comment.authorId === viewer.id
+      ? "/profile"
+      : comment.author
+        ? `/persona/${comment.authorId}`
+        : undefined;
 
   return (
     <div className="flex flex-col gap-space-sm py-space-md first:pt-0 last:pb-0">
@@ -265,7 +278,7 @@ function CommentItem({
         {comment.avatar && !deleted ? (
           <MediaImage
             src={comment.avatar}
-            alt={comment.author}
+            alt={commentName}
             wrapperClassName="h-9 w-9 shrink-0 rounded-full ring-1 ring-outline-variant"
           />
         ) : (
@@ -278,12 +291,11 @@ function CommentItem({
                 {t("deletedAuthor")}
               </span>
             ) : (
-              <Link
-                href={comment.authorId === viewer.id ? "/profile" : `/persona/${comment.authorId}`}
+              <AuthorName
+                name={commentName}
+                href={commentHref}
                 className="font-label-md text-label-md font-semibold text-on-surface transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              >
-                {comment.author}
-              </Link>
+              />
             )}
             <span className="font-body-sm text-body-sm text-text-muted" suppressHydrationWarning>
               {sentAgo}
@@ -327,12 +339,19 @@ function CommentItem({
             .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
             .map((reply) => {
               const replyDeleted = reply.deletedAt !== null;
+              const replyName = reply.author || tPosts("platformAuthor");
+              const replyHref =
+                reply.authorId === viewer.id
+                  ? "/profile"
+                  : reply.author
+                    ? `/persona/${reply.authorId}`
+                    : undefined;
               return (
                 <div key={reply.id} className="flex items-start gap-space-sm">
                   {reply.avatar && !replyDeleted ? (
                     <MediaImage
                       src={reply.avatar}
-                      alt={reply.author}
+                      alt={replyName}
                       wrapperClassName="h-8 w-8 shrink-0 rounded-full ring-1 ring-outline-variant"
                     />
                   ) : (
@@ -345,14 +364,11 @@ function CommentItem({
                           {t("deletedAuthor")}
                         </span>
                       ) : (
-                        <Link
-                          href={
-                            reply.authorId === viewer.id ? "/profile" : `/persona/${reply.authorId}`
-                          }
+                        <AuthorName
+                          name={replyName}
+                          href={replyHref}
                           className="font-label-md text-label-md font-semibold text-on-surface transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                        >
-                          {reply.author}
-                        </Link>
+                        />
                       )}
                       <span
                         className="font-body-sm text-body-sm text-text-muted"

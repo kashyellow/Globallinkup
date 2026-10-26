@@ -46,6 +46,11 @@ implementation. Where this summary and the PRD disagree, the PRD wins.
   suite (pgTAP, `supabase/tests/`). This project runs on the **545xx** port block
   (see `docs/plan/api-layer/README.md` §2);
   `.env.local` is created from `supabase status -o env`.
+- `npm run admin:bootstrap` — create or promote the `ADMIN_EMAIL` account to
+  `admin` on a deployed project (`db push` never runs `seed.sql`, so the cloud has
+  no admin). `--create` skips the persona funnel and makes the account in one
+  step. Flags: `-- --create`, `-- --email=…`, `-- --display-name=…`,
+  `-- --password=…`, `-- --dry-run`, `-- --allow-local`.
 - Hooks: `pre-commit` → lint-staged (ESLint `--fix` + Prettier); `commit-msg` →
   commitlint. CI (`.github/workflows/ci.yml`) runs commitlint on PRs plus
   format:check, lint, typecheck, test, build, and e2e. `.github/workflows/db.yml`
@@ -109,6 +114,11 @@ These are confirmed and supersede the PRD where it disagrees:
   `trashed`). Delete is a soft delete so an admin can restore a piece from Trash.
 - **Admin reject/suspend decisions require a reason** stored in
   `profile_moderation_events`; the member can read their latest reason.
+- **Admins are operators, not members.** `npm run admin:bootstrap -- --create`
+  makes the account (Supabase Auth user + minimal `profiles` row) without the
+  persona funnel. RLS keeps admin profiles out of Discover, dossiers,
+  `profiles_public`, and the connection graph; admin posts stay on the feed
+  (announcements) with the author masked behind the platform label.
 - **Discover order is a seeded shuffle**, stable across load-more for one search
   session and reshuffled on a new search.
 

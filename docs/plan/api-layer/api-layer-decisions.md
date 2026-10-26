@@ -99,12 +99,13 @@ perbaikan audit di `20261016120000_s1_fixes.sql`.
 Audit pasca-S1 menemukan lubang RLS di `connections` dan beberapa item lain;
 daftar lengkap + bukti ada di [`s1-audit-fixes.md`](./s1-audit-fixes.md).
 
-| ID   | Keputusan                                                                           |
-| ---- | ----------------------------------------------------------------------------------- |
-| CA-1 | `date_of_birth` pindah ke `public.profile_private`; umur via `public.profile_age()` |
-| CA-2 | CI menjalankan suite RLS (`supabase/**` + `package*.json` path filter)              |
-| CA-3 | `ADMIN_EMAIL` = hook bootstrap cloud; seed lokal tetap hardcode admin               |
-| CA-4 | Kolom baru (F-8), lihat tabel di bawah                                              |
+| ID   | Keputusan                                                                                                                               |
+| ---- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| CA-1 | `date_of_birth` pindah ke `public.profile_private`; umur via `public.profile_age()`                                                     |
+| CA-2 | CI menjalankan suite RLS (`supabase/**` + `package*.json` path filter)                                                                  |
+| CA-3 | `ADMIN_EMAIL` = hook bootstrap cloud (`npm run admin:bootstrap`); seed lokal tetap hardcode admin                                       |
+| CA-4 | Kolom baru (F-8), lihat tabel di bawah                                                                                                  |
+| CA-5 | Admin = operator: `--create` tanpa persona; RLS menyembunyikan admin dari surface member, post admin tetap tampil dengan label platform |
 
 Kolom/field CA-4 yang dikunci (migrasi susulan `s1_fixes`):
 

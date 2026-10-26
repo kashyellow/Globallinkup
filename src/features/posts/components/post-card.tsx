@@ -12,6 +12,7 @@ import { ReportDialog } from "@/features/reports/components/report-dialog";
 import { getPathname, Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import type { FeedPost } from "../queries";
+import { AuthorName } from "./author-name";
 import { PostCarousel } from "./post-carousel";
 
 export function PostCard({
@@ -49,7 +50,19 @@ export function PostCard({
   const [shared, setShared] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
 
-  const authorHref = isAuthor ? "/profile" : `/persona/${post.authorId}`;
+  // Admins are hidden from `profiles_public`: no name comes back, and there is no
+  // persona page to link to, so their posts render with the platform label.
+  const authorName = post.author || t("platformAuthor");
+  const authorHref = isAuthor ? "/profile" : post.author ? `/persona/${post.authorId}` : undefined;
+  const authorAvatar = post.avatar ? (
+    <MediaImage
+      src={post.avatar}
+      alt={authorName}
+      wrapperClassName="h-12 w-12 rounded-full ring-1 ring-outline-variant"
+    />
+  ) : (
+    <DefaultAvatar className="h-12 w-12 rounded-full ring-1 ring-outline-variant" />
+  );
   const previewComments = post.comments
     .filter((comment) => comment.parentId === null && comment.deletedAt === null)
     .slice(-2);
@@ -105,28 +118,23 @@ export function PostCard({
         {/* Author header */}
         <div className="flex flex-wrap items-center justify-between gap-x-space-md gap-y-space-sm p-space-lg">
           <div className="flex min-w-0 flex-1 items-center gap-space-md">
-            <Link
-              href={authorHref}
-              className="shrink-0 rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              {post.avatar ? (
-                <MediaImage
-                  src={post.avatar}
-                  alt={post.author}
-                  wrapperClassName="h-12 w-12 rounded-full ring-1 ring-outline-variant"
-                />
-              ) : (
-                <DefaultAvatar className="h-12 w-12 rounded-full ring-1 ring-outline-variant" />
-              )}
-            </Link>
+            {authorHref ? (
+              <Link
+                href={authorHref}
+                className="shrink-0 rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              >
+                {authorAvatar}
+              </Link>
+            ) : (
+              <div className="shrink-0 rounded-full">{authorAvatar}</div>
+            )}
             <div className="flex min-w-0 flex-col">
               <h2 className="truncate font-label-lg text-label-lg font-semibold text-on-surface">
-                <Link
+                <AuthorName
+                  name={authorName}
                   href={authorHref}
                   className="rounded transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                >
-                  {post.author}
-                </Link>
+                />
               </h2>
               <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-secondary">
                 <span className="flex items-center gap-1.5">
@@ -254,12 +262,11 @@ export function PostCard({
           </div>
 
           <p className="font-body-md text-body-md leading-relaxed text-on-surface-strong">
-            <Link
+            <AuthorName
+              name={authorName}
               href={authorHref}
               className="font-semibold text-on-surface transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-            >
-              {post.author}
-            </Link>{" "}
+            />{" "}
             {post.caption}
           </p>
           {likeError ? (
@@ -275,14 +282,16 @@ export function PostCard({
                   {comment.avatar ? (
                     <MediaImage
                       src={comment.avatar}
-                      alt={comment.author}
+                      alt={comment.author || t("platformAuthor")}
                       wrapperClassName="h-7 w-7 shrink-0 rounded-full ring-1 ring-outline-variant"
                     />
                   ) : (
                     <DefaultAvatar className="h-7 w-7 shrink-0 rounded-full ring-1 ring-outline-variant" />
                   )}
                   <p className="min-w-0 font-body-sm text-body-sm leading-relaxed text-on-surface-strong">
-                    <span className="font-semibold text-on-surface">{comment.author}</span>{" "}
+                    <span className="font-semibold text-on-surface">
+                      {comment.author || t("platformAuthor")}
+                    </span>{" "}
                     {comment.body}
                   </p>
                 </div>
@@ -305,7 +314,7 @@ export function PostCard({
         </div>
       </div>
       <ReportDialog
-        target={{ type: "post", id: post.id, name: post.author }}
+        target={{ type: "post", id: post.id, name: authorName }}
         open={reportOpen}
         onClose={() => setReportOpen(false)}
       />
