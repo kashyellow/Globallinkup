@@ -65,7 +65,8 @@ implementation. Where this summary and the PRD disagree, the PRD wins.
 - `src/components/{ui,layout}/`, `src/lib/{supabase,i18n,validation}/`,
   `src/messages/`, `src/styles/`, `src/types/`.
 - `supabase/` — config, migrations, seed, RLS tests.
-- `docs/` — PRD, handover, SPEC/CONTEXT/CONSTRAINTS, `adr/`.
+- `docs/` — PRD, handover, CONTEXT, `adr/` (decision records),
+  `feedback/` (client review rounds), `plan/` (slice plans).
 - `tests/e2e/` — Playwright. `public/` stays at the repo root.
 
 ## Roles & states
@@ -74,7 +75,9 @@ implementation. Where this summary and the PRD disagree, the PRD wins.
 - Account states: `PENDING` → `APPROVED` / `REJECTED` / `SUSPENDED`.
   Only `APPROVED` users get platform access. `ADMIN` is always approved.
 - Auth email is private; contact info lives in a separate `contact_details` table
-  gated by RLS on an accepted connection.
+  gated by RLS on an accepted connection. **Admins are not an exception**: the
+  admin read policy is being removed so only the owner and an accepted connection
+  can read those channels (ADR 0005).
 - Custom cultural interests stay in `profiles.interests text[]`. New labels are
   registered in `interest_catalog` as `pending` (max 3 new per member per 24h)
   and only become suggestions after admin approval. Rejecting a pending label
@@ -122,8 +125,40 @@ These are confirmed and supersede the PRD where it disagrees:
 - **Discover order is a seeded shuffle**, stable across load-more for one search
   session and reshuffled on a new search.
 
+## Confirmed next work (client review, 2026-10-27)
+
+Approved scope from the first client review. Details and acceptance criteria live
+in `docs/feedback/2026-10-27-client-review.md`; each item has an ADR. Nothing here
+is implemented yet unless the code says so.
+
+- **Content lifecycle** (ADR 0001): author _archive_ (permanent, revertible),
+  author _delete_ (hard delete after a hard confirmation), admin _remove_ (soft,
+  14 days, reason required, one bounded appeal), comment content purged at 14
+  days while the tombstone stays. `post-images` storage reads must be gated on the
+  post state.
+- **Notifications inbox** (ADR 0004): DB-backed notices with deep links. This is
+  moderation feedback, **not chat**: no threads, realtime, or user-to-user
+  messaging.
+- **Granular admin roles** (ADR 0002): roles are capability sets
+  (`members.review`, `posts.moderate`, `comments.moderate`, `interests.review`,
+  `reports.manage`, `marketplace.manage`, `admins.manage`, `settings.manage`,
+  `audit.read`). The first admin manages accounts and permissions in the UI.
+- **Audit + PII-safe logging** (ADR 0003): append-only `audit_events` with ids,
+  actions, reasons and whitelisted metadata only; 12-month retention; gated by
+  `audit.read`.
+- **No admin access to PII** (ADR 0005): drop the admin policies on
+  `contact_details` and `profile_private`.
+- **Theme modes** (ADR 0006): `light | dark | system`, default `system`, dark
+  colours taken only from `baefd24^`; layout unaffected.
+- **Global countries** (ADR 0007): every ISO-3166 country can register, and the
+  discover region filter is derived from countries that actually have approved
+  members.
+
 ## Out of scope (do not build without asking)
 
 Chat/DMs · groups/forums · stories/reels/live/video · user marketplace listings ·
 seller/vendor accounts · carts/checkout/payments/shipping · AI matchmaking ·
-following/followers · sub-admin/moderator roles.
+following/followers.
+
+Granular admin roles (sub-admins) were on this list; they are now in scope per
+ADR 0002.
