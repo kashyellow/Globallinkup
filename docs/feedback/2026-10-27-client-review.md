@@ -133,11 +133,12 @@ phase 3 ≈ 7–10 days, phase 4 ≈ 4–6 days.
 
 **Phase 1**
 
-- [ ] A member can register with any ISO-3166 country.
-- [ ] The discover region filter only offers countries that have approved members.
-- [ ] Theme follows `system` by default; the switch persists across reloads with
-      no flash of the wrong palette; both palettes pass a contrast check.
-- [ ] The marketplace explainer states that listings are curated and links to the
+- [x] A member can register with any ISO-3166 country.
+- [x] The discover region filter only offers countries that have approved members.
+- [x] Theme follows `system` by default; the switch persists across reloads with
+      no flash of the wrong palette (`tests/e2e/theme.spec.ts`).
+- [ ] Both palettes pass a contrast check (manual pass still pending).
+- [x] The marketplace explainer states that listings are curated and links to the
       partner-inquiry CTA.
 
 **Phase 2**
@@ -159,6 +160,10 @@ phase 3 ≈ 7–10 days, phase 4 ≈ 4–6 days.
 **Phase 3**
 
 - [ ] Owner can create an admin/sub-admin, assign a role, and edit capabilities.
+- [ ] Creating an account returns a one-time invite link; opening it lands on
+      `/accept-invite`, where the person sets their own password and gets the
+      assigned role without the persona funnel.
+- [ ] The invite link is never written to logs or the audit table.
 - [ ] A sub-admin with `marketplace.manage` reaches the marketplace desk and gets
       403 on every other desk, by URL and by RLS.
 - [ ] The last owner cannot be demoted or deactivated.
@@ -173,14 +178,29 @@ phase 3 ≈ 7–10 days, phase 4 ≈ 4–6 days.
 
 ---
 
-## 6. Open questions
+## 6. Decisions on the open questions
 
-| #   | Question                                                                                           | For    | Status |
-| --- | -------------------------------------------------------------------------------------------------- | ------ | ------ |
-| 1   | Admin accounts: email invite (requires SMTP/Resend now) or generated password shown once?          | Client | open   |
-| 2   | Notifications: are the 7 moderation/decision types enough, or should connection events notify too? | Client | open   |
-| 3   | Date of birth: confirm admins lose access to the raw value (only age is shown)?                    | Client | open   |
-| 4   | Purge schedule: `03:00 UTC` daily, and does an admin need a "purge now" button for demos?          | Team   | open   |
+All four are closed as of 2026-10-27.
+
+| #   | Question                                                                                           | Decision                                                                                                                                                                                                                                                                           |
+| --- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Admin accounts: email invite (requires SMTP/Resend now) or generated password shown once?          | **Invite link generated server-side** — `auth.admin.generateLink({ type: "invite" })` — and shared by the owner out-of-band; `/accept-invite` sets the password. No SMTP or new dependency. `inviteUserByEmail` becomes the flow once a custom SMTP with a verified domain exists. |
+| 2   | Notifications: are the 7 moderation/decision types enough, or should connection events notify too? | The **seven types are final** for this round; connection events are not included.                                                                                                                                                                                                  |
+| 3   | Date of birth: confirm admins lose access to the raw value (only age is shown)?                    | **Yes.** Drop `profile_private_select_admin`; admins only ever see `profile_age()`.                                                                                                                                                                                                |
+| 4   | Purge schedule: `03:00 UTC` daily, and does an admin need a "purge now" button for demos?          | **Daily at 03:00 UTC**, with no in-app button (permanent deletion should not be one click away). Demos and tests use `npm run purge -- --dry-run` / `--now`.                                                                                                                       |
+
+The invite link is a credential: single use, short-lived, never logged, never
+audited, and shown only once.
+
+### Operational gap: outbound email
+
+Not part of the six items, but it blocks launch: the cloud project still uses
+Supabase's default SMTP, which **only delivers to addresses in the Supabase
+organisation** and caps at **2 messages per hour**. `forgot-password` therefore
+does not reach real members today. Configuring Resend (or another provider) with a
+verified sending domain is a required production task. It is dashboard
+configuration, not a package — and the admin invite flow above deliberately does
+not depend on it.
 
 ---
 

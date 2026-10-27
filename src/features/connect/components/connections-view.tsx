@@ -1,10 +1,11 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 
 import { Icon } from "@/components/ui/icon";
+import { countryLabel } from "@/lib/persona/countries";
 import { cn } from "@/lib/utils";
 import { RegionFilter } from "@/features/persona/components/region-filter";
 import { CONNECTION_TABS, type ConnectionTab } from "../data";
@@ -54,7 +55,7 @@ function StatChip({
 
 export function ConnectionsView({ data }: { data: ConnectionsData }) {
   const t = useTranslations("Connections");
-  const tCountries = useTranslations("PersonaForm");
+  const locale = useLocale();
   const [tab, setTab] = useState<ConnectionTab>("active");
   const [countries, setCountries] = useState<string[]>([]);
   const [query, setQuery] = useState("");
@@ -62,7 +63,7 @@ export function ConnectionsView({ data }: { data: ConnectionsData }) {
   const needle = query.trim().toLowerCase();
   const availableCountries = [...new Set(data.active.map((connection) => connection.countryCode))]
     .filter(Boolean)
-    .sort((a, b) => tCountries(`countries.${a}`).localeCompare(tCountries(`countries.${b}`)));
+    .sort((a, b) => countryLabel(a, locale).localeCompare(countryLabel(b, locale), locale));
 
   const visibleActive = data.active.filter((connection) => {
     if (countries.length > 0 && !countries.includes(connection.countryCode)) return false;

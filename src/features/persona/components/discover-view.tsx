@@ -17,10 +17,12 @@ export async function DiscoverView({
   personas,
   total,
   seed,
+  countries,
 }: {
   personas: Persona[];
   total: number;
   seed: string;
+  countries: string[];
 }) {
   const t = await getTranslations("Discover");
   const tCommon = await getTranslations("Common");
@@ -128,6 +130,7 @@ export async function DiscoverView({
         initialPersonas={personas}
         initialSeed={seed}
         initialTotal={total}
+        countryOptions={countries}
         privacy={privacy}
         trustStrip={trustStrip}
       />

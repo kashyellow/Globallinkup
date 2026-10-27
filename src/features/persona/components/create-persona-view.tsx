@@ -12,7 +12,7 @@ import { signUpAction, type AuthError } from "@/features/auth/actions";
 import { useRegistrationDraft } from "@/features/auth/components/registration-draft-provider";
 import { savePersonaAction, type PersonaError } from "@/features/persona/actions";
 import { uploadImageAction } from "@/features/media/actions";
-import { PLATFORM_COUNTRIES } from "@/lib/persona/countries";
+import { countryLabel, sortedCountryCodes } from "@/lib/persona/countries";
 import { INTEREST_MAX } from "@/lib/persona/interests";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -649,9 +649,9 @@ export function CreatePersonaView({
                     defaultValue={initial?.country ?? "ES"}
                     className={cn(inputClass, "cursor-pointer appearance-none pr-10")}
                   >
-                    {PLATFORM_COUNTRIES.map((code) => (
+                    {sortedCountryCodes(locale).map((code) => (
                       <option key={code} value={code}>
-                        {t(`countries.${code}`)}
+                        {countryLabel(code, locale)}
                       </option>
                     ))}
                   </select>

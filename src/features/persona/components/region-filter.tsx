@@ -1,10 +1,10 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 
 import { Icon } from "@/components/ui/icon";
-import { PLATFORM_COUNTRIES } from "@/lib/persona/countries";
+import { countryLabel, ISO_COUNTRY_CODES } from "@/lib/persona/countries";
 import { cn } from "@/lib/utils";
 
 /**
@@ -24,7 +24,7 @@ export function RegionFilter({
   options?: readonly string[];
 }) {
   const t = useTranslations("Discover");
-  const tCountries = useTranslations("PersonaForm");
+  const locale = useLocale();
   const panelId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
@@ -52,11 +52,10 @@ export function RegionFilter({
   }, [open]);
 
   const needle = query.trim().toLowerCase();
-  const countries = optionCodes ?? PLATFORM_COUNTRIES;
-  const options = countries.filter((code) => {
-    if (!needle) return true;
-    return tCountries(`countries.${code}`).toLowerCase().includes(needle);
-  });
+  const countries = optionCodes ?? ISO_COUNTRY_CODES;
+  const options = countries
+    .filter((code) => !needle || countryLabel(code, locale).toLowerCase().includes(needle))
+    .sort((a, b) => countryLabel(a, locale).localeCompare(countryLabel(b, locale), locale));
 
   function toggle(code: string) {
     onChange(
@@ -152,7 +151,7 @@ export function RegionFilter({
                         : "text-secondary hover:bg-surface-container hover:text-on-surface",
                     )}
                   >
-                    <span>{tCountries(`countries.${code}`)}</span>
+                    <span>{countryLabel(code, locale)}</span>
                     <Icon
                       name={active ? "check_circle" : "circle"}
                       className={cn("text-base", active ? "text-primary" : "text-outline-variant")}

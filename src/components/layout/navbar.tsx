@@ -9,6 +9,7 @@ import { BrandMark } from "@/components/ui/brand-mark";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { MediaImage } from "@/components/ui/media-image";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useLocaleSwitch } from "@/features/shared/use-locale-switch";
 import { Link, usePathname } from "@/lib/i18n/navigation";
 import { routing } from "@/lib/i18n/routing";
@@ -36,6 +37,7 @@ export function Navbar({
   pendingRequests?: number;
 }) {
   const t = useTranslations("Nav");
+  const tTheme = useTranslations("Theme");
   const pathname = usePathname();
   const { locale, pending: localePending, switchLocale } = useLocaleSwitch();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -106,6 +108,7 @@ export function Navbar({
         </nav>
 
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <ThemeToggle className="hidden sm:inline-flex" />
           <div className="hidden sm:block">
             <LocaleSwitch
               locale={locale}
@@ -212,6 +215,11 @@ export function Navbar({
               </Link>
             ) : null}
             <div className="my-1 h-px bg-outline-variant" />
+
+            <div className="flex items-center justify-between gap-space-sm px-3 py-2">
+              <span className="font-label-md text-label-md text-text-muted">{tTheme("label")}</span>
+              <ThemeToggle />
+            </div>
 
             <div className="flex items-center justify-between gap-space-sm px-3 py-2 sm:hidden">
               <span className="font-label-md text-label-md text-text-muted">{t("language")}</span>

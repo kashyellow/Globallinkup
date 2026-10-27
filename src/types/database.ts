@@ -870,6 +870,10 @@ export type Database = {
     Functions: {
       are_connected: { Args: { a: string; b: string }; Returns: boolean };
       create_post: { Args: { p_caption: string; p_image_paths: string[] }; Returns: string };
+      discover_countries: {
+        Args: Record<PropertyKey, never>;
+        Returns: { country_code: string; member_count: number }[];
+      };
       discover_personas: {
         Args: {
           p_countries?: string[];

@@ -3,7 +3,7 @@
 import { z } from "zod";
 
 import { getCurrentProfile, getCurrentUser } from "@/lib/auth";
-import { PLATFORM_COUNTRIES } from "@/lib/persona/countries";
+import { ISO_COUNTRY_CODES, isIsoCountryCode } from "@/lib/persona/countries";
 
 import { DISCOVER_PAGE_SIZE } from "./constants";
 import { getDiscoverPersonas } from "./queries";
@@ -11,7 +11,10 @@ import type { Persona } from "./data";
 
 const discoverQuerySchema = z.object({
   query: z.string().trim().max(100).default(""),
-  countries: z.array(z.enum(PLATFORM_COUNTRIES)).max(PLATFORM_COUNTRIES.length).default([]),
+  countries: z
+    .array(z.string().trim().toUpperCase().refine(isIsoCountryCode, { message: "unknown country" }))
+    .max(ISO_COUNTRY_CODES.length)
+    .default([]),
   offset: z.number().int().min(0).max(10_000).default(0),
   limit: z.number().int().min(1).max(20).default(DISCOVER_PAGE_SIZE),
   seed: z.string().trim().min(1).max(64).default("default"),

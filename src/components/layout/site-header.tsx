@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { BrandMark } from "@/components/ui/brand-mark";
 import { LocaleSwitch } from "@/components/layout/locale-switch";
 import { Icon } from "@/components/ui/icon";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { Link } from "@/lib/i18n/navigation";
 import { useLocaleSwitch } from "@/features/shared/use-locale-switch";
 import { cn } from "@/lib/utils";
@@ -74,6 +75,7 @@ export function SiteHeader({ mode = "content" }: { mode?: "landing" | "content" 
             </nav>
 
             <div className="flex shrink-0 items-center gap-2">
+              <ThemeToggle className="hidden sm:inline-flex" />
               <LocaleSwitch
                 locale={locale}
                 onSwitch={switchLocale}
@@ -117,12 +119,15 @@ export function SiteHeader({ mode = "content" }: { mode?: "landing" | "content" 
             </div>
           </>
         ) : (
-          <LocaleSwitch
-            locale={locale}
-            onSwitch={switchLocale}
-            disabled={localePending}
-            label={t("language")}
-          />
+          <div className="flex shrink-0 items-center gap-2">
+            <ThemeToggle className="hidden sm:inline-flex" />
+            <LocaleSwitch
+              locale={locale}
+              onSwitch={switchLocale}
+              disabled={localePending}
+              label={t("language")}
+            />
+          </div>
         )}
       </div>
 

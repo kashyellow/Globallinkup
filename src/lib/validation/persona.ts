@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { isIsoCountryCode } from "@/lib/persona/countries";
+
 import {
   CUSTOM_INTEREST_MAX,
   CUSTOM_INTEREST_MIN,
@@ -34,7 +36,7 @@ const interestSchema = z
 export const savePersonaSchema = z
   .object({
     fullName: z.string().trim().min(2, "fullNameTooShort").max(120),
-    country: z.string().trim().length(2, "countryInvalid"),
+    country: z.string().trim().toUpperCase().refine(isIsoCountryCode, "countryInvalid"),
     city: z.string().trim().min(1, "cityRequired").max(120),
     headline: z
       .union([z.literal(""), z.string().trim().max(120)])

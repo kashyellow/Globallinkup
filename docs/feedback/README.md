@@ -15,7 +15,8 @@ specified. Cross-cutting decisions graduate into `docs/adr/`.
 - Numbered items are stable. Follow-ups on item 4 go in the next round's file and
   link back with `(see round 1, item 4)`.
 - Anything that changes the data model, RLS, or a locked decision gets an ADR.
-- Open questions live in the round file **and** in its "Open questions" table
-  until answered, so nothing is silently dropped.
+- Questions live in the round file and are **closed in place** (the table is
+  renamed to "Decisions on the open questions"), so nothing is silently dropped
+  and the original wording stays readable.
 - Scope changes against `docs/CONTEXT.md` ("Out of scope") are called out
   explicitly; this round is what moved granular admin roles in.

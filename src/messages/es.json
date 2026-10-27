@@ -42,6 +42,12 @@
     "guidelines": "Normas de Conexión",
     "adminAccess": "Acceso Admin"
   },
+  "Theme": {
+    "label": "Tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema (sigue el dispositivo)"
+  },
   "Common": {
     "connect": "Conectar",
     "connected": "Conectado",
@@ -382,7 +388,7 @@
     },
     "notice": {
       "title": "Cómo Funciona el Comercio Curado de GlobalLinkup",
-      "body": "Conectamos a compradores interculturales conscientes directamente con makers regionales verificados. El equipo de GlobalLinkup coordina la logística, el cumplimiento aduanero y los pagos directos sin el desorden de un carrito de compra automatizado.",
+      "body": "Cada pieza está curada por el equipo de GlobalLinkup, así que los miembros no pueden publicar sus propios artículos. Agregar mercancía se hace en el portal de administración, no aquí. Si creas algo y quieres que aparezca, envía una consulta para socios artesanos y nuestro equipo se encarga de la ficha, la logística, la aduana y el pago directo.",
       "cta": "Consultas para Socios Artesanos"
     },
     "drawer": {
