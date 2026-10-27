@@ -280,6 +280,106 @@
 }
 
 /*
+ * Dark palette — colours only, lifted from the warm-charcoal design that
+ * preceded the light mockup (commit baefd24^). Spacing, radii, typography and
+ * shadows stay exactly as defined above; the five gold tokens did not exist in
+ * that commit and are derived to keep the same relationship to their neighbours.
+ */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-primary: #e86a5b;
+  --color-primary-container: #e86a5b;
+  --color-primary-hover: #d85e50;
+  --color-inverse-primary: #a6392e;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #ffffff;
+  --color-background: #0b0a09;
+  --color-background-cream: #0b0a09;
+  --color-surface: #121110;
+  --color-surface-dark: #121110;
+  --color-surface-dim: #141311;
+  --color-surface-lowest: #0e0d0c;
+  --color-surface-low: #181715;
+  --color-surface-card: #181715;
+  --color-surface-container: #1e1c1a;
+  --color-surface-container-high: #262320;
+  --color-surface-container-highest: #2b2824;
+  --color-surface-bright: #262320;
+  --color-surface-variant: #242220;
+  --color-inverse-surface: #f6f3ee;
+  --color-inverse-on-surface: #121110;
+  --color-on-background: #f6f3ee;
+  --color-on-surface: #f6f3ee;
+  --color-text-ivory: #f6f3ee;
+  --color-on-surface-variant: #b0aaa2;
+  --color-on-surface-strong: #ede9e3;
+  --color-on-surface-muted: #c8c3bd;
+  --color-text-muted: #878179;
+  --color-text-muted-dark: #9e9992;
+  --color-placeholder: #5c564f;
+  --color-secondary: #9e9992;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #2b2320;
+  --color-secondary-container-alt: #26201d;
+  --color-secondary-fixed: #2b2220;
+  --color-secondary-fixed-dim: #362e2b;
+  --color-on-secondary-container: #ede9e3;
+  --color-tertiary: #2e9b68;
+  --color-tertiary-container: #2e9b68;
+  --color-tertiary-fixed: #1a402f;
+  --color-tertiary-fixed-dim: #2e9b68;
+  --color-on-tertiary: #ffffff;
+  --color-on-tertiary-container: #73dba2;
+  --color-success: #2e9b68;
+  --color-success-bright: #22c55e;
+  --color-success-strong: #006d44;
+  --color-success-hover: #258257;
+  --color-success-surface: #163d2c;
+  --color-success-surface-alt: #1b382b;
+  --color-success-container: #184e36;
+  --color-success-border: #2d7d56;
+  --color-success-ring: #38a36f;
+  --color-success-text: #73dba2;
+  --color-success-text-bright: #8ff7bc;
+  --color-error: #cf6679;
+  --color-error-container: #491a1a;
+  --color-on-error: #ffffff;
+  --color-on-error-container: #ffdad6;
+  --color-danger: #ef4444;
+  --color-danger-surface: #3d1414;
+  --color-danger-border: #5c1d1d;
+  --color-danger-border-strong: #ba1a1a;
+  --color-danger-text: #fca5a5;
+  --color-admin-surface: #2e201e;
+  --color-admin-border: #482823;
+  --color-admin-text: #ffb4a9;
+  --color-admin-text-soft: #ffdad5;
+  --color-outline: #3d3833;
+  --color-outline-variant: #2e2b27;
+  --color-border-subtle: #2e2b27;
+  --color-border-dark: #383430;
+  --color-border-strong: #3e3430;
+  --color-outline-strong: #524d47;
+  --color-outline-hover: #48433d;
+  --color-surface-tint: #e86a5b;
+  --color-marketing-base: #100e0d;
+  --color-marketing-shell: #171513;
+  --color-marketing-core: #1c1917;
+  --color-marketing-raised: #23201d;
+  --color-marketing-high: #2b2724;
+  --color-gold: #e2b678;
+  --color-gold-hover: #eec489;
+  --color-gold-strong: #e6bd86;
+  --color-gold-soft: #2e2519;
+  --color-on-gold: #231a12;
+  --color-jade: #4aab77;
+  --color-jade-bright: #6ecf98;
+  --color-jade-dim: #2f6b4b;
+  --color-jade-surface: #15271d;
+  --color-jade-border: #234332;
+}
+
+/*
  * Font families reference the CSS variables emitted by next/font, so they must
  * live in an `inline` theme block for the value to be inlined at build time.
  */

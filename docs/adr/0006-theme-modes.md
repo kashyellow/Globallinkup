@@ -1,6 +1,6 @@
 # ADR 0006 — Light, dark, and system themes
 
-- **Status:** proposed
+- **Status:** accepted (implemented 2026-10-27)
 - **Date:** 2026-10-27
 - **Related:** [round 1, item 5](../feedback/2026-10-27-client-review.md)
 

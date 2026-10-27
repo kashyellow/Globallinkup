@@ -28,6 +28,18 @@ export type DiscoverResult = {
   total: number;
 };
 
+/**
+ * Countries that currently have approved members, most populated first. The
+ * region filter renders this instead of a hardcoded list (ADR 0007).
+ */
+export async function getDiscoverCountries(): Promise<string[]> {
+  const supabase = await createClient();
+  const rows = unwrap(await supabase.rpc("discover_countries")) ?? [];
+  return rows
+    .map((row) => row.country_code)
+    .filter((code): code is string => typeof code === "string" && code.length > 0);
+}
+
 /** S6 — approved suggestions plus the viewer's own pending labels (RLS-gated). */
 export type InterestCatalogItem = {
   label: string;

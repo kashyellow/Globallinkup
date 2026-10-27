@@ -150,11 +150,12 @@ is implemented yet unless the code says so.
   `audit.read`.
 - **No admin access to PII** (ADR 0005): drop the admin policies on
   `contact_details` and `profile_private`.
-- **Theme modes** (ADR 0006): `light | dark | system`, default `system`, dark
-  colours taken only from `baefd24^`; layout unaffected.
-- **Global countries** (ADR 0007): every ISO-3166 country can register, and the
-  discover region filter is derived from countries that actually have approved
-  members.
+- **Theme modes** (ADR 0006) — **implemented**: `light | dark | system`, default
+  `system`, dark colours taken only from `baefd24^`; layout unaffected. Cookie +
+  pre-paint script, toggle in both headers.
+- **Global countries** (ADR 0007) — **implemented**: every ISO-3166 country can
+  register (`Intl.DisplayNames` labels), and the discover region filter is derived
+  from countries that actually have approved members (`discover_countries()`).
 
 ## Out of scope (do not build without asking)
 

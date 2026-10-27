@@ -19,12 +19,14 @@ export function DiscoverWorkspace({
   initialPersonas,
   initialTotal,
   initialSeed,
+  countryOptions,
   privacy,
   trustStrip,
 }: {
   initialPersonas: Persona[];
   initialTotal: number;
   initialSeed: string;
+  countryOptions: string[];
   privacy: ReactNode;
   trustStrip: ReactNode;
 }) {
@@ -144,6 +146,7 @@ export function DiscoverWorkspace({
         onQueryChange={handleQueryChange}
         countries={countries}
         onCountriesChange={handleCountriesChange}
+        countryOptions={countryOptions}
         onClear={clearFilters}
         loading={loading}
       />

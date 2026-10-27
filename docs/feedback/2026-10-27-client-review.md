@@ -133,11 +133,12 @@ phase 3 ≈ 7–10 days, phase 4 ≈ 4–6 days.
 
 **Phase 1**
 
-- [ ] A member can register with any ISO-3166 country.
-- [ ] The discover region filter only offers countries that have approved members.
-- [ ] Theme follows `system` by default; the switch persists across reloads with
-      no flash of the wrong palette; both palettes pass a contrast check.
-- [ ] The marketplace explainer states that listings are curated and links to the
+- [x] A member can register with any ISO-3166 country.
+- [x] The discover region filter only offers countries that have approved members.
+- [x] Theme follows `system` by default; the switch persists across reloads with
+      no flash of the wrong palette (`tests/e2e/theme.spec.ts`).
+- [ ] Both palettes pass a contrast check (manual pass still pending).
+- [x] The marketplace explainer states that listings are curated and links to the
       partner-inquiry CTA.
 
 **Phase 2**

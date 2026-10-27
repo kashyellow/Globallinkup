@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { Instrument_Sans, Manrope } from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
@@ -6,6 +7,7 @@ import { notFound } from "next/navigation";
 
 import { ICON_FONT_HREF } from "@/components/ui/icon-names";
 import { routing } from "@/lib/i18n/routing";
+import { parseThemeMode, THEME_COLORS, THEME_COOKIE, THEME_INIT_SCRIPT } from "@/lib/theme";
 import "../globals.css";
 
 const manrope = Manrope({
@@ -65,10 +67,14 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   }
 
   const messages = await getMessages();
+  const cookieStore = await cookies();
+  const themeMode = parseThemeMode(cookieStore.get(THEME_COOKIE)?.value);
 
   return (
     <html
       lang={locale}
+      data-theme-mode={themeMode}
+      data-theme={themeMode === "system" ? undefined : themeMode}
       className={`${manrope.variable} ${body.variable} h-full scroll-pt-24 antialiased motion-safe:scroll-smooth`}
       suppressHydrationWarning
     >
@@ -78,6 +84,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
         {/* Material Symbols icon font (App Router has no pages/_document).
             Subset via `icon_names` keeps this at ~15 KB instead of ~4 MB. */}
         <link rel="stylesheet" href={ICON_FONT_HREF} />
+        <meta name="theme-color" content={THEME_COLORS.light} />
+        {/* Resolves `system` before first paint so the palette never flashes. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body className="flex min-h-full flex-col bg-background font-body-md text-body-md text-on-surface">
         {/* Shell chrome (Navbar/Footer vs public header/footer) lives in the
