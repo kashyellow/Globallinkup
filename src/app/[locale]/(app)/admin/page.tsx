@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
+import { getLocale } from "next-intl/server";
+
 import { LinkPending } from "@/components/layout/link-pending";
 import { Icon } from "@/components/ui/icon";
 import { getAdminMetrics } from "@/features/admin/queries";
+import { getAdminCapabilities } from "@/lib/admin";
+import { redirect } from "@/lib/i18n/navigation";
 import { Link } from "@/lib/i18n/navigation";
 
 export async function generateMetadata({
@@ -17,6 +21,22 @@ export async function generateMetadata({
 }
 
 export default async function AdminDashboardPage() {
+  // The control room aggregates every desk, so it is owner-level. Sub-admins land
+  // on the desk they can actually use.
+  const capabilities = await getAdminCapabilities();
+  if (!capabilities.includes("reports.manage")) {
+    const locale = await getLocale();
+    const target = capabilities.includes("members.review")
+      ? "/admin/users"
+      : capabilities.includes("marketplace.manage")
+        ? "/admin/marketplace"
+        : capabilities.includes("interests.review")
+          ? "/admin/interests"
+          : "/discover";
+    redirect({ href: target, locale });
+    return null;
+  }
+
   const t = await getTranslations("Admin.dashboard");
   const metrics = await getAdminMetrics();
 

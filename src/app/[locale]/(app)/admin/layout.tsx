@@ -3,11 +3,13 @@ import { getTranslations } from "next-intl/server";
 
 import { Icon } from "@/components/ui/icon";
 import { AdminTabs } from "@/features/admin/components/admin-tabs";
+import { getAdminCapabilities } from "@/lib/admin";
 import { requireAdmin } from "@/lib/auth";
 
 /** Guarded admin shell: one compact context bar, then route-specific tabs. */
 export default async function AdminLayout({ children }: { children: ReactNode }) {
   await requireAdmin();
+  const capabilities = await getAdminCapabilities();
   const t = await getTranslations("Admin");
 
   return (
@@ -33,7 +35,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
               {t("roleBadge")}
             </span>
           </div>
-          <AdminTabs />
+          <AdminTabs capabilities={capabilities} />
         </div>
       </section>
       {children}

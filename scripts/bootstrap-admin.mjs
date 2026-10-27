@@ -51,6 +51,8 @@ Options:
                          Default: "${DEFAULT_DISPLAY_NAME}".
   --password=<secret>    Password for a created account. When the account
                          already exists this resets it. Omit to generate one.
+  --role=<slug>          Admin role to assign (default: owner). Create roles in
+                         the database first; unknown slugs are rejected.
   --email=<address>      Target account. Default: ADMIN_EMAIL.
   --dry-run              Print the plan without writing anything.
   --allow-local          Allow a local Supabase URL (127.0.0.1 / localhost).
@@ -200,6 +202,7 @@ async function main() {
   const { values } = parseArgs({
     options: {
       email: { type: "string" },
+      role: { type: "string" },
       create: { type: "boolean", default: false },
       "display-name": { type: "string" },
       password: { type: "string" },
@@ -225,6 +228,7 @@ async function main() {
     fail(`--password must be at least ${MIN_PASSWORD_LENGTH} characters.`);
   }
 
+  const roleSlug = (values.role ?? "owner").trim();
   const displayName = (values["display-name"] ?? DEFAULT_DISPLAY_NAME).trim();
   if (values.create && !displayName) {
     fail("--display-name cannot be empty.");
@@ -282,9 +286,25 @@ async function main() {
   }
   console.log(`  actions : ${steps.join("; ")}`);
 
+  console.log(`  role    : ${roleSlug}`);
+
   if (values["dry-run"]) {
     console.log("  dry run : nothing was written.");
     return;
+  }
+
+  const { data: roleRow } = await supabase
+    .from("admin_roles")
+    .select("id, slug")
+    .eq("slug", roleSlug)
+    .maybeSingle();
+
+  if (!roleRow) {
+    fail(
+      `unknown admin role "${roleSlug}". Create it in the admin UI or the database ` +
+        "first, then re-run.",
+      2,
+    );
   }
 
   let password = null;
@@ -317,8 +337,17 @@ async function main() {
     }
   }
 
+  if (profile.admin_role_id !== roleRow.id) {
+    const { error: roleError } = await supabase
+      .from("profiles")
+      .update({ admin_role_id: roleRow.id })
+      .eq("id", profile.id);
+
+    if (roleError) fail(`could not assign the role: ${roleError.message}`);
+  }
+
   console.log(
-    `\n${profile.display_name} <${email}> is now ${profile.role} / ${profile.approval_status}.`,
+    `\n${profile.display_name} <${email}> is now ${profile.role} / ${profile.approval_status} (${roleRow.slug}).`,
   );
   if (generatedPassword && password) {
     console.log(`\nGenerated password (shown once): ${password}`);

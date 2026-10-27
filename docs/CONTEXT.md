@@ -145,12 +145,12 @@ is implemented yet unless the code says so.
 - **Notifications inbox** (ADR 0004): DB-backed notices with deep links. This is
   moderation feedback, **not chat**: no threads, realtime, or user-to-user
   messaging.
-- **Granular admin roles** (ADR 0002): roles are capability sets
-  (`members.review`, `posts.moderate`, `comments.moderate`, `interests.review`,
-  `reports.manage`, `marketplace.manage`, `admins.manage`, `settings.manage`,
-  `audit.read`). The first admin manages accounts and permissions in the UI, and
-  hands out a one-time invite link so the person sets their own password (no SMTP
-  needed).
+- **Granular admin roles** (ADR 0002) — **data model, RLS and shell
+  implemented**: `admin_roles` + `profiles.admin_role_id`, `has_capability()`,
+  policies rewritten per area, admin tabs filtered by capability, and
+  `admin:bootstrap --role=<slug>` assigns a role. `is_admin()` now means owner, so
+  anything not yet migrated stays owner-only. Still pending: the in-app team
+  screen (create accounts, edit capabilities, one-time invite link).
 - **Audit + PII-safe logging** (ADR 0003): append-only `audit_events` with ids,
   actions, reasons and whitelisted metadata only; 12-month retention; gated by
   `audit.read`.

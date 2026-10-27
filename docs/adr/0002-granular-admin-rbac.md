@@ -1,6 +1,6 @@
 # ADR 0002 — Granular admin roles and capabilities
 
-- **Status:** proposed
+- **Status:** accepted — roles, policy rewrite, capability-aware shell and CLI role assignment landed 2026-10-28; the in-app team/invite UI is still pending
 - **Date:** 2026-10-27
 - **Related:** [round 1, item 6](../feedback/2026-10-27-client-review.md),
   [ADR 0003 (audit)](./0003-audit-log-and-pii.md),

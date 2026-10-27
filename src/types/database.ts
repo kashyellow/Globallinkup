@@ -602,6 +602,7 @@ export type Database = {
       };
       profiles: {
         Row: {
+          admin_role_id: string | null;
           approval_status: Database["public"]["Enums"]["approval_status"];
           avatar_url: string | null;
           badge: string | null;
@@ -624,6 +625,7 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          admin_role_id?: string | null;
           approval_status?: Database["public"]["Enums"]["approval_status"];
           avatar_url?: string | null;
           badge?: string | null;
@@ -646,6 +648,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          admin_role_id?: string | null;
           approval_status?: Database["public"]["Enums"]["approval_status"];
           avatar_url?: string | null;
           badge?: string | null;
@@ -782,6 +785,39 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      admin_roles: {
+        Row: {
+          capabilities: string[];
+          created_at: string;
+          description: string | null;
+          id: string;
+          is_system: boolean;
+          name: string;
+          slug: string;
+          updated_at: string;
+        };
+        Insert: {
+          capabilities?: string[];
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          is_system?: boolean;
+          name: string;
+          slug: string;
+          updated_at?: string;
+        };
+        Update: {
+          capabilities?: string[];
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          is_system?: boolean;
+          name?: string;
+          slug?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
       };
       notifications: {
         Row: {
@@ -965,6 +1001,10 @@ export type Database = {
       discover_countries: {
         Args: Record<PropertyKey, never>;
         Returns: { country_code: string; member_count: number }[];
+      };
+      my_capabilities: {
+        Args: Record<PropertyKey, never>;
+        Returns: string[];
       };
       purge_expired_content: {
         Args: { p_dry_run?: boolean };
