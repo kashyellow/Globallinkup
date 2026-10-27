@@ -143,6 +143,16 @@ A single Vercel Cron (`0 3 * * *`) hits `/api/cron/purge` with a
 Vercel Hobby allows 100 cron jobs per project but only **once per day** with
 per-hour scheduling precision, which is fine for a 14-day window.
 
+The hour is a server concern, not a user-facing one: a removed post is invisible
+the moment the admin removes it, and the timer only decides when the bytes are
+deleted. `03:00 UTC` is chosen for low global load; no per-user timezone logic
+exists.
+
+There is **no** in-app "purge now" button — permanent deletion should not be one
+click away. Demos and tests use the same code path from the CLI:
+`npm run purge -- --dry-run` and `npm run purge -- --now` (service role, local and
+staging only).
+
 ## Consequences
 
 - The author loses "undo" for deletion. That is the point: the archive exists for

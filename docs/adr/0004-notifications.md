@@ -56,8 +56,8 @@ create table public.notifications (
 | `persona.approved` / `persona.rejected` / `persona.suspended` | Member decision                        | `/profile` / `/verify`                                                              |
 | `interest.approved` / `interest.rejected`                     | Custom interest decision               | `/profile/edit`                                                                     |
 
-Connection events are **not** included in this round; they are an open question
-for the client.
+Connection events are **not** included: the client confirmed the seven types above
+are enough for this round.
 
 ### Interaction model
 
@@ -70,8 +70,10 @@ for the client.
 - No realtime. The bell refreshes on navigation; optional lightweight polling
   (60 s) is enough for a moderation notice and can be dropped without any data
   change.
-- No email in this round: sending mail needs a real SMTP provider, which is still
-  an open question (see ADR 0002). The schema has room to add `emailed_at` later.
+- No email in this round: sending mail needs a custom SMTP provider, which is still
+  missing (see "Known operational gaps" in `docs/CONTEXT.md`). The invite link in
+  ADR 0002 is delivered by the owner instead. The schema has room to add
+  `emailed_at` later.
 
 ### Presentation rules (PII)
 

@@ -142,7 +142,9 @@ is implemented yet unless the code says so.
 - **Granular admin roles** (ADR 0002): roles are capability sets
   (`members.review`, `posts.moderate`, `comments.moderate`, `interests.review`,
   `reports.manage`, `marketplace.manage`, `admins.manage`, `settings.manage`,
-  `audit.read`). The first admin manages accounts and permissions in the UI.
+  `audit.read`). The first admin manages accounts and permissions in the UI, and
+  hands out a one-time invite link so the person sets their own password (no SMTP
+  needed).
 - **Audit + PII-safe logging** (ADR 0003): append-only `audit_events` with ids,
   actions, reasons and whitelisted metadata only; 12-month retention; gated by
   `audit.read`.
@@ -162,3 +164,12 @@ following/followers.
 
 Granular admin roles (sub-admins) were on this list; they are now in scope per
 ADR 0002.
+
+## Known operational gaps
+
+- **Outbound email.** The cloud project still uses Supabase's default SMTP, which
+  only delivers to addresses in the Supabase organisation and caps at 2 messages
+  per hour. `forgot-password` therefore does not reach real members. Configuring
+  Resend (or another provider) with a verified sending domain is a **pre-launch
+  requirement**; it is dashboard configuration, not a package. Admin accounts use
+  invite links shared by the owner, so they do not depend on SMTP.

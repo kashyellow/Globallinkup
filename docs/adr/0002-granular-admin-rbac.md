@@ -99,16 +99,24 @@ model already allows it without a migration.
 
 ### Creating accounts
 
-Each admin has their own email and password. Two flows, and the choice is an
-open question for the client:
+Each admin has their own email and password, and the owner creates the account
+from the UI. The chosen flow avoids SMTP for now (round 1, question 1):
 
-1. **Invite (preferred long-term):** `auth.admin.inviteUserByEmail` → the person
-   sets their own password via `/accept-invite`, which creates the minimal profile
-   and assigns the role. Requires a working SMTP provider (Resend or similar).
-2. **Generated password (works today):** the owner enters email + role; the
-   server generates a password, shows it once, and the account signs in normally.
-   It is the current `npm run admin:bootstrap -- --create` behaviour moved into
-   the UI.
+1. **Invite link, shared by the owner (current).** The server calls
+   `auth.admin.generateLink({ type: "invite", email })` with the service role and
+   shows the returned `action_link` once. The owner sends it over a channel they
+   trust. The link opens `/accept-invite?token=…`, where the person sets their own
+   password; that route creates the minimal profile and assigns the role, skipping
+   the persona funnel.
+   - The link **is** a credential: single use, short-lived, never logged, never
+     stored in the audit table, and never shown a second time.
+   - The admin never learns the password, and the account cannot be used until
+     the link is accepted.
+2. **Email invite (once SMTP exists).** The same flow, but
+   `auth.admin.inviteUserByEmail` sends the message directly; no schema or UI
+   change, only the call site.
+3. **Generated password (fallback).** Generate, show once, sign in normally. Used
+   only when a link cannot be delivered.
 
 The CLI stays for the very first owner:
 `npm run admin:bootstrap -- --create --email=… --role=owner`.
