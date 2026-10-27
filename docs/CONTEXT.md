@@ -142,17 +142,20 @@ is implemented yet unless the code says so.
 - **Granular admin roles** (ADR 0002): roles are capability sets
   (`members.review`, `posts.moderate`, `comments.moderate`, `interests.review`,
   `reports.manage`, `marketplace.manage`, `admins.manage`, `settings.manage`,
-  `audit.read`). The first admin manages accounts and permissions in the UI.
+  `audit.read`). The first admin manages accounts and permissions in the UI, and
+  hands out a one-time invite link so the person sets their own password (no SMTP
+  needed).
 - **Audit + PII-safe logging** (ADR 0003): append-only `audit_events` with ids,
   actions, reasons and whitelisted metadata only; 12-month retention; gated by
   `audit.read`.
 - **No admin access to PII** (ADR 0005): drop the admin policies on
   `contact_details` and `profile_private`.
-- **Theme modes** (ADR 0006): `light | dark | system`, default `system`, dark
-  colours taken only from `baefd24^`; layout unaffected.
-- **Global countries** (ADR 0007): every ISO-3166 country can register, and the
-  discover region filter is derived from countries that actually have approved
-  members.
+- **Theme modes** (ADR 0006) — **implemented**: `light | dark | system`, default
+  `system`, dark colours taken only from `baefd24^`; layout unaffected. Cookie +
+  pre-paint script, toggle in both headers.
+- **Global countries** (ADR 0007) — **implemented**: every ISO-3166 country can
+  register (`Intl.DisplayNames` labels), and the discover region filter is derived
+  from countries that actually have approved members (`discover_countries()`).
 
 ## Out of scope (do not build without asking)
 
@@ -162,3 +165,12 @@ following/followers.
 
 Granular admin roles (sub-admins) were on this list; they are now in scope per
 ADR 0002.
+
+## Known operational gaps
+
+- **Outbound email.** The cloud project still uses Supabase's default SMTP, which
+  only delivers to addresses in the Supabase organisation and caps at 2 messages
+  per hour. `forgot-password` therefore does not reach real members. Configuring
+  Resend (or another provider) with a verified sending domain is a **pre-launch
+  requirement**; it is dashboard configuration, not a package. Admin accounts use
+  invite links shared by the owner, so they do not depend on SMTP.

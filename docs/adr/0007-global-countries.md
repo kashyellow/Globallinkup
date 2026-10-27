@@ -1,6 +1,6 @@
 # ADR 0007 — Global country coverage
 
-- **Status:** proposed
+- **Status:** accepted (implemented 2026-10-27)
 - **Date:** 2026-10-27
 - **Related:** [round 1, item 2](../feedback/2026-10-27-client-review.md)
 
@@ -38,15 +38,19 @@ the country name.
      a 200-entry translation file).
    - Labels come from `Intl.DisplayNames([locale], { type: "region" })`, which is
      already localised for EN and ES and needs no i18n keys per country.
-2. **Searchable picker, not a `<select>`.** Reuse the combobox pattern already
-   proven by the interest picker: type to filter, keyboard navigable, shows the
-   localised name and the code.
-3. **Validate on both sides.** Client: membership in the ISO set. Server: Zod
-   `z.string().regex(/^[A-Z]{2}$/)` plus membership. Add a DB guard so direct
-   writes cannot store junk:
-   `alter table public.profiles add constraint profiles_country_code_iso check (country_code is null or country_code ~ '^[A-Z]{2}$')`,
-   and validate membership inside `save_persona` (the RPC currently stores
-   whatever it is given).
+2. **Native `<select>` first.** All 249 options, ordered by their localised label
+   (`sortedCountryCodes`, cached per locale). The OS picker already gives
+   type-ahead on desktop and a searchable wheel on mobile, and the existing field
+   keeps its style and its default (`ES` when the member has none). A custom
+   combobox is a follow-up only if typing through the list proves annoying.
+3. **Validate on both sides, at the level each side can enforce.**
+   - Server action: `savePersonaSchema` upper-cases the value and refines it with
+     `isIsoCountryCode`, so membership is checked against the full ISO set.
+   - Database: `profiles_country_code_format` enforces the **shape**
+     (`^[A-Z]{2}$`). It deliberately does not check membership — SQL has no ISO
+     list, and shipping a 249-row table for a format guard is not worth it. Any
+     write path that bypasses the action (a direct RPC call) still cannot store
+     lower-case or longer junk.
 4. **The discover filter is derived from data**, which is the client's actual
    expectation: the options are the distinct `country_code` values of approved
    members (with a count), so a country appears the day its first member is

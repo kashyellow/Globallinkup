@@ -42,6 +42,12 @@
     "guidelines": "Connect Guidelines",
     "adminAccess": "Admin Access"
   },
+  "Theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System (follows device)"
+  },
   "Common": {
     "connect": "Connect",
     "connected": "Connected",
@@ -382,7 +388,7 @@
     },
     "notice": {
       "title": "How GlobalLinkup Curated Commerce Works",
-      "body": "We connect conscious cross-cultural buyers directly with vetted regional makers. GlobalLinkup staff coordinates logistics, customs compliance, and direct payments without automated checkout cart clutter.",
+      "body": "Every piece is curated by the GlobalLinkup team, so members cannot list their own items. Adding merchandise happens in the admin portal, not here. If you make something and want it featured, send an artisan partner inquiry and our staff handles the listing, logistics, customs and direct payment.",
       "cta": "Artisan Partner Inquiries"
     },
     "drawer": {

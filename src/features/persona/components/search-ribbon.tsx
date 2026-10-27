@@ -19,6 +19,7 @@ export function SearchRibbon({
   onQueryChange,
   countries,
   onCountriesChange,
+  countryOptions,
   onClear,
   loading,
 }: {
@@ -26,6 +27,7 @@ export function SearchRibbon({
   onQueryChange: (value: string) => void;
   countries: string[];
   onCountriesChange: (countries: string[]) => void;
+  countryOptions: string[];
   onClear: () => void;
   loading: boolean;
 }) {
@@ -59,7 +61,11 @@ export function SearchRibbon({
 
         <div className="flex items-center gap-space-xs">
           <div className="min-w-0 flex-1 sm:flex-none">
-            <RegionFilter selected={countries} onChange={onCountriesChange} />
+            <RegionFilter
+              selected={countries}
+              onChange={onCountriesChange}
+              options={countryOptions}
+            />
           </div>
           {hasFilters ? (
             <button
