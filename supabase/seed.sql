@@ -399,35 +399,35 @@ values
 -- ----------------------------------------------------------------------------
 insert into public.posts (id, author_id, image_path, caption, moderation_status, created_at, updated_at)
 values
-  ('a0000000-0000-0000-0000-000000000001', '22222222-2222-2222-2222-222222222222', 'post-images/seed/sofia-terrace.jpg', 'Cafe terrace light in the Gothic Quarter, shot on expired Portra.', 'visible', now() - interval '2 hours', now() - interval '2 hours'),
-  ('a0000000-0000-0000-0000-000000000002', '33333333-3333-3333-3333-333333333333', 'post-images/seed/mateo-coyoacan.jpg', 'Jacaranda season on a cobblestone avenue in Coyoacán.', 'visible', now() - interval '5 hours', now() - interval '5 hours'),
-  ('a0000000-0000-0000-0000-000000000003', '66666666-6666-6666-6666-666666666666', 'post-images/seed/elena-gallery.jpg', 'Opening night at a contemporary art space in Madrid.', 'visible', now() - interval '1 day', now() - interval '1 day'),
-  ('a0000000-0000-0000-0000-000000000004', 'b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1', 'post-images/seed/daniel-condesa-01.jpg', 'Three corners of Condesa I keep returning to: the kiosk, the tiled stair, and the morning light on the park.', 'visible', now() - interval '7 hours', now() - interval '7 hours'),
-  ('a0000000-0000-0000-0000-000000000005', 'b2b2b2b2-b2b2-b2b2-b2b2-b2b2b2b2b2b2', 'post-images/seed/valentina-chapinero.jpg', 'A quiet afternoon documenting the independent bookshops of Chapinero.', 'visible', now() - interval '10 hours', now() - interval '10 hours'),
-  ('a0000000-0000-0000-0000-000000000006', 'b3b3b3b3-b3b3-b3b3-b3b3-b3b3b3b3b3b3', 'post-images/seed/andres-oaxaca.jpg', 'Fresh clay, slow hands, and the smell of the workshop after rain.', 'visible', now() - interval '14 hours', now() - interval '14 hours'),
-  ('a0000000-0000-0000-0000-000000000007', 'b4b4b4b4-b4b4-b4b4-b4b4-b4b4b4b4b4b4', 'post-images/seed/carla-gracia.jpg', 'A long lunch in Gràcia that turned into a two-hour conversation about train travel.', 'visible', now() - interval '20 hours', now() - interval '20 hours'),
-  ('a0000000-0000-0000-0000-000000000008', 'b5b5b5b5-b5b5-b5b5-b5b5-b5b5b5b5b5b5', 'post-images/seed/mariana-alfama.jpg', 'Field recording at the edge of Alfama, just before the market closed.', 'visible', now() - interval '1 day 3 hours', now() - interval '1 day 3 hours'),
-  ('a0000000-0000-0000-0000-000000000009', 'b6b6b6b6-b6b6-b6b6-b6b6-b6b6b6b6b6b6', 'post-images/seed/tomas-santiago.jpg', 'New housing, old walls, and the people who hold both together.', 'visible', now() - interval '1 day 8 hours', now() - interval '1 day 8 hours'),
-  ('a0000000-0000-0000-0000-000000000010', 'b7b7b7b7-b7b7-b7b7-b7b7-b7b7b7b7b7b7', 'post-images/seed/lucia-tintes.jpg', 'Natural dye tests for the spring workshop. Onion skin, cochineal, and a lot of patience.', 'visible', now() - interval '2 days', now() - interval '2 days'),
-  ('a0000000-0000-0000-0000-000000000011', '44444444-4444-4444-4444-444444444444', 'post-images/seed/camila-telar.jpg', 'The loom in the highlands does not hurry. Neither should we.', 'visible', now() - interval '2 days 6 hours', now() - interval '2 days 6 hours'),
-  ('a0000000-0000-0000-0000-000000000012', '55555555-5555-5555-5555-555555555555', 'post-images/seed/lucas-vinyl.jpg', 'Found a stack of field recordings in San Telmo and spent the afternoon listening.', 'visible', now() - interval '3 days', now() - interval '3 days');
+  ('a0000000-0000-0000-0000-000000000001', '22222222-2222-2222-2222-222222222222', 'seed/sofia-terrace.jpg', 'Cafe terrace light in the Gothic Quarter, shot on expired Portra.', 'visible', now() - interval '2 hours', now() - interval '2 hours'),
+  ('a0000000-0000-0000-0000-000000000002', '33333333-3333-3333-3333-333333333333', 'seed/mateo-coyoacan.jpg', 'Jacaranda season on a cobblestone avenue in Coyoacán.', 'visible', now() - interval '5 hours', now() - interval '5 hours'),
+  ('a0000000-0000-0000-0000-000000000003', '66666666-6666-6666-6666-666666666666', 'seed/elena-gallery.jpg', 'Opening night at a contemporary art space in Madrid.', 'visible', now() - interval '1 day', now() - interval '1 day'),
+  ('a0000000-0000-0000-0000-000000000004', 'b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1', 'seed/daniel-condesa-01.jpg', 'Three corners of Condesa I keep returning to: the kiosk, the tiled stair, and the morning light on the park.', 'visible', now() - interval '7 hours', now() - interval '7 hours'),
+  ('a0000000-0000-0000-0000-000000000005', 'b2b2b2b2-b2b2-b2b2-b2b2-b2b2b2b2b2b2', 'seed/valentina-chapinero.jpg', 'A quiet afternoon documenting the independent bookshops of Chapinero.', 'visible', now() - interval '10 hours', now() - interval '10 hours'),
+  ('a0000000-0000-0000-0000-000000000006', 'b3b3b3b3-b3b3-b3b3-b3b3-b3b3b3b3b3b3', 'seed/andres-oaxaca.jpg', 'Fresh clay, slow hands, and the smell of the workshop after rain.', 'visible', now() - interval '14 hours', now() - interval '14 hours'),
+  ('a0000000-0000-0000-0000-000000000007', 'b4b4b4b4-b4b4-b4b4-b4b4-b4b4b4b4b4b4', 'seed/carla-gracia.jpg', 'A long lunch in Gràcia that turned into a two-hour conversation about train travel.', 'visible', now() - interval '20 hours', now() - interval '20 hours'),
+  ('a0000000-0000-0000-0000-000000000008', 'b5b5b5b5-b5b5-b5b5-b5b5-b5b5b5b5b5b5', 'seed/mariana-alfama.jpg', 'Field recording at the edge of Alfama, just before the market closed.', 'visible', now() - interval '1 day 3 hours', now() - interval '1 day 3 hours'),
+  ('a0000000-0000-0000-0000-000000000009', 'b6b6b6b6-b6b6-b6b6-b6b6-b6b6b6b6b6b6', 'seed/tomas-santiago.jpg', 'New housing, old walls, and the people who hold both together.', 'visible', now() - interval '1 day 8 hours', now() - interval '1 day 8 hours'),
+  ('a0000000-0000-0000-0000-000000000010', 'b7b7b7b7-b7b7-b7b7-b7b7-b7b7b7b7b7b7', 'seed/lucia-tintes.jpg', 'Natural dye tests for the spring workshop. Onion skin, cochineal, and a lot of patience.', 'visible', now() - interval '2 days', now() - interval '2 days'),
+  ('a0000000-0000-0000-0000-000000000011', '44444444-4444-4444-4444-444444444444', 'seed/camila-telar.jpg', 'The loom in the highlands does not hurry. Neither should we.', 'visible', now() - interval '2 days 6 hours', now() - interval '2 days 6 hours'),
+  ('a0000000-0000-0000-0000-000000000012', '55555555-5555-5555-5555-555555555555', 'seed/lucas-vinyl.jpg', 'Found a stack of field recordings in San Telmo and spent the afternoon listening.', 'visible', now() - interval '3 days', now() - interval '3 days');
 
 insert into public.post_images (post_id, storage_path, sort)
 values
-  ('a0000000-0000-0000-0000-000000000001', 'post-images/seed/sofia-terrace.jpg', 0),
-  ('a0000000-0000-0000-0000-000000000002', 'post-images/seed/mateo-coyoacan.jpg', 0),
-  ('a0000000-0000-0000-0000-000000000003', 'post-images/seed/elena-gallery.jpg', 0),
-  ('a0000000-0000-0000-0000-000000000004', 'post-images/seed/daniel-condesa-01.jpg', 0),
-  ('a0000000-0000-0000-0000-000000000004', 'post-images/seed/daniel-condesa-02.jpg', 1),
-  ('a0000000-0000-0000-0000-000000000004', 'post-images/seed/daniel-condesa-03.jpg', 2),
-  ('a0000000-0000-0000-0000-000000000005', 'post-images/seed/valentina-chapinero.jpg', 0),
-  ('a0000000-0000-0000-0000-000000000006', 'post-images/seed/andres-oaxaca.jpg', 0),
-  ('a0000000-0000-0000-0000-000000000007', 'post-images/seed/carla-gracia.jpg', 0),
-  ('a0000000-0000-0000-0000-000000000008', 'post-images/seed/mariana-alfama.jpg', 0),
-  ('a0000000-0000-0000-0000-000000000009', 'post-images/seed/tomas-santiago.jpg', 0),
-  ('a0000000-0000-0000-0000-000000000010', 'post-images/seed/lucia-tintes.jpg', 0),
-  ('a0000000-0000-0000-0000-000000000011', 'post-images/seed/camila-telar.jpg', 0),
-  ('a0000000-0000-0000-0000-000000000012', 'post-images/seed/lucas-vinyl.jpg', 0);
+  ('a0000000-0000-0000-0000-000000000001', 'seed/sofia-terrace.jpg', 0),
+  ('a0000000-0000-0000-0000-000000000002', 'seed/mateo-coyoacan.jpg', 0),
+  ('a0000000-0000-0000-0000-000000000003', 'seed/elena-gallery.jpg', 0),
+  ('a0000000-0000-0000-0000-000000000004', 'seed/daniel-condesa-01.jpg', 0),
+  ('a0000000-0000-0000-0000-000000000004', 'seed/daniel-condesa-02.jpg', 1),
+  ('a0000000-0000-0000-0000-000000000004', 'seed/daniel-condesa-03.jpg', 2),
+  ('a0000000-0000-0000-0000-000000000005', 'seed/valentina-chapinero.jpg', 0),
+  ('a0000000-0000-0000-0000-000000000006', 'seed/andres-oaxaca.jpg', 0),
+  ('a0000000-0000-0000-0000-000000000007', 'seed/carla-gracia.jpg', 0),
+  ('a0000000-0000-0000-0000-000000000008', 'seed/mariana-alfama.jpg', 0),
+  ('a0000000-0000-0000-0000-000000000009', 'seed/tomas-santiago.jpg', 0),
+  ('a0000000-0000-0000-0000-000000000010', 'seed/lucia-tintes.jpg', 0),
+  ('a0000000-0000-0000-0000-000000000011', 'seed/camila-telar.jpg', 0),
+  ('a0000000-0000-0000-0000-000000000012', 'seed/lucas-vinyl.jpg', 0);
 
 insert into public.post_likes (post_id, user_id, created_at)
 values
