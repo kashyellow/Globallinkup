@@ -2,17 +2,17 @@
 
 import type { CSSProperties } from "react";
 import { useFormatter, useTranslations } from "next-intl";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Icon } from "@/components/ui/icon";
 import { InlineAlert } from "@/components/ui/inline-alert";
 import { MediaImage } from "@/components/ui/media-image";
 import { Spinner } from "@/components/ui/spinner";
-import { removePostAction, resolveReportAction } from "@/features/admin/actions";
+import { removePostAction, resolveReportAction, restorePostAction } from "@/features/admin/actions";
 import { AdminPagination } from "@/features/admin/components/admin-pagination";
 import { AdminSearchForm } from "@/features/admin/components/admin-search-form";
 import { AdminStatusLinks } from "@/features/admin/components/admin-status-links";
+import { useDialogA11y } from "@/features/shared/use-dialog-a11y";
 import { usePendingAction } from "@/features/shared/use-pending-action";
 import { useRefresh } from "@/features/shared/refresh-provider";
 import { cn } from "@/lib/utils";
@@ -45,13 +45,13 @@ export function AdminModerationTab({
   const { refresh } = useRefresh();
   const { isPending, run } = usePendingAction();
   const [handledIds, setHandledIds] = useState<ReadonlySet<string>>(() => new Set());
-  const [confirmTarget, setConfirmTarget] = useState<AdminReportDto | null>(null);
+  const [removeTarget, setRemoveTarget] = useState<AdminReportDto | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const visible = reports.filter((report) => !handledIds.has(report.id));
 
   async function resolve(report: AdminReportDto, nextStatus: ResolveStatus) {
-    const result = await run(`report:${report.id}`, async () => {
+    await run(`report:${report.id}`, async () => {
       setError(null);
       try {
         const response = await resolveReportAction({ reportId: report.id, status: nextStatus });
@@ -67,17 +67,15 @@ export function AdminModerationTab({
         return false;
       }
     });
-
-    if (result) setConfirmTarget(null);
   }
 
-  async function removePost(report: AdminReportDto) {
+  async function removePost(report: AdminReportDto, reason: string) {
     if (report.targetType !== "post" || !report.targetId) return;
 
     const result = await run(`remove:${report.id}`, async () => {
       setError(null);
       try {
-        const removed = await removePostAction({ postId: report.targetId! });
+        const removed = await removePostAction({ postId: report.targetId!, reason });
         if (!removed.ok) {
           setError(tCommon("actionError"));
           return false;
@@ -99,7 +97,26 @@ export function AdminModerationTab({
       }
     });
 
-    if (result) setConfirmTarget(null);
+    if (result) setRemoveTarget(null);
+  }
+
+  async function restorePost(report: AdminReportDto) {
+    if (report.targetType !== "post" || !report.targetId) return;
+    await run(`restore:${report.id}`, async () => {
+      setError(null);
+      try {
+        const restored = await restorePostAction({ postId: report.targetId! });
+        if (!restored.ok) {
+          setError(tCommon("actionError"));
+          return false;
+        }
+        refresh();
+        return true;
+      } catch {
+        setError(tCommon("actionError"));
+        return false;
+      }
+    });
   }
 
   const statusOptions = [
@@ -181,7 +198,8 @@ export function AdminModerationTab({
               report={report}
               pending={isPending(`report:${report.id}`) || isPending(`remove:${report.id}`)}
               onResolve={(nextStatus) => void resolve(report, nextStatus)}
-              onRemove={() => setConfirmTarget(report)}
+              onRemove={() => setRemoveTarget(report)}
+              onRestore={() => void restorePost(report)}
             />
           ))}
         </div>
@@ -196,17 +214,12 @@ export function AdminModerationTab({
         extra={target !== "all" ? { target } : undefined}
       />
 
-      <ConfirmDialog
-        open={confirmTarget !== null}
-        title={t("removePostWarn")}
-        body={tCommon("confirmBody")}
-        confirmLabel={tCommon("confirmAction")}
-        cancelLabel={tCommon("cancel")}
-        pendingLabel={tCommon("processing")}
-        pending={confirmTarget ? isPending(`remove:${confirmTarget.id}`) : false}
-        onClose={() => setConfirmTarget(null)}
-        onConfirm={() => {
-          if (confirmTarget) void removePost(confirmTarget);
+      <RemovePostDialog
+        target={removeTarget}
+        pending={removeTarget ? isPending(`remove:${removeTarget.id}`) : false}
+        onClose={() => setRemoveTarget(null)}
+        onSubmit={(reason) => {
+          if (removeTarget) void removePost(removeTarget, reason);
         }}
       />
     </div>
@@ -218,11 +231,13 @@ function ReportCard({
   pending,
   onResolve,
   onRemove,
+  onRestore,
 }: {
   report: AdminReportDto;
   pending: boolean;
   onResolve: (status: ResolveStatus) => void;
   onRemove: () => void;
+  onRestore: () => void;
 }) {
   const t = useTranslations("Admin.moderation");
   const tCommon = useTranslations("Common");
@@ -284,7 +299,24 @@ function ReportCard({
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-space-sm border-t border-outline-variant pt-space-sm">
-          {report.targetType === "post" && report.status === "open" ? (
+          {report.targetType === "post" && report.targetState === "removed" ? (
+            <button
+              type="button"
+              onClick={onRestore}
+              disabled={pending}
+              className={cn(
+                ACTION_BASE,
+                "focus-visible:outline-success-border-strong border border-success-border bg-success-surface text-success-text hover:border-success",
+              )}
+            >
+              {pending ? (
+                <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
+              ) : (
+                <Icon name="restore" className="text-sm" />
+              )}
+              {t("restorePost")}
+            </button>
+          ) : report.targetType === "post" && report.status === "open" ? (
             <button
               type="button"
               onClick={onRemove}
@@ -335,6 +367,99 @@ function ReportCard({
           ) : null}
         </div>
       </article>
+    </div>
+  );
+}
+
+function RemovePostDialog({
+  target,
+  pending,
+  onClose,
+  onSubmit,
+}: {
+  target: AdminReportDto | null;
+  pending: boolean;
+  onClose: () => void;
+  onSubmit: (reason: string) => void;
+}) {
+  const t = useTranslations("Admin.moderation");
+  const tCommon = useTranslations("Common");
+  const [reason, setReason] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const containerRef = useDialogA11y(target !== null, onClose, textareaRef);
+  const valid = reason.trim().length >= 10;
+
+  return (
+    <div
+      aria-hidden={target === null}
+      inert={target === null}
+      onClick={(event) => {
+        if (!pending && event.target === event.currentTarget) onClose();
+      }}
+      className={cn(
+        "fixed inset-0 z-[90] flex items-end justify-center bg-background/80 p-0 backdrop-blur-sm transition-opacity duration-300 sm:items-center sm:p-space-lg",
+        target ? "opacity-100" : "pointer-events-none opacity-0",
+      )}
+    >
+      <div
+        ref={containerRef}
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="remove-post-title"
+        aria-describedby="remove-post-body"
+        className="w-full max-w-md rounded-t-[1.5rem] border border-outline-variant bg-surface-low p-space-lg shadow-lift-lg sm:rounded-[1.5rem]"
+      >
+        <h2
+          id="remove-post-title"
+          className="font-headline-sm text-headline-sm font-semibold text-on-surface"
+        >
+          {t("removeReasonTitle")}
+        </h2>
+        <p id="remove-post-body" className="mt-1 font-body-sm text-body-sm text-secondary">
+          {t("removeReasonBody")}
+        </p>
+        <label className="mt-space-md flex flex-col gap-1.5">
+          <span className="font-label-md text-label-md font-semibold text-on-surface">
+            {t("removeReasonLabel")}
+          </span>
+          <textarea
+            ref={textareaRef}
+            rows={4}
+            maxLength={500}
+            value={reason}
+            onChange={(event) => setReason(event.target.value)}
+            placeholder={t("removeReasonPlaceholder")}
+            className="w-full resize-none rounded-2xl border border-outline-variant bg-surface-dim p-space-md font-body-sm text-body-sm text-on-surface transition-colors placeholder:text-placeholder hover:border-outline-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          />
+        </label>
+        <div className="mt-1 flex items-center justify-between font-body-sm text-body-sm text-secondary">
+          <span>{t("removeReasonHint")}</span>
+          <span className="tabular-nums">{reason.trim().length} / 500</span>
+        </div>
+        <div className="mt-space-lg flex flex-col-reverse gap-space-sm sm:flex-row sm:justify-end">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={pending}
+            className="inline-flex min-h-11 items-center justify-center rounded-full border border-outline-variant bg-surface-dim px-space-lg py-2.5 font-label-lg text-label-lg font-semibold text-on-surface transition-colors hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60"
+          >
+            {tCommon("cancel")}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (valid) onSubmit(reason.trim());
+            }}
+            disabled={pending || !valid}
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-danger px-space-lg py-2.5 font-label-lg text-label-lg font-semibold text-white transition-colors hover:bg-danger-border-strong focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-danger-border-strong disabled:opacity-60"
+          >
+            {pending ? (
+              <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
+            ) : null}
+            {t("removeReasonConfirm")}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

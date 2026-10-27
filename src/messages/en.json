@@ -602,7 +602,14 @@
       "targetAll": "All targets",
       "targetUser": "Members",
       "targetPost": "Posts",
-      "searchPlaceholder": "Search report reason or details…"
+      "searchPlaceholder": "Search report reason or details…",
+      "restorePost": "Restore post",
+      "removeReasonTitle": "Remove this post?",
+      "removeReasonBody": "The post is hidden immediately and permanently deleted after 14 days. The author sees your reason and can appeal once.",
+      "removeReasonLabel": "Reason",
+      "removeReasonPlaceholder": "Explain what breaks the guidelines (10–500 characters).",
+      "removeReasonHint": "Shared with the author.",
+      "removeReasonConfirm": "Remove post"
     },
     "interests": {
       "title": "Cultural Interest Review",
@@ -1386,13 +1393,30 @@
       "title": "Your Dispatches",
       "body": "Photos and notes you have shared with the community, newest first.",
       "appreciations": "{count, plural, =1 {# Appreciation} other {# Appreciations}}",
-      "empty": "You have not shared a dispatch yet.",
+      "empty": {
+        "active": "No active posts yet.",
+        "archived": "Nothing archived.",
+        "removed": "Nothing removed."
+      },
       "textOnly": "Text dispatch",
       "openPost": "Open post",
       "delete": "Delete post",
       "loadMore": "Show {count} more dispatches",
       "deleteTitle": "Delete this post?",
-      "deleteBody": "The post will disappear from the feed and your archive. This cannot be undone."
+      "deleteBody": "The post will disappear from the feed and your archive. This cannot be undone.",
+      "filtersLabel": "Filter posts by state",
+      "filters": {
+        "active": "Active",
+        "archived": "Archived",
+        "removed": "Removed"
+      },
+      "badgeArchived": "Archived",
+      "badgeRemoved": "Removed",
+      "archive": "Archive",
+      "unarchive": "Restore to feed",
+      "removedReason": "Removed by moderation: {reason}",
+      "purgeCountdown": "Permanently deleted in {count} days",
+      "locked": "Awaiting review"
     },
     "circles": {
       "title": "Mutual Circles",

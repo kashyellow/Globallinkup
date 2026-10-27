@@ -68,6 +68,7 @@ export type AdminReportDto = {
   targetId: string | null;
   targetLabel: string;
   targetImage: string | null;
+  targetState: "visible" | "archived" | "removed" | null;
   reporterName: string;
 };
 
@@ -413,7 +414,7 @@ export async function getAdminModeration({
       ? supabase.from("profiles_public").select("id, display_name").in("id", profileIds)
       : Promise.resolve({ data: [], error: null }),
     postIds.length > 0
-      ? supabase.from("posts").select("id, caption, image_path, author_id").in("id", postIds)
+      ? supabase.from("posts").select("id, caption, image_path, author_id, state").in("id", postIds)
       : Promise.resolve({ data: [], error: null }),
   ]);
 
@@ -454,6 +455,7 @@ export async function getAdminModeration({
           ? `${authorNameById.get(post.author_id) ?? "Member"}: ${post.caption}`
           : (profileName ?? "Member"),
         targetImage: post ? resolveImageUrl(post.image_path, signed) : null,
+        targetState: post?.state ?? null,
         reporterName: nameById.get(row.reporter_id) ?? "",
       } satisfies AdminReportDto;
     }),

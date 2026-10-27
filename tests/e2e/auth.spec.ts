@@ -324,6 +324,25 @@ test("@auth authors delete posts from the archive, not the feed", async ({ page 
     .click();
 });
 
+test("@auth an author archives and restores a post", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await page.goto("/en/profile");
+  await page.waitForTimeout(1000);
+
+  const archive = page.getByRole("button", { name: /^archive$/i }).first();
+  await expect(archive).toBeVisible();
+  await archive.click();
+
+  // The card moves out of Active and into Archived.
+  await page.getByRole("button", { name: /^archived/i }).click();
+  const restore = page.getByRole("button", { name: /restore to feed/i }).first();
+  await expect(restore).toBeVisible();
+  await restore.click();
+
+  await page.getByRole("button", { name: /^active/i }).click();
+  await expect(page.getByRole("button", { name: /^archive$/i }).first()).toBeVisible();
+});
+
 test("@auth admins can moderate posts and comments inline", async ({ page }) => {
   await signIn(page, "admin@globallinkup.test");
   await page.goto("/en/posts");

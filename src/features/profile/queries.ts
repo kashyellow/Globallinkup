@@ -21,6 +21,9 @@ export type ProfileDispatch = {
   caption: string;
   createdAt: string;
   likes: number;
+  state: "visible" | "archived" | "removed";
+  removedReason: string | null;
+  purgeAfter: string | null;
 };
 
 export type OwnProfile = {
@@ -87,9 +90,8 @@ export async function getOwnProfile(
       .eq("status", "accepted"),
     supabase
       .from("posts")
-      .select("id, image_path, caption, created_at")
+      .select("id, image_path, caption, created_at, state, removed_reason, purge_after")
       .eq("author_id", viewerId)
-      .eq("moderation_status", "visible")
       .order("created_at", { ascending: false }),
   ]);
 
@@ -154,8 +156,8 @@ export async function getOwnProfile(
     };
   });
 
-  // The archive is the member's own visible posts. Like counts are read for
-  // those posts only, and images are signed in one batch.
+  // The archive is every post the member owns, whatever its lifecycle state;
+  // the UI splits them into Active / Archived / Removed.
   const posts = unwrap(postsRes) ?? [];
   const postIds = posts.map((post) => post.id);
   const likes =
@@ -180,6 +182,9 @@ export async function getOwnProfile(
     caption: post.caption ?? "",
     createdAt: post.created_at ?? "",
     likes: likeCount.get(post.id) ?? 0,
+    state: post.state,
+    removedReason: post.removed_reason,
+    purgeAfter: post.purge_after,
   }));
 
   const languages = Array.isArray(profile.languages)

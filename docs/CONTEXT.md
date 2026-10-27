@@ -134,8 +134,10 @@ is implemented yet unless the code says so.
 - **Content lifecycle** (ADR 0001) — **data model and server actions
   implemented**: `post_state` (`visible | archived | removed`), the guard that
   keeps removal admin-only, hard delete for authors, admin remove/restore with a
-  14-day deadline, and storage reads already gated on the owning post. Still
-  pending: the profile tabs and dialogs, the purge job, and the appeal flow.
+  14-day deadline, and storage reads already gated on the owning post. The
+  profile archive now splits Active / Archived / Removed with archive, unarchive
+  and hard delete, and the moderation desk asks for a removal reason and can
+  restore. Still pending: the purge job, the appeal flow, and notifications.
 - **Notifications inbox** (ADR 0004): DB-backed notices with deep links. This is
   moderation feedback, **not chat**: no threads, realtime, or user-to-user
   messaging.

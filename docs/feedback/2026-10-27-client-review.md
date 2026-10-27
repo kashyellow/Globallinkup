@@ -143,7 +143,7 @@ phase 3 ≈ 7–10 days, phase 4 ≈ 4–6 days.
 
 **Phase 2**
 
-- [ ] Author can archive and restore; archived posts are absent from the feed.
+- [x] Author can archive and restore; archived posts are absent from the feed.
 - [ ] Author hard delete removes the row and its storage objects; the audit entry
       keeps only ids.
 - [ ] Admin removal requires a reason; the author sees the reason, a 14-day

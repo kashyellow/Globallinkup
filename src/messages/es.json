@@ -602,7 +602,14 @@
       "targetAll": "Todos los objetivos",
       "targetUser": "Miembros",
       "targetPost": "Publicaciones",
-      "searchPlaceholder": "Buscar motivo o detalles del reporte…"
+      "searchPlaceholder": "Buscar motivo o detalles del reporte…",
+      "restorePost": "Restaurar publicación",
+      "removeReasonTitle": "¿Retirar esta publicación?",
+      "removeReasonBody": "La publicación se oculta de inmediato y se elimina definitivamente a los 14 días. El autor verá tu motivo y podrá apelar una vez.",
+      "removeReasonLabel": "Motivo",
+      "removeReasonPlaceholder": "Explica qué infringe las normas (10–500 caracteres).",
+      "removeReasonHint": "Se comparte con el autor.",
+      "removeReasonConfirm": "Retirar publicación"
     },
     "interests": {
       "title": "Revisión de Afinidades Culturales",
@@ -1386,13 +1393,30 @@
       "title": "Tus Crónicas",
       "body": "Fotos y notas que has compartido con la comunidad, de la más reciente a la más antigua.",
       "appreciations": "{count, plural, =1 {# Apreciación} other {# Apreciaciones}}",
-      "empty": "Todavía no has compartido ninguna crónica.",
+      "empty": {
+        "active": "Todavía no hay publicaciones activas.",
+        "archived": "Nada archivado.",
+        "removed": "Nada retirado."
+      },
       "textOnly": "Publicación de texto",
       "openPost": "Abrir publicación",
       "delete": "Eliminar publicación",
       "loadMore": "Mostrar {count} publicaciones más",
       "deleteTitle": "¿Eliminar esta publicación?",
-      "deleteBody": "La publicación desaparecerá del feed y de tu archivo. No se puede deshacer."
+      "deleteBody": "La publicación desaparecerá del feed y de tu archivo. No se puede deshacer.",
+      "filtersLabel": "Filtrar publicaciones por estado",
+      "filters": {
+        "active": "Activas",
+        "archived": "Archivadas",
+        "removed": "Retiradas"
+      },
+      "badgeArchived": "Archivada",
+      "badgeRemoved": "Retirada",
+      "archive": "Archivar",
+      "unarchive": "Devolver al feed",
+      "removedReason": "Retirada por moderación: {reason}",
+      "purgeCountdown": "Se eliminará definitivamente en {count} días",
+      "locked": "En revisión"
     },
     "circles": {
       "title": "Círculos Mutuos",
