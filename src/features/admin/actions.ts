@@ -86,27 +86,97 @@ export async function resolveReportAction(input: unknown): Promise<AdminResult> 
 
 const postSchema = z.object({ postId: uuidSchema });
 
+/** Moderation retention window (ADR 0001). Mirrors the purge job. */
+const PURGE_WINDOW_DAYS = 14;
+
+const removePostSchema = postSchema.extend({
+  /**
+   * Required by the moderation dialog; the fallback keeps older call sites
+   * working until the UI passes the reason everywhere.
+   */
+  reason: z.string().trim().min(10).max(500).optional(),
+});
+
 export async function removePostAction(input: unknown): Promise<AdminResult> {
   const ctx = await requireAdminClient();
   if (!ctx) return { ok: false, error: "forbidden" };
 
-  const parsed = postSchema.safeParse(input);
+  const parsed = removePostSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
 
+  const { data: current, error: readError } = await ctx.supabase
+    .from("posts")
+    .select("id, state")
+    .eq("id", parsed.data.postId)
+    .maybeSingle();
+
+  if (readError) return { ok: false, error: "unknown" };
+  if (!current) return { ok: false, error: "forbidden" };
+
+  const now = new Date();
   const { data: updated, error } = await ctx.supabase
     .from("posts")
     .update({
-      moderation_status: "removed",
+      state: "removed",
+      previous_state: current.state === "removed" ? "visible" : current.state,
       removed_by: ctx.user.id,
-      removed_at: new Date().toISOString(),
+      removed_at: now.toISOString(),
+      removed_reason: parsed.data.reason ?? "Removed by moderation.",
+      purge_after: new Date(now.getTime() + PURGE_WINDOW_DAYS * 86_400_000).toISOString(),
     })
     .eq("id", parsed.data.postId)
     .select("id");
 
   if (error) return { ok: false, error: "unknown" };
   if (!updated || updated.length === 0) return { ok: false, error: "forbidden" };
+
   revalidatePath("/admin");
   revalidatePath("/admin/moderation");
+  revalidatePath("/posts");
+  revalidatePath("/profile");
+  return { ok: true };
+}
+
+/** Undo a removal while the appeal window is open. */
+export async function restorePostAction(input: unknown): Promise<AdminResult> {
+  const ctx = await requireAdminClient();
+  if (!ctx) return { ok: false, error: "forbidden" };
+
+  const parsed = postSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid" };
+
+  const { data: current, error: readError } = await ctx.supabase
+    .from("posts")
+    .select("id, state, previous_state")
+    .eq("id", parsed.data.postId)
+    .maybeSingle();
+
+  if (readError) return { ok: false, error: "unknown" };
+  if (!current) return { ok: false, error: "forbidden" };
+  if (current.state !== "removed") return { ok: true };
+
+  const target = current.previous_state ?? "visible";
+  const { data: updated, error } = await ctx.supabase
+    .from("posts")
+    .update({
+      state: target,
+      archived_at: target === "archived" ? new Date().toISOString() : null,
+      removed_by: null,
+      removed_at: null,
+      removed_reason: null,
+      previous_state: null,
+      purge_after: null,
+    })
+    .eq("id", parsed.data.postId)
+    .select("id");
+
+  if (error) return { ok: false, error: "unknown" };
+  if (!updated || updated.length === 0) return { ok: false, error: "forbidden" };
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/moderation");
+  revalidatePath("/posts");
+  revalidatePath("/profile");
   return { ok: true };
 }
 

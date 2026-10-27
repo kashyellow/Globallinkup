@@ -14,7 +14,7 @@ select plan(7);
 
 -- Fixtures: a visible seed post (a000…0001, authored by sofia) and a removed
 -- post by the same author with its own image.
-insert into public.posts (id, author_id, caption, moderation_status, removed_by, removed_at)
+insert into public.posts (id, author_id, caption, state, removed_by, removed_at)
 values (
   'a0000000-0000-0000-0000-00000000f001',
   '22222222-2222-2222-2222-222222222222',

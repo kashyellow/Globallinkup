@@ -437,10 +437,15 @@ export type Database = {
           caption: string | null;
           created_at: string;
           id: string;
+          archived_at: string | null;
           image_path: string | null;
           moderation_status: Database["public"]["Enums"]["moderation_status"];
+          previous_state: Database["public"]["Enums"]["post_state"] | null;
+          purge_after: string | null;
           removed_at: string | null;
           removed_by: string | null;
+          removed_reason: string | null;
+          state: Database["public"]["Enums"]["post_state"];
           updated_at: string;
         };
         Insert: {
@@ -448,10 +453,15 @@ export type Database = {
           caption?: string | null;
           created_at?: string;
           id?: string;
+          archived_at?: string | null;
           image_path?: string | null;
           moderation_status?: Database["public"]["Enums"]["moderation_status"];
+          previous_state?: Database["public"]["Enums"]["post_state"] | null;
+          purge_after?: string | null;
           removed_at?: string | null;
           removed_by?: string | null;
+          removed_reason?: string | null;
+          state?: Database["public"]["Enums"]["post_state"];
           updated_at?: string;
         };
         Update: {
@@ -459,10 +469,15 @@ export type Database = {
           caption?: string | null;
           created_at?: string;
           id?: string;
+          archived_at?: string | null;
           image_path?: string | null;
           moderation_status?: Database["public"]["Enums"]["moderation_status"];
+          previous_state?: Database["public"]["Enums"]["post_state"] | null;
+          purge_after?: string | null;
           removed_at?: string | null;
           removed_by?: string | null;
+          removed_reason?: string | null;
+          state?: Database["public"]["Enums"]["post_state"];
           updated_at?: string;
         };
         Relationships: [
@@ -784,6 +799,11 @@ export type Database = {
           image_path: string | null;
           like_count: number | null;
           moderation_status: Database["public"]["Enums"]["moderation_status"] | null;
+          archived_at: string | null;
+          previous_state: Database["public"]["Enums"]["post_state"] | null;
+          purge_after: string | null;
+          removed_reason: string | null;
+          state: Database["public"]["Enums"]["post_state"] | null;
           updated_at: string | null;
         };
         Relationships: [
@@ -955,6 +975,7 @@ export type Database = {
       interest_status: "pending" | "approved" | "rejected";
       marketplace_status: "draft" | "live" | "unpublished" | "trashed";
       moderation_status: "visible" | "removed";
+      post_state: "visible" | "archived" | "removed";
       report_status: "open" | "resolved" | "dismissed";
       report_target_type: "user" | "post";
     };

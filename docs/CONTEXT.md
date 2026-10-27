@@ -131,11 +131,11 @@ Approved scope from the first client review. Details and acceptance criteria liv
 in `docs/feedback/2026-10-27-client-review.md`; each item has an ADR. Nothing here
 is implemented yet unless the code says so.
 
-- **Content lifecycle** (ADR 0001): author _archive_ (permanent, revertible),
-  author _delete_ (hard delete after a hard confirmation), admin _remove_ (soft,
-  14 days, reason required, one bounded appeal), comment content purged at 14
-  days while the tombstone stays. `post-images` storage reads must be gated on the
-  post state.
+- **Content lifecycle** (ADR 0001) — **data model and server actions
+  implemented**: `post_state` (`visible | archived | removed`), the guard that
+  keeps removal admin-only, hard delete for authors, admin remove/restore with a
+  14-day deadline, and storage reads already gated on the owning post. Still
+  pending: the profile tabs and dialogs, the purge job, and the appeal flow.
 - **Notifications inbox** (ADR 0004): DB-backed notices with deep links. This is
   moderation feedback, **not chat**: no threads, realtime, or user-to-user
   messaging.

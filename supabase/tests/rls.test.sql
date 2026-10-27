@@ -9,7 +9,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(94);
+select plan(95);
 
 -- Fixed ids from the seed.
 --   admin   11111111-…  sofia 22222222-…  mateo 33333333-…
@@ -276,22 +276,36 @@ select is(
 );
 reset role;
 
--- 25. F-3: an author can soft-remove their own post (FR-6.5).
+-- 25. F-3: an author can archive their own post (ADR 0001).
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"22222222-2222-2222-2222-222222222222","role":"authenticated"}';
 select lives_ok(
-  $$ update public.posts set moderation_status = 'removed'
+  $$ update public.posts set state = 'archived'
      where id = 'a0000000-0000-0000-0000-000000000001' $$,
-  'author can soft-remove their own post'
+  'author can archive their own post'
 );
 
--- 26. F-3: …but cannot un-remove it.
+-- 26. …but removal is an admin decision; the author cannot set it.
 select throws_ok(
-  $$ update public.posts set moderation_status = 'visible'
+  $$ update public.posts set state = 'removed'
      where id = 'a0000000-0000-0000-0000-000000000001' $$,
   42501,
   null,
-  'author cannot un-remove a post'
+  'author cannot remove their own post'
+);
+reset role;
+
+-- 27. An admin removes it, which the rest of the suite relies on.
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated"}';
+select lives_ok(
+  $$ update public.posts
+       set state = 'removed',
+           removed_by = '11111111-1111-1111-1111-111111111111',
+           removed_at = now(),
+           removed_reason = 'Removed by the RLS suite.'
+     where id = 'a0000000-0000-0000-0000-000000000001' $$,
+  'admin can remove a post'
 );
 reset role;
 
