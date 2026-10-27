@@ -9,7 +9,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(93);
+select plan(94);
 
 -- Fixed ids from the seed.
 --   admin   11111111-…  sofia 22222222-…  mateo 33333333-…
@@ -80,13 +80,16 @@ select is_empty(
 );
 reset role;
 
--- 8. admin reads every contact_details row (4 seeded).
+-- 8. admins cannot read contact_details or date of birth (ADR 0005).
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated"}';
--- Relative so a database mutated by the app (e2e onboarding) does not break it.
-select ok(
-  (select count(*) from public.contact_details) >= 4,
-  'admin reads all contact_details'
+select is_empty(
+  $$ select 1 from public.contact_details where profile_id = '22222222-2222-2222-2222-222222222222' $$,
+  'admin cannot read a member''s contact_details'
+);
+select is_empty(
+  $$ select 1 from public.profile_private where profile_id = '22222222-2222-2222-2222-222222222222' $$,
+  'admin cannot read a member''s date of birth'
 );
 reset role;
 

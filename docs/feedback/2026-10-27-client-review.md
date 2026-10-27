@@ -154,7 +154,7 @@ phase 3 ≈ 7–10 days, phase 4 ≈ 4–6 days.
       (storage RLS), while the author still can.
 - [ ] Notifications deep-link to their target and are readable only by the
       recipient.
-- [ ] An admin can no longer read `contact_details` or `profile_private`
+- [x] An admin can no longer read `contact_details` or `profile_private`
       (pgTAP proves it).
 
 **Phase 3**

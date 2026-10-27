@@ -496,26 +496,6 @@ function PersonaDossierDialog({
             </section>
           </div>
 
-          <section className="space-y-1.5">
-            <h3 className="font-label-md text-label-md font-semibold tracking-[0.08em] text-text-muted uppercase">
-              {t("contactChannels")}
-            </h3>
-            {user.channels.length > 0 ? (
-              <div className="flex flex-wrap gap-1.5">
-                {user.channels.map((channel) => (
-                  <span
-                    key={`${channel.key}-${channel.value}`}
-                    className="rounded-full border border-outline-variant bg-surface-container px-2.5 py-0.5 font-label-md text-label-md text-on-surface-strong"
-                  >
-                    {channel.key}: {channel.value}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <p className="font-body-sm text-body-sm text-secondary">{t("noChannels")}</p>
-            )}
-          </section>
-
           <section className="space-y-2">
             <h3 className="font-label-md text-label-md font-semibold tracking-[0.08em] text-text-muted uppercase">
               {t("moderationHistory")}

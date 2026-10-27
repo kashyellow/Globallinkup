@@ -148,8 +148,9 @@ is implemented yet unless the code says so.
 - **Audit + PII-safe logging** (ADR 0003): append-only `audit_events` with ids,
   actions, reasons and whitelisted metadata only; 12-month retention; gated by
   `audit.read`.
-- **No admin access to PII** (ADR 0005): drop the admin policies on
-  `contact_details` and `profile_private`.
+- **No admin access to PII** (ADR 0005) — **implemented**: the admin policies
+  on `contact_details` and `profile_private` are gone, and the dossier no longer
+  renders contact channels.
 - **Theme modes** (ADR 0006) — **implemented**: `light | dark | system`, default
   `system`, dark colours taken only from `baefd24^`; layout unaffected. Cookie +
   pre-paint script, toggle in both headers.

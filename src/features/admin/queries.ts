@@ -9,7 +9,6 @@ import { unwrap, unwrapCount } from "@/lib/supabase/unwrap";
 export type AdminProfileStatus = "pending" | "approved" | "rejected" | "suspended";
 export type AdminProfileFilter = AdminProfileStatus | "all";
 
-export type AdminChannel = { key: string; value: string };
 export type AdminModerationEvent = {
   decision: AdminProfileStatus;
   reason: string | null;
@@ -30,7 +29,6 @@ export type AdminProfileDto = {
   languages: string[];
   interests: string[];
   submittedAt: string | null;
-  channels: AdminChannel[];
   moderation: AdminModerationEvent[];
 };
 
@@ -121,29 +119,6 @@ function parseLanguages(value: unknown): string[] {
     const code = (entry as { code?: unknown }).code;
     return typeof code === "string" && code.length > 0 ? [code] : [];
   });
-}
-
-function buildChannels(contact: {
-  whatsapp: string | null;
-  instagram: string | null;
-  email: string | null;
-  other: unknown;
-}): AdminChannel[] {
-  const channels: AdminChannel[] = [];
-  const push = (key: string, value: unknown) => {
-    if (typeof value === "string" && value.trim().length > 0) {
-      channels.push({ key, value: value.trim() });
-    }
-  };
-  const other = (contact.other ?? {}) as Record<string, unknown>;
-  push("whatsapp", contact.whatsapp);
-  push("telegram", other.telegram);
-  push("instagram", contact.instagram);
-  push("facebook", other.facebook);
-  push("tiktok", other.tiktok);
-  push("x", other.x);
-  push("email", contact.email);
-  return channels;
 }
 
 export async function getAdminMetrics(): Promise<AdminMetrics> {
@@ -248,11 +223,8 @@ export async function getAdminUsers({
   if (rows.length === 0) return { users: [], total };
 
   const ids = rows.map((row) => row.id).filter((id): id is string => Boolean(id));
-  const [contacts, events, avatars] = await Promise.all([
-    supabase
-      .from("contact_details")
-      .select("profile_id, whatsapp, instagram, email, other")
-      .in("profile_id", ids),
+  // Contact channels are PII and are not readable by admins (ADR 0005).
+  const [events, avatars] = await Promise.all([
     supabase
       .from("profile_moderation_events")
       .select("profile_id, decision, reason, created_at")
@@ -265,7 +237,6 @@ export async function getAdminUsers({
     ),
   ]);
 
-  const contactById = new Map((unwrap(contacts) ?? []).map((row) => [row.profile_id, row]));
   const eventsById = new Map<string, AdminModerationEvent[]>();
   for (const event of unwrap(events) ?? []) {
     const list = eventsById.get(event.profile_id) ?? [];
@@ -280,7 +251,6 @@ export async function getAdminUsers({
   return {
     users: rows.map((row) => {
       const id = row.id ?? "";
-      const contact = contactById.get(id);
       return {
         id,
         name: row.display_name ?? "",
@@ -295,14 +265,6 @@ export async function getAdminUsers({
         languages: parseLanguages(row.languages),
         interests: row.interests ?? [],
         submittedAt: row.submitted_at,
-        channels: contact
-          ? buildChannels({
-              whatsapp: contact.whatsapp,
-              instagram: contact.instagram,
-              email: contact.email,
-              other: contact.other,
-            })
-          : [],
         moderation: eventsById.get(id) ?? [],
       } satisfies AdminProfileDto;
     }),
