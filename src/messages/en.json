@@ -386,15 +386,12 @@
       "cta": "Artisan Partner Inquiries"
     },
     "drawer": {
-      "adminVerified": "Admin Verified",
       "close": "Close detail panel",
       "artisanPartnerDirect": "Artisan Partner Direct",
       "currencyUsd": "USD",
       "howToOrderTitle": "How to Order / Direct Inquiries",
       "howToOrderBody": "GlobalLinkup facilitates orders personally with our regional makers. Because quantities are limited and made in small batches, orders are confirmed directly via our multilingual concierge. No shopping cart checkout or user reselling.",
       "contactCta": "Contact Concierge / Inquire to Buy",
-      "whatsappPrefix": "Or message via WhatsApp:",
-      "emailPrefix": "Official Email:",
       "whatsappMessage": "Hello GlobalLinkup Concierge, I would like to inquire about ordering the {product}.",
       "trust": {
         "fairCompensation": "Fair Compensation",
@@ -415,9 +412,7 @@
       "body": "Ask about a piece, artisan partnerships, shipping, or a custom request. We reply personally.",
       "close": "Close inquiry dialog",
       "emailCta": "Email the concierge",
-      "whatsappCta": "Message on WhatsApp",
-      "emailSubject": "GlobalLinkup concierge inquiry",
-      "contactHint": "You can also reach us at {email} or {phone}."
+      "emailSubject": "GlobalLinkup concierge inquiry"
     }
   },
   "Admin": {
@@ -845,6 +840,8 @@
       "signedInSignOut": "Sign out",
       "invalidTitle": "Incorrect credentials",
       "invalidBody": "Incorrect email or password. Please try again or",
+      "errorTitle": "We couldn't sign you in",
+      "errorBody": "Something went wrong on our side. Please try again in a moment.",
       "resetPassword": "reset your password",
       "emailLabel": "Email Address",
       "emailHelper": "Verified ID",
@@ -909,9 +906,9 @@
       "progressLabel": "Onboarding Progress",
       "step1": "01 Account",
       "step1Sub": "Credentials",
-      "step2": "02 Persona",
+      "step2": "02 Personal",
       "step2Sub": "Cultural Bio",
-      "step3": "03 Human Review",
+      "step3": "03 Personal Review",
       "step3Sub": "Verification",
       "approvedTitle": "Identity Verified & Authenticated",
       "approvedBadge": "Active Citizen",
@@ -1090,7 +1087,7 @@
     "errorUpload": "We could not upload that photo. Try a JPG, PNG or WEBP under 5 MB.",
     "errorUnknown": "We could not save your persona. Please try again.",
     "whatsapp": "WhatsApp",
-    "whatsappPlaceholder": "+34 612 345 678",
+    "whatsappPlaceholder": "Country code + number",
     "telegram": "Telegram",
     "telegramPlaceholder": "sofia_bcn",
     "facebook": "Facebook",
@@ -1311,7 +1308,6 @@
       "logout": "Log Out"
     },
     "identity": {
-      "mutual": "Mutual 100%",
       "mutualConsent": "Mutual Consent Verified"
     },
     "trust": {
@@ -1342,7 +1338,6 @@
     },
     "locker": {
       "title": "Contact Locker",
-      "badge": "Zero Cold DMs",
       "body": "Your personal handles are encrypted by default. Contact channels are revealed strictly after reciprocal invitation consent.",
       "masked": "(Masked)",
       "handles": {
@@ -1384,7 +1379,6 @@
     "dispatches": {
       "title": "Your Dispatches",
       "body": "Photos and notes you have shared with the community, newest first.",
-      "visibility": "Visible to members",
       "appreciations": "{count, plural, =1 {# Appreciation} other {# Appreciations}}",
       "empty": "You have not shared a dispatch yet.",
       "textOnly": "Text dispatch",

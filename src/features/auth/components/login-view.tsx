@@ -9,7 +9,7 @@ import { AuthBackLink } from "@/features/auth/components/auth-back-link";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
-type LoginState = "ready" | "invalid" | "loading";
+type LoginState = "ready" | "invalid" | "error" | "loading";
 
 /** A signed-in account that cannot enter the app yet. */
 export type BlockedAccount = {
@@ -45,29 +45,51 @@ export function LoginView({ currentAccount }: { currentAccount?: BlockedAccount 
     }
   }
 
-  async function submit(event: FormEvent) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!email.includes("@") || password.length < 1) {
+    // Read the real field values, not React state. Password managers can fill a
+    // controlled input without firing `onChange`, which used to submit empty
+    // strings and show "Incorrect credentials" without ever calling Supabase.
+    const formData = new FormData(event.currentTarget);
+    const submittedEmail = String(formData.get("email") ?? "").trim();
+    const submittedPassword = String(formData.get("password") ?? "");
+
+    setEmail(submittedEmail);
+    setPassword(submittedPassword);
+
+    if (!submittedEmail.includes("@") || submittedPassword.length < 1) {
       setState("invalid");
       return;
     }
 
     setState("loading");
     try {
-      const result = await signInAction({ email, password, remember });
+      const result = await signInAction({
+        email: submittedEmail,
+        password: submittedPassword,
+        remember,
+      });
       if (!result.ok) {
-        setState("invalid");
+        // Only a rejected credential deserves the "incorrect credentials"
+        // banner; outages and other failures get the neutral retry banner.
+        setState(result.error === "invalid" ? "invalid" : "error");
         return;
       }
 
       router.push(result.redirectTo);
     } catch {
-      setState("invalid");
+      setState("error");
     }
   }
 
   const isInvalid = state === "invalid";
+  const isError = state === "error";
+  const hasError = isInvalid || isError;
+
+  function clearError() {
+    if (isInvalid || isError) setState("ready");
+  }
 
   const notice = currentAccount
     ? {
@@ -193,6 +215,25 @@ export function LoginView({ currentAccount }: { currentAccount?: BlockedAccount 
                 </div>
               ) : null}
 
+              {/* Auth unreachable, rate-limited, or otherwise not a bad password */}
+              {isError ? (
+                <div
+                  id="login-error"
+                  role="alert"
+                  className="flex items-start gap-space-sm rounded-2xl border border-outline-variant bg-surface-container p-space-md"
+                >
+                  <Icon name="info" className="mt-0.5 shrink-0 text-lg text-primary" />
+                  <div className="flex flex-col">
+                    <span className="font-label-lg text-label-lg font-semibold text-on-surface">
+                      {t("errorTitle")}
+                    </span>
+                    <p className="mt-0.5 font-body-sm text-body-sm text-secondary">
+                      {t("errorBody")}
+                    </p>
+                  </div>
+                </div>
+              ) : null}
+
               {/* `noValidate` hands validation to the in-app error banner. Without
                   it the browser's own email check blocks submit on a malformed
                   address and the designed banner is unreachable. */}
@@ -217,15 +258,18 @@ export function LoginView({ currentAccount }: { currentAccount?: BlockedAccount 
                       type="email"
                       autoComplete="email"
                       required
-                      aria-invalid={isInvalid || undefined}
-                      aria-describedby={isInvalid ? "login-error" : undefined}
+                      aria-invalid={hasError || undefined}
+                      aria-describedby={hasError ? "login-error" : undefined}
                       value={email}
-                      onChange={(event) => setEmail(event.target.value)}
+                      onChange={(event) => {
+                        setEmail(event.target.value);
+                        clearError();
+                      }}
                       placeholder={t("emailPlaceholder")}
                       className={cn(
                         FIELD_BASE,
                         "rounded-full pr-12",
-                        isInvalid
+                        hasError
                           ? "border-danger-border-strong focus-visible:outline-danger-border-strong"
                           : "border-outline-variant focus-visible:outline-primary",
                       )}
@@ -259,13 +303,19 @@ export function LoginView({ currentAccount }: { currentAccount?: BlockedAccount 
                       type={showPassword ? "text" : "password"}
                       autoComplete="current-password"
                       required
-                      aria-invalid={isInvalid || undefined}
-                      aria-describedby={isInvalid ? "login-error" : undefined}
+                      aria-invalid={hasError || undefined}
+                      aria-describedby={hasError ? "login-error" : undefined}
                       value={password}
-                      onChange={(event) => setPassword(event.target.value)}
+                      onChange={(event) => {
+                        setPassword(event.target.value);
+                        clearError();
+                      }}
                       className={cn(
                         FIELD_BASE,
-                        "rounded-full border-outline-variant pr-12 focus-visible:outline-primary",
+                        "rounded-full pr-12",
+                        hasError
+                          ? "border-danger-border-strong focus-visible:outline-danger-border-strong"
+                          : "border-outline-variant focus-visible:outline-primary",
                       )}
                     />
                     <button

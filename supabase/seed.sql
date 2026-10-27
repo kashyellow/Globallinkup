@@ -519,7 +519,7 @@ values
   ('b0000000-0000-0000-0000-000000000002', 'Artisanal Ceramic Espresso Set (Barcelona)', 6400, 'USD',
    'Hand-thrown speckled stoneware fired twice in a Gràcia family atelier.',
    'Barcelona, ES',
-   '+34 612 345 678', true, '11111111-1111-1111-1111-111111111111'),
+   null, true, '11111111-1111-1111-1111-111111111111'),
   ('b0000000-0000-0000-0000-000000000003', 'Bilingual Cultural Phrasebook & Journal (EN/ES)', 2400, 'USD',
    'Linen-bound official GlobalLinkup journal paired with a copper pen.',
    'Official Edition',

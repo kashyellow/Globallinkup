@@ -85,11 +85,7 @@ export function ProfileActivity({
 
   return (
     <section>
-      <SectionHead index="05" title={t("sections.archive")}>
-        <span className="border border-success-border px-2 py-0.5 font-label-md text-label-md font-semibold tracking-[0.08em] text-success-text uppercase">
-          {t("dispatches.visibility")}
-        </span>
-      </SectionHead>
+      <SectionHead index="05" title={t("sections.archive")} />
 
       <TabBar tab={tab} onChange={setTab} labels={tabLabels} />
 

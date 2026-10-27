@@ -81,11 +81,7 @@ function DialogContent({
 
   return (
     <>
-      <div className="sticky top-0 z-20 flex items-center justify-between border-b border-outline-variant bg-surface-low/95 px-space-lg py-space-md backdrop-blur-md">
-        <span className="inline-flex items-center gap-1 rounded-full border border-success-border bg-success-surface px-2.5 py-0.5 font-label-md text-label-md font-semibold text-success-text">
-          <Icon name="verified" className="text-xs" />
-          {t("adminVerified")}
-        </span>
+      <div className="sticky top-0 z-20 flex items-center justify-end border-b border-outline-variant bg-surface-low/95 px-space-lg py-space-md backdrop-blur-md">
         <button
           type="button"
           onClick={onClose}
@@ -234,24 +230,6 @@ function DialogContent({
               <Icon name="forum" className="text-xl" />
               {t("contactCta")}
             </a>
-            <div className="mt-1 flex items-center justify-center gap-2 font-label-md text-label-md text-secondary">
-              <span>{t("whatsappPrefix")}</span>
-              <a
-                href={`tel:${contact.whatsappNumber.replace(/\s/g, "")}`}
-                className="rounded font-semibold text-on-surface transition-colors duration-300 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              >
-                {contact.whatsappNumber}
-              </a>
-            </div>
-            <div className="flex items-center justify-center gap-2 font-label-md text-label-md text-secondary">
-              <span>{t("emailPrefix")}</span>
-              <a
-                href={`mailto:${contact.email}`}
-                className="rounded font-semibold text-on-surface transition-colors duration-300 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              >
-                {contact.email}
-              </a>
-            </div>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-x-space-md gap-y-2 border-t border-outline-variant pt-space-md font-label-md text-label-md text-secondary">

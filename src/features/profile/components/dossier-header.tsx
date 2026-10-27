@@ -169,10 +169,6 @@ export function DossierHeader({ profile }: { profile: OwnProfile }) {
                       <DefaultAvatar className="h-full w-full" />
                     )}
                   </div>
-                  <span className="absolute -bottom-4 left-4 inline-flex -rotate-6 items-center gap-1.5 border border-primary bg-surface-lowest px-2.5 py-1 font-label-md text-label-md font-bold tracking-[0.08em] text-primary uppercase transition-transform duration-500 hover:rotate-0 motion-reduce:transition-none">
-                    <Icon name="verified" filled className="text-sm" />
-                    {t("identity.mutual")}
-                  </span>
                 </div>
               </div>
             </div>

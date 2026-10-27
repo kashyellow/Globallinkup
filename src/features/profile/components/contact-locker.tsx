@@ -33,11 +33,7 @@ export function ContactLocker({
 
   return (
     <section>
-      <SectionHead index="04" title={t("title")}>
-        <span className="border border-primary px-2 py-0.5 font-label-md text-label-md font-bold tracking-[0.08em] text-primary uppercase">
-          {t("badge")}
-        </span>
-      </SectionHead>
+      <SectionHead index="04" title={t("title")} />
 
       <p className="mt-space-md max-w-[62ch] font-body-sm text-body-sm text-text-muted">
         {t("body")}

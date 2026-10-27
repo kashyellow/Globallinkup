@@ -284,7 +284,7 @@ function StatusChip({ status }: { status: AdminProductStatus }) {
   return (
     <span
       className={cn(
-        "rounded-full border px-2.5 py-0.5 font-label-md text-label-md font-semibold",
+        "shrink-0 rounded-full border px-2.5 py-0.5 font-label-md text-label-md font-semibold",
         status === "live"
           ? "border-success-border bg-success-surface text-success-text"
           : status === "unpublished"
@@ -320,8 +320,8 @@ function ProductRow({
 
   return (
     <div className="bezel-tray" data-product-name={product.name}>
-      <div className="flex flex-col items-start justify-between gap-space-md bezel-core p-space-md sm:flex-row sm:items-center">
-        <div className="flex min-w-0 items-center gap-space-md">
+      <div className="flex flex-col items-start justify-between gap-space-md bezel-core p-space-md lg:flex-row lg:items-center">
+        <div className="flex w-full min-w-0 items-center gap-space-md lg:w-auto lg:flex-1">
           {product.image ? (
             <MediaImage
               alt={product.name}
@@ -334,14 +334,14 @@ function ProductRow({
               <Icon name="image" />
             </span>
           )}
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="truncate font-headline-sm text-headline-sm font-semibold text-on-surface">
+          <div className="min-w-0 flex-1">
+            <div className="flex min-w-0 items-center gap-2">
+              <h2 className="min-w-0 truncate font-headline-sm text-headline-sm font-semibold text-on-surface">
                 {product.name}
               </h2>
               <StatusChip status={product.status} />
               {product.imagePaths.length > 1 ? (
-                <span className="inline-flex items-center gap-1 rounded-full border border-outline-variant bg-surface-container px-2 py-0.5 font-label-md text-label-md text-secondary">
+                <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-outline-variant bg-surface-container px-2 py-0.5 font-label-md text-label-md text-secondary">
                   <Icon name="photo_library" className="text-sm" />
                   {product.imagePaths.length}
                 </span>
@@ -353,7 +353,7 @@ function ProductRow({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-space-xs">
+        <div className="flex shrink-0 flex-wrap items-center gap-space-xs">
           {product.status === "trashed" ? (
             <button
               type="button"

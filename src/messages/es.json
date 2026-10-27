@@ -386,15 +386,12 @@
       "cta": "Consultas para Socios Artesanos"
     },
     "drawer": {
-      "adminVerified": "Verificado por Admin",
       "close": "Cerrar panel de detalles",
       "artisanPartnerDirect": "Socio Artesano Directo",
       "currencyUsd": "USD",
       "howToOrderTitle": "Cómo Pedir / Consultas Directas",
       "howToOrderBody": "GlobalLinkup gestiona los pedidos personalmente con nuestros makers regionales. Como las cantidades son limitadas y se producen en lotes pequeños, los pedidos se confirman directamente a través de nuestro conserje multilingüe. Sin pago mediante carrito ni reventa entre usuarios.",
       "contactCta": "Contactar al Conserje / Consultar Compra",
-      "whatsappPrefix": "O escribe por WhatsApp:",
-      "emailPrefix": "Correo Oficial:",
       "whatsappMessage": "Hola Conserje de GlobalLinkup, quisiera consultar sobre pedir el {product}.",
       "trust": {
         "fairCompensation": "Compensación Justa",
@@ -415,9 +412,7 @@
       "body": "Pregunta por una pieza, colaboraciones artesanas, envíos o un encargo especial. Respondemos personalmente.",
       "close": "Cerrar el diálogo de consulta",
       "emailCta": "Escribir al concierge",
-      "whatsappCta": "Mensaje por WhatsApp",
-      "emailSubject": "Consulta al concierge de GlobalLinkup",
-      "contactHint": "También puedes escribirnos a {email} o al {phone}."
+      "emailSubject": "Consulta al concierge de GlobalLinkup"
     }
   },
   "Admin": {
@@ -845,6 +840,8 @@
       "signedInSignOut": "Cerrar sesión",
       "invalidTitle": "Credenciales incorrectas",
       "invalidBody": "Correo o contraseña incorrectos. Intenta de nuevo o",
+      "errorTitle": "No pudimos iniciar sesión",
+      "errorBody": "Algo falló de nuestro lado. Intenta de nuevo en un momento.",
       "resetPassword": "restablece tu contraseña",
       "emailLabel": "Correo Electrónico",
       "emailHelper": "Identidad verificada",
@@ -909,9 +906,9 @@
       "progressLabel": "Progreso de Incorporación",
       "step1": "01 Cuenta",
       "step1Sub": "Credenciales",
-      "step2": "02 Persona",
+      "step2": "02 Personal",
       "step2Sub": "Biografía Cultural",
-      "step3": "03 Revisión Humana",
+      "step3": "03 Revisión Personal",
       "step3Sub": "Verificación",
       "approvedTitle": "Identidad Verificada y Autenticada",
       "approvedBadge": "Ciudadano Activo",
@@ -1090,7 +1087,7 @@
     "errorUpload": "No pudimos subir esa foto. Prueba con un JPG, PNG o WEBP de menos de 5 MB.",
     "errorUnknown": "No pudimos guardar tu perfil. Inténtalo de nuevo.",
     "whatsapp": "WhatsApp",
-    "whatsappPlaceholder": "+34 612 345 678",
+    "whatsappPlaceholder": "Código de país + número",
     "telegram": "Telegram",
     "telegramPlaceholder": "sofia_bcn",
     "facebook": "Facebook",
@@ -1311,7 +1308,6 @@
       "logout": "Cerrar Sesión"
     },
     "identity": {
-      "mutual": "Mutuo 100%",
       "mutualConsent": "Consentimiento Mutuo Verificado"
     },
     "trust": {
@@ -1342,7 +1338,6 @@
     },
     "locker": {
       "title": "Bóveda de Contacto",
-      "badge": "Cero MD en Frío",
       "body": "Tus contactos personales están cifrados por defecto. Los canales de contacto se revelan estrictamente tras el consentimiento recíproco de la invitación.",
       "masked": "(Enmascarado)",
       "handles": {
@@ -1384,7 +1379,6 @@
     "dispatches": {
       "title": "Tus Crónicas",
       "body": "Fotos y notas que has compartido con la comunidad, de la más reciente a la más antigua.",
-      "visibility": "Visible para miembros",
       "appreciations": "{count, plural, =1 {# Apreciación} other {# Apreciaciones}}",
       "empty": "Todavía no has compartido ninguna crónica.",
       "textOnly": "Publicación de texto",

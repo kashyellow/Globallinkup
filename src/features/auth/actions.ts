@@ -34,6 +34,12 @@ function mapAuthError(error: { code?: string; status?: number; message?: string 
   const code = error.code ?? "";
   const message = error.message?.toLowerCase() ?? "";
 
+  // A rejected password must stay distinct from an outage: the login view shows
+  // a different banner for `unknown`, so a network failure never blames the
+  // credentials the member just typed.
+  if (code === "invalid_credentials" || message.includes("invalid login credentials")) {
+    return "invalid";
+  }
   if (
     code === "user_already_exists" ||
     error.status === 422 ||
@@ -100,11 +106,21 @@ export async function signInAction(input: unknown): Promise<AuthResult> {
   if (!parsed.success) return { ok: false, error: "invalid" };
 
   const supabase = await createClient({ remember: parsed.data.remember });
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: parsed.data.email,
-    password: parsed.data.password,
-  });
-  if (error || !data.user) return { ok: false, error: "invalid" };
+
+  let result: Awaited<ReturnType<typeof supabase.auth.signInWithPassword>>;
+  try {
+    result = await supabase.auth.signInWithPassword({
+      email: parsed.data.email,
+      password: parsed.data.password,
+    });
+  } catch {
+    // Unreachable Auth/network failure: keep it distinct from a bad password.
+    return { ok: false, error: "unknown" };
+  }
+
+  const { data, error } = result;
+  if (error) return { ok: false, error: mapAuthError(error) };
+  if (!data.user) return { ok: false, error: "unknown" };
 
   // Keep the preference readable by the proxy so a refresh does not turn a
   // session-only login into a persistent one.

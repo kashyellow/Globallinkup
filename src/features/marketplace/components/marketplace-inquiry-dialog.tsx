@@ -73,20 +73,7 @@ export function MarketplaceInquiryDialog({
             <Icon name="mail" className="text-lg" />
             {t("emailCta")}
           </a>
-          <a
-            href={contact.whatsappLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex min-h-12 items-center justify-center gap-2 rounded-full border border-outline bg-surface-container px-4 font-label-lg text-label-lg font-semibold text-on-surface transition-colors hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
-          >
-            <Icon name="forum" className="text-lg" />
-            {t("whatsappCta")}
-          </a>
         </div>
-
-        <p className="text-center font-body-sm text-body-sm text-text-muted">
-          {t("contactHint", { email: contact.email, phone: contact.whatsappNumber })}
-        </p>
       </div>
     </div>
   );
