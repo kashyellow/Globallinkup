@@ -8,7 +8,12 @@ import { Icon } from "@/components/ui/icon";
 import { InlineAlert } from "@/components/ui/inline-alert";
 import { MediaImage } from "@/components/ui/media-image";
 import { Spinner } from "@/components/ui/spinner";
-import { removePostAction, resolveReportAction, restorePostAction } from "@/features/admin/actions";
+import {
+  removePostAction,
+  resolveAppealFormAction,
+  resolveReportAction,
+  restorePostAction,
+} from "@/features/admin/actions";
 import { AdminPagination } from "@/features/admin/components/admin-pagination";
 import { AdminSearchForm } from "@/features/admin/components/admin-search-form";
 import { AdminStatusLinks } from "@/features/admin/components/admin-status-links";
@@ -16,7 +21,12 @@ import { useDialogA11y } from "@/features/shared/use-dialog-a11y";
 import { usePendingAction } from "@/features/shared/use-pending-action";
 import { useRefresh } from "@/features/shared/refresh-provider";
 import { cn } from "@/lib/utils";
-import type { AdminReportDto, AdminReportFilter, AdminReportTarget } from "../queries";
+import type {
+  AdminAppealDto,
+  AdminReportDto,
+  AdminReportFilter,
+  AdminReportTarget,
+} from "../queries";
 
 const ACTION_BASE =
   "inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 py-2 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-px disabled:opacity-60";
@@ -25,6 +35,7 @@ type ResolveStatus = "resolved" | "dismissed";
 
 export function AdminModerationTab({
   reports,
+  appeals,
   query,
   status,
   target,
@@ -33,6 +44,7 @@ export function AdminModerationTab({
   totalPages,
 }: {
   reports: AdminReportDto[];
+  appeals: AdminAppealDto[];
   query: string;
   status: AdminReportFilter;
   target: AdminReportTarget;
@@ -134,6 +146,65 @@ export function AdminModerationTab({
 
   return (
     <div className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
+      {appeals.length > 0 ? (
+        <section className="mb-space-lg space-y-space-sm rounded-2xl border border-outline-variant bg-surface-low p-space-md">
+          <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
+            {t("appealsTitle", { count: appeals.length })}
+          </h2>
+          <p className="font-body-sm text-body-sm text-secondary">{t("appealsBody")}</p>
+          <ul className="space-y-space-sm">
+            {appeals.map((appeal) => (
+              <li
+                key={appeal.id}
+                className="space-y-2 rounded-xl border border-outline-variant bg-surface-container p-space-sm"
+              >
+                <p className="font-label-lg text-label-lg font-semibold text-on-surface">
+                  {appeal.postCaption || t("appealsUntitled")}
+                </p>
+                <p className="font-label-md text-label-md text-text-muted">{appeal.authorName}</p>
+                <p className="font-body-sm text-body-sm text-on-surface-strong">{appeal.message}</p>
+                <form
+                  action={resolveAppealFormAction}
+                  className="flex flex-col gap-2 sm:flex-row sm:items-center"
+                >
+                  <input type="hidden" name="appealId" value={appeal.id} />
+                  <input
+                    name="note"
+                    maxLength={500}
+                    placeholder={t("appealNotePlaceholder")}
+                    className="min-h-10 flex-1 rounded-full border border-outline-variant bg-surface-dim px-3 font-body-sm text-body-sm text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      type="submit"
+                      name="decision"
+                      value="accepted"
+                      className={cn(
+                        ACTION_BASE,
+                        "bg-primary text-on-primary hover:bg-primary-hover focus-visible:outline-primary",
+                      )}
+                    >
+                      {t("appealAccept")}
+                    </button>
+                    <button
+                      type="submit"
+                      name="decision"
+                      value="declined"
+                      className={cn(
+                        ACTION_BASE,
+                        "border border-outline-variant bg-surface-dim text-on-surface hover:border-outline-hover hover:bg-surface-container focus-visible:outline-primary",
+                      )}
+                    >
+                      {t("appealDecline")}
+                    </button>
+                  </div>
+                </form>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       <div className="flex flex-col justify-between gap-space-md lg:flex-row lg:items-end">
         <div>
           <p className="font-label-md text-label-md font-semibold text-primary">{t("eyebrow")}</p>

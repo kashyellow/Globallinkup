@@ -1,6 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+
+import { notifyMember } from "@/lib/notifications";
 import { z } from "zod";
 import { uuidSchema } from "@/lib/validation/ids";
 
@@ -47,6 +49,21 @@ export async function reviewPersonaAction(input: unknown): Promise<AdminResult> 
   });
 
   if (error || data !== true) return { ok: false, error: "unknown" };
+
+  const decision = parsed.data.decision;
+  await notifyMember({
+    recipientId: parsed.data.profileId,
+    type:
+      decision === "approved"
+        ? "persona.approved"
+        : decision === "suspended"
+          ? "persona.suspended"
+          : "persona.rejected",
+    targetType: "profile",
+    targetId: parsed.data.profileId,
+    reason: parsed.data.reason ?? null,
+  });
+
   revalidatePath("/admin");
   revalidatePath("/admin/users");
   return { ok: true };
@@ -106,7 +123,7 @@ export async function removePostAction(input: unknown): Promise<AdminResult> {
 
   const { data: current, error: readError } = await ctx.supabase
     .from("posts")
-    .select("id, state")
+    .select("id, state, author_id")
     .eq("id", parsed.data.postId)
     .maybeSingle();
 
@@ -130,6 +147,14 @@ export async function removePostAction(input: unknown): Promise<AdminResult> {
   if (error) return { ok: false, error: "unknown" };
   if (!updated || updated.length === 0) return { ok: false, error: "forbidden" };
 
+  await notifyMember({
+    recipientId: current.author_id,
+    type: "post.removed",
+    targetType: "post",
+    targetId: current.id,
+    reason: parsed.data.reason ?? "Removed by moderation.",
+  });
+
   revalidatePath("/admin");
   revalidatePath("/admin/moderation");
   revalidatePath("/posts");
@@ -147,7 +172,7 @@ export async function restorePostAction(input: unknown): Promise<AdminResult> {
 
   const { data: current, error: readError } = await ctx.supabase
     .from("posts")
-    .select("id, state, previous_state")
+    .select("id, state, previous_state, author_id")
     .eq("id", parsed.data.postId)
     .maybeSingle();
 
@@ -173,11 +198,102 @@ export async function restorePostAction(input: unknown): Promise<AdminResult> {
   if (error) return { ok: false, error: "unknown" };
   if (!updated || updated.length === 0) return { ok: false, error: "forbidden" };
 
+  await notifyMember({
+    recipientId: current.author_id,
+    type: "post.restored",
+    targetType: "post",
+    targetId: current.id,
+  });
+
   revalidatePath("/admin");
   revalidatePath("/admin/moderation");
   revalidatePath("/posts");
   revalidatePath("/profile");
   return { ok: true };
+}
+
+/**
+ * Accept or decline an appeal (ADR 0001). Accepting restores the post; declining
+ * keeps the removal and tells the author why. FormData keeps the desk server-
+ * rendered: no client state, no extra dialog.
+ */
+export async function resolveAppealFormAction(formData: FormData): Promise<void> {
+  const ctx = await requireAdminClient();
+  if (!ctx) return;
+
+  const parsed = z
+    .object({
+      appealId: uuidSchema,
+      decision: z.enum(["accepted", "declined"]),
+      note: z.string().trim().max(500).optional(),
+    })
+    .safeParse({
+      appealId: formData.get("appealId"),
+      decision: formData.get("decision"),
+      note: formData.get("note") ?? undefined,
+    });
+  if (!parsed.success) return;
+
+  const { data: appeal } = await ctx.supabase
+    .from("post_appeals")
+    .select("id, post_id, author_id, status")
+    .eq("id", parsed.data.appealId)
+    .maybeSingle();
+
+  if (!appeal || appeal.status !== "open") return;
+
+  const accepted = parsed.data.decision === "accepted";
+  const now = new Date().toISOString();
+
+  await ctx.supabase
+    .from("post_appeals")
+    .update({
+      status: parsed.data.decision,
+      admin_id: ctx.user.id,
+      admin_note: parsed.data.note?.length ? parsed.data.note : null,
+      resolved_at: now,
+    })
+    .eq("id", appeal.id);
+
+  if (accepted) {
+    const { data: post } = await ctx.supabase
+      .from("posts")
+      .select("id, previous_state")
+      .eq("id", appeal.post_id)
+      .maybeSingle();
+
+    await ctx.supabase
+      .from("posts")
+      .update({
+        state: post?.previous_state ?? "visible",
+        archived_at: post?.previous_state === "archived" ? now : null,
+        removed_by: null,
+        removed_at: null,
+        removed_reason: null,
+        previous_state: null,
+        purge_after: null,
+      })
+      .eq("id", appeal.post_id);
+
+    await notifyMember({
+      recipientId: appeal.author_id,
+      type: "post.restored",
+      targetType: "post",
+      targetId: appeal.post_id,
+    });
+  } else {
+    await notifyMember({
+      recipientId: appeal.author_id,
+      type: "appeal.declined",
+      targetType: "post",
+      targetId: appeal.post_id,
+      reason: parsed.data.note ?? null,
+    });
+  }
+
+  revalidatePath("/admin/moderation");
+  revalidatePath("/profile");
+  revalidatePath("/posts");
 }
 
 // ---------------------------------------------------------------------------
@@ -195,12 +311,27 @@ export async function reviewInterestAction(input: unknown): Promise<AdminResult>
   const parsed = interestReviewSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
 
+  const { data: interest } = await ctx.supabase
+    .from("interest_catalog")
+    .select("id, created_by")
+    .eq("id", parsed.data.interestId)
+    .maybeSingle();
+
   const { data, error } = await ctx.supabase.rpc("review_interest", {
     p_interest_id: parsed.data.interestId,
     p_decision: parsed.data.decision,
   });
 
   if (error || data !== true) return { ok: false, error: "unknown" };
+
+  if (interest?.created_by) {
+    await notifyMember({
+      recipientId: interest.created_by,
+      type: parsed.data.decision === "approved" ? "interest.approved" : "interest.rejected",
+      targetType: "interest",
+      targetId: interest.id,
+    });
+  }
 
   revalidatePath("/admin");
   revalidatePath("/admin/interests");

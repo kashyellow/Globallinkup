@@ -609,7 +609,13 @@
       "removeReasonLabel": "Motivo",
       "removeReasonPlaceholder": "Explica qué infringe las normas (10–500 caracteres).",
       "removeReasonHint": "Se comparte con el autor.",
-      "removeReasonConfirm": "Retirar publicación"
+      "removeReasonConfirm": "Retirar publicación",
+      "appealsTitle": "Apelaciones ({count})",
+      "appealsBody": "Una apelación por retirada. Aceptar restaura la publicación; rechazar envía tu nota al autor.",
+      "appealsUntitled": "Publicación sin título",
+      "appealNotePlaceholder": "Nota para el autor (opcional al aceptar)",
+      "appealAccept": "Aceptar y restaurar",
+      "appealDecline": "Rechazar"
     },
     "interests": {
       "title": "Revisión de Afinidades Culturales",
@@ -1416,7 +1422,13 @@
       "unarchive": "Devolver al feed",
       "removedReason": "Retirada por moderación: {reason}",
       "purgeCountdown": "Se eliminará definitivamente en {count} días",
-      "locked": "En revisión"
+      "locked": "En revisión",
+      "appeal": "Apelar esta retirada",
+      "appealPlaceholder": "Explica por qué debería restaurarse (10–500 caracteres).",
+      "appealSubmit": "Enviar apelación",
+      "appealSent": "Apelación enviada — en revisión.",
+      "appealDeclined": "Apelación rechazada.",
+      "appealAccepted": "Apelación aceptada — la publicación volvió."
     },
     "circles": {
       "title": "Círculos Mutuos",
@@ -1448,6 +1460,24 @@
       "noticeTitle": "Los estándares de la comunidad están en preparación",
       "noticeBody": "Los estándares de la comunidad se publicarán aquí. Mientras tanto, siguen vigentes los Términos del Servicio y la Política de Privacidad.",
       "backHome": "Volver al inicio"
+    }
+  },
+  "Notifications": {
+    "title": "Notificaciones",
+    "intro": "Decisiones de moderación y resultados de revisión que te afectan.",
+    "bell": "Notificaciones",
+    "bellWithCount": "Notificaciones ({count} sin leer)",
+    "emptyTitle": "Nada todavía",
+    "emptyBody": "Aquí aparecen las decisiones sobre tus publicaciones, persona e intereses.",
+    "types": {
+      "post.removed": "Publicación retirada",
+      "post.restored": "Publicación restaurada",
+      "appeal.declined": "Apelación rechazada",
+      "persona.approved": "Persona aprobada",
+      "persona.rejected": "Persona rechazada",
+      "persona.suspended": "Cuenta suspendida",
+      "interest.approved": "Interés aprobado",
+      "interest.rejected": "Interés rechazado"
     }
   }
 }

@@ -4,6 +4,7 @@ import { useFormatter, useTranslations } from "next-intl";
 
 import { Icon } from "@/components/ui/icon";
 import { MediaImage } from "@/components/ui/media-image";
+import { submitAppealFormAction } from "@/features/posts/appeal-actions";
 import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import type { ProfileDispatch } from "../queries";
@@ -122,6 +123,43 @@ export function DispatchCard({
                   {t("purgeCountdown", { count: remaining })}
                 </p>
               ) : null}
+
+              {dispatch.appeal === null ? (
+                <details className="pt-1">
+                  <summary className="cursor-pointer font-label-md text-label-md font-semibold text-primary">
+                    {t("appeal")}
+                  </summary>
+                  <form action={submitAppealFormAction} className="mt-2 flex flex-col gap-2">
+                    <input type="hidden" name="postId" value={dispatch.id} />
+                    <textarea
+                      name="message"
+                      rows={3}
+                      minLength={10}
+                      maxLength={500}
+                      required
+                      placeholder={t("appealPlaceholder")}
+                      className="w-full resize-none rounded-xl border border-outline-variant bg-surface-dim p-2 font-body-sm text-body-sm text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    />
+                    <button
+                      type="submit"
+                      className="self-start rounded-full bg-primary px-3 py-1.5 font-label-md text-label-md font-semibold text-on-primary hover:bg-primary-hover"
+                    >
+                      {t("appealSubmit")}
+                    </button>
+                  </form>
+                </details>
+              ) : dispatch.appeal.status === "open" ? (
+                <p className="font-label-md text-label-md text-secondary">{t("appealSent")}</p>
+              ) : dispatch.appeal.status === "declined" ? (
+                <p className="font-body-sm text-body-sm text-danger-text">
+                  {t("appealDeclined")}
+                  {dispatch.appeal.adminNote ? ` — ${dispatch.appeal.adminNote}` : null}
+                </p>
+              ) : (
+                <p className="font-label-md text-label-md text-success-text">
+                  {t("appealAccepted")}
+                </p>
+              )}
             </div>
           ) : null}
         </div>

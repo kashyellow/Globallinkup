@@ -783,6 +783,78 @@ export type Database = {
           },
         ];
       };
+      notifications: {
+        Row: {
+          created_at: string;
+          expires_at: string;
+          id: string;
+          read_at: string | null;
+          reason: string | null;
+          recipient_id: string;
+          target_id: string | null;
+          target_type: string | null;
+          type: Database["public"]["Enums"]["notification_type"];
+        };
+        Insert: {
+          created_at?: string;
+          expires_at?: string;
+          id?: string;
+          read_at?: string | null;
+          reason?: string | null;
+          recipient_id: string;
+          target_id?: string | null;
+          target_type?: string | null;
+          type: Database["public"]["Enums"]["notification_type"];
+        };
+        Update: {
+          created_at?: string;
+          expires_at?: string;
+          id?: string;
+          read_at?: string | null;
+          reason?: string | null;
+          recipient_id?: string;
+          target_id?: string | null;
+          target_type?: string | null;
+          type?: Database["public"]["Enums"]["notification_type"];
+        };
+        Relationships: [];
+      };
+      post_appeals: {
+        Row: {
+          admin_id: string | null;
+          admin_note: string | null;
+          author_id: string;
+          created_at: string;
+          id: string;
+          message: string;
+          post_id: string;
+          resolved_at: string | null;
+          status: Database["public"]["Enums"]["appeal_status"];
+        };
+        Insert: {
+          admin_id?: string | null;
+          admin_note?: string | null;
+          author_id: string;
+          created_at?: string;
+          id?: string;
+          message: string;
+          post_id: string;
+          resolved_at?: string | null;
+          status?: Database["public"]["Enums"]["appeal_status"];
+        };
+        Update: {
+          admin_id?: string | null;
+          admin_note?: string | null;
+          author_id?: string;
+          created_at?: string;
+          id?: string;
+          message?: string;
+          post_id?: string;
+          resolved_at?: string | null;
+          status?: Database["public"]["Enums"]["appeal_status"];
+        };
+        Relationships: [];
+      };
     };
     Views: {
       posts_feed: {
@@ -894,6 +966,10 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: { country_code: string; member_count: number }[];
       };
+      purge_expired_content: {
+        Args: { p_dry_run?: boolean };
+        Returns: Json;
+      };
       discover_personas: {
         Args: {
           p_countries?: string[];
@@ -974,7 +1050,17 @@ export type Database = {
       connection_status: "requested" | "accepted" | "declined";
       interest_status: "pending" | "approved" | "rejected";
       marketplace_status: "draft" | "live" | "unpublished" | "trashed";
+      appeal_status: "open" | "accepted" | "declined";
       moderation_status: "visible" | "removed";
+      notification_type:
+        | "post.removed"
+        | "post.restored"
+        | "appeal.declined"
+        | "persona.approved"
+        | "persona.rejected"
+        | "persona.suspended"
+        | "interest.approved"
+        | "interest.rejected";
       post_state: "visible" | "archived" | "removed";
       report_status: "open" | "resolved" | "dismissed";
       report_target_type: "user" | "post";

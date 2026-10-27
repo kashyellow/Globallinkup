@@ -146,13 +146,13 @@ phase 3 ≈ 7–10 days, phase 4 ≈ 4–6 days.
 - [x] Author can archive and restore; archived posts are absent from the feed.
 - [ ] Author hard delete removes the row and its storage objects; the audit entry
       keeps only ids.
-- [ ] Admin removal requires a reason; the author sees the reason, a 14-day
+- [x] Admin removal requires a reason; the author sees the reason, a 14-day
       countdown, and can file one appeal.
 - [ ] Admin can restore during the window; after 14 days the post is purged.
-- [ ] Deleted comment bodies are purged at 14 days and threads stay readable.
+- [x] Deleted comment bodies are purged at 14 days and threads stay readable.
 - [ ] Any approved member requesting a soft-deleted post image gets nothing
       (storage RLS), while the author still can.
-- [ ] Notifications deep-link to their target and are readable only by the
+- [x] Notifications deep-link to their target and are readable only by the
       recipient.
 - [x] An admin can no longer read `contact_details` or `profile_private`
       (pgTAP proves it).

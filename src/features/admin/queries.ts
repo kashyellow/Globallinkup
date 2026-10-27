@@ -463,6 +463,50 @@ export async function getAdminModeration({
   };
 }
 
+export type AdminAppealDto = {
+  id: string;
+  postId: string;
+  authorName: string;
+  postCaption: string;
+  message: string;
+  createdAt: string;
+};
+
+/** Open appeals waiting for a moderator decision (ADR 0001). */
+export async function getOpenAppeals(): Promise<AdminAppealDto[]> {
+  const supabase = await createClient();
+  const rows =
+    unwrap(
+      await supabase
+        .from("post_appeals")
+        .select("id, post_id, author_id, message, created_at")
+        .eq("status", "open")
+        .order("created_at", { ascending: true }),
+    ) ?? [];
+
+  if (rows.length === 0) return [];
+
+  const authorIds = [...new Set(rows.map((row) => row.author_id))];
+  const postIds = [...new Set(rows.map((row) => row.post_id))];
+  const [authors, posts] = await Promise.all([
+    supabase.from("profiles_public").select("id, display_name").in("id", authorIds),
+    supabase.from("posts").select("id, caption").in("id", postIds),
+  ]);
+  const authorById = new Map(
+    (unwrap(authors) ?? []).map((row) => [row.id, row.display_name ?? ""]),
+  );
+  const postById = new Map((unwrap(posts) ?? []).map((row) => [row.id, row.caption ?? ""]));
+
+  return rows.map((row) => ({
+    id: row.id,
+    postId: row.post_id,
+    authorName: authorById.get(row.author_id) ?? "",
+    postCaption: postById.get(row.post_id) ?? "",
+    message: row.message,
+    createdAt: row.created_at,
+  }));
+}
+
 export async function getAdminInterests({
   query,
   status,

@@ -46,6 +46,8 @@ implementation. Where this summary and the PRD disagree, the PRD wins.
   suite (pgTAP, `supabase/tests/`). This project runs on the **545xx** port block
   (see `docs/plan/api-layer/README.md` §2);
   `.env.local` is created from `supabase status -o env`.
+- `npm run purge` — run the retention job (`-- --dry-run` to preview). Vercel
+  Cron calls `/api/cron/purge` at 03:00 UTC; both share the same SQL function.
 - `npm run admin:bootstrap` — create or promote the `ADMIN_EMAIL` account to
   `admin` on a deployed project (`db push` never runs `seed.sql`, so the cloud has
   no admin). `--create` skips the persona funnel and makes the account in one
@@ -135,9 +137,11 @@ is implemented yet unless the code says so.
   implemented**: `post_state` (`visible | archived | removed`), the guard that
   keeps removal admin-only, hard delete for authors, admin remove/restore with a
   14-day deadline, and storage reads already gated on the owning post. The
-  profile archive now splits Active / Archived / Removed with archive, unarchive
-  and hard delete, and the moderation desk asks for a removal reason and can
-  restore. Still pending: the purge job, the appeal flow, and notifications.
+  profile archive splits Active / Archived / Removed, the moderation desk asks
+  for a removal reason and can restore, one appeal per removal is answered by an
+  admin, and `npm run purge` (@ 03:00 UTC via Vercel Cron) enforces the 14-day
+  window. Notifications announce every decision in an in-app inbox. The audit
+  trail is ADR 0003 and still pending.
 - **Notifications inbox** (ADR 0004): DB-backed notices with deep links. This is
   moderation feedback, **not chat**: no threads, realtime, or user-to-user
   messaging.

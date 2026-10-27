@@ -1,6 +1,6 @@
 # ADR 0001 — Post and comment lifecycle
 
-- **Status:** accepted — data model, guards and Server Actions landed 2026-10-27; UI landed 2026-10-27; purge job, appeals and notifications are still pending
+- **Status:** accepted — implemented 2026-10-28 (data model, UI, purge, appeals, notifications); the audit trail is ADR 0003
 - **Date:** 2026-10-27
 - **Related:** [round 1, item 4](../feedback/2026-10-27-client-review.md),
   [ADR 0004](./0004-notifications.md), [ADR 0003](./0003-audit-log-and-pii.md)

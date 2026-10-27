@@ -609,7 +609,13 @@
       "removeReasonLabel": "Reason",
       "removeReasonPlaceholder": "Explain what breaks the guidelines (10–500 characters).",
       "removeReasonHint": "Shared with the author.",
-      "removeReasonConfirm": "Remove post"
+      "removeReasonConfirm": "Remove post",
+      "appealsTitle": "Appeals ({count})",
+      "appealsBody": "One appeal per removal. Accepting restores the post; declining sends the author your note.",
+      "appealsUntitled": "Untitled post",
+      "appealNotePlaceholder": "Note for the author (optional when accepting)",
+      "appealAccept": "Accept and restore",
+      "appealDecline": "Decline"
     },
     "interests": {
       "title": "Cultural Interest Review",
@@ -1416,7 +1422,13 @@
       "unarchive": "Restore to feed",
       "removedReason": "Removed by moderation: {reason}",
       "purgeCountdown": "Permanently deleted in {count} days",
-      "locked": "Awaiting review"
+      "locked": "Awaiting review",
+      "appeal": "Appeal this removal",
+      "appealPlaceholder": "Explain why this post should be restored (10–500 characters).",
+      "appealSubmit": "Send appeal",
+      "appealSent": "Appeal sent — awaiting review.",
+      "appealDeclined": "Appeal declined.",
+      "appealAccepted": "Appeal accepted — the post is back."
     },
     "circles": {
       "title": "Mutual Circles",
@@ -1448,6 +1460,24 @@
       "noticeTitle": "Community standards are being finalized",
       "noticeBody": "The community standards will be published here. Until then, the Terms of Service and Privacy Policy remain in force.",
       "backHome": "Back to home"
+    }
+  },
+  "Notifications": {
+    "title": "Notifications",
+    "intro": "Moderation decisions and review outcomes that involve you.",
+    "bell": "Notifications",
+    "bellWithCount": "Notifications ({count} unread)",
+    "emptyTitle": "Nothing yet",
+    "emptyBody": "Decisions about your posts, persona, and interests land here.",
+    "types": {
+      "post.removed": "Post removed",
+      "post.restored": "Post restored",
+      "appeal.declined": "Appeal declined",
+      "persona.approved": "Persona approved",
+      "persona.rejected": "Persona rejected",
+      "persona.suspended": "Account suspended",
+      "interest.approved": "Interest approved",
+      "interest.rejected": "Interest rejected"
     }
   }
 }

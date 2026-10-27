@@ -9,6 +9,7 @@ import { BrandMark } from "@/components/ui/brand-mark";
 import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { MediaImage } from "@/components/ui/media-image";
+import { NotificationBell } from "@/features/notifications/components/notification-bell";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useLocaleSwitch } from "@/features/shared/use-locale-switch";
 import { Link, usePathname } from "@/lib/i18n/navigation";
@@ -29,12 +30,14 @@ export function Navbar({
   viewerName,
   viewerAvatar,
   pendingRequests = 0,
+  notifications = 0,
 }: {
   isAdmin?: boolean;
   viewerName: string;
   viewerAvatar: string | null;
   /** Inbound requests awaiting review, from the layout's count query. */
   pendingRequests?: number;
+  notifications?: number;
 }) {
   const t = useTranslations("Nav");
   const tTheme = useTranslations("Theme");
@@ -108,6 +111,7 @@ export function Navbar({
         </nav>
 
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          <NotificationBell count={notifications} />
           <ThemeToggle className="hidden sm:inline-flex" />
           <div className="hidden sm:block">
             <LocaleSwitch

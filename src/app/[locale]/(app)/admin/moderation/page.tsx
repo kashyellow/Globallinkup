@@ -12,6 +12,7 @@ import {
 import {
   ADMIN_PAGE_SIZES,
   getAdminModeration,
+  getOpenAppeals,
   type AdminReportFilter,
   type AdminReportTarget,
 } from "@/features/admin/queries";
@@ -39,6 +40,7 @@ export default async function AdminModerationPage({
   const status = parseEnum<AdminReportFilter>(sp.status, STATUSES, "open");
   const target = parseEnum<AdminReportTarget>(sp.target, TARGETS, "all");
   const page = parsePage(sp.page);
+  const appeals = await getOpenAppeals();
   const { reports, total } = await getAdminModeration({
     query,
     status,
@@ -50,6 +52,7 @@ export default async function AdminModerationPage({
   return (
     <AdminModerationTab
       reports={reports}
+      appeals={appeals}
       query={query}
       status={status}
       target={target}

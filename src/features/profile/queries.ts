@@ -24,6 +24,11 @@ export type ProfileDispatch = {
   state: "visible" | "archived" | "removed";
   removedReason: string | null;
   purgeAfter: string | null;
+  appeal: {
+    status: "open" | "accepted" | "declined";
+    message: string;
+    adminNote: string | null;
+  } | null;
 };
 
 export type OwnProfile = {
@@ -176,6 +181,27 @@ export async function getOwnProfile(
     posts.map((post) => post.image_path),
   );
 
+  const removedIds = posts.filter((post) => post.state === "removed").map((post) => post.id);
+  const appealByPost = new Map<string, NonNullable<ProfileDispatch["appeal"]>>();
+  if (removedIds.length > 0) {
+    const appeals = unwrap(
+      await supabase
+        .from("post_appeals")
+        .select("post_id, message, status, admin_note, created_at")
+        .in("post_id", removedIds)
+        .order("created_at", { ascending: false }),
+    );
+    for (const row of appeals ?? []) {
+      if (!appealByPost.has(row.post_id)) {
+        appealByPost.set(row.post_id, {
+          status: row.status,
+          message: row.message,
+          adminNote: row.admin_note,
+        });
+      }
+    }
+  }
+
   const dispatches: ProfileDispatch[] = posts.map((post) => ({
     id: post.id,
     image: resolveImageUrl(post.image_path, postImages),
@@ -185,6 +211,7 @@ export async function getOwnProfile(
     state: post.state,
     removedReason: post.removed_reason,
     purgeAfter: post.purge_after,
+    appeal: appealByPost.get(post.id) ?? null,
   }));
 
   const languages = Array.isArray(profile.languages)
