@@ -718,15 +718,33 @@
       }
     },
     "capabilities": {
-      "members.review": "Review members",
-      "posts.moderate": "Moderate posts",
-      "comments.moderate": "Moderate comments",
-      "interests.review": "Review interests",
-      "reports.manage": "Handle reports",
-      "marketplace.manage": "Manage marketplace",
-      "admins.manage": "Manage admins",
-      "settings.manage": "Edit settings",
-      "audit.read": "Read audit trail"
+      "members": {
+        "review": "Review members"
+      },
+      "posts": {
+        "moderate": "Moderate posts"
+      },
+      "comments": {
+        "moderate": "Moderate comments"
+      },
+      "interests": {
+        "review": "Review interests"
+      },
+      "reports": {
+        "manage": "Handle reports"
+      },
+      "marketplace": {
+        "manage": "Manage marketplace"
+      },
+      "admins": {
+        "manage": "Manage admins"
+      },
+      "settings": {
+        "manage": "Edit settings"
+      },
+      "audit": {
+        "read": "Read audit trail"
+      }
     }
   },
   "Connections": {
@@ -1524,14 +1542,22 @@
     "emptyTitle": "Nothing yet",
     "emptyBody": "Decisions about your posts, persona, and interests land here.",
     "types": {
-      "post.removed": "Post removed",
-      "post.restored": "Post restored",
-      "appeal.declined": "Appeal declined",
-      "persona.approved": "Persona approved",
-      "persona.rejected": "Persona rejected",
-      "persona.suspended": "Account suspended",
-      "interest.approved": "Interest approved",
-      "interest.rejected": "Interest rejected"
+      "post": {
+        "removed": "Post removed",
+        "restored": "Post restored"
+      },
+      "appeal": {
+        "declined": "Appeal declined"
+      },
+      "persona": {
+        "approved": "Persona approved",
+        "rejected": "Persona rejected",
+        "suspended": "Account suspended"
+      },
+      "interest": {
+        "approved": "Interest approved",
+        "rejected": "Interest rejected"
+      }
     }
   },
   "AcceptInvite": {

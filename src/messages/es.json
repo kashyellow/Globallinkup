@@ -718,15 +718,33 @@
       }
     },
     "capabilities": {
-      "members.review": "Revisar miembros",
-      "posts.moderate": "Moderar publicaciones",
-      "comments.moderate": "Moderar comentarios",
-      "interests.review": "Revisar intereses",
-      "reports.manage": "Gestionar reportes",
-      "marketplace.manage": "Gestionar marketplace",
-      "admins.manage": "Gestionar admins",
-      "settings.manage": "Editar ajustes",
-      "audit.read": "Leer auditoría"
+      "members": {
+        "review": "Revisar miembros"
+      },
+      "posts": {
+        "moderate": "Moderar publicaciones"
+      },
+      "comments": {
+        "moderate": "Moderar comentarios"
+      },
+      "interests": {
+        "review": "Revisar intereses"
+      },
+      "reports": {
+        "manage": "Gestionar reportes"
+      },
+      "marketplace": {
+        "manage": "Gestionar marketplace"
+      },
+      "admins": {
+        "manage": "Gestionar admins"
+      },
+      "settings": {
+        "manage": "Editar ajustes"
+      },
+      "audit": {
+        "read": "Leer auditoría"
+      }
     }
   },
   "Connections": {
@@ -1524,14 +1542,22 @@
     "emptyTitle": "Nada todavía",
     "emptyBody": "Aquí aparecen las decisiones sobre tus publicaciones, persona e intereses.",
     "types": {
-      "post.removed": "Publicación retirada",
-      "post.restored": "Publicación restaurada",
-      "appeal.declined": "Apelación rechazada",
-      "persona.approved": "Persona aprobada",
-      "persona.rejected": "Persona rechazada",
-      "persona.suspended": "Cuenta suspendida",
-      "interest.approved": "Interés aprobado",
-      "interest.rejected": "Interés rechazado"
+      "post": {
+        "removed": "Publicación retirada",
+        "restored": "Publicación restaurada"
+      },
+      "appeal": {
+        "declined": "Apelación rechazada"
+      },
+      "persona": {
+        "approved": "Persona aprobada",
+        "rejected": "Persona rechazada",
+        "suspended": "Cuenta suspendida"
+      },
+      "interest": {
+        "approved": "Interés aprobado",
+        "rejected": "Interés rechazado"
+      }
     }
   },
   "AcceptInvite": {
