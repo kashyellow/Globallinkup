@@ -154,8 +154,9 @@ is implemented yet unless the code says so.
 - **Audit + PII-safe logging** (ADR 0003) — **table and wiring implemented**:
   append-only `audit_events` (ids, actions, reasons, state metadata only),
   `record_audit()` for admins, 12-month retention via the purge job, and rows for
-  member/post/interest/appeal/product decisions. Still pending: the audit viewer
-  and the structured logger with `redact()`.
+  member/post/interest/appeal/product decisions, an `/admin/audit` viewer gated by
+  `audit.read`, and a structured logger whose `redact()` strips banned PII keys
+  (unit-tested).
 - **No admin access to PII** (ADR 0005) — **implemented**: the admin policies
   on `contact_details` and `profile_private` are gone, and the dossier no longer
   renders contact channels.

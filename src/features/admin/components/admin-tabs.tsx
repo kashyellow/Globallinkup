@@ -19,6 +19,7 @@ export const ADMIN_TABS = [
   },
   { href: "/admin/moderation", key: "moderation", icon: "gavel", requires: "reports.manage" },
   { href: "/admin/interests", key: "interests", icon: "tag", requires: "interests.review" },
+  { href: "/admin/audit", key: "audit", icon: "article", requires: "audit.read" },
 ] as const satisfies ReadonlyArray<{
   href: string;
   key: string;

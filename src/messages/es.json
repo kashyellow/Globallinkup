@@ -673,6 +673,14 @@
         "suspendedProfiles": "Miembros suspendidos",
         "reportedPosts": "Publicaciones reportadas"
       }
+    },
+    "audit": {
+      "audit": {
+        "title": "Registro de auditoría",
+        "body": "Registro inmutable de acciones de administración: ids, acciones y motivos. No guarda contenido de miembros.",
+        "forbidden": "Tu rol no puede leer el registro de auditoría.",
+        "empty": "Todavía no hay eventos."
+      }
     }
   },
   "Connections": {

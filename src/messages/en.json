@@ -673,6 +673,14 @@
         "suspendedProfiles": "Suspended members",
         "reportedPosts": "Reported posts"
       }
+    },
+    "audit": {
+      "audit": {
+        "title": "Audit trail",
+        "body": "Append-only record of admin actions: ids, actions and reasons. No member content is stored here.",
+        "forbidden": "Your role cannot read the audit trail.",
+        "empty": "No audit events yet."
+      }
     }
   },
   "Connections": {

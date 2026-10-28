@@ -583,3 +583,34 @@ export async function getAdminInterestCounts(): Promise<Record<AdminInterestFilt
     rejected: unwrapCount(rejected),
   };
 }
+
+export type AdminAuditEvent = {
+  id: string;
+  occurredAt: string;
+  actorRole: string | null;
+  action: string;
+  targetType: string | null;
+  targetId: string | null;
+  reason: string | null;
+};
+
+/** Newest first. RLS denies this read without `audit.read`. */
+export async function getAuditEvents(limit = 100): Promise<AdminAuditEvent[]> {
+  const supabase = await createClient();
+  const rows = unwrap(
+    await supabase
+      .from("audit_events")
+      .select("id, occurred_at, actor_role, action, target_type, target_id, reason")
+      .order("occurred_at", { ascending: false })
+      .limit(limit),
+  );
+  return (rows ?? []).map((row) => ({
+    id: row.id,
+    occurredAt: row.occurred_at,
+    actorRole: row.actor_role,
+    action: row.action,
+    targetType: row.target_type,
+    targetId: row.target_id,
+    reason: row.reason,
+  }));
+}
