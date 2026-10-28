@@ -55,6 +55,7 @@ if (dryRun) {
   console.log(`  posts         : ${data?.posts ?? 0}`);
   console.log(`  comments      : ${data?.comments ?? 0}`);
   console.log(`  notifications : ${data?.notifications ?? 0}`);
+  console.log(`  audit rows    : ${audit.data ?? 0}`);
   console.log(`  images        : ${paths.length}`);
   console.log("  nothing was written.");
   process.exit(0);
@@ -69,6 +70,9 @@ if (paths.length > 0) {
     images = paths.length;
   }
 }
+
+const audit = await supabase.rpc("purge_audit_events");
+if (audit.error) console.error(`Audit retention failed: ${audit.error.message}`);
 
 console.log("Purge complete");
 console.log(`  posts         : ${data?.posts ?? 0}`);

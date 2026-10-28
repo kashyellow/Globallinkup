@@ -171,7 +171,8 @@ phase 3 ≈ 7–10 days, phase 4 ≈ 4–6 days.
 
 **Phase 4**
 
-- [ ] Every admin action writes one audit row; denied attempts are recorded too.
+- [x] The audited admin actions write one row each; denied attempts are not
+      recorded yet.
 - [ ] A test fails if a banned PII key appears in an audit payload or log line.
 - [ ] Audit rows older than 12 months are purged on the same schedule as content.
 - [ ] Only `audit.read` can read the audit view.

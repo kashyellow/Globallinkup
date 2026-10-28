@@ -32,6 +32,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ ok: false }, { status: 500 });
   }
 
+  const audit = await supabase.rpc("purge_audit_events");
   const result = (data ?? {}) as PurgeResult;
   const paths = Array.isArray(result.paths)
     ? result.paths.filter((path): path is string => typeof path === "string" && path.length > 0)
@@ -54,6 +55,7 @@ export async function GET(request: Request) {
     posts: result.posts ?? 0,
     comments: result.comments ?? 0,
     notifications: result.notifications ?? 0,
+    audit: audit.data ?? 0,
     images,
   });
 }

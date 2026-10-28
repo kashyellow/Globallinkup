@@ -786,6 +786,42 @@ export type Database = {
           },
         ];
       };
+      audit_events: {
+        Row: {
+          action: string;
+          actor_id: string | null;
+          actor_role: string | null;
+          id: string;
+          metadata: Json;
+          occurred_at: string;
+          reason: string | null;
+          target_id: string | null;
+          target_type: string | null;
+        };
+        Insert: {
+          action: string;
+          actor_id?: string | null;
+          actor_role?: string | null;
+          id?: string;
+          metadata?: Json;
+          occurred_at?: string;
+          reason?: string | null;
+          target_id?: string | null;
+          target_type?: string | null;
+        };
+        Update: {
+          action?: string;
+          actor_id?: string | null;
+          actor_role?: string | null;
+          id?: string;
+          metadata?: Json;
+          occurred_at?: string;
+          reason?: string | null;
+          target_id?: string | null;
+          target_type?: string | null;
+        };
+        Relationships: [];
+      };
       admin_roles: {
         Row: {
           capabilities: string[];
@@ -1001,6 +1037,20 @@ export type Database = {
       discover_countries: {
         Args: Record<PropertyKey, never>;
         Returns: { country_code: string; member_count: number }[];
+      };
+      purge_audit_events: {
+        Args: Record<PropertyKey, never>;
+        Returns: number;
+      };
+      record_audit: {
+        Args: {
+          p_action: string;
+          p_metadata?: Json;
+          p_reason?: string;
+          p_target_id?: string;
+          p_target_type?: string;
+        };
+        Returns: string;
       };
       my_capabilities: {
         Args: Record<PropertyKey, never>;

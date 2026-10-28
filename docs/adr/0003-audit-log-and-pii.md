@@ -1,6 +1,6 @@
 # ADR 0003 — Audit log and PII-safe logging
 
-- **Status:** proposed
+- **Status:** accepted (partial) — table, `record_audit()`, retention and admin-action wiring landed 2026-10-28; the audit viewer and the structured logger are pending
 - **Date:** 2026-10-27
 - **Related:** [round 1, closing note](../feedback/2026-10-27-client-review.md),
   [ADR 0002](./0002-granular-admin-rbac.md), [ADR 0005](./0005-pii-access-boundaries.md)

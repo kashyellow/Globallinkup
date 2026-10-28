@@ -151,9 +151,11 @@ is implemented yet unless the code says so.
   `admin:bootstrap --role=<slug>` assigns a role. `is_admin()` now means owner, so
   anything not yet migrated stays owner-only. Still pending: the in-app team
   screen (create accounts, edit capabilities, one-time invite link).
-- **Audit + PII-safe logging** (ADR 0003): append-only `audit_events` with ids,
-  actions, reasons and whitelisted metadata only; 12-month retention; gated by
-  `audit.read`.
+- **Audit + PII-safe logging** (ADR 0003) — **table and wiring implemented**:
+  append-only `audit_events` (ids, actions, reasons, state metadata only),
+  `record_audit()` for admins, 12-month retention via the purge job, and rows for
+  member/post/interest/appeal/product decisions. Still pending: the audit viewer
+  and the structured logger with `redact()`.
 - **No admin access to PII** (ADR 0005) — **implemented**: the admin policies
   on `contact_details` and `profile_private` are gone, and the dossier no longer
   renders contact channels.

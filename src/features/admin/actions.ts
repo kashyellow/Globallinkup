@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
+import { recordAudit } from "@/lib/audit";
 import { notifyMember } from "@/lib/notifications";
 import { z } from "zod";
 import { uuidSchema } from "@/lib/validation/ids";
@@ -51,6 +52,13 @@ export async function reviewPersonaAction(input: unknown): Promise<AdminResult> 
   if (error || data !== true) return { ok: false, error: "unknown" };
 
   const decision = parsed.data.decision;
+  await recordAudit({
+    action: `member.${decision === "approved" ? "approved" : decision === "suspended" ? "suspended" : "rejected"}`,
+    targetType: "profile",
+    targetId: parsed.data.profileId,
+    reason: parsed.data.reason ?? null,
+  });
+
   await notifyMember({
     recipientId: parsed.data.profileId,
     type:
@@ -147,6 +155,14 @@ export async function removePostAction(input: unknown): Promise<AdminResult> {
   if (error) return { ok: false, error: "unknown" };
   if (!updated || updated.length === 0) return { ok: false, error: "forbidden" };
 
+  await recordAudit({
+    action: "post.removed",
+    targetType: "post",
+    targetId: current.id,
+    reason: parsed.data.reason ?? "Removed by moderation.",
+    metadata: { from_state: current.state, to_state: "removed" },
+  });
+
   await notifyMember({
     recipientId: current.author_id,
     type: "post.removed",
@@ -197,6 +213,13 @@ export async function restorePostAction(input: unknown): Promise<AdminResult> {
 
   if (error) return { ok: false, error: "unknown" };
   if (!updated || updated.length === 0) return { ok: false, error: "forbidden" };
+
+  await recordAudit({
+    action: "post.restored",
+    targetType: "post",
+    targetId: current.id,
+    metadata: { to_state: target },
+  });
 
   await notifyMember({
     recipientId: current.author_id,
@@ -254,6 +277,13 @@ export async function resolveAppealFormAction(formData: FormData): Promise<void>
       resolved_at: now,
     })
     .eq("id", appeal.id);
+
+  await recordAudit({
+    action: accepted ? "appeal.accepted" : "appeal.declined",
+    targetType: "post",
+    targetId: appeal.post_id,
+    reason: parsed.data.note ?? null,
+  });
 
   if (accepted) {
     const { data: post } = await ctx.supabase
@@ -324,6 +354,12 @@ export async function reviewInterestAction(input: unknown): Promise<AdminResult>
 
   if (error || data !== true) return { ok: false, error: "unknown" };
 
+  await recordAudit({
+    action: parsed.data.decision === "approved" ? "interest.approved" : "interest.rejected",
+    targetType: "interest",
+    targetId: parsed.data.interestId,
+  });
+
   if (interest?.created_by) {
     await notifyMember({
       recipientId: interest.created_by,
@@ -390,6 +426,12 @@ export async function createProductAction(input: unknown): Promise<AdminResult> 
       })),
     );
   }
+
+  await recordAudit({
+    action: "product.created",
+    targetType: "product",
+    targetId: created.id,
+  });
 
   revalidatePath("/admin");
   revalidatePath("/admin/marketplace");
