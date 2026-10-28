@@ -159,11 +159,11 @@ phase 3 ≈ 7–10 days, phase 4 ≈ 4–6 days.
 
 **Phase 3**
 
-- [ ] Owner can create an admin/sub-admin, assign a role, and edit capabilities.
-- [ ] Creating an account returns a one-time invite link; opening it lands on
+- [x] Owner can create an admin/sub-admin, assign a role, and edit capabilities.
+- [x] Creating an account returns a one-time invite link; opening it lands on
       `/accept-invite`, where the person sets their own password and gets the
       assigned role without the persona funnel.
-- [ ] The invite link is never written to logs or the audit table.
+- [x] The invite link is never written to logs or the audit table.
 - [ ] A sub-admin with `marketplace.manage` reaches the marketplace desk and gets
       403 on every other desk, by URL and by RLS.
 - [ ] The last owner cannot be demoted or deactivated.

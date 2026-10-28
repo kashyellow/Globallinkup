@@ -440,7 +440,8 @@
       "moderation": "Reports & Moderation",
       "interests": "Interest Catalog",
       "label": "Admin sections",
-      "dashboard": "Dashboard"
+      "dashboard": "Dashboard",
+      "team": "Team"
     },
     "users": {
       "searchLabel": "Search members",
@@ -681,6 +682,51 @@
         "forbidden": "Your role cannot read the audit trail.",
         "empty": "No audit events yet."
       }
+    },
+    "team": {
+      "title": "Team & roles",
+      "body": "Create admin accounts with a one-time invite link and decide what each role can reach.",
+      "forbidden": "Your role cannot manage the team.",
+      "inviteTitle": "Invite an admin",
+      "inviteBody": "We generate a link you share yourself: no email is sent, and you never see their password.",
+      "emailPlaceholder": "person@example.com",
+      "generateLink": "Generate invite link",
+      "working": "Working…",
+      "linkOnce": "Copy this link now — it is shown once.",
+      "copy": "Copy",
+      "copied": "Copied",
+      "adminsTitle": "Admins",
+      "rolesTitle": "Roles",
+      "invitesTitle": "Pending invites",
+      "noInvites": "No pending invites.",
+      "systemRole": "System role",
+      "save": "Save",
+      "createRole": "Create role",
+      "newRoleTitle": "New role",
+      "roleNamePlaceholder": "Role name",
+      "saved": "Saved",
+      "saveError": "Could not save.",
+      "roleExists": "A role with that name already exists.",
+      "lastOwnerHint": "The last owner cannot be demoted.",
+      "errors": {
+        "forbidden": "You cannot manage the team.",
+        "invalid": "Check the email and role.",
+        "exists": "That account already exists.",
+        "unknown": "Something went wrong.",
+        "link": "That invite link is not valid anymore.",
+        "weak": "Choose a stronger password."
+      }
+    },
+    "capabilities": {
+      "members.review": "Review members",
+      "posts.moderate": "Moderate posts",
+      "comments.moderate": "Moderate comments",
+      "interests.review": "Review interests",
+      "reports.manage": "Handle reports",
+      "marketplace.manage": "Manage marketplace",
+      "admins.manage": "Manage admins",
+      "settings.manage": "Edit settings",
+      "audit.read": "Read audit trail"
     }
   },
   "Connections": {
@@ -1486,6 +1532,21 @@
       "persona.suspended": "Account suspended",
       "interest.approved": "Interest approved",
       "interest.rejected": "Interest rejected"
+    }
+  },
+  "AcceptInvite": {
+    "title": "Set your password",
+    "body": "You were invited to the GlobalLinkup team. Choose a password to finish setting up your account.",
+    "password": "Password",
+    "confirm": "Confirm password",
+    "submit": "Activate account",
+    "working": "Activating…",
+    "expired": "This link is missing its token. Ask the person who invited you for a fresh link.",
+    "errors": {
+      "invalid": "Passwords do not match or are too short.",
+      "link": "This invite link is invalid or already used.",
+      "weak": "Choose a stronger password.",
+      "unknown": "Something went wrong."
     }
   }
 }

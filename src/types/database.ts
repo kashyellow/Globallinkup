@@ -822,6 +822,33 @@ export type Database = {
         };
         Relationships: [];
       };
+      admin_invites: {
+        Row: {
+          accepted_at: string | null;
+          admin_role_id: string;
+          created_at: string;
+          email: string;
+          id: string;
+          invited_by: string | null;
+        };
+        Insert: {
+          accepted_at?: string | null;
+          admin_role_id: string;
+          created_at?: string;
+          email: string;
+          id?: string;
+          invited_by?: string | null;
+        };
+        Update: {
+          accepted_at?: string | null;
+          admin_role_id?: string;
+          created_at?: string;
+          email?: string;
+          id?: string;
+          invited_by?: string | null;
+        };
+        Relationships: [];
+      };
       admin_roles: {
         Row: {
           capabilities: string[];

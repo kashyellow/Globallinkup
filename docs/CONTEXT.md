@@ -149,8 +149,9 @@ is implemented yet unless the code says so.
   implemented**: `admin_roles` + `profiles.admin_role_id`, `has_capability()`,
   policies rewritten per area, admin tabs filtered by capability, and
   `admin:bootstrap --role=<slug>` assigns a role. `is_admin()` now means owner, so
-  anything not yet migrated stays owner-only. Still pending: the in-app team
-  screen (create accounts, edit capabilities, one-time invite link).
+  anything not yet migrated stays owner-only. `/admin/team` creates accounts with
+  a one-time invite link (`auth.admin.generateLink`, shared by the owner — no
+  SMTP), edits role capabilities and reassigns roles.
 - **Audit + PII-safe logging** (ADR 0003) — **table and wiring implemented**:
   append-only `audit_events` (ids, actions, reasons, state metadata only),
   `record_audit()` for admins, 12-month retention via the purge job, and rows for

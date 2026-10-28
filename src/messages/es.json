@@ -440,7 +440,8 @@
       "moderation": "Reportes y Moderación",
       "interests": "Catálogo de Afinidades",
       "label": "Secciones de administración",
-      "dashboard": "Panel"
+      "dashboard": "Panel",
+      "team": "Equipo"
     },
     "users": {
       "searchLabel": "Buscar miembros",
@@ -681,6 +682,51 @@
         "forbidden": "Tu rol no puede leer el registro de auditoría.",
         "empty": "Todavía no hay eventos."
       }
+    },
+    "team": {
+      "title": "Equipo y roles",
+      "body": "Crea cuentas de administración con un enlace de invitación de un solo uso y decide a qué puede acceder cada rol.",
+      "forbidden": "Tu rol no puede gestionar el equipo.",
+      "inviteTitle": "Invitar a un administrador",
+      "inviteBody": "Generamos un enlace que compartes tú: no se envía correo y nunca ves su contraseña.",
+      "emailPlaceholder": "persona@ejemplo.com",
+      "generateLink": "Generar enlace",
+      "working": "Procesando…",
+      "linkOnce": "Copia este enlace ahora — se muestra una sola vez.",
+      "copy": "Copiar",
+      "copied": "Copiado",
+      "adminsTitle": "Administradores",
+      "rolesTitle": "Roles",
+      "invitesTitle": "Invitaciones pendientes",
+      "noInvites": "No hay invitaciones pendientes.",
+      "systemRole": "Rol del sistema",
+      "save": "Guardar",
+      "createRole": "Crear rol",
+      "newRoleTitle": "Nuevo rol",
+      "roleNamePlaceholder": "Nombre del rol",
+      "saved": "Guardado",
+      "saveError": "No se pudo guardar.",
+      "roleExists": "Ya existe un rol con ese nombre.",
+      "lastOwnerHint": "El último propietario no puede ser degradado.",
+      "errors": {
+        "forbidden": "No puedes gestionar el equipo.",
+        "invalid": "Revisa el correo y el rol.",
+        "exists": "Esa cuenta ya existe.",
+        "unknown": "Algo salió mal.",
+        "link": "Ese enlace ya no es válido.",
+        "weak": "Elige una contraseña más fuerte."
+      }
+    },
+    "capabilities": {
+      "members.review": "Revisar miembros",
+      "posts.moderate": "Moderar publicaciones",
+      "comments.moderate": "Moderar comentarios",
+      "interests.review": "Revisar intereses",
+      "reports.manage": "Gestionar reportes",
+      "marketplace.manage": "Gestionar marketplace",
+      "admins.manage": "Gestionar admins",
+      "settings.manage": "Editar ajustes",
+      "audit.read": "Leer auditoría"
     }
   },
   "Connections": {
@@ -1486,6 +1532,21 @@
       "persona.suspended": "Cuenta suspendida",
       "interest.approved": "Interés aprobado",
       "interest.rejected": "Interés rechazado"
+    }
+  },
+  "AcceptInvite": {
+    "title": "Elige tu contraseña",
+    "body": "Te invitaron al equipo de GlobalLinkup. Elige una contraseña para terminar de configurar tu cuenta.",
+    "password": "Contraseña",
+    "confirm": "Confirmar contraseña",
+    "submit": "Activar cuenta",
+    "working": "Activando…",
+    "expired": "A este enlace le falta el token. Pide uno nuevo a quien te invitó.",
+    "errors": {
+      "invalid": "Las contraseñas no coinciden o son demasiado cortas.",
+      "link": "El enlace no es válido o ya se usó.",
+      "weak": "Elige una contraseña más fuerte.",
+      "unknown": "Algo salió mal."
     }
   }
 }
