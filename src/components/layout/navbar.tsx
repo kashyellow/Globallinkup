@@ -40,7 +40,6 @@ export function Navbar({
   notifications?: number;
 }) {
   const t = useTranslations("Nav");
-  const tTheme = useTranslations("Theme");
   const pathname = usePathname();
   const { locale, pending: localePending, switchLocale } = useLocaleSwitch();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -112,7 +111,7 @@ export function Navbar({
 
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <NotificationBell count={notifications} />
-          <ThemeToggle className="hidden sm:inline-flex" />
+          <ThemeToggle />
           <div className="hidden sm:block">
             <LocaleSwitch
               locale={locale}
@@ -219,11 +218,6 @@ export function Navbar({
               </Link>
             ) : null}
             <div className="my-1 h-px bg-outline-variant" />
-
-            <div className="flex items-center justify-between gap-space-sm px-3 py-2">
-              <span className="font-label-md text-label-md text-text-muted">{tTheme("label")}</span>
-              <ThemeToggle />
-            </div>
 
             <div className="flex items-center justify-between gap-space-sm px-3 py-2 sm:hidden">
               <span className="font-label-md text-label-md text-text-muted">{t("language")}</span>

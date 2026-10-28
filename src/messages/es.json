@@ -46,7 +46,8 @@
     "label": "Tema",
     "light": "Claro",
     "dark": "Oscuro",
-    "system": "Sistema (sigue el dispositivo)"
+    "system": "Sistema (sigue el dispositivo)",
+    "switchTo": "Cambiar tema a {mode}"
   },
   "Common": {
     "connect": "Conectar",

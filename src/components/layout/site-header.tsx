@@ -75,7 +75,7 @@ export function SiteHeader({ mode = "content" }: { mode?: "landing" | "content" 
             </nav>
 
             <div className="flex shrink-0 items-center gap-2">
-              <ThemeToggle className="hidden sm:inline-flex" />
+              <ThemeToggle />
               <LocaleSwitch
                 locale={locale}
                 onSwitch={switchLocale}
@@ -120,7 +120,7 @@ export function SiteHeader({ mode = "content" }: { mode?: "landing" | "content" 
           </>
         ) : (
           <div className="flex shrink-0 items-center gap-2">
-            <ThemeToggle className="hidden sm:inline-flex" />
+            <ThemeToggle />
             <LocaleSwitch
               locale={locale}
               onSwitch={switchLocale}

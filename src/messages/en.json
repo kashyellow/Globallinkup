@@ -46,7 +46,8 @@
     "label": "Theme",
     "light": "Light",
     "dark": "Dark",
-    "system": "System (follows device)"
+    "system": "System (follows device)",
+    "switchTo": "Switch theme to {mode}"
   },
   "Common": {
     "connect": "Connect",

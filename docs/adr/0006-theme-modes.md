@@ -52,9 +52,10 @@ Three modes — `light`, `dark`, `system` — with `system` as the default.
 
 ### Toggle
 
-- A three-state control in the navbar/profile menu: Light, Dark, System, with
-  `aria-pressed`, translated in EN/ES, and a short "follows your device" hint on
-  System.
+- **One compact cycling button** in both headers, visible at every breakpoint:
+  system → light → dark → system. It replaced three separate buttons because the
+  group crowded the mobile navbar; the icon reflects the current mode and the
+  label announces the next one.
 - Toggling writes the cookie and sets `data-theme` immediately (no reload).
 
 ## Consequences

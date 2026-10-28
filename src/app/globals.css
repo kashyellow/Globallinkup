@@ -485,18 +485,6 @@
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    background:
-      radial-gradient(
-        78rem 52rem at 12% -8%,
-        color-mix(in oklab, var(--color-gold) 18%, transparent),
-        transparent 62%
-      ),
-      radial-gradient(
-        64rem 46rem at 88% 6%,
-        color-mix(in oklab, var(--color-jade) 5%, transparent),
-        transparent 60%
-      ),
-      linear-gradient(180deg, #f7edde 0%, var(--color-marketing-base) 38%);
   }
 
   &::after {

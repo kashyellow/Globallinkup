@@ -9,69 +9,43 @@ import {
   getThemeModeSnapshot,
   getThemeServerSnapshot,
   subscribeThemeMode,
-  THEME_MODES,
   type ThemeMode,
 } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
+/** One compact control instead of three buttons: system → light → dark → system. */
+const CYCLE: readonly ThemeMode[] = ["system", "light", "dark"] as const;
+
 const ICONS: Record<ThemeMode, string> = {
+  system: "brightness_auto",
   light: "light_mode",
   dark: "dark_mode",
-  system: "brightness_auto",
 };
 
-/**
- * Three-state theme switch (light / dark / system).
- *
- * The active state is read after mount: the server cannot know what `system`
- * resolves to, and rendering a pressed button during SSR would mismatch
- * hydration. The palette itself is already correct before paint thanks to the
- * inline script in the root layout — only this control catches up.
- */
 export function ThemeToggle({ className }: { className?: string }) {
   const t = useTranslations("Theme");
-  // `null` until the client snapshot is read, which keeps SSR and the first
-  // client render identical (the palette itself is already correct).
   const mode = useSyncExternalStore(
     subscribeThemeMode,
     getThemeModeSnapshot,
     getThemeServerSnapshot,
   );
 
-  function choose(next: ThemeMode) {
-    applyThemeMode(next);
-  }
+  // `null` on the server so the first client render matches the server HTML.
+  const current: ThemeMode = mode ?? "system";
+  const next = CYCLE[(CYCLE.indexOf(current) + 1) % CYCLE.length];
 
   return (
-    <div
-      role="group"
-      aria-label={t("label")}
+    <button
+      type="button"
+      onClick={() => applyThemeMode(next)}
+      aria-label={t("switchTo", { mode: t(next) })}
+      title={`${t(current)} → ${t(next)}`}
       className={cn(
-        "inline-flex items-center gap-0.5 rounded-full border border-outline-variant bg-surface-container p-0.5",
+        "flex h-10 w-10 items-center justify-center rounded-full text-secondary transition-colors duration-200 hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
         className,
       )}
     >
-      {THEME_MODES.map((option) => {
-        const active = mode === option;
-        return (
-          <button
-            key={option}
-            type="button"
-            onClick={() => choose(option)}
-            aria-pressed={active}
-            aria-label={t(option)}
-            title={t(option)}
-            className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
-              active
-                ? "bg-primary text-on-primary"
-                : "text-secondary hover:bg-surface-container-high hover:text-on-surface",
-            )}
-          >
-            <Icon name={ICONS[option]} className="text-[18px]" />
-          </button>
-        );
-      })}
-    </div>
+      <Icon name={ICONS[current]} className="text-[19px]" />
+    </button>
   );
 }
