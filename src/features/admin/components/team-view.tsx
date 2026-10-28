@@ -5,13 +5,13 @@ import { useTranslations } from "next-intl";
 
 import { Spinner } from "@/components/ui/spinner";
 import {
-  ADMIN_CAPABILITIES,
   assignRoleAction,
   createRoleAction,
   inviteAdminAction,
   saveRoleAction,
   type TeamState,
 } from "@/features/admin/team-actions";
+import { ADMIN_CAPABILITIES } from "@/lib/admin-capabilities";
 import { cn } from "@/lib/utils";
 
 const INITIAL: TeamState = { ok: false };

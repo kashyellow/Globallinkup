@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { LinkPending } from "@/components/layout/link-pending";
 import { Icon } from "@/components/ui/icon";
 import { Link, usePathname } from "@/lib/i18n/navigation";
-import type { AdminCapability } from "@/lib/admin";
+import type { AdminCapability } from "@/lib/admin-capabilities";
 import { cn } from "@/lib/utils";
 
 export const ADMIN_TABS = [

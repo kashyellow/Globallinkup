@@ -343,6 +343,26 @@ test("@auth an author archives and restores a post", async ({ page }) => {
   await expect(page.getByRole("button", { name: /^archive$/i }).first()).toBeVisible();
 });
 
+test("@auth the audit and team desks render cleanly", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") errors.push(message.text());
+  });
+
+  await signIn(page, "admin@globallinkup.test");
+  await page.goto("/en/admin/audit");
+  await expect(page.getByRole("heading", { name: /audit trail/i })).toBeVisible();
+
+  await page.goto("/en/admin/team");
+  await expect(page.getByRole("heading", { name: /team & roles/i })).toBeVisible();
+  await expect(page.getByRole("checkbox").first()).toBeVisible();
+
+  const relevant = errors.filter((error) =>
+    /MISSING_MESSAGE|is not a function|use\(\)/.test(error),
+  );
+  expect(relevant).toEqual([]);
+});
+
 test("@auth the notifications inbox renders without React use() warnings", async ({ page }) => {
   const errors: string[] = [];
   page.on("console", (message) => {

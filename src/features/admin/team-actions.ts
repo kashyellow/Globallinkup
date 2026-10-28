@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
-import { ADMIN_CAPABILITIES, isAdminCapability } from "@/lib/admin";
+import { isAdminCapability } from "@/lib/admin-capabilities";
 import { getCurrentProfile, getCurrentUser } from "@/lib/auth";
 import { getPublicEnv } from "@/lib/env";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -248,5 +248,3 @@ export async function assignRoleAction(formData: FormData): Promise<void> {
 
   revalidatePath("/admin/team");
 }
-
-export { ADMIN_CAPABILITIES };

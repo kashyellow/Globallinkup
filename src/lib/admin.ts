@@ -3,6 +3,7 @@ import "server-only";
 import { cache } from "react";
 
 import { getServerClient } from "@/lib/auth";
+import { isAdminCapability, type AdminCapability } from "@/lib/admin-capabilities";
 import { unwrap } from "@/lib/supabase/unwrap";
 
 /**
@@ -10,23 +11,8 @@ import { unwrap } from "@/lib/supabase/unwrap";
  * this list exists so the admin shell can filter tabs and so the UI can fail
  * closed when it sees an unknown value.
  */
-export const ADMIN_CAPABILITIES = [
-  "members.review",
-  "posts.moderate",
-  "comments.moderate",
-  "interests.review",
-  "reports.manage",
-  "marketplace.manage",
-  "admins.manage",
-  "settings.manage",
-  "audit.read",
-] as const;
-
-export type AdminCapability = (typeof ADMIN_CAPABILITIES)[number];
-
-export function isAdminCapability(value: string): value is AdminCapability {
-  return (ADMIN_CAPABILITIES as readonly string[]).includes(value);
-}
+export { ADMIN_CAPABILITIES, isAdminCapability } from "@/lib/admin-capabilities";
+export type { AdminCapability } from "@/lib/admin-capabilities";
 
 /**
  * The caller's capabilities, read through `my_capabilities()` (a definer
