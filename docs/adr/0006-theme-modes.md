@@ -57,6 +57,8 @@ Three modes — `light`, `dark`, `system` — with `system` as the default.
   group crowded the mobile navbar; the icon reflects the current mode and the
   label announces the next one.
 - Toggling writes the cookie and sets `data-theme` immediately (no reload).
+- The pre-paint resolver ships via `next/script` with `strategy="beforeInteractive"`;
+  a raw `<script>` in a React component never runs on the client (React 19 warns).
 
 ## Consequences
 
