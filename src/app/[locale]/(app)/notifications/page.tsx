@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { after } from "next/server";
 import { getTranslations } from "next-intl/server";
 
 import { Icon } from "@/components/ui/icon";
@@ -28,14 +29,22 @@ const HREF: Record<string, string> = {
   "interest.rejected": "/profile/edit",
 };
 
-export default async function NotificationsPage() {
+export default async function NotificationsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
   await requireApprovedUser();
-  const t = await getTranslations("Notifications");
+  // Explicit locale: an implicit lookup would resolve root params a second time
+  // and React 19 flags the conditional `use()` (conditional-use-of-use).
+  const t = await getTranslations({ locale, namespace: "Notifications" });
 
   // Read state is captured before the visit clears it, so unread rows still look
-  // unread on this render.
+  // unread on this render. Marking happens after the response instead of during
+  // render (a render-time write is a side effect React may run twice).
   const notifications = await getNotifications();
-  await markAllNotificationsRead();
+  after(() => markAllNotificationsRead());
 
   return (
     <div className="mx-auto w-full max-w-3xl px-margin-mobile py-block-mobile md:px-margin md:py-block">

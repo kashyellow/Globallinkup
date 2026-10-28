@@ -343,6 +343,20 @@ test("@auth an author archives and restores a post", async ({ page }) => {
   await expect(page.getByRole("button", { name: /^archive$/i }).first()).toBeVisible();
 });
 
+test("@auth the notifications inbox renders without React use() warnings", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") errors.push(message.text());
+  });
+
+  await signIn(page, "sofia.martinez@example.com");
+  await page.goto("/en/notifications");
+  await expect(page.getByRole("heading", { name: /notifications/i })).toBeVisible();
+
+  const useWarnings = errors.filter((error) => error.includes("use()"));
+  expect(useWarnings).toEqual([]);
+});
+
 test("@auth admins can moderate posts and comments inline", async ({ page }) => {
   await signIn(page, "admin@globallinkup.test");
   await page.goto("/en/posts");
