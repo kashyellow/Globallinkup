@@ -442,7 +442,8 @@
       "interests": "Interest Catalog",
       "label": "Admin sections",
       "dashboard": "Dashboard",
-      "team": "Team"
+      "team": "Team",
+      "audit": "Audit"
     },
     "users": {
       "searchLabel": "Search members",

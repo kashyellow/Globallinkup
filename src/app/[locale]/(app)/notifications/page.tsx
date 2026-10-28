@@ -6,6 +6,7 @@ import { Icon } from "@/components/ui/icon";
 import { getNotifications, markAllNotificationsRead } from "@/features/notifications/queries";
 import { Link } from "@/lib/i18n/navigation";
 import { requireApprovedUser } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
 export async function generateMetadata({
@@ -43,8 +44,9 @@ export default async function NotificationsPage({
   // Read state is captured before the visit clears it, so unread rows still look
   // unread on this render. Marking happens after the response instead of during
   // render (a render-time write is a side effect React may run twice).
-  const notifications = await getNotifications();
-  after(() => markAllNotificationsRead());
+  const supabase = await createClient();
+  const notifications = await getNotifications(supabase);
+  after(() => markAllNotificationsRead(supabase));
 
   return (
     <div className="mx-auto w-full max-w-3xl px-margin-mobile py-block-mobile md:px-margin md:py-block">

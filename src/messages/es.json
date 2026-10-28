@@ -442,7 +442,8 @@
       "interests": "Catálogo de Afinidades",
       "label": "Secciones de administración",
       "dashboard": "Panel",
-      "team": "Equipo"
+      "team": "Equipo",
+      "audit": "Auditoría"
     },
     "users": {
       "searchLabel": "Buscar miembros",

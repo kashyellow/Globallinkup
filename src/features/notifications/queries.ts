@@ -1,5 +1,7 @@
 import "server-only";
 
+import type { SupabaseClient } from "@supabase/supabase-js";
+
 import { createClient } from "@/lib/supabase/server";
 import { unwrap } from "@/lib/supabase/unwrap";
 import type { Database } from "@/types/database";
@@ -16,8 +18,10 @@ export async function getUnreadNotificationCount(): Promise<number> {
 }
 
 /** Newest first. Read state is captured before the page marks them read. */
-export async function getNotifications(limit = 50): Promise<NotificationRow[]> {
-  const supabase = await createClient();
+export async function getNotifications(
+  supabase: SupabaseClient<Database>,
+  limit = 50,
+): Promise<NotificationRow[]> {
   const rows = unwrap(
     await supabase
       .from("notifications")
@@ -28,8 +32,12 @@ export async function getNotifications(limit = 50): Promise<NotificationRow[]> {
   return rows ?? [];
 }
 
-export async function markAllNotificationsRead(): Promise<void> {
-  const supabase = await createClient();
+/**
+ * Takes the client instead of creating one: the caller may run this from
+ * `after()`, where Next forbids `cookies()` because the response is already
+ * being flushed.
+ */
+export async function markAllNotificationsRead(supabase: SupabaseClient<Database>): Promise<void> {
   await supabase
     .from("notifications")
     .update({ read_at: new Date().toISOString() })
