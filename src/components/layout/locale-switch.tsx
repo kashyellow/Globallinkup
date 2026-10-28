@@ -1,11 +1,14 @@
 "use client";
 
+import { Icon } from "@/components/ui/icon";
 import { routing, type Locale } from "@/lib/i18n/routing";
 import { cn } from "@/lib/utils";
 
-const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
-
-/** Shared compact locale switch used by the public and app headers. */
+/**
+ * One compact button instead of two: clicking advances to the next locale
+ * (EN → ES → EN), mirroring the theme control. The header keeps a single
+ * affordance at every breakpoint instead of a second row in the burger menu.
+ */
 export function LocaleSwitch({
   locale,
   onSwitch,
@@ -17,32 +20,25 @@ export function LocaleSwitch({
   disabled?: boolean;
   label: string;
 }) {
+  const current = routing.locales.includes(locale as Locale)
+    ? (locale as Locale)
+    : routing.locales[0];
+  const next = routing.locales[(routing.locales.indexOf(current) + 1) % routing.locales.length];
+
   return (
-    <div className="flex items-center gap-1" role="group" aria-label={label}>
-      {routing.locales.map((code, index) => (
-        <span key={code} className="flex items-center gap-1">
-          {index > 0 ? (
-            <span aria-hidden className="h-1 w-1 rounded-full bg-outline-strong" />
-          ) : null}
-          <button
-            type="button"
-            onClick={() => onSwitch(code)}
-            disabled={disabled}
-            aria-busy={disabled || undefined}
-            aria-current={code === locale ? "true" : undefined}
-            className={cn(
-              "min-h-9 rounded-full px-1.5 font-label-md text-label-md transition-colors duration-300",
-              EASE,
-              "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60",
-              code === locale
-                ? "font-bold text-on-surface"
-                : "font-medium text-text-muted hover:text-on-surface",
-            )}
-          >
-            {code.toUpperCase()}
-          </button>
-        </span>
-      ))}
-    </div>
+    <button
+      type="button"
+      onClick={() => onSwitch(next)}
+      disabled={disabled}
+      aria-busy={disabled || undefined}
+      aria-label={`${label}: ${next.toUpperCase()}`}
+      title={`${label}: ${next.toUpperCase()}`}
+      className={cn(
+        "flex h-10 items-center justify-center gap-1 rounded-full px-2.5 text-secondary transition-colors duration-300 hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60",
+      )}
+    >
+      <Icon name="translate" className="text-[18px]" />
+      <span className="font-label-md text-label-md font-semibold">{current.toUpperCase()}</span>
+    </button>
   );
 }

@@ -124,6 +124,9 @@ These are confirmed and supersede the PRD where it disagrees:
   persona funnel. RLS keeps admin profiles out of Discover, dossiers,
   `profiles_public`, and the connection graph; admin posts stay on the feed
   (announcements) with the author masked behind the platform label.
+- **Header controls are single cycling buttons**: theme (system → light → dark)
+  and language (EN ⇄ ES). Both stay visible at every breakpoint; the burger menu
+  does not duplicate them.
 - **Discover order is a seeded shuffle**, stable across load-more for one search
   session and reshuffled on a new search.
 

@@ -13,7 +13,6 @@ import { NotificationBell } from "@/features/notifications/components/notificati
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useLocaleSwitch } from "@/features/shared/use-locale-switch";
 import { Link, usePathname } from "@/lib/i18n/navigation";
-import { routing } from "@/lib/i18n/routing";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -112,14 +111,12 @@ export function Navbar({
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <NotificationBell count={notifications} />
           <ThemeToggle />
-          <div className="hidden sm:block">
-            <LocaleSwitch
-              locale={locale}
-              onSwitch={switchLocale}
-              disabled={localePending}
-              label={t("language")}
-            />
-          </div>
+          <LocaleSwitch
+            locale={locale}
+            onSwitch={switchLocale}
+            disabled={localePending}
+            label={t("language")}
+          />
 
           {isAdmin ? (
             <Link
@@ -218,30 +215,6 @@ export function Navbar({
               </Link>
             ) : null}
             <div className="my-1 h-px bg-outline-variant" />
-
-            <div className="flex items-center justify-between gap-space-sm px-3 py-2 sm:hidden">
-              <span className="font-label-md text-label-md text-text-muted">{t("language")}</span>
-              <div className="flex items-center gap-1" role="group" aria-label={t("language")}>
-                {routing.locales.map((code) => (
-                  <button
-                    key={code}
-                    type="button"
-                    onClick={() => switchLocale(code)}
-                    disabled={localePending}
-                    aria-busy={localePending || undefined}
-                    aria-current={code === locale ? "true" : undefined}
-                    className={cn(
-                      "flex min-h-11 min-w-11 items-center justify-center rounded-full border px-3 font-label-md text-label-md transition-colors duration-200",
-                      code === locale
-                        ? "border-primary bg-primary/15 font-semibold text-primary"
-                        : "border-outline-variant text-secondary hover:bg-surface-container hover:text-on-surface",
-                    )}
-                  >
-                    {code.toUpperCase()}
-                  </button>
-                ))}
-              </div>
-            </div>
           </nav>
         </div>
       ) : null}
