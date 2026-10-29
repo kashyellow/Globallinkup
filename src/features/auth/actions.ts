@@ -134,11 +134,18 @@ export async function signInAction(input: unknown): Promise<AuthResult> {
   });
   cookieStore.delete(RESET_REQUEST_COOKIE);
 
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select("approval_status")
     .eq("id", data.user.id)
     .maybeSingle();
+
+  if (profileError) {
+    // A failed read is not "this account has no persona": sending the member to
+    // /create-persona here is how a transient error looked like a lost profile.
+    console.error("[auth] post-signin profile read failed", { code: profileError.code });
+    return { ok: false, error: "unknown" };
+  }
 
   return { ok: true, redirectTo: postAuthPath(profile) };
 }
