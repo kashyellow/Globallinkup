@@ -146,7 +146,7 @@ test("@auth discover shows real personas and viewer connect state", async ({ pag
   await expect(page).toHaveURL(/\/en\/discover$/);
 
   // The header count comes from the rows, not a hardcoded marketing number.
-  await expect(page.getByText(/^\d+ Active Personas Abroad$/).first()).toBeVisible();
+  await expect(page.getByText(/^\d+ Active profiles abroad$/).first()).toBeVisible();
   await expect(page.getByText(/Showing 10 of 12/i)).toBeVisible();
 
   const search = page.getByRole("searchbox", { name: /search by name/i });
@@ -613,7 +613,7 @@ test("@auth the profile shows the real dossier and unlocked channels", async ({ 
   // Editing opens the persona form in edit mode, not the onboarding flow.
   await page.getByRole("link", { name: /edit profile/i }).click();
   await expect(page).toHaveURL(/\/en\/profile\/edit$/);
-  await expect(page.getByRole("heading", { name: /edit your persona/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /edit your personal profile/i })).toBeVisible();
   await expect(page.locator("#persona-fullname")).toHaveValue("Sofia Martinez");
 });
 
