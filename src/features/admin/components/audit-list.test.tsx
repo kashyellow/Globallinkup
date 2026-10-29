@@ -18,7 +18,10 @@ const event: AdminAuditEvent = {
   targetType: "post",
   targetId: "a0000000-0000-0000-0000-000000000001",
   reason: "Spam link",
-  metadata: { before: "visible", after: "removed" },
+  metadata: {
+    before: { state: "visible", moderation_status: "visible", review: "manual" },
+    after: { state: "removed", moderation_status: "removed", review: "manual" },
+  },
 };
 
 describe("AuditList", () => {
@@ -31,8 +34,16 @@ describe("AuditList", () => {
     await user.click(screen.getByRole("button", { name: /post\.removed/ }));
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
-    expect(screen.getByText(/"before": "visible"/)).toBeInTheDocument();
-    expect(screen.getByText(/"after": "removed"/)).toBeInTheDocument();
+    expect(screen.getByText("before")).toBeInTheDocument();
+    expect(screen.getByText("after")).toBeInTheDocument();
+    expect(screen.getByText(/"state": "visible"/)).toBeInTheDocument();
+    expect(screen.getByText(/"state": "removed"/)).toBeInTheDocument();
+    expect(screen.getAllByText(/"review": "manual"/)).toHaveLength(2);
+    // Changed lines get the admin highlight; unchanged ones stay plain.
+    expect(screen.getByText(/"state": "removed"/)).toHaveClass("bg-admin-surface");
+    for (const line of screen.getAllByText(/"review": "manual"/)) {
+      expect(line).not.toHaveClass("bg-admin-surface");
+    }
   });
 
   it("closes the dialog again", async () => {

@@ -681,7 +681,9 @@
       "allActions": "All actions",
       "viewDetails": "View details",
       "detailTitle": "Audit event",
-      "jsonTitle": "Event JSON",
+      "before": "Before",
+      "after": "After",
+      "changedHint": "Highlighted fields changed between the snapshots.",
       "fields": {
         "occurredAt": "When",
         "actor": "Actor role",

@@ -13,7 +13,7 @@ export async function recordAudit(input: {
   targetType?: string;
   targetId?: string | null;
   reason?: string | null;
-  metadata?: Record<string, string | number | boolean | null>;
+  metadata?: Record<string, Json>;
 }): Promise<void> {
   const supabase = await createClient();
   const { error } = await supabase.rpc("record_audit", {

@@ -49,7 +49,7 @@ export async function reviewPersonaAction(input: unknown): Promise<AdminResult> 
 
   const { data: beforeMember } = await ctx.supabase
     .from("profiles")
-    .select("approval_status")
+    .select("approval_status, reviewed_at")
     .eq("id", parsed.data.profileId)
     .maybeSingle();
 
@@ -62,14 +62,26 @@ export async function reviewPersonaAction(input: unknown): Promise<AdminResult> 
   if (error || data !== true) return { ok: false, error: "unknown" };
 
   const decision = parsed.data.decision;
+  const { data: afterMember } = await ctx.supabase
+    .from("profiles")
+    .select("approval_status, reviewed_at")
+    .eq("id", parsed.data.profileId)
+    .maybeSingle();
+
   await recordAudit({
     action: `member.${decision === "approved" ? "approved" : decision === "suspended" ? "suspended" : "rejected"}`,
     targetType: "profile",
     targetId: parsed.data.profileId,
     reason: parsed.data.reason ?? null,
     metadata: {
-      before: beforeMember?.approval_status ?? null,
-      after: decision,
+      before: {
+        approval_status: beforeMember?.approval_status ?? null,
+        reviewed_at: beforeMember?.reviewed_at ?? null,
+      },
+      after: {
+        approval_status: afterMember?.approval_status ?? decision,
+        reviewed_at: afterMember?.reviewed_at ?? null,
+      },
     },
   });
 
@@ -145,7 +157,7 @@ export async function removePostAction(input: unknown): Promise<AdminResult> {
 
   const { data: current, error: readError } = await ctx.supabase
     .from("posts")
-    .select("id, state, author_id")
+    .select("id, state, moderation_status, previous_state, author_id, removed_at, purge_after")
     .eq("id", parsed.data.postId)
     .maybeSingle();
 
@@ -153,15 +165,17 @@ export async function removePostAction(input: unknown): Promise<AdminResult> {
   if (!current) return { ok: false, error: "forbidden" };
 
   const now = new Date();
+  const purgeAfter = new Date(now.getTime() + PURGE_WINDOW_DAYS * 86_400_000).toISOString();
+  const previousState = current.state === "removed" ? "visible" : current.state;
   const { data: updated, error } = await ctx.supabase
     .from("posts")
     .update({
       state: "removed",
-      previous_state: current.state === "removed" ? "visible" : current.state,
+      previous_state: previousState,
       removed_by: ctx.user.id,
       removed_at: now.toISOString(),
       removed_reason: parsed.data.reason ?? "Removed by moderation.",
-      purge_after: new Date(now.getTime() + PURGE_WINDOW_DAYS * 86_400_000).toISOString(),
+      purge_after: purgeAfter,
     })
     .eq("id", parsed.data.postId)
     .select("id");
@@ -174,7 +188,22 @@ export async function removePostAction(input: unknown): Promise<AdminResult> {
     targetType: "post",
     targetId: current.id,
     reason: parsed.data.reason ?? "Removed by moderation.",
-    metadata: { before: current.state, after: "removed" },
+    metadata: {
+      before: {
+        state: current.state,
+        moderation_status: current.moderation_status,
+        previous_state: current.previous_state,
+        removed_at: current.removed_at,
+        purge_after: current.purge_after,
+      },
+      after: {
+        state: "removed",
+        moderation_status: "removed",
+        previous_state: previousState,
+        removed_at: now.toISOString(),
+        purge_after: purgeAfter,
+      },
+    },
   });
 
   await notifyMember({
@@ -202,7 +231,7 @@ export async function restorePostAction(input: unknown): Promise<AdminResult> {
 
   const { data: current, error: readError } = await ctx.supabase
     .from("posts")
-    .select("id, state, previous_state, author_id")
+    .select("id, state, moderation_status, previous_state, author_id, removed_at, purge_after")
     .eq("id", parsed.data.postId)
     .maybeSingle();
 
@@ -211,11 +240,12 @@ export async function restorePostAction(input: unknown): Promise<AdminResult> {
   if (current.state !== "removed") return { ok: true };
 
   const target = current.previous_state ?? "visible";
+  const now = new Date().toISOString();
   const { data: updated, error } = await ctx.supabase
     .from("posts")
     .update({
       state: target,
-      archived_at: target === "archived" ? new Date().toISOString() : null,
+      archived_at: target === "archived" ? now : null,
       removed_by: null,
       removed_at: null,
       removed_reason: null,
@@ -232,7 +262,22 @@ export async function restorePostAction(input: unknown): Promise<AdminResult> {
     action: "post.restored",
     targetType: "post",
     targetId: current.id,
-    metadata: { before: current.state, after: target },
+    metadata: {
+      before: {
+        state: current.state,
+        moderation_status: current.moderation_status,
+        previous_state: current.previous_state,
+        removed_at: current.removed_at,
+        purge_after: current.purge_after,
+      },
+      after: {
+        state: target,
+        moderation_status: target === "visible" ? "visible" : "removed",
+        previous_state: null,
+        removed_at: null,
+        purge_after: null,
+      },
+    },
   });
 
   await notifyMember({
@@ -281,6 +326,12 @@ export async function resolveAppealFormAction(formData: FormData): Promise<void>
 
   const accepted = parsed.data.decision === "accepted";
   const now = new Date().toISOString();
+  const { data: post } = await ctx.supabase
+    .from("posts")
+    .select("id, state, previous_state")
+    .eq("id", appeal.post_id)
+    .maybeSingle();
+  const restoredState = post?.previous_state ?? "visible";
 
   await ctx.supabase
     .from("post_appeals")
@@ -297,21 +348,21 @@ export async function resolveAppealFormAction(formData: FormData): Promise<void>
     targetType: "post",
     targetId: appeal.post_id,
     reason: parsed.data.note ?? null,
-    metadata: { before: appeal.status, after: parsed.data.decision },
+    metadata: {
+      before: { status: appeal.status, post_state: post?.state ?? null },
+      after: {
+        status: parsed.data.decision,
+        post_state: accepted ? restoredState : (post?.state ?? null),
+      },
+    },
   });
 
   if (accepted) {
-    const { data: post } = await ctx.supabase
-      .from("posts")
-      .select("id, previous_state")
-      .eq("id", appeal.post_id)
-      .maybeSingle();
-
     await ctx.supabase
       .from("posts")
       .update({
-        state: post?.previous_state ?? "visible",
-        archived_at: post?.previous_state === "archived" ? now : null,
+        state: restoredState,
+        archived_at: restoredState === "archived" ? now : null,
         removed_by: null,
         removed_at: null,
         removed_reason: null,
@@ -358,7 +409,7 @@ export async function reviewInterestAction(input: unknown): Promise<AdminResult>
 
   const { data: interest } = await ctx.supabase
     .from("interest_catalog")
-    .select("id, created_by, status")
+    .select("id, created_by, status, reviewed_at")
     .eq("id", parsed.data.interestId)
     .maybeSingle();
 
@@ -369,13 +420,25 @@ export async function reviewInterestAction(input: unknown): Promise<AdminResult>
 
   if (error || data !== true) return { ok: false, error: "unknown" };
 
+  const { data: afterInterest } = await ctx.supabase
+    .from("interest_catalog")
+    .select("status, reviewed_at")
+    .eq("id", parsed.data.interestId)
+    .maybeSingle();
+
   await recordAudit({
     action: parsed.data.decision === "approved" ? "interest.approved" : "interest.rejected",
     targetType: "interest",
     targetId: parsed.data.interestId,
     metadata: {
-      before: interest?.status ?? null,
-      after: parsed.data.decision,
+      before: {
+        status: interest?.status ?? null,
+        reviewed_at: interest?.reviewed_at ?? null,
+      },
+      after: {
+        status: afterInterest?.status ?? parsed.data.decision,
+        reviewed_at: afterInterest?.reviewed_at ?? null,
+      },
     },
   });
 
@@ -448,7 +511,14 @@ export async function createProductAction(input: unknown): Promise<AdminResult> 
     action: "product.created",
     targetType: "product",
     targetId: created.id,
-    metadata: { before: "none", after: data.isPublished ? "live" : "draft" },
+    metadata: {
+      before: { lifecycle: "none", is_published: false, image_count: 0 },
+      after: {
+        lifecycle: data.isPublished ? "live" : "draft",
+        is_published: data.isPublished,
+        image_count: data.imagePaths.length,
+      },
+    },
   });
 
   revalidatePath("/admin");

@@ -681,7 +681,9 @@
       "allActions": "Todas las acciones",
       "viewDetails": "Ver detalles",
       "detailTitle": "Evento de auditoría",
-      "jsonTitle": "JSON del evento",
+      "before": "Antes",
+      "after": "Después",
+      "changedHint": "Los campos resaltados cambiaron entre las capturas.",
       "fields": {
         "occurredAt": "Cuándo",
         "actor": "Rol del actor",

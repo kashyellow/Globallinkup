@@ -116,21 +116,20 @@ function AuditDetail({
   const t = useTranslations("Admin.audit");
   const tCommon = useTranslations("Common");
 
-  const before = event.metadata.before ?? event.metadata.from_state ?? null;
-  const after = event.metadata.after ?? event.metadata.to_state ?? null;
-
-  const payload = {
-    id: event.id,
-    occurredAt: event.occurredAt,
-    actorRole: event.actorRole,
-    action: event.action,
-    targetType: event.targetType,
-    targetId: event.targetId,
-    reason: event.reason,
-    before,
-    after,
-    metadata: event.metadata,
-  };
+  const beforeSnap = snapshot(event.metadata.before ?? event.metadata.from_state);
+  const afterSnap = snapshot(event.metadata.after ?? event.metadata.to_state);
+  const keys = [
+    ...new Set([...Object.keys(beforeSnap ?? {}), ...Object.keys(afterSnap ?? {})]),
+  ].sort();
+  const hasSnapshot = Boolean(beforeSnap || afterSnap);
+  const before = hasSnapshot ? align(beforeSnap, keys) : null;
+  const after = hasSnapshot ? align(afterSnap, keys) : null;
+  const changed = new Set(
+    keys.filter(
+      (key) =>
+        JSON.stringify(beforeSnap?.[key] ?? null) !== JSON.stringify(afterSnap?.[key] ?? null),
+    ),
+  );
 
   return (
     <>
@@ -171,12 +170,16 @@ function AuditDetail({
         </dl>
 
         <div className="mt-space-lg">
-          <p className="font-label-md text-label-md font-semibold text-on-surface">
-            {t("jsonTitle")}
-          </p>
-          <pre className="mt-2 max-h-72 overflow-auto rounded-xl border border-outline-variant bg-surface-dim p-3 font-mono text-xs leading-relaxed text-on-surface-strong">
-            {JSON.stringify(payload, null, 2)}
-          </pre>
+          <div className="grid grid-cols-1 gap-space-sm sm:grid-cols-2">
+            <SnapshotBox label={t("before")} value={before} changed={changed} />
+            <SnapshotBox label={t("after")} value={after} changed={changed} />
+          </div>
+          {changed.size > 0 ? (
+            <p className="mt-space-sm flex items-center gap-1.5 font-label-md text-label-md text-text-muted">
+              <span className="inline-block h-3 w-3 rounded-sm border border-admin-border bg-admin-surface" />
+              {t("changedHint")}
+            </p>
+          ) : null}
         </div>
       </div>
 
@@ -216,5 +219,58 @@ function Field({
         {value}
       </dd>
     </div>
+  );
+}
+
+/** New rows store objects; legacy rows stored a bare state string. */
+type Snapshot = Record<string, unknown>;
+
+function snapshot(value: unknown): Snapshot | null {
+  if (value === null || value === undefined) return null;
+  if (typeof value === "object" && !Array.isArray(value)) return value as Snapshot;
+  return { state: value };
+}
+
+/** Keep both cards on the same keys so the diff is easy to scan. */
+function align(value: Snapshot | null, keys: string[]): Snapshot {
+  return Object.fromEntries(keys.map((key) => [key, value && key in value ? value[key] : null]));
+}
+
+function SnapshotBox({
+  label,
+  value,
+  changed,
+}: {
+  label: string;
+  value: Snapshot | null;
+  changed: ReadonlySet<string>;
+}) {
+  const lines = value === null ? [] : JSON.stringify(value, null, 2).split("\n");
+
+  return (
+    <section className="flex min-w-0 flex-col rounded-xl border border-outline-variant bg-surface-dim">
+      <h3 className="border-b border-outline-variant px-space-md py-2 font-label-md text-label-md font-semibold text-on-surface">
+        {label}
+      </h3>
+      <pre className="max-h-60 overflow-auto p-3 font-mono text-xs leading-relaxed text-on-surface-strong">
+        {value === null
+          ? "null"
+          : lines.map((line, index) => {
+              const match = /^\s*"([^"]+)":/.exec(line);
+              const highlighted = match ? changed.has(match[1]) : false;
+              return (
+                <span
+                  key={index}
+                  className={cn(
+                    "block",
+                    highlighted && "-mx-1 rounded-sm bg-admin-surface px-1 text-admin-text",
+                  )}
+                >
+                  {line}
+                </span>
+              );
+            })}
+      </pre>
+    </section>
   );
 }
