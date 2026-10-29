@@ -120,7 +120,7 @@ test("@auth an admin can reach the admin portal", async ({ page }) => {
   await page.goto("/en/admin");
   await expect(page).toHaveURL(/\/en\/admin$/);
   await expect(page.getByRole("heading", { name: /Control room overview/i })).toBeVisible();
-  await page.getByRole("link", { name: /users & personas/i }).click();
+  await page.getByRole("link", { name: /users & profiles/i }).click();
   await expect(page).toHaveURL(/\/en\/admin\/users$/);
 });
 
