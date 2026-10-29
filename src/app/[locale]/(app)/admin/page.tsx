@@ -30,9 +30,13 @@ export default async function AdminDashboardPage() {
       ? "/admin/users"
       : capabilities.includes("marketplace.manage")
         ? "/admin/marketplace"
-        : capabilities.includes("interests.review")
-          ? "/admin/interests"
-          : "/discover";
+        : capabilities.includes("posts.moderate")
+          ? "/admin/moderation"
+          : capabilities.includes("interests.review")
+            ? "/admin/interests"
+            : capabilities.includes("audit.read")
+              ? "/admin/audit"
+              : "/discover";
     redirect({ href: target, locale });
     return null;
   }
@@ -47,6 +51,7 @@ export default async function AdminDashboardPage() {
       href: "/admin/users?status=pending",
       icon: "how_to_reg",
       tone: "primary",
+      capability: "members.review",
     },
     {
       key: "openReports",
@@ -54,6 +59,7 @@ export default async function AdminDashboardPage() {
       href: "/admin/moderation?status=open",
       icon: "flag",
       tone: "danger",
+      capability: "reports.manage",
     },
     {
       key: "pendingInterests",
@@ -61,6 +67,7 @@ export default async function AdminDashboardPage() {
       href: "/admin/interests?status=pending",
       icon: "tag",
       tone: "primary",
+      capability: "interests.review",
     },
     {
       key: "liveProducts",
@@ -68,8 +75,12 @@ export default async function AdminDashboardPage() {
       href: "/admin/marketplace?status=live",
       icon: "storefront",
       tone: "success",
+      capability: "marketplace.manage",
     },
   ] as const;
+
+  // Sub-admins only see the desks their role can actually read.
+  const visibleCards = cards.filter((card) => capabilities.includes(card.capability));
 
   return (
     <div className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
@@ -82,7 +93,7 @@ export default async function AdminDashboardPage() {
       </div>
 
       <div className="mt-space-xl grid grid-cols-1 gap-space-md sm:grid-cols-2 xl:grid-cols-4">
-        {cards.map((card) => (
+        {visibleCards.map((card) => (
           <Link
             key={card.key}
             href={card.href}
@@ -127,11 +138,22 @@ export default async function AdminDashboardPage() {
         <div className="grid grid-cols-2 gap-space-md bezel-core p-space-lg sm:grid-cols-4">
           {(
             [
-              ["approvedProfiles", metrics.approvedProfiles],
-              ["rejectedProfiles", metrics.rejectedProfiles],
-              ["suspendedProfiles", metrics.suspendedProfiles],
-              ["reportedPosts", metrics.reportedPosts],
-            ] as const
+              ...(capabilities.includes("members.review")
+                ? ([
+                    ["approvedProfiles", metrics.approvedProfiles],
+                    ["rejectedProfiles", metrics.rejectedProfiles],
+                    ["suspendedProfiles", metrics.suspendedProfiles],
+                  ] as const)
+                : []),
+              ...(capabilities.includes("reports.manage")
+                ? ([["reportedPosts", metrics.reportedPosts]] as const)
+                : []),
+            ] as ReadonlyArray<
+              readonly [
+                "approvedProfiles" | "rejectedProfiles" | "suspendedProfiles" | "reportedPosts",
+                number,
+              ]
+            >
           ).map(([key, value]) => (
             <div key={key}>
               <p className="font-label-md text-label-md text-secondary">{t(`stats.${key}`)}</p>

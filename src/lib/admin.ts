@@ -27,3 +27,9 @@ export const getAdminCapabilities = cache(async (): Promise<AdminCapability[]> =
   if (!Array.isArray(data)) return [];
   return data.filter(isAdminCapability);
 });
+
+/** Cheap capability probe for Server Actions and pages. Cached per request. */
+export async function hasCapability(capability: AdminCapability): Promise<boolean> {
+  const capabilities = await getAdminCapabilities();
+  return capabilities.includes(capability);
+}

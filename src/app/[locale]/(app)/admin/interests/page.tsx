@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+
+import { getAdminCapabilities } from "@/lib/admin";
 
 import { AdminInterestsTab } from "@/features/admin/components/interests-tab";
 import {
@@ -33,6 +36,7 @@ export default async function AdminInterestsPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
+  if (!(await getAdminCapabilities()).includes("interests.review")) notFound();
   const sp = await searchParams;
   const query = parseQuery(sp.q);
   const status = parseEnum<AdminInterestFilter>(sp.status, STATUSES, "pending");

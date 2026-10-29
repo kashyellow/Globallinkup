@@ -36,6 +36,8 @@ type ResolveStatus = "resolved" | "dismissed";
 export function AdminModerationTab({
   reports,
   appeals,
+  canManageReports,
+  canModeratePosts,
   query,
   status,
   target,
@@ -45,6 +47,8 @@ export function AdminModerationTab({
 }: {
   reports: AdminReportDto[];
   appeals: AdminAppealDto[];
+  canManageReports: boolean;
+  canModeratePosts: boolean;
   query: string;
   status: AdminReportFilter;
   target: AdminReportTarget;
@@ -146,63 +150,76 @@ export function AdminModerationTab({
 
   return (
     <div className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
-      {appeals.length > 0 ? (
-        <section className="mb-space-lg space-y-space-sm rounded-2xl border border-outline-variant bg-surface-low p-space-md">
-          <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
-            {t("appealsTitle", { count: appeals.length })}
-          </h2>
-          <p className="font-body-sm text-body-sm text-secondary">{t("appealsBody")}</p>
-          <ul className="space-y-space-sm">
-            {appeals.map((appeal) => (
-              <li
-                key={appeal.id}
-                className="space-y-2 rounded-xl border border-outline-variant bg-surface-container p-space-sm"
-              >
-                <p className="font-label-lg text-label-lg font-semibold text-on-surface">
-                  {appeal.postCaption || t("appealsUntitled")}
-                </p>
-                <p className="font-label-md text-label-md text-text-muted">{appeal.authorName}</p>
-                <p className="font-body-sm text-body-sm text-on-surface-strong">{appeal.message}</p>
-                <form
-                  action={resolveAppealFormAction}
-                  className="flex flex-col gap-2 sm:flex-row sm:items-center"
+      {canModeratePosts ? (
+        appeals.length > 0 ? (
+          <section className="mb-space-lg space-y-space-sm rounded-2xl border border-outline-variant bg-surface-low p-space-md">
+            <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
+              {t("appealsTitle", { count: appeals.length })}
+            </h2>
+            <p className="font-body-sm text-body-sm text-secondary">{t("appealsBody")}</p>
+            <ul className="space-y-space-sm">
+              {appeals.map((appeal) => (
+                <li
+                  key={appeal.id}
+                  className="space-y-2 rounded-xl border border-outline-variant bg-surface-container p-space-sm"
                 >
-                  <input type="hidden" name="appealId" value={appeal.id} />
-                  <input
-                    name="note"
-                    maxLength={500}
-                    placeholder={t("appealNotePlaceholder")}
-                    className="min-h-10 flex-1 rounded-full border border-outline-variant bg-surface-dim px-3 font-body-sm text-body-sm text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      type="submit"
-                      name="decision"
-                      value="accepted"
-                      className={cn(
-                        ACTION_BASE,
-                        "bg-primary text-on-primary hover:bg-primary-hover focus-visible:outline-primary",
-                      )}
-                    >
-                      {t("appealAccept")}
-                    </button>
-                    <button
-                      type="submit"
-                      name="decision"
-                      value="declined"
-                      className={cn(
-                        ACTION_BASE,
-                        "border border-outline-variant bg-surface-dim text-on-surface hover:border-outline-hover hover:bg-surface-container focus-visible:outline-primary",
-                      )}
-                    >
-                      {t("appealDecline")}
-                    </button>
-                  </div>
-                </form>
-              </li>
-            ))}
-          </ul>
-        </section>
+                  <p className="font-label-lg text-label-lg font-semibold text-on-surface">
+                    {appeal.postCaption || t("appealsUntitled")}
+                  </p>
+                  <p className="font-label-md text-label-md text-text-muted">{appeal.authorName}</p>
+                  <p className="font-body-sm text-body-sm text-on-surface-strong">
+                    {appeal.message}
+                  </p>
+                  <form
+                    action={resolveAppealFormAction}
+                    className="flex flex-col gap-2 sm:flex-row sm:items-center"
+                  >
+                    <input type="hidden" name="appealId" value={appeal.id} />
+                    <input
+                      name="note"
+                      maxLength={500}
+                      placeholder={t("appealNotePlaceholder")}
+                      className="min-h-10 flex-1 rounded-full border border-outline-variant bg-surface-dim px-3 font-body-sm text-body-sm text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        type="submit"
+                        name="decision"
+                        value="accepted"
+                        className={cn(
+                          ACTION_BASE,
+                          "bg-primary text-on-primary hover:bg-primary-hover focus-visible:outline-primary",
+                        )}
+                      >
+                        {t("appealAccept")}
+                      </button>
+                      <button
+                        type="submit"
+                        name="decision"
+                        value="declined"
+                        className={cn(
+                          ACTION_BASE,
+                          "border border-outline-variant bg-surface-dim text-on-surface hover:border-outline-hover hover:bg-surface-container focus-visible:outline-primary",
+                        )}
+                      >
+                        {t("appealDecline")}
+                      </button>
+                    </div>
+                  </form>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ) : (
+          <div className="mb-space-lg bezel-tray">
+            <div className="flex flex-col items-center gap-2 bezel-core py-space-xl text-center">
+              <Icon name="verified_user" className="text-3xl text-success-text" />
+              <p className="font-label-lg text-label-lg font-semibold text-on-surface">
+                {t("appealsEmpty")}
+              </p>
+            </div>
+          </div>
+        )
       ) : null}
 
       <div className="flex flex-col justify-between gap-space-md lg:flex-row lg:items-end">
@@ -213,98 +230,107 @@ export function AdminModerationTab({
           </h1>
           <p className="mt-2 max-w-[62ch] font-body-md text-body-md text-secondary">{t("body")}</p>
         </div>
-        <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-danger-border bg-danger-surface px-space-md py-1.5 font-label-md text-label-md font-semibold text-danger-text">
-          <span className="h-1.5 w-1.5 rounded-full bg-danger" />
-          {t("needsReview", { count: total })}
-        </span>
+        {canManageReports ? (
+          <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-danger-border bg-danger-surface px-space-md py-1.5 font-label-md text-label-md font-semibold text-danger-text">
+            <span className="h-1.5 w-1.5 rounded-full bg-danger" />
+            {t("needsReview", { count: total })}
+          </span>
+        ) : null}
       </div>
 
-      <div className="mt-space-lg bezel-tray">
-        <div className="flex flex-col gap-space-md bezel-core p-space-md md:p-space-lg">
-          <div className="flex flex-col gap-space-sm lg:flex-row lg:items-center lg:justify-between">
-            <AdminSearchForm
-              basePath="/admin/moderation"
-              query={query}
-              status={status}
-              placeholder={t("searchPlaceholder")}
-              extra={target !== "all" ? { target } : undefined}
-            />
+      {canManageReports ? (
+        <>
+          <div className="mt-space-lg bezel-tray">
+            <div className="flex flex-col gap-space-md bezel-core p-space-md md:p-space-lg">
+              <div className="flex flex-col gap-space-sm lg:flex-row lg:items-center lg:justify-between">
+                <AdminSearchForm
+                  basePath="/admin/moderation"
+                  query={query}
+                  status={status}
+                  placeholder={t("searchPlaceholder")}
+                  extra={target !== "all" ? { target } : undefined}
+                />
+              </div>
+              <div className="flex flex-col gap-space-sm lg:flex-row lg:items-center lg:justify-between">
+                <AdminStatusLinks
+                  basePath="/admin/moderation"
+                  current={status}
+                  options={statusOptions}
+                  query={query}
+                  extra={extra}
+                />
+                <AdminStatusLinks
+                  basePath="/admin/moderation"
+                  current={target}
+                  options={targetOptions}
+                  query={query}
+                  extra={status !== "all" ? { status } : undefined}
+                  param="target"
+                />
+              </div>
+            </div>
           </div>
-          <div className="flex flex-col gap-space-sm lg:flex-row lg:items-center lg:justify-between">
-            <AdminStatusLinks
-              basePath="/admin/moderation"
-              current={status}
-              options={statusOptions}
-              query={query}
-              extra={extra}
-            />
-            <AdminStatusLinks
-              basePath="/admin/moderation"
-              current={target}
-              options={targetOptions}
-              query={query}
-              extra={status !== "all" ? { status } : undefined}
-              param="target"
-            />
-          </div>
-        </div>
-      </div>
 
-      {error ? <InlineAlert className="mt-space-md">{error}</InlineAlert> : null}
+          {error ? <InlineAlert className="mt-space-md">{error}</InlineAlert> : null}
 
-      {visible.length === 0 ? (
-        <div className="mt-space-lg bezel-tray">
-          <div className="flex flex-col items-center gap-2 bezel-core py-space-xl text-center">
-            <Icon name="verified_user" className="text-3xl text-success-text" />
-            <p className="font-label-lg text-label-lg font-semibold text-on-surface">
-              {t("emptyTitle")}
-            </p>
-          </div>
-        </div>
-      ) : (
-        <div className="mt-space-lg grid grid-cols-1 gap-space-md md:grid-cols-2">
-          {visible.map((report) => (
-            <ReportCard
-              key={report.id}
-              report={report}
-              pending={isPending(`report:${report.id}`) || isPending(`remove:${report.id}`)}
-              onResolve={(nextStatus) => void resolve(report, nextStatus)}
-              onRemove={() => setRemoveTarget(report)}
-              onRestore={() => void restorePost(report)}
-            />
-          ))}
-        </div>
-      )}
+          {visible.length === 0 ? (
+            <div className="mt-space-lg bezel-tray">
+              <div className="flex flex-col items-center gap-2 bezel-core py-space-xl text-center">
+                <Icon name="verified_user" className="text-3xl text-success-text" />
+                <p className="font-label-lg text-label-lg font-semibold text-on-surface">
+                  {t("emptyTitle")}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-space-lg grid grid-cols-1 gap-space-md md:grid-cols-2">
+              {visible.map((report) => (
+                <ReportCard
+                  key={report.id}
+                  report={report}
+                  canModeratePosts={canModeratePosts}
+                  pending={isPending(`report:${report.id}`) || isPending(`remove:${report.id}`)}
+                  onResolve={(nextStatus) => void resolve(report, nextStatus)}
+                  onRemove={() => setRemoveTarget(report)}
+                  onRestore={() => void restorePost(report)}
+                />
+              ))}
+            </div>
+          )}
 
-      <AdminPagination
-        basePath="/admin/moderation"
-        page={page}
-        totalPages={totalPages}
-        query={query}
-        status={status}
-        extra={target !== "all" ? { target } : undefined}
-      />
+          <AdminPagination
+            basePath="/admin/moderation"
+            page={page}
+            totalPages={totalPages}
+            query={query}
+            status={status}
+            extra={target !== "all" ? { target } : undefined}
+          />
 
-      <RemovePostDialog
-        target={removeTarget}
-        pending={removeTarget ? isPending(`remove:${removeTarget.id}`) : false}
-        onClose={() => setRemoveTarget(null)}
-        onSubmit={(reason) => {
-          if (removeTarget) void removePost(removeTarget, reason);
-        }}
-      />
+          <RemovePostDialog
+            target={removeTarget}
+            pending={removeTarget ? isPending(`remove:${removeTarget.id}`) : false}
+            onClose={() => setRemoveTarget(null)}
+            onSubmit={(reason) => {
+              if (removeTarget) void removePost(removeTarget, reason);
+            }}
+          />
+        </>
+      ) : null}
     </div>
   );
 }
 
 function ReportCard({
   report,
+  canModeratePosts,
   pending,
   onResolve,
   onRemove,
   onRestore,
 }: {
   report: AdminReportDto;
+  canModeratePosts: boolean;
   pending: boolean;
   onResolve: (status: ResolveStatus) => void;
   onRemove: () => void;
@@ -354,7 +380,7 @@ function ReportCard({
             )}
             <div className="min-w-0">
               <h3 className="line-clamp-2 font-headline-sm text-headline-sm font-semibold text-on-surface">
-                {report.targetLabel}
+                {report.targetLabel || t("targetPost")}
               </h3>
               {report.details ? (
                 <p className="mt-1 line-clamp-3 font-body-sm text-body-sm text-text-muted">
@@ -370,7 +396,7 @@ function ReportCard({
         </div>
 
         <div className="flex flex-wrap items-center justify-end gap-space-sm border-t border-outline-variant pt-space-sm">
-          {report.targetType === "post" && report.targetState === "removed" ? (
+          {canModeratePosts && report.targetType === "post" && report.targetState === "removed" ? (
             <button
               type="button"
               onClick={onRestore}
@@ -387,7 +413,7 @@ function ReportCard({
               )}
               {t("restorePost")}
             </button>
-          ) : report.targetType === "post" && report.status === "open" ? (
+          ) : canModeratePosts && report.targetType === "post" && report.status === "open" ? (
             <button
               type="button"
               onClick={onRemove}

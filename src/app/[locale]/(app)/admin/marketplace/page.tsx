@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+
+import { getAdminCapabilities } from "@/lib/admin";
 
 import { AdminMarketplaceTab } from "@/features/admin/components/marketplace-tab";
 import {
@@ -32,6 +35,7 @@ export default async function AdminMarketplacePage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
+  if (!(await getAdminCapabilities()).includes("marketplace.manage")) notFound();
   const sp = await searchParams;
   const query = parseQuery(sp.q);
   const status = parseEnum<AdminProductFilter>(sp.status, STATUSES, "all");

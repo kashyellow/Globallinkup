@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { uuidSchema } from "@/lib/validation/ids";
 
+import { hasCapability } from "@/lib/admin";
 import { getCurrentProfile, getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
@@ -47,8 +48,7 @@ const deleteSchema = z.object({ commentId: uuidSchema });
 
 export async function deleteCommentAction(input: unknown): Promise<CommentResult> {
   const user = await getCurrentUser();
-  const profile = await getCurrentProfile();
-  if (!user || !profile || profile.role !== "admin") {
+  if (!user || !(await hasCapability("comments.moderate"))) {
     return { ok: false, error: "forbidden" };
   }
 

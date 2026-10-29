@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+
+import { getAdminCapabilities } from "@/lib/admin";
 
 import { AdminModerationTab } from "@/features/admin/components/moderation-tab";
 import {
@@ -35,24 +38,33 @@ export default async function AdminModerationPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
+  const capabilities = await getAdminCapabilities();
+  const canManageReports = capabilities.includes("reports.manage");
+  const canModeratePosts = capabilities.includes("posts.moderate");
+  if (!canManageReports && !canModeratePosts) notFound();
+
   const sp = await searchParams;
   const query = parseQuery(sp.q);
   const status = parseEnum<AdminReportFilter>(sp.status, STATUSES, "open");
   const target = parseEnum<AdminReportTarget>(sp.target, TARGETS, "all");
   const page = parsePage(sp.page);
-  const appeals = await getOpenAppeals();
-  const { reports, total } = await getAdminModeration({
-    query,
-    status,
-    target,
-    page,
-    pageSize: ADMIN_PAGE_SIZES.moderation,
-  });
+  const appeals = canModeratePosts ? await getOpenAppeals() : [];
+  const { reports, total } = canManageReports
+    ? await getAdminModeration({
+        query,
+        status,
+        target,
+        page,
+        pageSize: ADMIN_PAGE_SIZES.moderation,
+      })
+    : { reports: [], total: 0 };
 
   return (
     <AdminModerationTab
       reports={reports}
       appeals={appeals}
+      canManageReports={canManageReports}
+      canModeratePosts={canModeratePosts}
       query={query}
       status={status}
       target={target}

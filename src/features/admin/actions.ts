@@ -7,6 +7,7 @@ import { notifyMember } from "@/lib/notifications";
 import { z } from "zod";
 import { uuidSchema } from "@/lib/validation/ids";
 
+import type { AdminCapability } from "@/lib/admin-capabilities";
 import { getCurrentProfile, getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
@@ -18,13 +19,16 @@ import { createClient } from "@/lib/supabase/server";
 
 export type AdminResult = { ok: true } | { ok: false; error: string };
 
-async function requireAdminClient() {
+async function requireCapabilityClient(capability: AdminCapability) {
   const user = await getCurrentUser();
   const profile = await getCurrentProfile();
   if (!user || !profile || profile.role !== "admin" || profile.approval_status !== "approved") {
     return null;
   }
-  return { user, supabase: await createClient() };
+  const supabase = await createClient();
+  const { data } = await supabase.rpc("my_capabilities");
+  if (!Array.isArray(data) || !data.includes(capability)) return null;
+  return { user, supabase };
 }
 
 // ---------------------------------------------------------------------------
@@ -37,11 +41,17 @@ const reviewSchema = z.object({
 });
 
 export async function reviewPersonaAction(input: unknown): Promise<AdminResult> {
-  const ctx = await requireAdminClient();
+  const ctx = await requireCapabilityClient("members.review");
   if (!ctx) return { ok: false, error: "forbidden" };
 
   const parsed = reviewSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
+
+  const { data: beforeMember } = await ctx.supabase
+    .from("profiles")
+    .select("approval_status")
+    .eq("id", parsed.data.profileId)
+    .maybeSingle();
 
   const { data, error } = await ctx.supabase.rpc("review_persona", {
     p_profile_id: parsed.data.profileId,
@@ -57,6 +67,10 @@ export async function reviewPersonaAction(input: unknown): Promise<AdminResult> 
     targetType: "profile",
     targetId: parsed.data.profileId,
     reason: parsed.data.reason ?? null,
+    metadata: {
+      before: beforeMember?.approval_status ?? null,
+      after: decision,
+    },
   });
 
   await notifyMember({
@@ -86,7 +100,7 @@ const reportSchema = z.object({
 });
 
 export async function resolveReportAction(input: unknown): Promise<AdminResult> {
-  const ctx = await requireAdminClient();
+  const ctx = await requireCapabilityClient("reports.manage");
   if (!ctx) return { ok: false, error: "forbidden" };
 
   const parsed = reportSchema.safeParse(input);
@@ -123,7 +137,7 @@ const removePostSchema = postSchema.extend({
 });
 
 export async function removePostAction(input: unknown): Promise<AdminResult> {
-  const ctx = await requireAdminClient();
+  const ctx = await requireCapabilityClient("posts.moderate");
   if (!ctx) return { ok: false, error: "forbidden" };
 
   const parsed = removePostSchema.safeParse(input);
@@ -160,7 +174,7 @@ export async function removePostAction(input: unknown): Promise<AdminResult> {
     targetType: "post",
     targetId: current.id,
     reason: parsed.data.reason ?? "Removed by moderation.",
-    metadata: { from_state: current.state, to_state: "removed" },
+    metadata: { before: current.state, after: "removed" },
   });
 
   await notifyMember({
@@ -180,7 +194,7 @@ export async function removePostAction(input: unknown): Promise<AdminResult> {
 
 /** Undo a removal while the appeal window is open. */
 export async function restorePostAction(input: unknown): Promise<AdminResult> {
-  const ctx = await requireAdminClient();
+  const ctx = await requireCapabilityClient("posts.moderate");
   if (!ctx) return { ok: false, error: "forbidden" };
 
   const parsed = postSchema.safeParse(input);
@@ -218,7 +232,7 @@ export async function restorePostAction(input: unknown): Promise<AdminResult> {
     action: "post.restored",
     targetType: "post",
     targetId: current.id,
-    metadata: { to_state: target },
+    metadata: { before: current.state, after: target },
   });
 
   await notifyMember({
@@ -241,7 +255,7 @@ export async function restorePostAction(input: unknown): Promise<AdminResult> {
  * rendered: no client state, no extra dialog.
  */
 export async function resolveAppealFormAction(formData: FormData): Promise<void> {
-  const ctx = await requireAdminClient();
+  const ctx = await requireCapabilityClient("posts.moderate");
   if (!ctx) return;
 
   const parsed = z
@@ -283,6 +297,7 @@ export async function resolveAppealFormAction(formData: FormData): Promise<void>
     targetType: "post",
     targetId: appeal.post_id,
     reason: parsed.data.note ?? null,
+    metadata: { before: appeal.status, after: parsed.data.decision },
   });
 
   if (accepted) {
@@ -335,7 +350,7 @@ const interestReviewSchema = z.object({
 });
 
 export async function reviewInterestAction(input: unknown): Promise<AdminResult> {
-  const ctx = await requireAdminClient();
+  const ctx = await requireCapabilityClient("interests.review");
   if (!ctx) return { ok: false, error: "forbidden" };
 
   const parsed = interestReviewSchema.safeParse(input);
@@ -343,7 +358,7 @@ export async function reviewInterestAction(input: unknown): Promise<AdminResult>
 
   const { data: interest } = await ctx.supabase
     .from("interest_catalog")
-    .select("id, created_by")
+    .select("id, created_by, status")
     .eq("id", parsed.data.interestId)
     .maybeSingle();
 
@@ -358,6 +373,10 @@ export async function reviewInterestAction(input: unknown): Promise<AdminResult>
     action: parsed.data.decision === "approved" ? "interest.approved" : "interest.rejected",
     targetType: "interest",
     targetId: parsed.data.interestId,
+    metadata: {
+      before: interest?.status ?? null,
+      after: parsed.data.decision,
+    },
   });
 
   if (interest?.created_by) {
@@ -384,13 +403,12 @@ const productSchema = z.object({
   description: z.string().trim().max(2000).optional(),
   originLabel: z.string().trim().max(120).optional(),
   /** Phone for the seller contact line on the public catalog. */
-  sellerPhone: z.string().trim().max(60).optional(),
   isPublished: z.boolean().default(false),
   imagePaths: z.array(z.string().trim().min(1).max(400)).max(10).default([]),
 });
 
 export async function createProductAction(input: unknown): Promise<AdminResult> {
-  const ctx = await requireAdminClient();
+  const ctx = await requireCapabilityClient("marketplace.manage");
   if (!ctx) return { ok: false, error: "forbidden" };
 
   const parsed = productSchema.safeParse(input);
@@ -408,7 +426,6 @@ export async function createProductAction(input: unknown): Promise<AdminResult> 
       currency: data.currency,
       description: data.description ?? null,
       origin_label: data.originLabel ?? null,
-      contact_information: data.sellerPhone ?? null,
       is_published: data.isPublished,
       created_by: ctx.user.id,
     })
@@ -431,6 +448,7 @@ export async function createProductAction(input: unknown): Promise<AdminResult> 
     action: "product.created",
     targetType: "product",
     targetId: created.id,
+    metadata: { before: "none", after: data.isPublished ? "live" : "draft" },
   });
 
   revalidatePath("/admin");
@@ -442,7 +460,7 @@ export async function createProductAction(input: unknown): Promise<AdminResult> 
 const updateSchema = productSchema.extend({ productId: uuidSchema });
 
 export async function updateProductAction(input: unknown): Promise<AdminResult> {
-  const ctx = await requireAdminClient();
+  const ctx = await requireCapabilityClient("marketplace.manage");
   if (!ctx) return { ok: false, error: "forbidden" };
 
   const parsed = updateSchema.safeParse(input);
@@ -460,7 +478,6 @@ export async function updateProductAction(input: unknown): Promise<AdminResult> 
       currency: data.currency,
       description: data.description ?? null,
       origin_label: data.originLabel ?? null,
-      contact_information: data.sellerPhone ?? null,
       is_published: data.isPublished,
     })
     .eq("id", data.productId)
@@ -489,7 +506,7 @@ export async function updateProductAction(input: unknown): Promise<AdminResult> 
 const publishSchema = z.object({ productId: uuidSchema, isPublished: z.boolean() });
 
 export async function setProductPublishedAction(input: unknown): Promise<AdminResult> {
-  const ctx = await requireAdminClient();
+  const ctx = await requireCapabilityClient("marketplace.manage");
   if (!ctx) return { ok: false, error: "forbidden" };
 
   const parsed = publishSchema.safeParse(input);
@@ -512,7 +529,7 @@ export async function setProductPublishedAction(input: unknown): Promise<AdminRe
 const productIdSchema = z.object({ productId: uuidSchema });
 
 export async function deleteProductAction(input: unknown): Promise<AdminResult> {
-  const ctx = await requireAdminClient();
+  const ctx = await requireCapabilityClient("marketplace.manage");
   if (!ctx) return { ok: false, error: "forbidden" };
 
   const parsed = productIdSchema.safeParse(input);
@@ -538,7 +555,7 @@ export async function deleteProductAction(input: unknown): Promise<AdminResult> 
 const restoreSchema = z.object({ productId: uuidSchema });
 
 export async function restoreProductAction(input: unknown): Promise<AdminResult> {
-  const ctx = await requireAdminClient();
+  const ctx = await requireCapabilityClient("marketplace.manage");
   if (!ctx) return { ok: false, error: "forbidden" };
 
   const parsed = restoreSchema.safeParse(input);
