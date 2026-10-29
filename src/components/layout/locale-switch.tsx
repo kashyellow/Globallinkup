@@ -34,7 +34,7 @@ export function LocaleSwitch({
       aria-label={`${label}: ${next.toUpperCase()}`}
       title={`${label}: ${next.toUpperCase()}`}
       className={cn(
-        "flex h-10 items-center justify-center gap-1 rounded-full px-2.5 text-secondary transition-colors duration-300 hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60",
+        "flex h-11 items-center justify-center gap-1 rounded-full px-2.5 text-secondary transition-colors duration-300 hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60",
       )}
     >
       <Icon name="translate" className="text-[18px]" />

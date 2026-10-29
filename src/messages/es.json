@@ -441,7 +441,14 @@
       "label": "Secciones de administración",
       "dashboard": "Panel",
       "team": "Equipo",
-      "audit": "Auditoría"
+      "audit": "Auditoría",
+      "dashboardShort": "Panel",
+      "usersShort": "Usuarios",
+      "marketplaceShort": "Marketplace",
+      "moderationShort": "Moderación",
+      "interestsShort": "Intereses",
+      "auditShort": "Auditoría",
+      "teamShort": "Equipo"
     },
     "users": {
       "searchLabel": "Buscar miembros",
@@ -820,6 +827,8 @@
       "emptyTitle": "Aún no tienes conexiones",
       "disconnect": "Desconectar",
       "vaultNotShared": "Sin compartir",
+      "vaultShowMissing": "Mostrar {count} sin compartir",
+      "vaultShowShared": "Mostrar solo canales compartidos",
       "channels": {
         "whatsapp": "WhatsApp",
         "telegram": "Telegram",
@@ -1269,7 +1278,7 @@
   },
   "Landing": {
     "hero": {
-      "badge": "Una red serena para el intercambio cultural",
+      "badge": "Una red cultural serena",
       "titleLine1": "Conecta más allá de las",
       "titleLine2": "fronteras.",
       "body": "Descubre personas reales, comparte tu mundo y cruza culturas. Sin algoritmos de feed, sin mensajes en frío y sin compartir contactos sin permiso.",

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { PersonaDetailView } from "@/features/persona/components/persona-detail-view";
 import { getPersonaDetail } from "@/features/persona/queries";
 import { requireApprovedUser } from "@/lib/auth";
+import { uuidSchema } from "@/lib/validation/ids";
 
 export async function generateMetadata({
   params,
@@ -21,6 +22,8 @@ export default async function PersonaDetailPage({
   params: Promise<{ locale: string; id: string }>;
 }) {
   const { locale, id } = await params;
+  if (!uuidSchema.safeParse(id).success) notFound();
+
   const { user, profile } = await requireApprovedUser();
   const persona = await getPersonaDetail(user.id, id, locale);
 

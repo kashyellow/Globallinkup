@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { AppFooterSpace } from "@/components/layout/app-footer-space";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { Navbar } from "@/components/layout/navbar";
@@ -44,9 +45,9 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
        * the page, so the reserve lives on the footer instead of `<main>` —
        * otherwise the bar floats on top of the footer's last row.
        */}
-      <div className="pb-24 lg:pb-0">
+      <AppFooterSpace>
         <SiteFooter variant="app" />
-      </div>
+      </AppFooterSpace>
       <BottomNav pendingRequests={pendingRequests} />
     </RefreshProvider>
   );

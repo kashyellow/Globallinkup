@@ -42,7 +42,7 @@ export function AdminTabs({ capabilities }: { capabilities: AdminCapability[] })
   return (
     <nav
       aria-label={t("label")}
-      className="-mx-margin-mobile no-scrollbar flex items-center gap-1 overflow-x-auto px-margin-mobile pb-1 md:mx-0 md:px-0"
+      className="grid grid-cols-4 items-stretch gap-1.5 sm:flex sm:flex-wrap sm:items-center"
     >
       {ADMIN_TABS.filter((tab) =>
         "requiresAny" in tab
@@ -58,7 +58,7 @@ export function AdminTabs({ capabilities }: { capabilities: AdminCapability[] })
             aria-current={active ? "page" : undefined}
             aria-label={t(tab.key)}
             className={cn(
-              "relative inline-flex min-h-11 shrink-0 items-center justify-center gap-0 rounded-full px-3 py-2 font-label-md text-label-md whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:gap-2 sm:px-space-md",
+              "relative inline-flex min-h-11 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-2 py-1.5 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:flex-row sm:gap-2 sm:rounded-full sm:px-space-md sm:py-2",
               active
                 ? "bg-surface-container-high font-semibold text-on-surface"
                 : "text-secondary hover:bg-surface-container hover:text-on-surface",
@@ -66,7 +66,10 @@ export function AdminTabs({ capabilities }: { capabilities: AdminCapability[] })
           >
             <LinkPending />
             <Icon name={tab.icon} className={cn("text-lg", active && "text-primary")} />
-            <span className="hidden sm:inline">{t(tab.key)}</span>
+            <span className="max-w-full truncate text-[10px] leading-none sm:hidden">
+              {t(`${tab.key}Short`)}
+            </span>
+            <span className="hidden whitespace-nowrap sm:inline">{t(tab.key)}</span>
           </Link>
         );
       })}

@@ -340,8 +340,11 @@ function TabBar({
   }, [tab]);
 
   return (
-    <div className="-mx-margin-mobile no-scrollbar overflow-x-auto border-b border-outline-variant px-margin-mobile md:mx-0 md:px-0">
-      <div ref={listRef} className="relative flex w-max items-end gap-space-md">
+    <div className="border-b border-outline-variant">
+      <div
+        ref={listRef}
+        className="relative grid w-full grid-cols-2 items-end gap-space-md sm:flex sm:w-max"
+      >
         <span
           ref={indicatorRef}
           aria-hidden
@@ -361,7 +364,7 @@ function TabBar({
               aria-pressed={active}
               onClick={() => onChange(id)}
               className={cn(
-                "relative min-h-11 px-1 pb-2 font-label-md text-label-md tracking-[0.08em] whitespace-nowrap uppercase",
+                "relative min-h-11 px-1 pb-2 text-center font-label-md text-label-md tracking-[0.08em] uppercase sm:whitespace-nowrap",
                 "transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
                 EASE,
                 active ? "font-bold text-primary" : "text-text-muted hover:text-on-surface",

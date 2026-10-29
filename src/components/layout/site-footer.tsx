@@ -42,9 +42,10 @@ function Column({ column }: { column: FooterColumn }) {
         {column.texts?.map((text) => (
           <li
             key={text}
-            className="inline-flex min-h-11 items-center font-body-sm text-body-sm text-on-surface-variant"
+            className="flex items-start gap-2 py-1 font-body-sm text-body-sm text-on-surface-variant"
           >
-            {text}
+            <span aria-hidden className="mt-[0.55em] h-1 w-1 shrink-0 rounded-full bg-primary" />
+            <span>{text}</span>
           </li>
         ))}
       </ul>

@@ -7,6 +7,7 @@ import { getPostDetail } from "@/features/posts/queries";
 import { getAdminCapabilities } from "@/lib/admin";
 import { getServerClient, requireApprovedUser } from "@/lib/auth";
 import { createSignedImageUrl } from "@/lib/storage";
+import { uuidSchema } from "@/lib/validation/ids";
 
 export async function generateMetadata({
   params,
@@ -22,6 +23,8 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
   const { user, profile } = await requireApprovedUser();
   const capabilities = await getAdminCapabilities();
   const { id } = await params;
+  if (!uuidSchema.safeParse(id).success) notFound();
+
   const post = await getPostDetail(user.id, id);
   if (!post) notFound();
 

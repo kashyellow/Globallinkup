@@ -30,7 +30,7 @@ export function ProductDialog({
         if (event.target === event.currentTarget) onClose();
       }}
       className={cn(
-        "fixed inset-0 z-[70] flex items-end justify-center bg-background/80 backdrop-blur-sm transition-opacity duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] sm:items-center sm:p-space-lg",
+        "fixed inset-0 z-[70] flex items-end justify-center bg-background/80 pb-[env(safe-area-inset-bottom)] backdrop-blur-sm transition-opacity duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] sm:items-center sm:p-space-lg",
         open ? "opacity-100" : "pointer-events-none opacity-0",
       )}
     >

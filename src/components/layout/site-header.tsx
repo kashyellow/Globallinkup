@@ -28,6 +28,7 @@ const SECTION_LINKS = [
  */
 export function SiteHeader({ mode = "content" }: { mode?: "landing" | "content" }) {
   const t = useTranslations("MarketingNav");
+  const tTheme = useTranslations("Theme");
   const { locale, pending: localePending, switchLocale } = useLocaleSwitch();
   const [menuOpen, setMenuOpen] = useState(false);
   const isLanding = mode === "landing";
@@ -75,24 +76,26 @@ export function SiteHeader({ mode = "content" }: { mode?: "landing" | "content" 
             </nav>
 
             <div className="flex shrink-0 items-center gap-2">
-              <ThemeToggle />
-              <LocaleSwitch
-                locale={locale}
-                onSwitch={switchLocale}
-                disabled={localePending}
-                label={t("language")}
-              />
+              <div className="hidden items-center gap-2 sm:flex">
+                <ThemeToggle />
+                <LocaleSwitch
+                  locale={locale}
+                  onSwitch={switchLocale}
+                  disabled={localePending}
+                  label={t("language")}
+                />
+              </div>
 
               <Link
                 href="/login"
-                className="hidden min-h-9 items-center rounded-full px-3 font-label-lg text-label-lg font-medium text-on-surface-variant transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:inline-flex"
+                className="hidden min-h-11 items-center rounded-full px-3 font-label-lg text-label-lg font-medium text-on-surface-variant transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:inline-flex"
               >
                 {t("signIn")}
               </Link>
 
               <Link
                 href="/register"
-                className="group inline-flex h-10 items-center gap-1.5 rounded-full bg-primary pr-1.5 pl-1.5 font-label-lg text-label-lg whitespace-nowrap text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:pl-4"
+                className="group inline-flex h-11 items-center gap-1.5 rounded-full bg-primary pr-1.5 pl-1.5 font-label-lg text-label-lg whitespace-nowrap text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:pl-4"
               >
                 <span className="md:hidden">{t("joinShort")}</span>
                 <span className="hidden md:inline">{t("join")}</span>
@@ -112,7 +115,7 @@ export function SiteHeader({ mode = "content" }: { mode?: "landing" | "content" 
                 aria-label={t("toggleMenu")}
                 aria-expanded={menuOpen}
                 onClick={() => setMenuOpen((value) => !value)}
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-outline-variant bg-surface-container text-secondary transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary xl:hidden"
+                className="flex h-11 w-11 items-center justify-center rounded-full border border-outline-variant bg-surface-container text-secondary transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary xl:hidden"
               >
                 <Icon name={menuOpen ? "close" : "menu"} className="text-[20px]" />
               </button>
@@ -151,6 +154,18 @@ export function SiteHeader({ mode = "content" }: { mode?: "landing" | "content" 
             >
               {t("signIn")}
             </Link>
+            <div className="mt-1 flex items-center justify-between gap-2 border-t border-outline-variant px-3 py-2 sm:hidden">
+              <span className="font-label-lg text-label-lg text-secondary">{tTheme("label")}</span>
+              <div className="flex items-center gap-1">
+                <ThemeToggle />
+                <LocaleSwitch
+                  locale={locale}
+                  onSwitch={switchLocale}
+                  disabled={localePending}
+                  label={t("language")}
+                />
+              </div>
+            </div>
           </nav>
         </div>
       ) : null}

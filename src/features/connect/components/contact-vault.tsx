@@ -42,7 +42,9 @@ function channelHref(channel: ContactChannel): string | null {
 
 export function ContactVault({ channels }: { channels: ContactChannel[] }) {
   const t = useTranslations("Connections.active");
+  const [showAll, setShowAll] = useState(false);
   const byKey = new Map(channels.map((channel) => [channel.key, channel.value]));
+  const missingCount = CHANNEL_ORDER.filter((key) => !(byKey.get(key) ?? "")).length;
 
   return (
     <div
@@ -70,6 +72,7 @@ export function ContactVault({ channels }: { channels: ContactChannel[] }) {
                 value
                   ? "border-outline-variant bg-surface-low"
                   : "border-dashed border-outline-variant bg-surface-low/50",
+                !value && !showAll && "hidden sm:flex",
               )}
             >
               <div className="flex min-w-0 items-center gap-2 text-on-surface">
@@ -111,6 +114,17 @@ export function ContactVault({ channels }: { channels: ContactChannel[] }) {
           );
         })}
       </div>
+
+      {missingCount > 0 ? (
+        <button
+          type="button"
+          onClick={() => setShowAll((current) => !current)}
+          className="flex min-h-11 w-full items-center justify-center gap-1.5 rounded-full border border-outline-variant bg-surface-low/60 px-3 font-label-md text-label-md text-secondary transition-colors hover:bg-surface-low hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:hidden"
+        >
+          <Icon name={showAll ? "visibility_off" : "visibility"} className="text-base" />
+          {showAll ? t("vaultShowShared") : t("vaultShowMissing", { count: missingCount })}
+        </button>
+      ) : null}
     </div>
   );
 }

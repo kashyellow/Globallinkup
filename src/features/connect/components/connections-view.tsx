@@ -111,7 +111,7 @@ export function ConnectionsView({ data }: { data: ConnectionsData }) {
           style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
         >
           <div className="flex flex-wrap items-center justify-between gap-space-md">
-            <div className="-mx-space-md no-scrollbar flex w-full items-center gap-2 overflow-x-auto px-space-md md:mx-0 md:w-auto md:px-0">
+            <div className="flex w-full flex-wrap items-center gap-2 md:w-auto">
               {CONNECTION_TABS.map((key) => {
                 const active = tab === key;
                 const pending = key === "requests";

@@ -291,8 +291,9 @@
   --color-primary-container: #e86a5b;
   --color-primary-hover: #d85e50;
   --color-inverse-primary: #a6392e;
-  --color-on-primary: #ffffff;
-  --color-on-primary-container: #ffffff;
+  /* Dark text on the coral primary passes WCAG AA (6.26:1 vs 3.16:1). */
+  --color-on-primary: #1b0f0d;
+  --color-on-primary-container: #1b0f0d;
   --color-background: #0b0a09;
   --color-background-cream: #0b0a09;
   --color-surface: #121110;
@@ -328,8 +329,8 @@
   --color-tertiary-container: #2e9b68;
   --color-tertiary-fixed: #1a402f;
   --color-tertiary-fixed-dim: #2e9b68;
-  --color-on-tertiary: #ffffff;
-  --color-on-tertiary-container: #73dba2;
+  --color-on-tertiary: #06130c;
+  --color-on-tertiary-container: #06130c;
   --color-success: #2e9b68;
   --color-success-bright: #22c55e;
   --color-success-strong: #006d44;

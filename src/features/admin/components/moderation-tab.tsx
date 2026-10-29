@@ -515,7 +515,7 @@ function RemovePostDialog({
         if (!pending && event.target === event.currentTarget) onClose();
       }}
       className={cn(
-        "fixed inset-0 z-[90] flex items-end justify-center bg-background/80 p-0 backdrop-blur-sm transition-opacity duration-300 sm:items-center sm:p-space-lg",
+        "fixed inset-0 z-[90] flex items-end justify-center bg-background/80 p-0 pb-[env(safe-area-inset-bottom)] backdrop-blur-sm transition-opacity duration-300 sm:items-center sm:p-space-lg",
         target ? "opacity-100" : "pointer-events-none opacity-0",
       )}
     >

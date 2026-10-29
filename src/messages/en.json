@@ -441,7 +441,14 @@
       "label": "Admin sections",
       "dashboard": "Dashboard",
       "team": "Team",
-      "audit": "Audit"
+      "audit": "Audit",
+      "dashboardShort": "Dashboard",
+      "usersShort": "Users",
+      "marketplaceShort": "Marketplace",
+      "moderationShort": "Moderation",
+      "interestsShort": "Interests",
+      "auditShort": "Audit",
+      "teamShort": "Team"
     },
     "users": {
       "searchLabel": "Search members",
@@ -820,6 +827,8 @@
       "emptyTitle": "No connections yet",
       "disconnect": "Disconnect",
       "vaultNotShared": "Not shared",
+      "vaultShowMissing": "Show {count} not shared",
+      "vaultShowShared": "Show shared channels only",
       "channels": {
         "whatsapp": "WhatsApp",
         "telegram": "Telegram",
@@ -1269,7 +1278,7 @@
   },
   "Landing": {
     "hero": {
-      "badge": "A quiet network for cultural exchange",
+      "badge": "A quiet cultural network",
       "titleLine1": "Connect beyond",
       "titleLine2": "borders.",
       "body": "Discover real people, share your world, and reach across cultures. No feed algorithms, no cold messages, no contact details exchanged without permission.",

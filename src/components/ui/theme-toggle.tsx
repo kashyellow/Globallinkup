@@ -41,7 +41,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-label={t("switchTo", { mode: t(next) })}
       title={`${t(current)} → ${t(next)}`}
       className={cn(
-        "flex h-10 w-10 items-center justify-center rounded-full text-secondary transition-colors duration-200 hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+        "flex h-11 w-11 items-center justify-center rounded-full text-secondary transition-colors duration-200 hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
         className,
       )}
     >

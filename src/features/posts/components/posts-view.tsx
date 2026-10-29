@@ -217,7 +217,7 @@ export function PostsView({
               className="flex flex-col gap-space-sm bezel-core p-space-md sm:flex-row sm:items-center sm:justify-between"
               style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
             >
-              <div className="-mx-space-sm no-scrollbar flex items-center gap-2 overflow-x-auto px-space-sm sm:mx-0 sm:px-0">
+              <div className="flex flex-wrap items-center gap-2">
                 {POST_FILTERS.map((key) => (
                   <button
                     key={key}

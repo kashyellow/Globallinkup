@@ -90,10 +90,10 @@ export function DossierHeader({
 
   return (
     <section className="relative w-full">
-      <div className="mx-auto max-w-[1240px] px-margin-mobile pt-block-mobile md:px-margin md:pt-block">
-        {/* Action bar */}
-        <div className="flex flex-wrap items-center justify-end gap-y-space-sm border-y border-outline-variant py-space-sm">
-          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
+      <div className="mx-auto flex max-w-[1240px] flex-col px-margin-mobile pt-block-mobile md:px-margin md:pt-block">
+        {/* Action bar — after the identity block on phones, above it from lg up. */}
+        <div className="order-2 flex flex-wrap items-center justify-end gap-y-space-sm border-y border-outline-variant py-space-sm lg:order-1">
+          <div className="flex w-full flex-wrap gap-2 sm:w-auto sm:flex-nowrap sm:items-center">
             {canShare ? (
               <button type="button" onClick={share} className={CONTROL}>
                 <Icon
@@ -127,7 +127,7 @@ export function DossierHeader({
         </div>
 
         {/* 01 — Identity */}
-        <Reveal delay={60}>
+        <Reveal delay={60} className="order-1 lg:order-2">
           <div className="mt-space-lg">
             <SectionHead index="01" title={t("sections.identity")} />
 
@@ -169,7 +169,7 @@ export function DossierHeader({
 
               <div className="lg:col-span-5">
                 <div className="group relative mx-auto w-full max-w-[19rem] lg:mx-0 lg:ml-auto lg:max-w-none">
-                  <div className="aspect-[4/5] w-full overflow-hidden border border-outline-variant bg-surface-low">
+                  <div className="aspect-square w-full overflow-hidden border border-outline-variant bg-surface-low sm:aspect-[4/5]">
                     {profile.avatar ? (
                       <MediaImage
                         alt={profile.name}
@@ -188,7 +188,7 @@ export function DossierHeader({
         </Reveal>
 
         {/* 02 — Ledger */}
-        <Reveal delay={140}>
+        <Reveal delay={140} className="order-3">
           <div className="mt-space-lg">
             <SectionHead index="02" title={t("sections.record")} />
 

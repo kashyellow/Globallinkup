@@ -74,7 +74,7 @@ export async function Hero() {
               />
               <div aria-hidden className="absolute inset-0 bg-transparent/25" />
 
-              <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-primary/80 px-2.5 py-1 font-label-md text-label-md text-white backdrop-blur-sm">
+              <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-primary/80 px-2.5 py-1 font-label-md text-label-md text-on-primary backdrop-blur-sm">
                 <Icon name="location_on" className="text-[14px] text-gold" />
                 {t("city")}
               </span>

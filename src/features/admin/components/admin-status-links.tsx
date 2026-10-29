@@ -26,7 +26,7 @@ export function AdminStatusLinks({
   param?: string;
 }) {
   return (
-    <div className="-mx-space-sm no-scrollbar flex items-center gap-1.5 overflow-x-auto px-space-sm pb-1">
+    <div className="flex flex-wrap items-center gap-1.5">
       {options.map((option) => {
         const params = new URLSearchParams(extra);
         if (query) params.set("q", query);

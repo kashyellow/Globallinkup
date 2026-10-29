@@ -163,7 +163,7 @@ export function ResetPasswordView({ hasRecoverySession }: { hasRecoverySession: 
                       passed >= 3 ? "text-success-text" : "text-on-surface",
                     )}
                   >
-                    {t(strengthKey)}
+                    {password.length === 0 ? "—" : t(strengthKey)}
                   </span>
                 </div>
                 <div className="flex h-1.5 w-full gap-1 overflow-hidden rounded-full bg-outline-variant">

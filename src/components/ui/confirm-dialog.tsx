@@ -44,7 +44,7 @@ export function ConfirmDialog({
         if (!pending && event.target === event.currentTarget) onClose();
       }}
       className={cn(
-        "fixed inset-0 z-[90] flex items-end justify-center bg-background/80 p-0 backdrop-blur-sm transition-opacity duration-300 sm:items-center sm:p-space-lg",
+        "fixed inset-0 z-[90] flex items-end justify-center bg-background/80 p-0 pb-[env(safe-area-inset-bottom)] backdrop-blur-sm transition-opacity duration-300 sm:items-center sm:p-space-lg",
         open ? "opacity-100" : "pointer-events-none opacity-0",
       )}
     >
@@ -85,9 +85,9 @@ export function ConfirmDialog({
             onClick={onConfirm}
             disabled={pending}
             className={cn(
-              "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-space-lg py-2.5 font-label-lg text-label-lg font-semibold text-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-70",
+              "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-space-lg py-2.5 font-label-lg text-label-lg font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-70",
               tone === "danger"
-                ? "bg-danger hover:bg-danger-border-strong focus-visible:outline-danger-border-strong"
+                ? "bg-danger text-on-error hover:bg-danger-border-strong focus-visible:outline-danger-border-strong"
                 : "bg-primary text-on-primary hover:bg-primary-hover focus-visible:outline-primary",
             )}
           >

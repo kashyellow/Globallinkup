@@ -55,7 +55,7 @@ export async function PeopleSection() {
                     alt={t(`${person.key}.alt`)}
                     wrapperClassName="h-full w-full"
                   />
-                  <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-primary/85 px-2.5 py-1 font-label-md text-label-md text-white backdrop-blur-sm">
+                  <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-primary/85 px-2.5 py-1 font-label-md text-label-md text-on-primary backdrop-blur-sm">
                     <Icon name="location_on" className="text-[14px] text-gold" />
                     {t(`${person.key}.city`)}
                   </span>

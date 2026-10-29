@@ -51,7 +51,7 @@ export async function MarketplaceSection() {
                   <span className="absolute top-3 right-3 rounded-full border border-outline-variant bg-marketing-core/95 px-2.5 py-1 font-label-md text-label-md font-semibold text-on-surface backdrop-blur-sm">
                     {t(`${product.key}.price`)}
                   </span>
-                  <span className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-primary/90 px-2.5 py-1 font-label-caps text-label-caps tracking-[0.1em] text-white uppercase backdrop-blur-sm">
+                  <span className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-primary/90 px-2.5 py-1 font-label-caps text-label-caps tracking-[0.1em] text-on-primary uppercase backdrop-blur-sm">
                     <Icon name="public" className="text-[13px] text-gold" />
                     {t(`${product.key}.origin`)}
                   </span>

@@ -518,7 +518,7 @@ export function CreatePersonaView({
                       </span>
                     </div>
                   </button>
-                  <div className="pointer-events-none absolute -right-1 -bottom-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary-container text-white shadow-md">
+                  <div className="pointer-events-none absolute -right-1 -bottom-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary-container text-on-primary shadow-md">
                     <Icon name="add" className="text-[16px]" />
                   </div>
                 </div>
@@ -881,19 +881,19 @@ export function CreatePersonaView({
 
             {/* 6. Private contact vault */}
             <section className="flex flex-col gap-space-md rounded-xl border border-outline-variant bg-surface-container p-space-lg">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-space-xs">
-                  <div className="flex h-6 w-6 items-center justify-center rounded bg-primary-container text-white">
+              <div className="flex flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:justify-between">
+                <div className="flex min-w-0 items-start gap-space-xs">
+                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-primary-container text-on-primary">
                     <Icon name="lock" className="text-[14px]" />
                   </div>
-                  <h4 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
+                  <h4 className="min-w-0 font-headline-sm text-headline-sm font-semibold text-on-surface">
                     {t("vaultTitle")}
                     <span aria-hidden className="ml-0.5 text-danger-text">
                       *
                     </span>
                   </h4>
                 </div>
-                <span className="shrink-0 rounded-lg bg-tertiary px-2 py-0.5 font-label-caps text-label-caps font-bold whitespace-nowrap text-white uppercase">
+                <span className="shrink-0 rounded-lg bg-tertiary px-2 py-0.5 font-label-caps text-label-caps font-bold whitespace-nowrap text-on-tertiary uppercase">
                   {t("vaultBadge")}
                 </span>
               </div>
@@ -988,7 +988,7 @@ export function CreatePersonaView({
                   "group flex w-full items-center justify-center gap-space-xs rounded-lg px-space-md py-3 text-center font-label-lg text-label-lg font-semibold shadow-md transition-colors sm:w-auto sm:px-space-xl",
                   submitting
                     ? "cursor-wait bg-surface-variant text-secondary"
-                    : "bg-primary-container text-white hover:bg-primary-hover",
+                    : "bg-primary-container text-on-primary hover:bg-primary-hover",
                 )}
               >
                 <span>

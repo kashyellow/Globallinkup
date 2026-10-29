@@ -118,8 +118,8 @@ export function MarketplaceView({
     <>
       {/* Editorial header */}
       <section className="border-b border-outline-variant bg-surface-low">
-        <div className="mx-auto max-w-[1240px] px-margin-mobile pt-block-mobile pb-space-xl md:px-margin md:pt-block">
-          <div className="flex flex-col justify-between gap-space-lg lg:flex-row lg:items-end">
+        <div className="mx-auto max-w-[1240px] px-margin-mobile pt-space-lg pb-space-lg md:px-margin md:pt-block md:pb-space-xl">
+          <div className="flex flex-col justify-between gap-space-md lg:flex-row lg:items-end lg:gap-space-lg">
             <div className="flex max-w-3xl flex-col gap-space-sm">
               <p className="font-label-caps text-label-caps tracking-[0.16em] text-primary uppercase">
                 {t("banner.badge")}
@@ -134,7 +134,7 @@ export function MarketplaceView({
               </p>
             </div>
 
-            <div className="shrink-0 self-start bezel-tray lg:self-auto">
+            <div className="hidden shrink-0 self-start bezel-tray sm:block lg:self-auto">
               <div
                 className="flex items-center gap-space-md bezel-core px-space-md py-space-sm"
                 style={{ "--bezel-core-bg": "var(--color-surface-container)" } as CSSProperties}
@@ -154,7 +154,7 @@ export function MarketplaceView({
             </div>
           </div>
 
-          <div className="mt-space-lg flex items-center gap-2 font-body-sm text-body-sm text-secondary">
+          <div className="mt-space-md flex items-center gap-2 font-body-sm text-body-sm text-secondary md:mt-space-lg">
             <Icon name="lock" className="shrink-0 text-base text-tertiary" />
             <span>{t("banner.note")}</span>
           </div>
@@ -162,7 +162,7 @@ export function MarketplaceView({
       </section>
 
       {/* Controls */}
-      <section className="mx-auto max-w-[1240px] px-margin-mobile py-space-lg md:px-margin">
+      <section className="mx-auto max-w-[1240px] px-margin-mobile py-space-md md:px-margin md:py-space-lg">
         <div className="flex flex-col items-stretch justify-between gap-space-md md:flex-row md:items-center">
           <div className="relative max-w-xl flex-1">
             <Icon
@@ -291,7 +291,7 @@ export function MarketplaceView({
               type="button"
               onClick={() => setInquiryOpen(true)}
               className={cn(
-                "group inline-flex h-11 shrink-0 items-center gap-2 rounded-full border border-outline bg-surface-low px-5 font-label-lg text-label-lg whitespace-nowrap text-on-surface transition-colors duration-300 hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+                "group inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-full border border-outline bg-surface-low px-5 py-2.5 text-center font-label-lg text-label-lg text-on-surface transition-colors duration-300 hover:border-outline-hover hover:bg-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px sm:w-auto",
                 EASE,
               )}
             >

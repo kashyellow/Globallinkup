@@ -335,17 +335,19 @@ function ProductRow({
             </span>
           )}
           <div className="min-w-0 flex-1">
-            <div className="flex min-w-0 items-center gap-2">
-              <h2 className="min-w-0 truncate font-headline-sm text-headline-sm font-semibold text-on-surface">
+            <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2 lg:flex-nowrap">
+              <h2 className="line-clamp-2 min-w-0 font-headline-sm text-headline-sm font-semibold text-balance text-on-surface lg:line-clamp-1">
                 {product.name}
               </h2>
-              <StatusChip status={product.status} />
-              {product.imagePaths.length > 1 ? (
-                <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-outline-variant bg-surface-container px-2 py-0.5 font-label-md text-label-md text-secondary">
-                  <Icon name="photo_library" className="text-sm" />
-                  {product.imagePaths.length}
-                </span>
-              ) : null}
+              <div className="flex shrink-0 items-center gap-1.5">
+                <StatusChip status={product.status} />
+                {product.imagePaths.length > 1 ? (
+                  <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-outline-variant bg-surface-container px-2 py-0.5 font-label-md text-label-md text-secondary">
+                    <Icon name="photo_library" className="text-sm" />
+                    {product.imagePaths.length}
+                  </span>
+                ) : null}
+              </div>
             </div>
             <p className="truncate font-body-sm text-body-sm text-secondary">
               {[product.origin, product.price].filter(Boolean).join(" · ")}
@@ -353,7 +355,7 @@ function ProductRow({
           </div>
         </div>
 
-        <div className="flex shrink-0 flex-wrap items-center gap-space-xs">
+        <div className="flex shrink-0 flex-wrap items-center gap-space-xs lg:flex-nowrap">
           {product.status === "trashed" ? (
             <button
               type="button"
@@ -554,7 +556,7 @@ function ProductFormDialog({
 
   return (
     <div
-      className="fixed inset-0 z-[85] flex items-end justify-center bg-background/80 backdrop-blur-sm sm:items-center sm:p-space-lg"
+      className="fixed inset-0 z-[85] flex items-end justify-center bg-background/80 pb-[env(safe-area-inset-bottom)] backdrop-blur-sm sm:items-center sm:p-space-lg"
       onClick={(event) => {
         if (!busy && event.target === event.currentTarget) onClose();
       }}

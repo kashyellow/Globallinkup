@@ -58,7 +58,7 @@ export async function DispatchesSection() {
                     wrapperClassName="h-full w-full"
                     className="transition-transform duration-[900ms] ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-[1.02]"
                   />
-                  <span className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-primary/90 px-3 py-1 font-label-md text-label-md text-white backdrop-blur-sm">
+                  <span className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-primary/90 px-3 py-1 font-label-md text-label-md text-on-primary backdrop-blur-sm">
                     <Icon name="location_on" className="text-[14px] text-gold" />
                     {t("featuredLocation")}
                   </span>

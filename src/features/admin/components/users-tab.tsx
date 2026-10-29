@@ -383,7 +383,7 @@ function PersonaDossierDialog({
 
   return (
     <div
-      className="fixed inset-0 z-[85] flex items-end justify-center bg-background/80 backdrop-blur-sm sm:items-center sm:p-space-lg"
+      className="fixed inset-0 z-[85] flex items-end justify-center bg-background/80 pb-[env(safe-area-inset-bottom)] backdrop-blur-sm sm:items-center sm:p-space-lg"
       onClick={(event) => {
         if (!pending && event.target === event.currentTarget) onClose();
       }}
@@ -604,7 +604,7 @@ function ReasonDialog({
         if (!pending && event.target === event.currentTarget) onClose();
       }}
       className={cn(
-        "fixed inset-0 z-[90] flex items-end justify-center bg-background/80 p-0 backdrop-blur-sm transition-opacity duration-300 sm:items-center sm:p-space-lg",
+        "fixed inset-0 z-[90] flex items-end justify-center bg-background/80 p-0 pb-[env(safe-area-inset-bottom)] backdrop-blur-sm transition-opacity duration-300 sm:items-center sm:p-space-lg",
         target ? "opacity-100" : "pointer-events-none opacity-0",
       )}
     >

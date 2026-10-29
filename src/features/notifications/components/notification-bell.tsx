@@ -19,7 +19,7 @@ export function NotificationBell({ count, className }: { count: number; classNam
       aria-label={count > 0 ? t("bellWithCount", { count }) : t("bell")}
       title={t("bell")}
       className={cn(
-        "relative flex h-10 w-10 items-center justify-center rounded-full text-secondary transition-colors duration-200 hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+        "relative flex h-11 w-11 items-center justify-center rounded-full text-secondary transition-colors duration-200 hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
         className,
       )}
     >

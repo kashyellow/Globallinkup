@@ -61,7 +61,7 @@ export function Eyebrow({
   return (
     <p
       className={cn(
-        "inline-flex items-center gap-2 rounded-full border px-3 py-1 font-label-caps text-label-caps tracking-[0.12em] uppercase",
+        "inline-flex items-center gap-2 rounded-full border px-2.5 py-1 font-label-caps text-[10px] tracking-[0.08em] uppercase sm:px-3 sm:text-label-caps sm:tracking-[0.12em]",
         tone === "dark"
           ? "border-white/15 bg-white/5 text-gold"
           : "border-outline-variant bg-marketing-core/60 text-on-surface-variant",

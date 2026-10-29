@@ -39,6 +39,7 @@ export function Navbar({
   notifications?: number;
 }) {
   const t = useTranslations("Nav");
+  const tTheme = useTranslations("Theme");
   const pathname = usePathname();
   const { locale, pending: localePending, switchLocale } = useLocaleSwitch();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -82,7 +83,7 @@ export function Navbar({
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "relative inline-flex min-h-10 items-center gap-1.5 rounded-full px-3 py-2 font-label-lg text-label-lg transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                  "relative inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 py-2 font-label-lg text-label-lg transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                   EASE,
                   active
                     ? "bg-surface-container-high font-semibold text-on-surface"
@@ -110,18 +111,20 @@ export function Navbar({
 
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <NotificationBell count={notifications} />
-          <ThemeToggle />
-          <LocaleSwitch
-            locale={locale}
-            onSwitch={switchLocale}
-            disabled={localePending}
-            label={t("language")}
-          />
+          <div className="hidden items-center gap-1.5 sm:flex">
+            <ThemeToggle />
+            <LocaleSwitch
+              locale={locale}
+              onSwitch={switchLocale}
+              disabled={localePending}
+              label={t("language")}
+            />
+          </div>
 
           {isAdmin ? (
             <Link
               href="/admin"
-              className="hidden min-h-9 items-center rounded-full px-3 font-label-lg text-label-lg font-medium text-secondary transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:inline-flex"
+              className="hidden min-h-11 items-center rounded-full px-3 font-label-lg text-label-lg font-medium text-secondary transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:inline-flex"
             >
               {t("adminPortal")}
             </Link>
@@ -215,6 +218,18 @@ export function Navbar({
               </Link>
             ) : null}
             <div className="my-1 h-px bg-outline-variant" />
+            <div className="flex items-center justify-between gap-2 px-3 py-2 sm:hidden">
+              <span className="font-label-lg text-label-lg text-secondary">{tTheme("label")}</span>
+              <div className="flex items-center gap-1">
+                <ThemeToggle />
+                <LocaleSwitch
+                  locale={locale}
+                  onSwitch={switchLocale}
+                  disabled={localePending}
+                  label={t("language")}
+                />
+              </div>
+            </div>
           </nav>
         </div>
       ) : null}

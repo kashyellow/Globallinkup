@@ -33,10 +33,14 @@ export function BottomNav({ pendingRequests = 0 }: { pendingRequests?: number })
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
+  // Admin has its own tab rail; the member destinations would compete with it
+  // and eat the limited bottom space on phones.
+  if (pathname.startsWith("/admin")) return null;
+
   return (
     <nav
       aria-label={t("primaryNavigation")}
-      className="fixed inset-x-0 bottom-0 z-30 px-margin-mobile lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-30 px-margin-mobile pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
       <div className="mx-auto mb-3 flex max-w-[1240px] items-stretch gap-0.5 rounded-full border border-outline-variant bg-surface-low/85 p-1 shadow-lift-sm backdrop-blur-xl">
         {NAV_ITEMS.map((item) => {
@@ -75,7 +79,7 @@ export function BottomNav({ pendingRequests = 0 }: { pendingRequests?: number })
               </span>
               <span
                 className={cn(
-                  "max-w-full truncate text-[12px] leading-none",
+                  "max-w-full truncate text-[10px] leading-none min-[360px]:text-[11px] min-[390px]:text-[12px]",
                   active ? "font-semibold text-on-surface" : "font-medium text-secondary",
                 )}
               >
