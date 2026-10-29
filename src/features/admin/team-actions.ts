@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 
 import { isAdminCapability } from "@/lib/admin-capabilities";
+import { recordAudit } from "@/lib/audit";
+import { roleSnapshot } from "@/features/admin/audit-snapshots";
 import { getCurrentProfile, getCurrentUser } from "@/lib/auth";
 import { getPublicEnv } from "@/lib/env";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -66,16 +68,30 @@ export async function inviteAdminAction(
     return { ok: false, error: link.error?.message.includes("already") ? "exists" : "unknown" };
   }
 
-  const { error } = await admin.from("admin_invites").upsert(
-    {
-      email,
-      admin_role_id: role?.id ?? null,
-      invited_by: ctx.user.id,
-      accepted_at: null,
+  const { data: invite, error } = await admin
+    .from("admin_invites")
+    .upsert(
+      {
+        email,
+        admin_role_id: role?.id ?? null,
+        invited_by: ctx.user.id,
+        accepted_at: null,
+      },
+      { onConflict: "email" },
+    )
+    .select("id")
+    .single();
+  if (error || !invite) return { ok: false, error: "unknown" };
+
+  await recordAudit({
+    action: "admin.invite_created",
+    targetType: "invite",
+    targetId: invite.id,
+    metadata: {
+      before: { status: null, role_slug: null },
+      after: { status: "pending", role_slug: role?.slug ?? null },
     },
-    { onConflict: "email" },
-  );
-  if (error) return { ok: false, error: "unknown" };
+  });
 
   revalidatePath("/admin/team");
   return {
@@ -142,12 +158,12 @@ export async function acceptInviteAction(
     .update({ accepted_at: new Date().toISOString() })
     .eq("id", invite.id);
 
-  await recordInviteAudit(user.id, invite.admin_role_id, email);
+  await recordInviteAudit(user.id, invite.admin_role_id);
   await supabase.auth.signOut();
   redirect("/login");
 }
 
-async function recordInviteAudit(actorId: string, roleId: string | null, email: string) {
+async function recordInviteAudit(actorId: string, roleId: string | null) {
   const admin = createAdminClient();
   const role = roleId
     ? (await admin.from("admin_roles").select("slug").eq("id", roleId).maybeSingle()).data
@@ -158,7 +174,10 @@ async function recordInviteAudit(actorId: string, roleId: string | null, email: 
     action: "admin.invite_accepted",
     target_type: "profile",
     target_id: actorId,
-    metadata: { email_domain: email.split("@")[1] ?? "" },
+    metadata: {
+      before: { status: "pending", role_slug: role?.slug ?? null },
+      after: { status: "accepted", role_slug: role?.slug ?? null },
+    },
   });
 }
 
@@ -171,7 +190,40 @@ export async function revokeInviteAction(formData: FormData): Promise<void> {
     .safeParse({ inviteId: formData.get("inviteId") });
   if (!parsed.success) return;
 
-  await ctx.supabase.from("admin_invites").delete().eq("id", parsed.data.inviteId);
+  const { data: invite } = await ctx.supabase
+    .from("admin_invites")
+    .select("id, admin_role_id, accepted_at")
+    .eq("id", parsed.data.inviteId)
+    .maybeSingle();
+  if (!invite) return;
+
+  const role = invite.admin_role_id
+    ? (
+        await ctx.supabase
+          .from("admin_roles")
+          .select("slug")
+          .eq("id", invite.admin_role_id)
+          .maybeSingle()
+      ).data
+    : null;
+  const status = invite.accepted_at ? "accepted" : "pending";
+
+  const { error } = await ctx.supabase
+    .from("admin_invites")
+    .delete()
+    .eq("id", parsed.data.inviteId);
+  if (error) return;
+
+  await recordAudit({
+    action: "admin.invite_revoked",
+    targetType: "invite",
+    targetId: invite.id,
+    metadata: {
+      before: { status, role_slug: role?.slug ?? null },
+      after: { status: "revoked", role_slug: role?.slug ?? null },
+    },
+  });
+
   revalidatePath("/admin/team");
 }
 
@@ -182,7 +234,26 @@ export async function saveRoleAction(_previous: TeamState, formData: FormData): 
   const parsed = z.object({ roleId: uuidSchema }).safeParse({ roleId: formData.get("roleId") });
   if (!parsed.success) return { ok: false, error: "invalid" };
 
+  const { data: before } = await ctx.supabase
+    .from("admin_roles")
+    .select("slug, capabilities")
+    .eq("id", parsed.data.roleId)
+    .maybeSingle();
+  if (!before) return { ok: false, error: "invalid" };
+
   const capabilities = readCapabilities(formData);
+  // Audit before the write: the actor may remove admins.manage from their own
+  // role, and record_audit() would refuse the row afterwards.
+  await recordAudit({
+    action: "role.updated",
+    targetType: "role",
+    targetId: parsed.data.roleId,
+    metadata: {
+      before: roleSnapshot(before),
+      after: roleSnapshot({ ...before, capabilities }),
+    },
+  });
+
   const { error } = await ctx.supabase
     .from("admin_roles")
     .update({ capabilities })
@@ -211,12 +282,27 @@ export async function createRoleAction(
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-  const { error } = await ctx.supabase.from("admin_roles").insert({
-    slug,
-    name,
-    capabilities: readCapabilities(formData),
-  });
+  const { data: created, error } = await ctx.supabase
+    .from("admin_roles")
+    .insert({
+      slug,
+      name,
+      capabilities: readCapabilities(formData),
+    })
+    .select("id, slug, capabilities")
+    .single();
   if (error) return { ok: false, error: error.code === "23505" ? "exists" : "unknown" };
+  if (!created) return { ok: false, error: "unknown" };
+
+  await recordAudit({
+    action: "role.created",
+    targetType: "role",
+    targetId: created.id,
+    metadata: {
+      before: { slug: null, capabilities: [] },
+      after: roleSnapshot(created),
+    },
+  });
 
   revalidatePath("/admin/team");
   return { ok: true };
@@ -237,22 +323,45 @@ export async function assignRoleAction(formData: FormData): Promise<void> {
     .select("id")
     .eq("slug", "owner")
     .maybeSingle();
+  const { data: target } = await admin
+    .from("profiles")
+    .select("admin_role_id")
+    .eq("id", parsed.data.profileId)
+    .maybeSingle();
+  if (!target) return;
 
   // The last owner cannot be demoted.
-  if (ownerRole && parsed.data.roleId !== ownerRole.id) {
-    const { data: target } = await admin
+  if (ownerRole && target.admin_role_id === ownerRole.id && parsed.data.roleId !== ownerRole.id) {
+    const { count } = await admin
       .from("profiles")
-      .select("admin_role_id")
-      .eq("id", parsed.data.profileId)
-      .maybeSingle();
-    if (target?.admin_role_id === ownerRole.id) {
-      const { count } = await admin
-        .from("profiles")
-        .select("id", { count: "exact", head: true })
-        .eq("admin_role_id", ownerRole.id);
-      if ((count ?? 0) <= 1) return;
-    }
+      .select("id", { count: "exact", head: true })
+      .eq("admin_role_id", ownerRole.id);
+    if ((count ?? 0) <= 1) return;
   }
+
+  const [oldRole, newRole] = await Promise.all([
+    target.admin_role_id
+      ? admin.from("admin_roles").select("slug").eq("id", target.admin_role_id).maybeSingle()
+      : Promise.resolve({ data: null }),
+    admin.from("admin_roles").select("slug").eq("id", parsed.data.roleId).maybeSingle(),
+  ]);
+  if (!newRole.data) return;
+
+  await recordAudit({
+    action: "admin.role_changed",
+    targetType: "profile",
+    targetId: parsed.data.profileId,
+    metadata: {
+      before: {
+        role_slug: oldRole.data?.slug ?? null,
+        role_id: target.admin_role_id,
+      },
+      after: {
+        role_slug: newRole.data.slug,
+        role_id: parsed.data.roleId,
+      },
+    },
+  });
 
   await admin
     .from("profiles")

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { recordAudit } from "@/lib/audit";
+import { productSnapshot, reportSnapshot } from "@/features/admin/audit-snapshots";
 import { notifyMember } from "@/lib/notifications";
 import { z } from "zod";
 import { uuidSchema } from "@/lib/validation/ids";
@@ -118,18 +119,41 @@ export async function resolveReportAction(input: unknown): Promise<AdminResult> 
   const parsed = reportSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
 
+  const { data: report } = await ctx.supabase
+    .from("reports")
+    .select("id, status, resolved_at, target_type, target_user_id, target_post_id")
+    .eq("id", parsed.data.reportId)
+    .maybeSingle();
+  if (!report) return { ok: false, error: "forbidden" };
+
+  const resolvedAt = new Date().toISOString();
   const { data: updated, error } = await ctx.supabase
     .from("reports")
     .update({
       status: parsed.data.status,
       resolved_by: ctx.user.id,
-      resolved_at: new Date().toISOString(),
+      resolved_at: resolvedAt,
     })
     .eq("id", parsed.data.reportId)
     .select("id");
 
   if (error) return { ok: false, error: "unknown" };
   if (!updated || updated.length === 0) return { ok: false, error: "forbidden" };
+
+  await recordAudit({
+    action: `report.${parsed.data.status}`,
+    targetType: "report",
+    targetId: report.id,
+    metadata: {
+      before: reportSnapshot(report),
+      after: reportSnapshot({
+        ...report,
+        status: parsed.data.status,
+        resolved_at: resolvedAt,
+      }),
+    },
+  });
+
   revalidatePath("/admin");
   revalidatePath("/admin/moderation");
   return { ok: true };
@@ -459,6 +483,21 @@ export async function reviewInterestAction(input: unknown): Promise<AdminResult>
 // ---------------------------------------------------------------------------
 // Marketplace CRUD
 // ---------------------------------------------------------------------------
+
+/** State fields only: never the name, description or image paths. */
+const PRODUCT_SNAPSHOT_FIELDS =
+  "id, catalog_status, is_published, published_at, deleted_at, price_cents, currency";
+
+async function productImageCount(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  productId: string,
+): Promise<number> {
+  const { count } = await supabase
+    .from("marketplace_product_images")
+    .select("id", { count: "exact", head: true })
+    .eq("product_id", productId);
+  return count ?? 0;
+}
 const productSchema = z.object({
   name: z.string().trim().min(2).max(160),
   priceCents: z.number().int().min(0).max(100_000_000),
@@ -492,7 +531,7 @@ export async function createProductAction(input: unknown): Promise<AdminResult> 
       is_published: data.isPublished,
       created_by: ctx.user.id,
     })
-    .select("id")
+    .select(PRODUCT_SNAPSHOT_FIELDS)
     .single();
 
   if (error || !created) return { ok: false, error: "unknown" };
@@ -512,12 +551,16 @@ export async function createProductAction(input: unknown): Promise<AdminResult> 
     targetType: "product",
     targetId: created.id,
     metadata: {
-      before: { lifecycle: "none", is_published: false, image_count: 0 },
-      after: {
-        lifecycle: data.isPublished ? "live" : "draft",
-        is_published: data.isPublished,
-        image_count: data.imagePaths.length,
+      before: {
+        status: "none",
+        is_published: false,
+        published_at: null,
+        deleted_at: null,
+        price_cents: null,
+        currency: null,
+        image_count: 0,
       },
+      after: productSnapshot(created, data.imagePaths.length),
     },
   });
 
@@ -540,6 +583,14 @@ export async function updateProductAction(input: unknown): Promise<AdminResult> 
     return { ok: false, error: "invalid" };
   }
 
+  const { data: current } = await ctx.supabase
+    .from("marketplace_products")
+    .select(PRODUCT_SNAPSHOT_FIELDS)
+    .eq("id", data.productId)
+    .maybeSingle();
+  if (!current) return { ok: false, error: "forbidden" };
+  const beforeImages = await productImageCount(ctx.supabase, data.productId);
+
   const { data: updated, error } = await ctx.supabase
     .from("marketplace_products")
     .update({
@@ -551,7 +602,7 @@ export async function updateProductAction(input: unknown): Promise<AdminResult> 
       is_published: data.isPublished,
     })
     .eq("id", data.productId)
-    .select("id");
+    .select(PRODUCT_SNAPSHOT_FIELDS);
 
   if (error) return { ok: false, error: "unknown" };
   if (!updated || updated.length === 0) return { ok: false, error: "forbidden" };
@@ -566,6 +617,16 @@ export async function updateProductAction(input: unknown): Promise<AdminResult> 
       })),
     );
   }
+
+  await recordAudit({
+    action: "product.updated",
+    targetType: "product",
+    targetId: data.productId,
+    metadata: {
+      before: productSnapshot(current, beforeImages),
+      after: productSnapshot(updated[0], data.imagePaths.length),
+    },
+  });
 
   revalidatePath("/admin");
   revalidatePath("/admin/marketplace");
@@ -582,14 +643,33 @@ export async function setProductPublishedAction(input: unknown): Promise<AdminRe
   const parsed = publishSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
 
+  const { data: current } = await ctx.supabase
+    .from("marketplace_products")
+    .select(PRODUCT_SNAPSHOT_FIELDS)
+    .eq("id", parsed.data.productId)
+    .maybeSingle();
+  if (!current) return { ok: false, error: "forbidden" };
+  const images = await productImageCount(ctx.supabase, parsed.data.productId);
+
   const { data: updated, error } = await ctx.supabase
     .from("marketplace_products")
     .update({ is_published: parsed.data.isPublished })
     .eq("id", parsed.data.productId)
-    .select("id");
+    .select(PRODUCT_SNAPSHOT_FIELDS);
 
   if (error) return { ok: false, error: "unknown" };
   if (!updated || updated.length === 0) return { ok: false, error: "forbidden" };
+
+  await recordAudit({
+    action: parsed.data.isPublished ? "product.published" : "product.unpublished",
+    targetType: "product",
+    targetId: parsed.data.productId,
+    metadata: {
+      before: productSnapshot(current, images),
+      after: productSnapshot(updated[0], images),
+    },
+  });
+
   revalidatePath("/admin");
   revalidatePath("/admin/marketplace");
   revalidatePath("/marketplace");
@@ -605,6 +685,14 @@ export async function deleteProductAction(input: unknown): Promise<AdminResult> 
   const parsed = productIdSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
 
+  const { data: current } = await ctx.supabase
+    .from("marketplace_products")
+    .select(PRODUCT_SNAPSHOT_FIELDS)
+    .eq("id", parsed.data.productId)
+    .maybeSingle();
+  if (!current) return { ok: false, error: "forbidden" };
+  const images = await productImageCount(ctx.supabase, parsed.data.productId);
+
   // Soft delete (Phase 0 schema): the row and its images stay recoverable from
   // the admin Trash view. Public queries exclude `deleted_at is not null`.
   const { data: deleted, error } = await ctx.supabase
@@ -612,10 +700,21 @@ export async function deleteProductAction(input: unknown): Promise<AdminResult> 
     .update({ deleted_at: new Date().toISOString(), is_published: false })
     .eq("id", parsed.data.productId)
     .is("deleted_at", null)
-    .select("id");
+    .select(PRODUCT_SNAPSHOT_FIELDS);
 
   if (error) return { ok: false, error: "unknown" };
   if (!deleted || deleted.length === 0) return { ok: false, error: "forbidden" };
+
+  await recordAudit({
+    action: "product.trashed",
+    targetType: "product",
+    targetId: parsed.data.productId,
+    metadata: {
+      before: productSnapshot(current, images),
+      after: productSnapshot(deleted[0], images),
+    },
+  });
+
   revalidatePath("/admin");
   revalidatePath("/admin/marketplace");
   revalidatePath("/marketplace");
@@ -631,15 +730,34 @@ export async function restoreProductAction(input: unknown): Promise<AdminResult>
   const parsed = restoreSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: "invalid" };
 
-  const { data, error } = await ctx.supabase
+  const { data: current } = await ctx.supabase
+    .from("marketplace_products")
+    .select(PRODUCT_SNAPSHOT_FIELDS)
+    .eq("id", parsed.data.productId)
+    .maybeSingle();
+  if (!current) return { ok: false, error: "forbidden" };
+  const images = await productImageCount(ctx.supabase, parsed.data.productId);
+
+  const { data: restored, error } = await ctx.supabase
     .from("marketplace_products")
     .update({ deleted_at: null })
     .eq("id", parsed.data.productId)
     .not("deleted_at", "is", null)
-    .select("id");
+    .select(PRODUCT_SNAPSHOT_FIELDS);
 
   if (error) return { ok: false, error: "unknown" };
-  if (!data || data.length === 0) return { ok: false, error: "forbidden" };
+  if (!restored || restored.length === 0) return { ok: false, error: "forbidden" };
+
+  await recordAudit({
+    action: "product.restored",
+    targetType: "product",
+    targetId: parsed.data.productId,
+    metadata: {
+      before: productSnapshot(current, images),
+      after: productSnapshot(restored[0], images),
+    },
+  });
+
   revalidatePath("/admin");
   revalidatePath("/admin/marketplace");
   revalidatePath("/marketplace");

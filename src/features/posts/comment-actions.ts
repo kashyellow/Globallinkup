@@ -4,6 +4,8 @@ import { z } from "zod";
 import { uuidSchema } from "@/lib/validation/ids";
 
 import { hasCapability } from "@/lib/admin";
+import { commentSnapshot } from "@/features/admin/audit-snapshots";
+import { recordAudit } from "@/lib/audit";
 import { getCurrentProfile, getCurrentUser } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
@@ -56,14 +58,33 @@ export async function deleteCommentAction(input: unknown): Promise<CommentResult
   if (!parsed.success) return { ok: false, error: "invalid" };
 
   const supabase = await createClient();
+  const { data: comment } = await supabase
+    .from("post_comments")
+    .select("id, post_id, deleted_at")
+    .eq("id", parsed.data.commentId)
+    .maybeSingle();
+  if (!comment) return { ok: false, error: "forbidden" };
+
+  const deletedAt = new Date().toISOString();
   const { data, error } = await supabase
     .from("post_comments")
-    .update({ deleted_at: new Date().toISOString() })
+    .update({ deleted_at: deletedAt })
     .eq("id", parsed.data.commentId)
     .is("deleted_at", null)
     .select("id");
 
   if (error) return { ok: false, error: "unknown" };
   if (!data || data.length === 0) return { ok: false, error: "forbidden" };
+
+  await recordAudit({
+    action: "comment.removed",
+    targetType: "comment",
+    targetId: comment.id,
+    metadata: {
+      before: commentSnapshot(comment),
+      after: commentSnapshot({ ...comment, deleted_at: deletedAt }),
+    },
+  });
+
   return { ok: true };
 }
