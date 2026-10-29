@@ -3,7 +3,9 @@
 import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
 
+import { Icon } from "@/components/ui/icon";
 import { Spinner } from "@/components/ui/spinner";
+import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import {
   assignRoleAction,
   createRoleAction,
@@ -44,11 +46,8 @@ export function TeamView({
   const t = useTranslations("Admin.team");
 
   return (
-    <div className="mx-auto w-full max-w-[1000px] space-y-space-xl px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
-      <header className="space-y-1">
-        <h1 className="font-title text-title-mobile text-on-surface md:text-title">{t("title")}</h1>
-        <p className="max-w-[70ch] font-body-md text-body-md text-secondary">{t("body")}</p>
-      </header>
+    <div className="mx-auto w-full max-w-[1000px] space-y-space-lg px-margin-mobile pt-space-lg pb-page-mobile md:space-y-space-xl md:px-margin md:pt-block md:pb-page">
+      <AdminPageHeader title={t("title")} description={t("body")} />
 
       <InviteForm roles={roles} />
 
@@ -56,23 +55,28 @@ export function TeamView({
         <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
           {t("adminsTitle")}
         </h2>
-        <ul className="grid gap-2 sm:grid-cols-2">
+        <ul className="grid gap-space-sm sm:grid-cols-2">
           {admins.map((admin) => (
             <li
               key={admin.id}
-              className="flex flex-wrap items-center justify-between gap-2 p-space-md"
+              className="flex flex-col gap-space-sm rounded-2xl border border-outline-variant bg-surface-low p-space-md"
             >
-              <span className="flex items-center gap-2 font-label-lg text-label-lg text-on-surface">
+              <span className="flex flex-wrap items-center gap-2 font-label-lg text-label-lg font-semibold text-on-surface">
                 {admin.name}
                 {admin.roleId === null ? (
-                  <span className="rounded-full border border-outline-variant px-2 py-0.5 font-label-md text-label-md text-text-muted">
+                  <span className="rounded-full border border-outline-variant px-2 py-0.5 font-label-md text-label-md font-normal text-on-surface-variant">
                     {t("noRole")}
                   </span>
                 ) : null}
               </span>
               <form action={assignRoleAction} className="flex items-center gap-2">
                 <input type="hidden" name="profileId" value={admin.id} />
-                <select name="roleId" defaultValue={admin.roleId ?? ""} className={FIELD}>
+                <select
+                  name="roleId"
+                  defaultValue={admin.roleId ?? ""}
+                  aria-label={`${admin.name}: ${t("rolesTitle")}`}
+                  className={cn(FIELD, "min-w-0 flex-1")}
+                >
                   <option value="" disabled>
                     {t("noRole")}
                   </option>
@@ -89,7 +93,7 @@ export function TeamView({
             </li>
           ))}
         </ul>
-        <p className="font-body-sm text-body-sm text-text-muted">{t("lastOwnerHint")}</p>
+        <p className="font-body-sm text-body-sm text-on-surface-variant">{t("lastOwnerHint")}</p>
       </section>
 
       <section className="space-y-space-sm">
@@ -109,14 +113,11 @@ export function TeamView({
           {t("invitesTitle")}
         </h2>
         {invites.length === 0 ? (
-          <p className="font-body-sm text-body-sm text-text-muted">{t("noInvites")}</p>
+          <p className="font-body-sm text-body-sm text-on-surface-variant">{t("noInvites")}</p>
         ) : (
           <ul className="divide-y divide-outline-variant overflow-hidden rounded-2xl border border-outline-variant bg-surface-low">
             {invites.map((invite) => (
-              <li
-                key={invite.id}
-                className="space-y-2 rounded-2xl border border-outline-variant bg-surface-low p-4"
-              >
+              <li key={invite.id} className="space-y-2 p-space-md">
                 <p className="font-body-sm text-body-sm text-on-surface">{invite.email}</p>
                 <p className="font-label-md text-label-md text-text-muted">
                   {invite.roleName || t("noRole")}
@@ -159,9 +160,10 @@ function InviteForm({ roles }: { roles: TeamRole[] }) {
           name="email"
           required
           placeholder={t("emailPlaceholder")}
+          aria-label={t("emailPlaceholder")}
           className={cn(FIELD, "flex-1")}
         />
-        <select name="roleId" className={FIELD} defaultValue="">
+        <select name="roleId" className={FIELD} defaultValue="" aria-label={t("rolesTitle")}>
           <option value="">{t("assignLater")}</option>
           {roles.map((role) => (
             <option key={role.id} value={role.id}>
@@ -204,15 +206,18 @@ function InviteForm({ roles }: { roles: TeamRole[] }) {
 function CapabilityChecks({ selected }: { selected: string[] }) {
   const t = useTranslations("Admin.capabilities");
   return (
-    <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
+    <div className="grid grid-cols-1 gap-space-xs min-[420px]:grid-cols-2">
       {ADMIN_CAPABILITIES.map((capability) => (
-        <label key={capability} className="flex items-center gap-2 font-body-sm text-body-sm">
+        <label
+          key={capability}
+          className="flex min-h-11 cursor-pointer items-center gap-space-sm rounded-xl border border-outline-variant px-space-sm font-body-sm text-body-sm text-on-surface transition-colors duration-200 has-checked:border-primary has-checked:bg-surface-container has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary"
+        >
           <input
             type="checkbox"
             name="capability"
             value={capability}
             defaultChecked={selected.includes(capability)}
-            className="h-4 w-4 rounded border-outline-variant"
+            className="h-5 w-5 shrink-0 accent-primary"
           />
           {t(capability)}
         </label>
@@ -226,21 +231,25 @@ function RoleForm({ role }: { role: TeamRole }) {
   const [state, action, pending] = useActionState(saveRoleAction, INITIAL);
 
   return (
-    <details className="rounded-2xl border border-outline-variant bg-surface-low">
-      <summary className="flex cursor-pointer flex-wrap items-center justify-between gap-2 p-4 font-label-lg text-label-lg font-semibold text-on-surface">
+    <details className="group rounded-2xl border border-outline-variant bg-surface-low">
+      <summary className="flex min-h-14 cursor-pointer items-center justify-between gap-2 p-space-md font-label-lg text-label-lg font-semibold text-on-surface">
         <span className="flex items-center gap-2">
           {role.name}
           {role.isSystem ? (
-            <span className="rounded-full border border-outline-variant px-2 py-0.5 font-label-md text-label-md text-text-muted">
+            <span className="rounded-full border border-outline-variant px-2 py-0.5 font-label-md text-label-md font-normal text-on-surface-variant">
               {t("systemRole")}
             </span>
           ) : null}
         </span>
-        <span className="font-label-md text-label-md text-text-muted">
-          {role.capabilities.length}
+        <span className="flex shrink-0 items-center gap-1 font-label-md text-label-md font-normal text-on-surface-variant">
+          {t("permissionsCount", { count: role.capabilities.length })}
+          <Icon
+            name="expand_more"
+            className="text-xl transition-transform duration-200 group-open:rotate-180"
+          />
         </span>
       </summary>
-      <form action={action} className="space-y-2 border-t border-outline-variant p-4">
+      <form action={action} className="space-y-space-sm border-t border-outline-variant p-space-md">
         <input type="hidden" name="roleId" value={role.id} />
         <CapabilityChecks selected={role.capabilities} />
         <div className="flex items-center gap-3">
@@ -293,7 +302,7 @@ function CreateRoleForm() {
   return (
     <form
       action={action}
-      className="space-y-2 rounded-2xl border border-dashed border-outline-variant p-4"
+      className="space-y-space-sm rounded-2xl border border-dashed border-outline-variant p-space-md"
     >
       <p className="font-label-lg text-label-lg font-semibold text-on-surface">
         {t("newRoleTitle")}

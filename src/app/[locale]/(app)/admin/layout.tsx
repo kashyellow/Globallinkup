@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { getTranslations } from "next-intl/server";
 
 import { AdminTabs } from "@/features/admin/components/admin-tabs";
+import { getAdminTabCounts } from "@/features/admin/queries";
 import { getAdminCapabilities } from "@/lib/admin";
 import { requireAdmin } from "@/lib/auth";
 
@@ -24,12 +25,21 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     );
   }
 
+  const counts = await getAdminTabCounts({
+    members: capabilities.includes("members.review"),
+    reports: capabilities.includes("reports.manage"),
+  });
+
   return (
     <>
-      <section className="border-b border-outline-variant">
-        <div className="mx-auto flex max-w-[1240px] flex-col gap-space-sm px-margin-mobile pt-space-md pb-space-sm lg:gap-space-md lg:px-margin">
-          <div className="flex items-center justify-between gap-space-sm">
-            <p className="hidden min-w-0 truncate font-label-lg text-label-lg font-semibold text-on-surface sm:block">
+      {/*
+       * On a phone the tab bar stays pinned under the app header, so switching
+       * desks is one tap from anywhere in a long list. From lg it scrolls away.
+       */}
+      <section className="sticky top-14 z-30 border-b border-outline-variant bg-background lg:static">
+        <div className="mx-auto flex max-w-[1240px] flex-col gap-space-sm px-margin-mobile pb-space-md sm:pt-space-md lg:gap-space-md lg:px-margin">
+          <div className="hidden items-center justify-between gap-space-sm sm:flex">
+            <p className="min-w-0 truncate font-label-lg text-label-lg font-semibold text-on-surface sm:block">
               {t("panelTitle")}
             </p>
             <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-admin-border bg-admin-surface px-space-sm py-1 font-label-md text-label-md font-semibold whitespace-nowrap text-admin-text">
@@ -37,7 +47,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
               {t("roleBadge")}
             </span>
           </div>
-          <AdminTabs capabilities={capabilities} />
+          <AdminTabs capabilities={capabilities} counts={counts} />
         </div>
       </section>
       {children}

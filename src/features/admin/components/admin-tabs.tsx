@@ -35,7 +35,14 @@ export const ADMIN_TABS = [
   requiresAny?: readonly AdminCapability[];
 }>;
 
-export function AdminTabs({ capabilities }: { capabilities: AdminCapability[] }) {
+export function AdminTabs({
+  capabilities,
+  counts,
+}: {
+  capabilities: AdminCapability[];
+  /** Items waiting for a decision, shown as a badge on the matching tab. */
+  counts?: { users: number; moderation: number };
+}) {
   const t = useTranslations("Admin.tabs");
   const pathname = usePathname();
   const navRef = useRef<HTMLElement>(null);
@@ -67,12 +74,14 @@ export function AdminTabs({ capabilities }: { capabilities: AdminCapability[] })
       ).map((tab) => {
         const active =
           tab.href === "/admin" ? pathname === "/admin" : pathname.startsWith(tab.href);
+        const badge =
+          tab.key === "users" ? counts?.users : tab.key === "moderation" ? counts?.moderation : 0;
         return (
           <Link
             key={tab.href}
             href={tab.href}
             aria-current={active ? "page" : undefined}
-            aria-label={t(tab.key)}
+            aria-label={badge ? `${t(tab.key)} (${badge})` : t(tab.key)}
             className={cn(
               "relative inline-flex min-h-12 shrink-0 items-center gap-2 border-b-2 px-3 font-label-lg text-label-lg whitespace-nowrap transition-colors duration-200 first:pl-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary",
               active
@@ -87,6 +96,14 @@ export function AdminTabs({ capabilities }: { capabilities: AdminCapability[] })
             />
             <span className="sm:hidden">{t(`${tab.key}Short`)}</span>
             <span className="hidden whitespace-nowrap sm:inline">{t(tab.key)}</span>
+            {badge ? (
+              <span
+                aria-hidden
+                className="min-w-5 rounded-full bg-danger px-1.5 py-0.5 text-center font-label-md text-label-md leading-none font-semibold text-on-error tabular-nums"
+              >
+                {badge}
+              </span>
+            ) : null}
           </Link>
         );
       })}

@@ -7,7 +7,10 @@ import { AuditList } from "./audit-list";
 
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
-  useFormatter: () => ({ dateTime: () => "1 Jan 2026, 10:00" }),
+  useFormatter: () => ({
+    dateTime: () => "1 Jan 2026, 10:00",
+    relativeTime: () => "2 hours ago",
+  }),
 }));
 
 const event: AdminAuditEvent = {
@@ -47,6 +50,13 @@ describe("AuditList", () => {
     );
     expect(unchangedLine).toBeDefined();
     expect(unchangedLine).not.toHaveClass("bg-admin-surface");
+  });
+
+  it("shows how long ago an event happened and flags destructive actions", () => {
+    render(<AuditList events={[event]} />);
+
+    expect(screen.getByText("2 hours ago")).toBeInTheDocument();
+    expect(screen.getByText("post.removed")).toHaveClass("text-danger-text");
   });
 
   it("closes the dialog again", async () => {

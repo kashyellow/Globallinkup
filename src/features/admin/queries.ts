@@ -163,6 +163,58 @@ export async function getAdminMetrics(): Promise<AdminMetrics> {
   };
 }
 
+/** What needs a decision, for the badges on the admin tab bar. */
+export type AdminTabCounts = { users: number; moderation: number };
+
+export async function getAdminTabCounts(options: {
+  members: boolean;
+  reports: boolean;
+}): Promise<AdminTabCounts> {
+  const supabase = await createClient();
+  const [pending, open] = await Promise.all([
+    options.members
+      ? supabase
+          .from("profiles")
+          .select("id", { count: "exact", head: true })
+          .eq("role", "user")
+          .eq("approval_status", "pending")
+      : null,
+    options.reports
+      ? supabase.from("reports").select("id", { count: "exact", head: true }).eq("status", "open")
+      : null,
+  ]);
+  return {
+    users: pending ? unwrapCount(pending) : 0,
+    moderation: open ? unwrapCount(open) : 0,
+  };
+}
+
+/** Members per review state, for the filter chips on the Users desk. */
+export async function getAdminUserCounts(): Promise<Record<AdminProfileFilter, number>> {
+  const supabase = await createClient();
+  const count = (status?: AdminProfileStatus) => {
+    const request = supabase
+      .from("profiles")
+      .select("id", { count: "exact", head: true })
+      .eq("role", "user");
+    return status ? request.eq("approval_status", status) : request;
+  };
+  const [all, pending, approved, rejected, suspended] = await Promise.all([
+    count(),
+    count("pending"),
+    count("approved"),
+    count("rejected"),
+    count("suspended"),
+  ]);
+  return {
+    all: unwrapCount(all),
+    pending: unwrapCount(pending),
+    approved: unwrapCount(approved),
+    rejected: unwrapCount(rejected),
+    suspended: unwrapCount(suspended),
+  };
+}
+
 export async function getAdminUsers({
   query,
   status,
@@ -192,6 +244,10 @@ export async function getAdminUsers({
       `display_name.ilike.%${needle}%,city.ilike.%${needle}%,headline.ilike.%${needle}%,bio_en.ilike.%${needle}%,bio_es.ilike.%${needle}%`,
     );
   }
+
+  // `approval_status` sorts in declaration order (pending, approved, rejected,
+  // suspended), so the unfiltered list opens with whoever needs a decision.
+  if (status === "all") request = request.order("approval_status", { ascending: true });
 
   const response = await request
     .order("submitted_at", { ascending: false, nullsFirst: false })

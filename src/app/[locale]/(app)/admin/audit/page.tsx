@@ -7,6 +7,8 @@ import { AuditList } from "@/features/admin/components/audit-list";
 import { pageCount } from "@/features/admin/params";
 import { getAuditEvents } from "@/features/admin/queries";
 import { getAdminCapabilities } from "@/lib/admin";
+import { Icon } from "@/components/ui/icon";
+import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { requireAdmin } from "@/lib/auth";
 
 const ACTIONS = [
@@ -53,27 +55,31 @@ export default async function AdminAuditPage({
   const { events, total } = await getAuditEvents({ query, actionType, page, pageSize: PAGE_SIZE });
 
   return (
-    <div className="mx-auto w-full max-w-[1000px] px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
-      <h1 className="font-title text-title-mobile text-on-surface md:text-title">{t("title")}</h1>
-      <p className="mt-2 max-w-[70ch] font-body-md text-body-md text-secondary">{t("body")}</p>
+    <div className="mx-auto w-full max-w-[1000px] px-margin-mobile pt-space-lg pb-page-mobile md:px-margin md:pt-block md:pb-page">
+      <AdminPageHeader
+        title={t("title")}
+        description={t("body")}
+        meta={t("results", { count: total })}
+      />
 
-      {/* Phones: search on its own row, then the action filter and Search share one. */}
+      {/* Phones: search + button on one row, the action filter under it. */}
       <form
         method="get"
-        className="mt-space-lg grid grid-cols-[minmax(0,1fr)_auto] gap-2 sm:flex sm:flex-row"
+        className="mt-space-md grid grid-cols-[minmax(0,1fr)_auto] gap-space-xs sm:flex sm:flex-row sm:items-center md:mt-space-lg"
       >
         <input
+          type="search"
           name="q"
           defaultValue={query}
           placeholder={t("searchPlaceholder")}
           aria-label={t("searchPlaceholder")}
-          className="col-span-2 min-h-11 min-w-0 flex-1 rounded-full border border-outline-variant bg-surface-low px-4 font-body-sm text-body-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="min-h-11 min-w-0 flex-1 rounded-full border border-outline-variant bg-surface-low px-4 font-body-sm text-body-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         />
         <select
           name="action"
           defaultValue={actionType}
           aria-label={t("actionFilter")}
-          className="min-h-11 min-w-0 rounded-full border border-outline-variant bg-surface-low px-4 font-label-md text-label-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="col-span-2 row-start-2 min-h-11 min-w-0 rounded-full border border-outline-variant bg-surface-low px-4 font-label-md text-label-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:col-span-1"
         >
           <option value="all">{t("allActions")}</option>
           {ACTIONS.filter((value) => value !== "all").map((value) => (
@@ -84,18 +90,15 @@ export default async function AdminAuditPage({
         </select>
         <button
           type="submit"
-          className="inline-flex min-h-11 items-center justify-center rounded-full bg-primary px-5 font-label-md text-label-md font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="col-start-2 row-start-1 inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-full bg-primary px-3 font-label-md text-label-md font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:col-start-auto sm:row-start-auto sm:px-5"
         >
-          {t("searchAction")}
+          <Icon name="search" className="text-lg sm:hidden" />
+          <span className="sr-only sm:not-sr-only">{t("searchAction")}</span>
         </button>
       </form>
 
-      <p className="mt-space-sm font-label-md text-label-md text-text-muted">
-        {t("results", { count: total })}
-      </p>
-
       {events.length === 0 ? (
-        <p className="mt-space-lg rounded-2xl border border-dashed border-outline-variant p-space-lg text-center font-body-sm text-body-sm text-text-muted">
+        <p className="mt-space-md rounded-2xl border border-dashed border-outline-variant p-space-lg text-center font-body-sm text-body-sm text-text-muted">
           {t("empty")}
         </p>
       ) : (

@@ -12,7 +12,12 @@ import {
   pageCount,
   type SearchParams,
 } from "@/features/admin/params";
-import { ADMIN_PAGE_SIZES, getAdminUsers, type AdminProfileFilter } from "@/features/admin/queries";
+import {
+  ADMIN_PAGE_SIZES,
+  getAdminUserCounts,
+  getAdminUsers,
+  type AdminProfileFilter,
+} from "@/features/admin/queries";
 
 const STATUSES = ["all", "pending", "approved", "rejected", "suspended"] as const;
 
@@ -36,12 +41,10 @@ export default async function AdminUsersPage({
   const query = parseQuery(sp.q);
   const status = parseEnum<AdminProfileFilter>(sp.status, STATUSES, "all");
   const page = parsePage(sp.page);
-  const { users, total } = await getAdminUsers({
-    query,
-    status,
-    page,
-    pageSize: ADMIN_PAGE_SIZES.users,
-  });
+  const [{ users, total }, counts] = await Promise.all([
+    getAdminUsers({ query, status, page, pageSize: ADMIN_PAGE_SIZES.users }),
+    getAdminUserCounts(),
+  ]);
 
   return (
     <AdminUsersTab
@@ -51,6 +54,7 @@ export default async function AdminUsersPage({
       page={page}
       total={total}
       totalPages={pageCount(total, ADMIN_PAGE_SIZES.users)}
+      counts={counts}
     />
   );
 }

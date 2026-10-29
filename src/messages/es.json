@@ -676,6 +676,7 @@
       "invitesTitle": "Invitaciones pendientes",
       "noInvites": "No hay invitaciones pendientes.",
       "systemRole": "Rol del sistema",
+      "permissionsCount": "{count, plural, one {# permiso} other {# permisos}}",
       "save": "Guardar",
       "createRole": "Crear rol",
       "newRoleTitle": "Nuevo rol",

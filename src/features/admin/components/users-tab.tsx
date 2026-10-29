@@ -9,6 +9,7 @@ import { InlineAlert } from "@/components/ui/inline-alert";
 import { MediaImage } from "@/components/ui/media-image";
 import { Spinner } from "@/components/ui/spinner";
 import { reviewPersonaAction } from "@/features/admin/actions";
+import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { AdminSearchForm } from "@/features/admin/components/admin-search-form";
 import { AdminStatusLinks } from "@/features/admin/components/admin-status-links";
 import { AdminPagination } from "@/features/admin/components/admin-pagination";
@@ -37,6 +38,7 @@ export function AdminUsersTab({
   page,
   total,
   totalPages,
+  counts,
 }: {
   users: AdminProfileDto[];
   query: string;
@@ -44,6 +46,8 @@ export function AdminUsersTab({
   page: number;
   total: number;
   totalPages: number;
+  /** Members per review state, shown on the filter chips. */
+  counts: Record<AdminProfileFilter, number>;
 }) {
   const t = useTranslations("Admin.users");
   const tCommon = useTranslations("Common");
@@ -97,46 +101,37 @@ export function AdminUsersTab({
   }
 
   const statusOptions = [
-    { value: "all", label: t("filterAll") },
-    { value: "pending", label: t("statusPending") },
-    { value: "approved", label: t("statusApproved") },
-    { value: "rejected", label: t("statusRejected") },
-    { value: "suspended", label: t("statusSuspended") },
+    { value: "all", label: t("filterAll"), count: counts.all },
+    { value: "pending", label: t("statusPending"), count: counts.pending },
+    { value: "approved", label: t("statusApproved"), count: counts.approved },
+    { value: "rejected", label: t("statusRejected"), count: counts.rejected },
+    { value: "suspended", label: t("statusSuspended"), count: counts.suspended },
   ];
 
   const activeStatus = statusOverrides[dossier?.id ?? ""] ?? dossier?.status;
 
   return (
-    <div className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
-      <div className="flex flex-col justify-between gap-space-md lg:flex-row lg:items-end">
-        <div>
-          <h1 className="font-title text-title-mobile text-on-surface md:text-title">
-            {t("title")}
-          </h1>
-          <p className="mt-2 max-w-[62ch] font-body-md text-body-md text-secondary">{t("body")}</p>
-        </div>
-        <p className="font-label-md text-label-md text-secondary">
-          {t("resultsCount", { shown: users.length, total })}
-        </p>
-      </div>
+    <div className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-space-lg pb-page-mobile md:px-margin md:pt-block md:pb-page">
+      <AdminPageHeader
+        title={t("title")}
+        description={t("body")}
+        meta={t("resultsCount", { shown: users.length, total })}
+      />
 
-      <div className="mt-space-lg bezel-tray">
-        <div className="flex flex-col gap-space-md bezel-core p-space-md md:p-space-lg">
-          <div className="flex flex-col gap-space-sm lg:flex-row lg:items-center lg:justify-between">
-            <AdminSearchForm
-              basePath="/admin/users"
-              query={query}
-              status={status}
-              placeholder={t("searchPlaceholder")}
-            />
-            <AdminStatusLinks
-              basePath="/admin/users"
-              current={status}
-              options={statusOptions}
-              query={query}
-            />
-          </div>
-        </div>
+      {/* Phones: search and chips sit straight on the page; from md they get a panel. */}
+      <div className="mt-space-md flex flex-col gap-space-sm md:mt-space-lg md:rounded-2xl md:border md:border-outline-variant md:bg-surface-low md:p-space-lg lg:flex-row lg:items-center lg:justify-between">
+        <AdminSearchForm
+          basePath="/admin/users"
+          query={query}
+          status={status}
+          placeholder={t("searchPlaceholder")}
+        />
+        <AdminStatusLinks
+          basePath="/admin/users"
+          current={status}
+          options={statusOptions}
+          query={query}
+        />
       </div>
 
       {error ? <InlineAlert className="mt-space-md">{error}</InlineAlert> : null}
@@ -154,7 +149,7 @@ export function AdminUsersTab({
           </div>
         </div>
       ) : (
-        <div className="mt-space-lg grid grid-cols-1 gap-space-md">
+        <div className="mt-space-md grid grid-cols-1 gap-space-sm md:mt-space-lg md:gap-space-md">
           {users.map((user) => {
             const effectiveStatus = statusOverrides[user.id] ?? user.status;
             return (
@@ -201,12 +196,13 @@ export function AdminUsersTab({
   );
 }
 
-function StatusChip({ status }: { status: AdminProfileStatus }) {
+function StatusChip({ status, className }: { status: AdminProfileStatus; className?: string }) {
   const t = useTranslations("Admin.users");
   return (
     <span
       className={cn(
         "shrink-0 rounded-full border px-2.5 py-0.5 font-label-md text-label-md font-semibold whitespace-nowrap",
+        className,
         status === "approved"
           ? "border-success-border bg-success-surface text-success-text"
           : status === "pending"
@@ -236,80 +232,103 @@ function UserCard({
   const tCommon = useTranslations("Common");
   const format = useFormatter();
 
-  const meta = [
-    user.location,
-    user.languages.length > 0 ? user.languages.join(" / ") : null,
-  ].filter(Boolean);
+  const meta = [user.location, user.languages.length > 0 ? user.languages.join(" / ") : null]
+    .filter(Boolean)
+    .join(" · ");
+  const spinner = pending ? (
+    <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
+  ) : null;
 
   return (
-    <article className="flex flex-col gap-space-md rounded-2xl border border-outline-variant bg-surface-low p-space-md md:p-space-lg lg:flex-row lg:items-center lg:justify-between">
-      <div className="flex min-w-0 items-start gap-space-md">
+    <article className="relative flex flex-col gap-space-sm rounded-2xl border border-outline-variant bg-surface-low p-space-md transition-colors duration-200 md:p-space-lg lg:flex-row lg:items-center lg:justify-between">
+      {/*
+       * Phones: the whole row opens the dossier, so no "Inspect" button is
+       * needed. The row's text lets taps through to this overlay, and the
+       * decision buttons below sit above it. From lg the explicit button returns.
+       */}
+      <button
+        type="button"
+        onClick={onInspect}
+        aria-label={`${t("inspectDossier")}: ${user.name}`}
+        className="absolute inset-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-surface-container lg:hidden"
+      />
+
+      <div className="pointer-events-none relative flex min-w-0 items-center gap-space-md lg:pointer-events-auto">
         {user.avatar ? (
           <MediaImage
-            alt={user.name}
+            alt=""
             src={user.avatar}
-            wrapperClassName="h-16 w-14 shrink-0 rounded-xl border border-outline-variant md:h-20 md:w-16"
+            wrapperClassName="h-14 w-12 shrink-0 rounded-xl border border-outline-variant md:h-20 md:w-16"
             loading="lazy"
           />
         ) : (
-          <DefaultAvatar className="h-16 w-14 shrink-0 rounded-xl border border-outline-variant md:h-20 md:w-16" />
+          <DefaultAvatar className="h-14 w-12 shrink-0 rounded-xl border border-outline-variant md:h-20 md:w-16" />
         )}
 
-        <div className="flex min-w-0 flex-col gap-1">
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <div className="flex flex-wrap items-center gap-x-space-sm gap-y-1">
             <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
               {user.name}
               {user.age > 0 ? (
-                <span className="ml-1.5 font-body-sm text-body-sm font-normal text-secondary">
+                <span className="ml-1.5 font-body-sm text-body-sm font-normal text-on-surface-variant">
                   {user.age}
                 </span>
               ) : null}
             </h2>
-            <StatusChip status={status} />
+            {/* "Approved" is the default state, so on a phone only the exceptions carry a pill. */}
+            <StatusChip
+              status={status}
+              className={status === "approved" ? "max-md:hidden" : undefined}
+            />
           </div>
 
-          <p className="flex flex-wrap items-center gap-x-1.5 font-body-sm text-body-sm text-on-surface-variant">
-            <Icon name="location_on" className="text-sm" />
-            {meta.join(" · ")}
-          </p>
+          <p className="truncate font-body-sm text-body-sm text-on-surface-variant">{meta}</p>
 
           {status === "pending" && user.submittedAt ? (
             <p
-              className="font-body-sm text-body-sm text-on-surface-variant"
+              className="font-label-md text-label-md font-semibold text-primary"
               suppressHydrationWarning
             >
               {t("registeredAgo", {
                 time: format.relativeTime(new Date(user.submittedAt), new Date()),
               })}
             </p>
+          ) : user.headline ? (
+            <p className="truncate font-label-md text-label-md text-on-surface">{user.headline}</p>
           ) : null}
 
-          {user.headline ? (
-            <p className="font-label-md text-label-md text-primary">{user.headline}</p>
-          ) : null}
-          <p className="line-clamp-2 max-w-xl font-body-sm text-body-sm text-on-surface-variant">
+          <p className="mt-0.5 hidden max-w-xl font-body-sm text-body-sm text-on-surface-variant md:line-clamp-2 md:block">
             {user.bioEn || user.bioEs}
           </p>
         </div>
+
+        <Icon
+          name="chevron_right"
+          className="shrink-0 text-xl text-on-surface-variant lg:hidden!"
+        />
       </div>
 
       {/*
-       * Phones: equal-width buttons in a grid under the details, the primary
-       * decision across the full width. From lg the actions sit on the right.
-       * Reject only applies to a pending review; a rejected or suspended member
-       * can only be reinstated, an approved one suspended.
+       * Decisions live on the row only where one is waiting: Reject | Approve
+       * for a pending member, Approve alone to reinstate a rejected or suspended
+       * one. An approved member has no buttons on a phone; Suspend is in the
+       * dossier (and beside the row from lg).
        */}
-      <div className="grid grid-cols-2 gap-space-xs border-t border-outline-variant pt-space-md lg:flex lg:shrink-0 lg:items-center lg:border-t-0 lg:pt-0">
+      <div
+        className={cn(
+          "relative gap-space-xs lg:flex lg:shrink-0 lg:items-center",
+          status === "approved" ? "hidden" : "grid grid-cols-2",
+        )}
+      >
         <button
           type="button"
           onClick={onInspect}
           className={cn(
             ACTION_BASE,
-            "justify-center border border-outline-variant bg-surface-container text-on-surface hover:border-outline-hover hover:bg-surface-container-high",
-            status !== "pending" && status !== "approved" && "col-span-2",
+            "hidden justify-center border border-outline-variant bg-surface-container text-on-surface hover:border-outline-hover hover:bg-surface-container-high lg:inline-flex",
           )}
         >
-          <Icon name="badge" className="text-base max-sm:hidden!" />
+          <Icon name="badge" className="text-base" />
           {t("inspectDossier")}
         </button>
 
@@ -323,9 +342,7 @@ function UserCard({
               "justify-center border border-outline-variant text-secondary hover:border-danger-border-strong/60 hover:text-danger focus-visible:outline-danger-border-strong",
             )}
           >
-            {pending ? (
-              <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
-            ) : null}
+            {spinner}
             {t("suspend")}
           </button>
         ) : null}
@@ -340,11 +357,7 @@ function UserCard({
               "justify-center border border-danger-border bg-danger-surface text-danger-text hover:border-danger-border-strong/60 focus-visible:outline-danger-border-strong",
             )}
           >
-            {pending ? (
-              <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
-            ) : (
-              <Icon name="close" className="text-base" />
-            )}
+            {spinner ?? <Icon name="close" className="text-base" />}
             {t("reject")}
           </button>
         ) : null}
@@ -356,14 +369,11 @@ function UserCard({
             disabled={pending}
             className={cn(
               ACTION_BASE,
-              "col-span-2 justify-center border border-success-ring/30 bg-success-strong text-white hover:bg-success-hover focus-visible:outline-success-ring",
+              "justify-center border border-success-ring/30 bg-success-strong text-white hover:bg-success-hover focus-visible:outline-success-ring",
+              status !== "pending" && "col-span-2 lg:col-span-1",
             )}
           >
-            {pending ? (
-              <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
-            ) : (
-              <Icon name="check" className="text-base" />
-            )}
+            {spinner ?? <Icon name="check" className="text-base" />}
             {t("approveProfile")}
           </button>
         ) : null}

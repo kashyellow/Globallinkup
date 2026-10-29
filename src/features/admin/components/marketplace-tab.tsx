@@ -16,6 +16,7 @@ import {
   updateProductAction,
 } from "@/features/admin/actions";
 import { AdminPagination } from "@/features/admin/components/admin-pagination";
+import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { AdminSearchForm } from "@/features/admin/components/admin-search-form";
 import { AdminStatusLinks } from "@/features/admin/components/admin-status-links";
 import { uploadImageAction } from "@/features/media/actions";
@@ -142,44 +143,38 @@ export function AdminMarketplaceTab({
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
-      <div className="flex flex-col justify-between gap-space-md lg:flex-row lg:items-end">
-        <div>
-          <h1 className="font-title text-title-mobile text-on-surface md:text-title">
-            {t("title")}
-          </h1>
-          <p className="mt-2 max-w-[62ch] font-body-md text-body-md text-secondary">{t("body")}</p>
-        </div>
-        <button
-          type="button"
-          onClick={openCreate}
-          className="inline-flex min-h-11 shrink-0 items-center gap-2 self-start rounded-full bg-primary px-5 font-label-lg text-label-lg font-semibold text-on-primary transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px lg:self-auto"
-        >
-          <Icon name="add" className="text-lg" />
-          {t("newProduct")}
-        </button>
-      </div>
+    <div className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-space-lg pb-page-mobile md:px-margin md:pt-block md:pb-page">
+      <AdminPageHeader
+        title={t("title")}
+        description={t("body")}
+        meta={t("resultsCount", { shown: products.length, total })}
+        action={
+          <button
+            type="button"
+            onClick={openCreate}
+            aria-label={t("newProduct")}
+            className="inline-flex h-11 min-w-11 items-center justify-center gap-2 rounded-full bg-primary font-label-lg text-label-lg font-semibold text-on-primary transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px sm:px-5"
+          >
+            <Icon name="add" className="text-xl" />
+            <span className="hidden sm:inline">{t("newProduct")}</span>
+          </button>
+        }
+      />
 
-      <div className="mt-space-lg bezel-tray">
-        <div className="flex flex-col gap-space-md bezel-core p-space-md md:p-space-lg">
-          <div className="flex flex-col gap-space-sm lg:flex-row lg:items-center lg:justify-between">
-            <AdminSearchForm
-              basePath="/admin/marketplace"
-              query={query}
-              status={status}
-              placeholder={t("searchPlaceholder")}
-            />
-            <AdminStatusLinks
-              basePath="/admin/marketplace"
-              current={status}
-              options={statusOptions}
-              query={query}
-            />
-          </div>
-          <p className="font-label-md text-label-md text-secondary">
-            {t("resultsCount", { shown: products.length, total })}
-          </p>
-        </div>
+      {/* Phones: search and chips sit straight on the page; from md they get a panel. */}
+      <div className="mt-space-md flex flex-col gap-space-sm md:mt-space-lg md:rounded-2xl md:border md:border-outline-variant md:bg-surface-low md:p-space-lg lg:flex-row lg:items-center lg:justify-between">
+        <AdminSearchForm
+          basePath="/admin/marketplace"
+          query={query}
+          status={status}
+          placeholder={t("searchPlaceholder")}
+        />
+        <AdminStatusLinks
+          basePath="/admin/marketplace"
+          current={status}
+          options={statusOptions}
+          query={query}
+        />
       </div>
 
       {error ? <InlineAlert className="mt-space-md">{error}</InlineAlert> : null}
@@ -194,7 +189,7 @@ export function AdminMarketplaceTab({
           </div>
         </div>
       ) : (
-        <div className="mt-space-lg flex flex-col gap-space-sm">
+        <div className="mt-space-md flex flex-col gap-space-sm md:mt-space-lg">
           {products.map((product) => (
             <ProductRow
               key={product.id}
@@ -316,101 +311,111 @@ function ProductRow({
   onRestore: () => void;
 }) {
   const t = useTranslations("Admin.marketplace");
+  const meta = [product.origin, product.price].filter(Boolean).join(" · ");
+  const button =
+    "inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-outline-variant bg-surface-dim px-3 font-label-md text-label-md whitespace-nowrap text-on-surface transition-colors hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-60 lg:px-4";
 
   return (
-    <div className="bezel-tray" data-product-name={product.name}>
-      <div className="flex flex-col items-start justify-between gap-space-md bezel-core p-space-md lg:flex-row lg:items-center">
-        <div className="flex w-full min-w-0 items-center gap-space-md lg:w-auto lg:flex-1">
-          {product.image ? (
-            <MediaImage
-              alt={product.name}
-              src={product.image}
-              wrapperClassName="h-16 w-16 shrink-0 rounded-xl border border-outline-variant"
-              loading="lazy"
-            />
-          ) : (
-            <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-outline-variant bg-surface-variant text-secondary">
-              <Icon name="image" />
-            </span>
-          )}
-          <div className="min-w-0 flex-1">
-            <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2 lg:flex-nowrap">
-              <h2 className="line-clamp-2 min-w-0 font-headline-sm text-headline-sm font-semibold text-balance text-on-surface lg:line-clamp-1">
-                {product.name}
-              </h2>
-              <div className="flex shrink-0 items-center gap-1.5">
-                <StatusChip status={product.status} />
-                {product.imagePaths.length > 1 ? (
-                  <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-outline-variant bg-surface-container px-2 py-0.5 font-label-md text-label-md text-secondary">
-                    <Icon name="photo_library" className="text-sm" />
-                    {product.imagePaths.length}
-                  </span>
-                ) : null}
-              </div>
-            </div>
-            <p className="truncate font-body-sm text-body-sm text-secondary">
-              {[product.origin, product.price].filter(Boolean).join(" · ")}
-            </p>
-          </div>
-        </div>
+    <article
+      className="relative flex flex-col gap-space-sm rounded-2xl border border-outline-variant bg-surface-low p-space-md lg:flex-row lg:items-center lg:justify-between"
+      data-product-name={product.name}
+    >
+      {/*
+       * Phones: tapping the row opens the preview (which has an Edit button), so
+       * the row only carries the actions that change something. The text lets
+       * taps through to this overlay; the action buttons sit above it.
+       */}
+      <button
+        type="button"
+        onClick={onPreview}
+        aria-label={`${t("previewAction")}: ${product.name}`}
+        className="absolute inset-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:bg-surface-container lg:hidden"
+      />
 
-        {/* Phones: one even row of actions under the details, the trash icon last. */}
-        <div className="grid w-full grid-cols-[1fr_1fr_1fr_auto] items-center gap-space-xs border-t border-outline-variant pt-space-sm lg:flex lg:w-auto lg:shrink-0 lg:border-t-0 lg:pt-0">
-          {product.status === "trashed" ? (
+      <div className="pointer-events-none relative flex min-w-0 items-center gap-space-md lg:pointer-events-auto lg:flex-1">
+        {product.image ? (
+          <MediaImage
+            alt=""
+            src={product.image}
+            wrapperClassName="h-14 w-14 shrink-0 rounded-xl border border-outline-variant lg:h-16 lg:w-16"
+            loading="lazy"
+          />
+        ) : (
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-outline-variant bg-surface-variant text-secondary lg:h-16 lg:w-16">
+            <Icon name="image" />
+          </span>
+        )}
+        <div className="min-w-0 flex-1">
+          <h2 className="line-clamp-2 font-headline-sm text-headline-sm font-semibold text-balance text-on-surface lg:line-clamp-1">
+            {product.name}
+          </h2>
+          <p className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1 font-body-sm text-body-sm text-on-surface-variant">
+            <StatusChip status={product.status} />
+            {product.imagePaths.length > 1 ? (
+              <span
+                className="inline-flex items-center gap-0.5"
+                title={`${product.imagePaths.length}`}
+              >
+                <Icon name="photo_library" className="text-sm" />
+                {product.imagePaths.length}
+              </span>
+            ) : null}
+            <span className="truncate">{meta}</span>
+          </p>
+        </div>
+        <Icon
+          name="chevron_right"
+          className="shrink-0 text-xl text-on-surface-variant lg:hidden!"
+        />
+      </div>
+
+      <div
+        className={cn(
+          "relative grid items-center gap-space-xs lg:flex lg:w-auto lg:shrink-0",
+          product.status === "trashed" ? "grid-cols-1" : "grid-cols-[1fr_1fr_auto]",
+        )}
+      >
+        {product.status === "trashed" ? (
+          <button type="button" onClick={onRestore} disabled={pending} className={button}>
+            {pending ? (
+              <Spinner className="h-4 w-4 text-current" label={t("restore")} />
+            ) : (
+              <Icon name="restore" className="text-base" />
+            )}
+            {t("restore")}
+          </button>
+        ) : (
+          <>
             <button
               type="button"
-              onClick={onRestore}
-              disabled={pending}
-              className="col-span-4 inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-outline-variant bg-surface-dim px-4 font-label-md text-label-md text-on-surface transition-colors hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-60"
+              onClick={onPreview}
+              className={cn(button, "hidden lg:inline-flex")}
             >
-              {pending ? (
-                <Spinner className="h-4 w-4 text-current" label={t("restore")} />
-              ) : (
-                <Icon name="restore" className="text-base" />
-              )}
-              {t("restore")}
+              <Icon name="visibility" className="text-base" />
+              {t("previewAction")}
             </button>
-          ) : (
-            <>
-              <button
-                type="button"
-                onClick={onPreview}
-                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-outline-variant bg-surface-dim px-3 font-label-md text-label-md text-on-surface transition-colors hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px lg:px-4"
-              >
-                <Icon name="visibility" className="text-base" />
-                {t("previewAction")}
-              </button>
-              <button
-                type="button"
-                onClick={onEdit}
-                className="inline-flex min-h-11 items-center justify-center rounded-full border border-outline-variant bg-surface-dim px-3 font-label-md text-label-md text-on-surface transition-colors hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px lg:px-4"
-              >
-                {t("edit")}
-              </button>
-              <button
-                type="button"
-                onClick={onToggle}
-                disabled={pending}
-                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-outline-variant bg-surface-dim px-3 font-label-md text-label-md text-on-surface transition-colors hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-60 lg:px-4"
-              >
-                {pending ? <Spinner className="h-4 w-4 text-current" label={t("update")} /> : null}
-                {product.isPublished ? t("unpublish") : t("publish")}
-              </button>
-              <button
-                type="button"
-                onClick={onTrash}
-                disabled={pending}
-                title={t("delete")}
-                aria-label={t("delete")}
-                className="flex h-11 w-11 items-center justify-center rounded-full text-secondary transition-colors hover:bg-surface-variant hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60"
-              >
-                <Icon name="delete" className="text-lg" />
-              </button>
-            </>
-          )}
-        </div>
+            <button type="button" onClick={onEdit} className={button}>
+              <Icon name="edit" className="text-base lg:hidden!" />
+              {t("edit")}
+            </button>
+            <button type="button" onClick={onToggle} disabled={pending} className={button}>
+              {pending ? <Spinner className="h-4 w-4 text-current" label={t("update")} /> : null}
+              {product.isPublished ? t("unpublish") : t("publish")}
+            </button>
+            <button
+              type="button"
+              onClick={onTrash}
+              disabled={pending}
+              title={t("delete")}
+              aria-label={t("delete")}
+              className="flex h-11 w-11 items-center justify-center rounded-full text-secondary transition-colors hover:bg-surface-variant hover:text-danger focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-60"
+            >
+              <Icon name="delete" className="text-lg" />
+            </button>
+          </>
+        )}
       </div>
-    </div>
+    </article>
   );
 }
 

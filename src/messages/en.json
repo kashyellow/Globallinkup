@@ -676,6 +676,7 @@
       "invitesTitle": "Pending invites",
       "noInvites": "No pending invites.",
       "systemRole": "System role",
+      "permissionsCount": "{count, plural, one {# permission} other {# permissions}}",
       "save": "Save",
       "createRole": "Create role",
       "newRoleTitle": "New role",

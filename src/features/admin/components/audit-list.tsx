@@ -14,6 +14,9 @@ import type { AdminAuditEvent } from "../queries";
  * (`from_state` → `to_state`) are recorded. Metadata stays ids/state only by
  * design — no member content ever reaches this table (ADR 0003).
  */
+/** Actions that remove, refuse or revoke something read in red in the list. */
+const DESTRUCTIVE = /\.(removed|rejected|suspended|deleted|revoked|declined|trashed)$/;
+
 export function AuditList({ events }: { events: AdminAuditEvent[] }) {
   const t = useTranslations("Admin.audit");
   const format = useFormatter();
@@ -33,33 +36,39 @@ export function AuditList({ events }: { events: AdminAuditEvent[] }) {
               type="button"
               onClick={() => setSelected(event)}
               aria-haspopup="dialog"
-              className="group flex min-h-11 w-full items-start justify-between gap-space-sm p-space-md text-left transition-colors duration-300 hover:bg-surface-container focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary"
+              className="group flex min-h-14 w-full items-center justify-between gap-space-sm p-space-md text-left transition-colors duration-200 hover:bg-surface-container focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary active:bg-surface-container"
             >
-              <span className="flex min-w-0 flex-col gap-1">
-                <span className="flex flex-wrap items-baseline justify-between gap-2">
-                  <span className="font-label-lg text-label-lg font-semibold text-on-surface">
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span className="flex items-baseline justify-between gap-space-sm">
+                  <span
+                    className={cn(
+                      "min-w-0 truncate font-label-lg text-label-lg font-semibold",
+                      DESTRUCTIVE.test(event.action) ? "text-danger-text" : "text-on-surface",
+                    )}
+                  >
                     {event.action}
                   </span>
-                  <span className="font-label-md text-label-md text-text-muted">
-                    {timestamp(event.occurredAt)}
+                  <span
+                    className="shrink-0 font-label-md text-label-md text-on-surface-variant"
+                    title={timestamp(event.occurredAt)}
+                    suppressHydrationWarning
+                  >
+                    {format.relativeTime(new Date(event.occurredAt), new Date())}
                   </span>
                 </span>
-                <span className="font-body-sm text-body-sm text-secondary">
+                <span className="truncate font-body-sm text-body-sm text-on-surface-variant">
                   {event.actorRole ?? "admin"}
                   {event.targetType ? ` · ${event.targetType}` : ""}
                   {event.targetId ? ` ${event.targetId.slice(0, 8)}` : ""}
                 </span>
                 {event.reason ? (
-                  <span className="font-body-sm text-body-sm text-on-surface-strong">
+                  <span className="line-clamp-2 font-body-sm text-body-sm text-on-surface">
                     {event.reason}
                   </span>
                 ) : null}
                 <span className="sr-only">{t("viewDetails")}</span>
               </span>
-              <Icon
-                name="chevron_right"
-                className="mt-1 shrink-0 text-lg text-text-muted transition-transform duration-300 group-hover:translate-x-0.5"
-              />
+              <Icon name="chevron_right" className="shrink-0 text-xl text-on-surface-variant" />
             </button>
           </li>
         ))}

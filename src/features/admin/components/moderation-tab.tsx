@@ -15,6 +15,7 @@ import {
   restorePostAction,
 } from "@/features/admin/actions";
 import { AdminPagination } from "@/features/admin/components/admin-pagination";
+import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { AdminSearchForm } from "@/features/admin/components/admin-search-form";
 import { AdminStatusLinks } from "@/features/admin/components/admin-status-links";
 import { useDialogA11y } from "@/features/shared/use-dialog-a11y";
@@ -150,21 +151,18 @@ export function AdminModerationTab({
   const extra = target !== "all" ? { target } : undefined;
 
   return (
-    <div className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
-      <div className="flex flex-col justify-between gap-space-md lg:flex-row lg:items-end">
-        <div>
-          <h1 className="font-title text-title-mobile text-on-surface md:text-title">
-            {t("title")}
-          </h1>
-          <p className="mt-2 max-w-[62ch] font-body-md text-body-md text-secondary">{t("body")}</p>
-        </div>
-        {canManageReports ? (
-          <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-danger-border bg-danger-surface px-space-md py-1.5 font-label-md text-label-md font-semibold text-danger-text">
-            <span className="h-1.5 w-1.5 rounded-full bg-danger" />
-            {t("needsReview", { count: total })}
-          </span>
-        ) : null}
-      </div>
+    <div className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-space-lg pb-page-mobile md:px-margin md:pt-block md:pb-page">
+      <AdminPageHeader
+        title={t("title")}
+        description={t("body")}
+        meta={
+          canManageReports && status === "open" ? (
+            <span className="font-semibold text-danger-text">
+              {t("needsReview", { count: total })}
+            </span>
+          ) : undefined
+        }
+      />
 
       {canModeratePosts ? (
         appeals.length > 0 ? (
@@ -236,34 +234,31 @@ export function AdminModerationTab({
 
       {canManageReports ? (
         <>
-          <div className="mt-space-lg bezel-tray">
-            <div className="flex flex-col gap-space-md bezel-core p-space-md md:p-space-lg">
-              <div className="flex flex-col gap-space-sm lg:flex-row lg:items-center lg:justify-between">
-                <AdminSearchForm
-                  basePath="/admin/moderation"
-                  query={query}
-                  status={status}
-                  placeholder={t("searchPlaceholder")}
-                  extra={target !== "all" ? { target } : undefined}
-                />
-              </div>
-              <div className="flex flex-col gap-space-sm lg:flex-row lg:items-center lg:justify-between">
-                <AdminStatusLinks
-                  basePath="/admin/moderation"
-                  current={status}
-                  options={statusOptions}
-                  query={query}
-                  extra={extra}
-                />
-                <AdminStatusLinks
-                  basePath="/admin/moderation"
-                  current={target}
-                  options={targetOptions}
-                  query={query}
-                  extra={status !== "all" ? { status } : undefined}
-                  param="target"
-                />
-              </div>
+          {/* Phones: search and chips sit straight on the page; from md they get a panel. */}
+          <div className="mt-space-md flex flex-col gap-space-sm md:mt-space-lg md:rounded-2xl md:border md:border-outline-variant md:bg-surface-low md:p-space-lg">
+            <AdminSearchForm
+              basePath="/admin/moderation"
+              query={query}
+              status={status}
+              placeholder={t("searchPlaceholder")}
+              extra={target !== "all" ? { target } : undefined}
+            />
+            <div className="flex flex-col gap-space-xs md:flex-row md:items-center md:justify-between md:gap-space-sm">
+              <AdminStatusLinks
+                basePath="/admin/moderation"
+                current={status}
+                options={statusOptions}
+                query={query}
+                extra={extra}
+              />
+              <AdminStatusLinks
+                basePath="/admin/moderation"
+                current={target}
+                options={targetOptions}
+                query={query}
+                extra={status !== "all" ? { status } : undefined}
+                param="target"
+              />
             </div>
           </div>
 
@@ -279,7 +274,7 @@ export function AdminModerationTab({
               </div>
             </div>
           ) : (
-            <div className="mt-space-lg grid grid-cols-1 gap-space-md md:grid-cols-2">
+            <div className="mt-space-md grid grid-cols-1 gap-space-sm md:mt-space-lg md:grid-cols-2 md:gap-space-md">
               {visible.map((report) => (
                 <ReportCard
                   key={report.id}
@@ -439,7 +434,7 @@ function ReportCard({
               disabled={pending}
               className={cn(
                 ACTION_BASE,
-                "col-span-2 bg-danger text-on-error hover:bg-danger-border-strong focus-visible:outline-danger-border-strong",
+                "order-last col-span-2 border border-danger-border bg-danger-surface text-danger-text hover:border-danger-border-strong/60 focus-visible:outline-danger-border-strong sm:order-first sm:col-span-1",
               )}
             >
               {pending ? (
