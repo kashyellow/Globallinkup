@@ -108,7 +108,7 @@ from seed_users u;
 -- ----------------------------------------------------------------------------
 insert into public.profiles (
   id, display_name, country_code, city, bio_en, headline, languages, interests,
-  approval_status, role, submitted_at, reviewed_at
+  approval_status, role, admin_role_id, submitted_at, reviewed_at
 )
 values (
   '11111111-1111-1111-1111-111111111111',
@@ -117,7 +117,7 @@ values (
   'Platform Steward',
   '[{"code":"ES","level":"native"},{"code":"EN","level":"fluent"}]'::jsonb,
   array[]::text[],
-  'approved', 'admin', now(), now()
+  'approved', 'admin', (select id from public.admin_roles where slug = 'owner'), now(), now()
 );
 
 insert into public.profiles (

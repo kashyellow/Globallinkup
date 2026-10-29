@@ -8,6 +8,7 @@ import {
   assignRoleAction,
   createRoleAction,
   inviteAdminAction,
+  revokeInviteAction,
   saveRoleAction,
   type TeamState,
 } from "@/features/admin/team-actions";
@@ -29,7 +30,7 @@ export type TeamRole = {
 };
 
 export type TeamAdmin = { id: string; name: string; roleId: string | null };
-export type TeamInvite = { id: string; email: string; roleName: string };
+export type TeamInvite = { id: string; email: string; roleName: string; roleId: string | null };
 
 export function TeamView({
   roles,
@@ -57,16 +58,26 @@ export function TeamView({
         <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
           {t("adminsTitle")}
         </h2>
-        <ul className="divide-y divide-outline-variant overflow-hidden rounded-2xl border border-outline-variant bg-surface-low">
+        <ul className="grid gap-2 sm:grid-cols-2">
           {admins.map((admin) => (
             <li
               key={admin.id}
               className="flex flex-wrap items-center justify-between gap-2 p-space-md"
             >
-              <span className="font-label-lg text-label-lg text-on-surface">{admin.name}</span>
+              <span className="flex items-center gap-2 font-label-lg text-label-lg text-on-surface">
+                {admin.name}
+                {admin.roleId === null ? (
+                  <span className="rounded-full border border-outline-variant px-2 py-0.5 font-label-md text-label-md text-text-muted">
+                    {t("noRole")}
+                  </span>
+                ) : null}
+              </span>
               <form action={assignRoleAction} className="flex items-center gap-2">
                 <input type="hidden" name="profileId" value={admin.id} />
                 <select name="roleId" defaultValue={admin.roleId ?? ""} className={FIELD}>
+                  <option value="" disabled>
+                    {t("noRole")}
+                  </option>
                   {roles.map((role) => (
                     <option key={role.id} value={role.id}>
                       {role.name}
@@ -104,11 +115,26 @@ export function TeamView({
         ) : (
           <ul className="divide-y divide-outline-variant overflow-hidden rounded-2xl border border-outline-variant bg-surface-low">
             {invites.map((invite) => (
-              <li key={invite.id} className="flex items-center justify-between gap-2 p-space-md">
-                <span className="font-body-sm text-body-sm text-on-surface">{invite.email}</span>
-                <span className="font-label-md text-label-md text-text-muted">
-                  {invite.roleName}
-                </span>
+              <li
+                key={invite.id}
+                className="space-y-2 rounded-2xl border border-outline-variant bg-surface-low p-4"
+              >
+                <p className="font-body-sm text-body-sm text-on-surface">{invite.email}</p>
+                <p className="font-label-md text-label-md text-text-muted">
+                  {invite.roleName || t("noRole")}
+                </p>
+                <div className="flex flex-wrap items-start gap-2">
+                  <InviteLinkButton email={invite.email} roleId={invite.roleId} />
+                  <form action={revokeInviteAction}>
+                    <input type="hidden" name="inviteId" value={invite.id} />
+                    <button
+                      type="submit"
+                      className="inline-flex min-h-10 items-center rounded-full border border-danger-border px-3 font-label-md text-label-md text-danger-text hover:bg-danger-surface"
+                    >
+                      {t("revoke")}
+                    </button>
+                  </form>
+                </div>
               </li>
             ))}
           </ul>
@@ -137,7 +163,8 @@ function InviteForm({ roles }: { roles: TeamRole[] }) {
           placeholder={t("emailPlaceholder")}
           className={cn(FIELD, "flex-1")}
         />
-        <select name="roleId" className={FIELD} defaultValue={roles[0]?.id} required>
+        <select name="roleId" className={FIELD} defaultValue="">
+          <option value="">{t("assignLater")}</option>
           {roles.map((role) => (
             <option key={role.id} value={role.id}>
               {role.name}
@@ -201,32 +228,62 @@ function RoleForm({ role }: { role: TeamRole }) {
   const [state, action, pending] = useActionState(saveRoleAction, INITIAL);
 
   return (
-    <form
-      action={action}
-      className="space-y-2 rounded-2xl border border-outline-variant bg-surface-low p-4"
-    >
-      <div className="flex items-center justify-between gap-2">
-        <span className="font-label-lg text-label-lg font-semibold text-on-surface">
+    <details className="rounded-2xl border border-outline-variant bg-surface-low">
+      <summary className="flex cursor-pointer flex-wrap items-center justify-between gap-2 p-4 font-label-lg text-label-lg font-semibold text-on-surface">
+        <span className="flex items-center gap-2">
           {role.name}
+          {role.isSystem ? (
+            <span className="rounded-full border border-outline-variant px-2 py-0.5 font-label-md text-label-md text-text-muted">
+              {t("systemRole")}
+            </span>
+          ) : null}
         </span>
-        {role.isSystem ? (
-          <span className="font-label-md text-label-md text-text-muted">{t("systemRole")}</span>
-        ) : null}
-      </div>
-      <input type="hidden" name="roleId" value={role.id} />
-      <CapabilityChecks selected={role.capabilities} />
-      <div className="flex items-center gap-3">
-        <button type="submit" disabled={pending} className={BUTTON}>
-          {pending ? <Spinner className="h-4 w-4 text-current" label={t("working")} /> : null}
-          {t("save")}
-        </button>
-        {state.ok ? (
-          <span className="font-body-sm text-body-sm text-success-text">{t("saved")}</span>
-        ) : null}
-        {state.error ? (
-          <span className="font-body-sm text-body-sm text-danger-text">{t("saveError")}</span>
-        ) : null}
-      </div>
+        <span className="font-label-md text-label-md text-text-muted">
+          {role.capabilities.length}
+        </span>
+      </summary>
+      <form action={action} className="space-y-2 border-t border-outline-variant p-4">
+        <input type="hidden" name="roleId" value={role.id} />
+        <CapabilityChecks selected={role.capabilities} />
+        <div className="flex items-center gap-3">
+          <button type="submit" disabled={pending} className={BUTTON}>
+            {pending ? <Spinner className="h-4 w-4 text-current" label={t("working")} /> : null}
+            {t("save")}
+          </button>
+          {state.ok ? (
+            <span className="font-body-sm text-body-sm text-success-text">{t("saved")}</span>
+          ) : null}
+          {state.error ? (
+            <span className="font-body-sm text-body-sm text-danger-text">{t("saveError")}</span>
+          ) : null}
+        </div>
+      </form>
+    </details>
+  );
+}
+
+function InviteLinkButton({ email, roleId }: { email: string; roleId: string | null }) {
+  const t = useTranslations("Admin.team");
+  const [state, action, pending] = useActionState(inviteAdminAction, INITIAL);
+
+  return (
+    <form action={action} className="space-y-1">
+      <input type="hidden" name="email" value={email} />
+      <input type="hidden" name="roleId" value={roleId ?? ""} />
+      <button
+        type="submit"
+        disabled={pending}
+        className="inline-flex min-h-10 items-center gap-2 rounded-full border border-outline-variant px-3 font-label-md text-label-md hover:bg-surface-container disabled:opacity-60"
+      >
+        {pending ? <Spinner className="h-3.5 w-3.5 text-current" label={t("working")} /> : null}
+        {t("newLink")}
+      </button>
+      {state.link ? (
+        <input readOnly value={state.link} className={cn(FIELD, "w-full text-xs")} />
+      ) : null}
+      {state.error ? (
+        <span className="block font-body-sm text-body-sm text-danger-text">{t("linkFailed")}</span>
+      ) : null}
     </form>
   );
 }

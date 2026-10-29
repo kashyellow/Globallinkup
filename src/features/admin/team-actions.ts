@@ -46,19 +46,19 @@ export async function inviteAdminAction(
   const ctx = await requireAdminsManager();
   if (!ctx) return { ok: false, error: "forbidden" };
 
+  const rawRoleId = String(formData.get("roleId") ?? "").trim();
   const parsed = z
-    .object({ email: emailSchema, roleId: uuidSchema })
-    .safeParse({ email: formData.get("email"), roleId: formData.get("roleId") });
+    .object({ email: emailSchema, roleId: z.union([uuidSchema, z.literal("")]) })
+    .safeParse({ email: formData.get("email"), roleId: rawRoleId });
   if (!parsed.success) return { ok: false, error: "invalid" };
 
   const email = parsed.data.email.trim().toLowerCase();
-
-  const { data: role } = await ctx.supabase
-    .from("admin_roles")
-    .select("id, slug")
-    .eq("id", parsed.data.roleId)
-    .maybeSingle();
-  if (!role) return { ok: false, error: "invalid" };
+  // Empty means "assign later": the account starts with no role and shows "—".
+  const role = rawRoleId
+    ? ((await ctx.supabase.from("admin_roles").select("id, slug").eq("id", rawRoleId).maybeSingle())
+        .data ?? null)
+    : null;
+  if (rawRoleId && !role) return { ok: false, error: "invalid" };
 
   const admin = createAdminClient();
   const link = await admin.auth.admin.generateLink({ type: "invite", email });
@@ -69,7 +69,7 @@ export async function inviteAdminAction(
   const { error } = await admin.from("admin_invites").upsert(
     {
       email,
-      admin_role_id: role.id,
+      admin_role_id: role?.id ?? null,
       invited_by: ctx.user.id,
       accepted_at: null,
     },
@@ -90,14 +90,16 @@ export async function acceptInviteAction(
   formData: FormData,
 ): Promise<TeamState> {
   const tokenHash = String(formData.get("token_hash") ?? "");
+
+  // Validate first: `verifyOtp` burns the single-use invite token, so a rejected
+  // password must not reach it.
+  const password = passwordSchema.safeParse(formData.get("password"));
+  if (!password.success) return { ok: false, error: "password" };
+  if (password.data !== formData.get("confirm")) return { ok: false, error: "mismatch" };
+
   const parsed = z
-    .object({ tokenHash: z.string().min(10), password: passwordSchema, confirm: z.string() })
-    .refine((value) => value.password === value.confirm, { path: ["confirm"] })
-    .safeParse({
-      tokenHash,
-      password: formData.get("password"),
-      confirm: formData.get("confirm"),
-    });
+    .object({ tokenHash: z.string().min(10), password: z.string() })
+    .safeParse({ tokenHash, password: password.data });
   if (!parsed.success) return { ok: false, error: "invalid" };
 
   const supabase = await createClient();
@@ -145,13 +147,11 @@ export async function acceptInviteAction(
   redirect("/login");
 }
 
-async function recordInviteAudit(actorId: string, roleId: string, email: string) {
+async function recordInviteAudit(actorId: string, roleId: string | null, email: string) {
   const admin = createAdminClient();
-  const { data: role } = await admin
-    .from("admin_roles")
-    .select("slug")
-    .eq("id", roleId)
-    .maybeSingle();
+  const role = roleId
+    ? (await admin.from("admin_roles").select("slug").eq("id", roleId).maybeSingle()).data
+    : null;
   await admin.from("audit_events").insert({
     actor_id: actorId,
     actor_role: role?.slug ?? null,
@@ -160,6 +160,19 @@ async function recordInviteAudit(actorId: string, roleId: string, email: string)
     target_id: actorId,
     metadata: { email_domain: email.split("@")[1] ?? "" },
   });
+}
+
+export async function revokeInviteAction(formData: FormData): Promise<void> {
+  const ctx = await requireAdminsManager();
+  if (!ctx) return;
+
+  const parsed = z
+    .object({ inviteId: uuidSchema })
+    .safeParse({ inviteId: formData.get("inviteId") });
+  if (!parsed.success) return;
+
+  await ctx.supabase.from("admin_invites").delete().eq("id", parsed.data.inviteId);
+  revalidatePath("/admin/team");
 }
 
 export async function saveRoleAction(_previous: TeamState, formData: FormData): Promise<TeamState> {

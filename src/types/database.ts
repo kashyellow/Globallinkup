@@ -825,7 +825,7 @@ export type Database = {
       admin_invites: {
         Row: {
           accepted_at: string | null;
-          admin_role_id: string;
+          admin_role_id: string | null;
           created_at: string;
           email: string;
           id: string;
@@ -833,7 +833,7 @@ export type Database = {
         };
         Insert: {
           accepted_at?: string | null;
-          admin_role_id: string;
+          admin_role_id?: string | null;
           created_at?: string;
           email: string;
           id?: string;

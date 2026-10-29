@@ -355,6 +355,8 @@ test("@auth the audit and team desks render cleanly", async ({ page }) => {
 
   await page.goto("/en/admin/team");
   await expect(page.getByRole("heading", { name: /team & roles/i })).toBeVisible();
+  // Roles are collapsible cards now: open the first one before checking the matrix.
+  await page.locator("summary").first().click();
   await expect(page.getByRole("checkbox").first()).toBeVisible();
 
   const relevant = errors.filter((error) =>
