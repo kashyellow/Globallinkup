@@ -684,6 +684,7 @@
       "before": "Before",
       "after": "After",
       "changedHint": "Highlighted fields changed between the snapshots.",
+      "eventJson": "Event JSON",
       "fields": {
         "occurredAt": "When",
         "actor": "Actor role",
@@ -698,6 +699,8 @@
         "interest": "Interests",
         "product": "Products",
         "report": "Reports",
+        "comment": "Comments",
+        "role": "Roles",
         "admin": "Admins",
         "system": "System"
       },

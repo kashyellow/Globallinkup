@@ -684,6 +684,7 @@
       "before": "Antes",
       "after": "Después",
       "changedHint": "Los campos resaltados cambiaron entre las capturas.",
+      "eventJson": "JSON del evento",
       "fields": {
         "occurredAt": "Cuándo",
         "actor": "Rol del actor",
@@ -698,6 +699,8 @@
         "interest": "Intereses",
         "product": "Productos",
         "report": "Reportes",
+        "comment": "Comentarios",
+        "role": "Roles",
         "admin": "Admins",
         "system": "Sistema"
       },

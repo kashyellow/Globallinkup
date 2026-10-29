@@ -130,6 +130,16 @@ function AuditDetail({
         JSON.stringify(beforeSnap?.[key] ?? null) !== JSON.stringify(afterSnap?.[key] ?? null),
     ),
   );
+  const payload = {
+    id: event.id,
+    occurredAt: event.occurredAt,
+    actorRole: event.actorRole,
+    action: event.action,
+    targetType: event.targetType,
+    targetId: event.targetId,
+    reason: event.reason,
+    metadata: event.metadata,
+  };
 
   return (
     <>
@@ -180,6 +190,15 @@ function AuditDetail({
               {t("changedHint")}
             </p>
           ) : null}
+        </div>
+
+        <div className="mt-space-lg">
+          <p className="font-label-md text-label-md font-semibold text-on-surface">
+            {t("eventJson")}
+          </p>
+          <pre className="mt-2 max-h-72 overflow-auto rounded-xl border border-outline-variant bg-surface-dim p-3 font-mono text-xs leading-relaxed text-on-surface-strong">
+            {JSON.stringify(payload, null, 2)}
+          </pre>
         </div>
       </div>
 

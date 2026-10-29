@@ -17,6 +17,8 @@ const ACTIONS = [
   "interest",
   "product",
   "report",
+  "comment",
+  "role",
   "admin",
   "system",
 ] as const;

@@ -36,14 +36,17 @@ describe("AuditList", () => {
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(screen.getByText("before")).toBeInTheDocument();
     expect(screen.getByText("after")).toBeInTheDocument();
-    expect(screen.getByText(/"state": "visible"/)).toBeInTheDocument();
-    expect(screen.getByText(/"state": "removed"/)).toBeInTheDocument();
-    expect(screen.getAllByText(/"review": "manual"/)).toHaveLength(2);
-    // Changed lines get the admin highlight; unchanged ones stay plain.
-    expect(screen.getByText(/"state": "removed"/)).toHaveClass("bg-admin-surface");
-    for (const line of screen.getAllByText(/"review": "manual"/)) {
-      expect(line).not.toHaveClass("bg-admin-surface");
-    }
+    expect(screen.getByText("eventJson")).toBeInTheDocument();
+    expect(screen.getByText(/"action": "post\.removed"/)).toBeInTheDocument();
+
+    const jsonLines = Array.from(document.querySelectorAll("pre span"));
+    const changedLine = jsonLines.find((line) => line.textContent?.includes('"state": "removed"'));
+    expect(changedLine).toHaveClass("bg-admin-surface");
+    const unchangedLine = jsonLines.find((line) =>
+      line.textContent?.includes('"review": "manual"'),
+    );
+    expect(unchangedLine).toBeDefined();
+    expect(unchangedLine).not.toHaveClass("bg-admin-surface");
   });
 
   it("closes the dialog again", async () => {
