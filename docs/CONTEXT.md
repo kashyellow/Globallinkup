@@ -123,7 +123,9 @@ These are confirmed and supersede the PRD where it disagrees:
   makes the account (Supabase Auth user + minimal `profiles` row) without the
   persona funnel. RLS keeps admin profiles out of Discover, dossiers,
   `profiles_public`, and the connection graph; admin posts stay on the feed
-  (announcements) with the author masked behind the platform label.
+  (announcements) with the author masked behind the platform label. Admins
+  cannot connect, like, report, or edit a persona; they may comment. Support
+  can still read and remove member connections with `members.review`.
 - **Header controls are single cycling buttons**: theme (system → light → dark)
   and language (EN ⇄ ES). Both stay visible at every breakpoint; the burger menu
   does not duplicate them.
