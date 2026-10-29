@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { PostsView } from "@/features/posts/components/posts-view";
 import { POSTS_PAGE_SIZE } from "@/features/posts/data";
 import { getFeedPage } from "@/features/posts/queries";
+import { getAdminCapabilities } from "@/lib/admin";
 import { getServerClient, requireApprovedUser } from "@/lib/auth";
 import { createSignedImageUrl } from "@/lib/storage";
 
@@ -18,6 +19,7 @@ export async function generateMetadata({
 
 export default async function PostsPage() {
   const { user, profile } = await requireApprovedUser();
+  const capabilities = await getAdminCapabilities();
   const supabase = await getServerClient();
   const avatarPath = profile.avatar_url;
 
@@ -43,7 +45,10 @@ export default async function PostsPage() {
         id: user.id,
         name: profile.display_name,
         avatar,
-        isAdmin: profile.role === "admin",
+        isAdmin: capabilities.includes("posts.moderate"),
+        canModerateComments: capabilities.includes("comments.moderate"),
+        canConnect: profile.role === "user",
+        canLike: profile.role === "user",
       }}
     />
   );

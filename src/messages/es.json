@@ -46,7 +46,8 @@
     "label": "Tema",
     "light": "Claro",
     "dark": "Oscuro",
-    "system": "Sistema (sigue el dispositivo)"
+    "system": "Sistema (sigue el dispositivo)",
+    "switchTo": "Cambiar tema a {mode}"
   },
   "Common": {
     "connect": "Conectar",
@@ -138,7 +139,7 @@
       "badge": "Protocolo de Privacidad",
       "title": "El Intercambio Respetuoso en 4 Pasos",
       "body": "Cero spam no solicitado ni mensajes intrusivos. Los perfiles personales de WhatsApp e Instagram permanecen cifrados hasta que ambas personas confirman deliberadamente su interés.",
-      "step1Title": "Revisar Persona",
+      "step1Title": "Revisar perfil",
       "step1Body": "Explora biografías auténticas y diarios visuales publicados.",
       "step2Title": "Enviar Solicitud",
       "step2Body": "Transmite una única consulta cortés con contexto.",
@@ -193,7 +194,7 @@
       "activeDossier": "Expediente Activo",
       "meta": "27 · Nacida y radicada en Barcelona, España",
       "photoCount": "1 / 4 Fotos",
-      "personaNote": "Nota de la Persona",
+      "personaNote": "Nota del perfil",
       "bio": "“Fotógrafa e investigadora de arquitectura radicada en Barcelona. Fluida en español y aprendiendo inglés conversacional. Busca conectar con creativos de todo el mundo para intercambios culturales y paseos locales.”",
       "contactLayer": "Capa de Seguridad de Contacto Social",
       "lockedTitle": "Contactos Privados Protegidos",
@@ -210,14 +211,14 @@
       "sendRequest": "Enviar Solicitud de Conexión"
     },
     "trustSeal": "Sello de Verificación Humana de GlobalLinkup",
-    "searchEmpty": "Ninguna persona coincide con estos filtros.",
+    "searchEmpty": "Ningún perfil coincide con estos filtros.",
     "sendError": "No se pudo enviar la solicitud. Inténtalo de nuevo.",
     "detail": {
       "back": "Volver",
-      "about": "Sobre la persona",
+      "about": "Sobre el perfil",
       "contactNote": "Los datos de contacto siguen ocultos hasta que la conexión sea mutua.",
-      "report": "Reportar persona",
-      "metaTitle": "Persona",
+      "report": "Reportar perfil",
+      "metaTitle": "Perfil",
       "editProfile": "Editar perfil"
     },
     "regionsButton": "Regiones",
@@ -225,8 +226,8 @@
     "regionSearchPlaceholder": "Buscar regiones…",
     "noRegionResults": "Ninguna región coincide con esa búsqueda.",
     "searching": "Buscando…",
-    "loadError": "No pudimos cargar las personas. Inténtalo de nuevo.",
-    "loadMore": "Cargar más personas",
+    "loadError": "No pudimos cargar los perfiles. Inténtalo de nuevo.",
+    "loadMore": "Cargar más perfiles",
     "loadingMore": "Cargando más…",
     "allCaughtUp": "Has visto a todas las personas que coinciden con estos filtros."
   },
@@ -362,10 +363,9 @@
     "controls": {
       "searchPlaceholder": "Busca productos, artesanías, guías de idiomas...",
       "sortBy": "Ordenar por:",
-      "sortFeatured": "Curadurías Destacadas",
       "sortPriceLow": "Precio: Menor a Mayor",
       "sortPriceHigh": "Precio: Mayor a Menor",
-      "sortNewest": "Novedades",
+      "sortNewest": "Más recientes",
       "loadError": "No pudimos cargar el catálogo. Inténtalo de nuevo.",
       "loading": "Cargando catálogo…",
       "showing": "Mostrando {shown} de {total}",
@@ -398,19 +398,18 @@
       "howToOrderTitle": "Cómo Pedir / Consultas Directas",
       "howToOrderBody": "GlobalLinkup gestiona los pedidos personalmente con nuestros makers regionales. Como las cantidades son limitadas y se producen en lotes pequeños, los pedidos se confirman directamente a través de nuestro conserje multilingüe. Sin pago mediante carrito ni reventa entre usuarios.",
       "contactCta": "Contactar al Conserje / Consultar Compra",
-      "whatsappMessage": "Hola Conserje de GlobalLinkup, quisiera consultar sobre pedir el {product}.",
       "trust": {
         "fairCompensation": "Compensación Justa",
         "customsInsured": "Aduana Asegurada",
         "directMaker": "Trazabilidad Directa"
       },
-      "sellerPhone": "Contacto del vendedor",
       "openImage": "Abrir imagen del producto",
       "previousImage": "Imagen anterior del producto",
       "nextImage": "Imagen siguiente del producto",
       "imageOf": "Imagen {number} de {total} del producto",
       "imageLightbox": "Vista previa de la imagen",
-      "closeImage": "Cerrar la vista previa"
+      "closeImage": "Cerrar la vista previa",
+      "emailSubject": "Consulta sobre {product}"
     },
     "inquiry": {
       "eyebrow": "MESA DE CONCIERGE",
@@ -435,12 +434,14 @@
     "eyebrow": "Mesa Administrativa · Monitoreo y Verificación",
     "title": "Gobernanza y Control de Contenido",
     "tabs": {
-      "users": "Usuarios y Personas",
+      "users": "Usuarios y perfiles",
       "marketplace": "Catálogo del Mercado",
       "moderation": "Reportes y Moderación",
       "interests": "Catálogo de Afinidades",
       "label": "Secciones de administración",
-      "dashboard": "Panel"
+      "dashboard": "Panel",
+      "team": "Equipo",
+      "audit": "Auditoría"
     },
     "users": {
       "searchLabel": "Buscar miembros",
@@ -454,7 +455,6 @@
       "filterPhoto": "Requiere Inspección de Foto (3)",
       "filterVerifiedToday": "Verificados Hoy (8)",
       "registeredAgo": "Registrado hace {time}",
-      "phoneVerified": "Teléfono Verificado:",
       "yes": "Sí",
       "photoIntegrity": "Puntaje de Integridad de Foto:",
       "photoIntegrityHigh": "98% Alto",
@@ -479,8 +479,8 @@
       "statusSuspended": "Suspendido",
       "suspend": "Suspender",
       "emptyTitle": "Aún no hay perfiles",
-      "eyebrow": "Mesa de personas",
-      "title": "Usuarios y Personas",
+      "eyebrow": "Mesa de perfiles",
+      "title": "Usuarios y perfiles",
       "body": "Revisa identidades, inspecciona el dossier bilingüe completo y registra un motivo cuando rechaces o suspendas una cuenta.",
       "bioEn": "Bio en inglés",
       "bioEs": "Bio en español",
@@ -488,7 +488,7 @@
       "noChannels": "No se enviaron canales de contacto.",
       "moderationHistory": "Historial de moderación",
       "noHistory": "Todavía no hay decisiones de moderación.",
-      "dossierEyebrow": "Dossier de la persona",
+      "dossierEyebrow": "Dossier del perfil",
       "reasonBody": "Da a {name} una explicación clara. Se guarda con esta decisión y aparece en su pantalla de revisión.",
       "reasonLabel": "Motivo",
       "reasonPlaceholder": "Explica qué debe cambiar o por qué se restringe la cuenta…",
@@ -523,8 +523,6 @@
         "instantRelease": "Publicación inmediata del catálogo al confirmar",
         "saveDraft": "Guardar como Borrador",
         "publish": "Publicar Producto en el Mercado",
-        "phone": "Teléfono (Contacto del Vendedor)",
-        "phonePlaceholder": "+52 55 1234 5678",
         "images": "Imágenes del producto",
         "imageCount": "{count} / {max} imágenes",
         "removeImage": "Quitar la imagen {number}",
@@ -558,7 +556,6 @@
         "price": "Precio",
         "origin": "Origen",
         "description": "Descripción",
-        "phone": "Teléfono del vendedor",
         "created": "Creado",
         "published": "Publicado",
         "previousImage": "Imagen anterior",
@@ -602,7 +599,21 @@
       "targetAll": "Todos los objetivos",
       "targetUser": "Miembros",
       "targetPost": "Publicaciones",
-      "searchPlaceholder": "Buscar motivo o detalles del reporte…"
+      "searchPlaceholder": "Buscar motivo o detalles del reporte…",
+      "restorePost": "Restaurar publicación",
+      "removeReasonTitle": "¿Retirar esta publicación?",
+      "removeReasonBody": "La publicación se oculta de inmediato y se elimina definitivamente a los 14 días. El autor verá tu motivo y podrá apelar una vez.",
+      "removeReasonLabel": "Motivo",
+      "removeReasonPlaceholder": "Explica qué infringe las normas (10–500 caracteres).",
+      "removeReasonHint": "Se comparte con el autor.",
+      "removeReasonConfirm": "Retirar publicación",
+      "appealsTitle": "Apelaciones ({count})",
+      "appealsEmpty": "No hay apelaciones pendientes de decisión.",
+      "appealsBody": "Una apelación por retirada. Aceptar restaura la publicación; rechazar envía tu nota al autor.",
+      "appealsUntitled": "Publicación sin título",
+      "appealNotePlaceholder": "Nota para el autor (opcional al aceptar)",
+      "appealAccept": "Aceptar y restaurar",
+      "appealDecline": "Rechazar"
     },
     "interests": {
       "title": "Revisión de Afinidades Culturales",
@@ -638,7 +649,7 @@
       "body": "Revisa las colas que necesitan una decisión humana y entra directamente en la mesa correspondiente.",
       "cards": {
         "pendingProfiles": {
-          "title": "Personas pendientes",
+          "title": "Perfiles pendientes",
           "body": "Perfiles esperando revisión de identidad y retrato."
         },
         "openReports": {
@@ -660,7 +671,112 @@
         "suspendedProfiles": "Miembros suspendidos",
         "reportedPosts": "Publicaciones reportadas"
       }
-    }
+    },
+    "audit": {
+      "title": "Registro de auditoría",
+      "body": "Registro inmutable de acciones de administración: ids, acciones y motivos. No guarda contenido de miembros.",
+      "forbidden": "Tu rol no puede leer el registro de auditoría.",
+      "empty": "Todavía no hay eventos.",
+      "searchPlaceholder": "Buscar acción, rol o id de destino",
+      "allActions": "Todas las acciones",
+      "viewDetails": "Ver detalles",
+      "detailTitle": "Evento de auditoría",
+      "before": "Antes",
+      "after": "Después",
+      "changedHint": "Los campos resaltados cambiaron entre las capturas.",
+      "eventJson": "JSON del evento",
+      "fields": {
+        "occurredAt": "Cuándo",
+        "actor": "Rol del actor",
+        "targetType": "Tipo de objetivo",
+        "targetId": "ID del objetivo",
+        "reason": "Motivo"
+      },
+      "actions": {
+        "member": "Miembros",
+        "post": "Publicaciones",
+        "appeal": "Apelaciones",
+        "interest": "Intereses",
+        "product": "Productos",
+        "report": "Reportes",
+        "comment": "Comentarios",
+        "role": "Roles",
+        "admin": "Admins",
+        "system": "Sistema"
+      },
+      "results": "{count, plural, =0 {Sin eventos} =1 {# evento} other {# eventos}}",
+      "searchAction": "Buscar"
+    },
+    "team": {
+      "title": "Equipo y roles",
+      "body": "Crea cuentas de administración con un enlace de invitación de un solo uso y decide a qué puede acceder cada rol.",
+      "forbidden": "Tu rol no puede gestionar el equipo.",
+      "inviteTitle": "Invitar a un administrador",
+      "inviteBody": "Generamos un enlace que compartes tú: no se envía correo y nunca ves su contraseña.",
+      "emailPlaceholder": "persona@ejemplo.com",
+      "generateLink": "Generar enlace",
+      "working": "Procesando…",
+      "linkOnce": "Copia este enlace ahora — se muestra una sola vez.",
+      "copy": "Copiar",
+      "copied": "Copiado",
+      "adminsTitle": "Administradores",
+      "rolesTitle": "Roles",
+      "invitesTitle": "Invitaciones pendientes",
+      "noInvites": "No hay invitaciones pendientes.",
+      "systemRole": "Rol del sistema",
+      "save": "Guardar",
+      "createRole": "Crear rol",
+      "newRoleTitle": "Nuevo rol",
+      "roleNamePlaceholder": "Nombre del rol",
+      "saved": "Guardado",
+      "saveError": "No se pudo guardar.",
+      "roleExists": "Ya existe un rol con ese nombre.",
+      "lastOwnerHint": "El último propietario no puede ser degradado.",
+      "errors": {
+        "forbidden": "No puedes gestionar el equipo.",
+        "invalid": "Revisa el correo y el rol.",
+        "exists": "Esa cuenta ya existe.",
+        "unknown": "Algo salió mal.",
+        "link": "Ese enlace ya no es válido.",
+        "weak": "Elige una contraseña más fuerte."
+      },
+      "assignLater": "Asignar después —",
+      "noRole": "—",
+      "revoke": "Revocar",
+      "newLink": "Nuevo enlace",
+      "linkFailed": "No se pudo generar el enlace."
+    },
+    "capabilities": {
+      "members": {
+        "review": "Revisar miembros"
+      },
+      "posts": {
+        "moderate": "Moderar publicaciones"
+      },
+      "comments": {
+        "moderate": "Moderar comentarios"
+      },
+      "interests": {
+        "review": "Revisar intereses"
+      },
+      "reports": {
+        "manage": "Gestionar reportes"
+      },
+      "marketplace": {
+        "manage": "Gestionar marketplace"
+      },
+      "admins": {
+        "manage": "Gestionar admins"
+      },
+      "settings": {
+        "manage": "Editar ajustes"
+      },
+      "audit": {
+        "read": "Leer auditoría"
+      }
+    },
+    "pendingRoleTitle": "Tu acceso está pendiente",
+    "pendingRoleBody": "Un propietario todavía debe asignarte un rol. Podrás entrar cuando lo haga."
   },
   "Connections": {
     "header": {
@@ -740,7 +856,7 @@
       "yourNote": "Tu nota",
       "sentOn": "Enviada {date}",
       "readNote": "Leer nota completa",
-      "viewPersona": "Ver persona",
+      "viewPersona": "Ver perfil",
       "closeNote": "Cerrar nota"
     },
     "tags": {
@@ -840,7 +956,7 @@
       "subtitle": "Ingresa tu correo y contraseña para acceder a tu cuenta de GlobalLinkup.",
       "signedInTitle": "Ya has iniciado sesión",
       "signedInBodyPending": "Has iniciado sesión como {email}. Tu cuenta espera la aprobación del administrador, así que la app sigue bloqueada por ahora.",
-      "signedInBodyRejected": "Has iniciado sesión como {email}. Tu persona necesita cambios antes de poder ser aprobada.",
+      "signedInBodyRejected": "Has iniciado sesión como {email}. Tu perfil personal necesita cambios antes de poder ser aprobado.",
       "signedInBodySuspended": "Has iniciado sesión como {email}. Tu cuenta está suspendida actualmente.",
       "signedInReview": "Ver estado de la revisión",
       "signedInSignOut": "Cerrar sesión",
@@ -864,7 +980,7 @@
     "register": {
       "stepperLabel": "Paso Inicial / Onboarding",
       "step1": "01 Cuenta",
-      "step2": "02 Persona",
+      "step2": "02 Perfil",
       "step3": "03 Verificación",
       "photoAlt": "Miembros de la comunidad global conectando en un cálido patio exterior.",
       "photoBadge": "Comunidad Global Verificada",
@@ -898,7 +1014,7 @@
       "toggleConfirm": "Mostrar u ocultar confirmación de contraseña",
       "confirmError": "Las contraseñas deben ser exactamente idénticas.",
       "terms": "Acepto los <terms>Términos del Servicio</terms> y la <privacy>Política de Privacidad</privacy> de GlobalLinkup. Entiendo que la verificación de identidad se completará tras la revisión de mi perfil.",
-      "submit": "Continuar a la Persona",
+      "submit": "Continuar al perfil",
       "haveAccount": "¿Ya tienes una cuenta registrada?",
       "logIn": "Inicia sesión",
       "submitting": "Creando cuenta…",
@@ -906,7 +1022,7 @@
       "errorWeakPassword": "Elige una contraseña más fuerte: 8+ caracteres con mayúscula, minúscula y número.",
       "errorRateLimited": "Demasiados intentos. Espera un momento e inténtalo de nuevo.",
       "errorGeneric": "No pudimos crear tu cuenta. Inténtalo de nuevo.",
-      "errorConfirmEmail": "Revisa tu correo para confirmar la cuenta y luego inicia sesión para terminar tu persona."
+      "errorConfirmEmail": "Revisa tu correo para confirmar la cuenta y luego inicia sesión para terminar tu perfil personal."
     },
     "verify": {
       "progressLabel": "Progreso de Incorporación",
@@ -931,7 +1047,7 @@
       "timeline": "Tiempo de espera estimado:",
       "timelineStrong": "Normalmente verificado en 4–12 horas",
       "timelineHint": "(Hora de respuesta habitual)",
-      "reassurePrimary": "Gracias por crear tu Persona de GlobalLinkup. Para proteger a nuestra comunidad del spam, los bots y el scraping automatizado, cada dossier nuevo lo revisa personalmente nuestro equipo antes de que puedas empezar a conectar.",
+      "reassurePrimary": "Gracias por crear tu perfil personal de GlobalLinkup. Para proteger a nuestra comunidad del spam, los bots y el scraping automatizado, cada dossier nuevo lo revisa personalmente nuestro equipo antes de que puedas empezar a conectar.",
       "reassureSecondary": "Apreciamos tu paciencia. Cada solicitud se revisa manualmente para garantizar una comunidad cálida, segura y 100% auténtica.",
       "dossierTitle": "Vista Previa del Dossier Enviado",
       "dossierBadge": "Cápsula Cifrada",
@@ -950,7 +1066,7 @@
       "next3Body": "El acceso completo sin máscaras a salones bilingües, envíos de viaje curados y solicitudes de conexión privadas se desbloquea al instante.",
       "next3Footer": "Listo al aprobar",
       "exploreStories": "Explorar Historias Públicas",
-      "editPersona": "Editar Persona Enviada",
+      "editPersona": "Editar perfil enviado",
       "suspendedTitle": "Cuenta Suspendida",
       "suspendedBadge": "Acceso en pausa",
       "suspendedBody": "Tu cuenta ha sido suspendida. Si crees que es un error, contacta a la mesa de revisión.",
@@ -1017,14 +1133,14 @@
   "PersonaForm": {
     "eyebrow": "Fase de Registro • Paso 02",
     "eyebrowMeta": "Curaduría Editorial Bilingüe",
-    "title": "Crea tu Persona",
+    "title": "Crea tu perfil personal",
     "editEyebrow": "Perfil",
-    "editTitle": "Edita tu Persona",
+    "editTitle": "Edita tu perfil personal",
     "editBack": "Volver al perfil",
     "editSubmit": "Guardar Cambios",
     "editSubmitting": "Guardando…",
     "pipeStep1": "01 Cuenta",
-    "pipeStep2": "02 Persona",
+    "pipeStep2": "02 Perfil",
     "pipeStep3": "03 Revisión",
     "photoLabel": "Retrato de Perfil",
     "photoHint": "Una foto tuya cándida y auténtica con luz natural.",
@@ -1084,14 +1200,14 @@
     "instagramPlaceholder": "sofia.arquitectura",
     "vaultNote": "Guardado con cifrado de clave soberana. Conservas la capacidad de revocar el acceso en cualquier momento.",
     "back": "Volver al Paso 1",
-    "submit": "Enviar a Revisión",
+    "submit": "Enviar perfil personal a revisión",
     "optional": "Opcional",
     "dobLabel": "Fecha de nacimiento",
     "dobMeta": "Opcional",
     "submitting": "Enviando…",
     "errorInvalid": "Revisa los campos marcados e inténtalo de nuevo.",
     "errorUpload": "No pudimos subir esa foto. Prueba con un JPG, PNG o WEBP de menos de 5 MB.",
-    "errorUnknown": "No pudimos guardar tu perfil. Inténtalo de nuevo.",
+    "errorUnknown": "No pudimos guardar tu perfil personal. Inténtalo de nuevo.",
     "whatsapp": "WhatsApp",
     "whatsappPlaceholder": "Código de país + número",
     "telegram": "Telegram",
@@ -1164,7 +1280,7 @@
       "trust3": "Canales con consentimiento mutuo",
       "cardAlt": "Sofia Martínez, retratada en una calle soleada de Barcelona.",
       "city": "Barcelona, España",
-      "verified": "Persona verificada",
+      "verified": "Perfil verificado",
       "name": "Sofia Martínez, 27",
       "role": "Arquitecta y documentalista cultural",
       "bio": "Curiosa por la restauración brutalista, las terrazas soleadas y los paseos en película analógica por el Barrio Gótico. Busca intercambio genuino entre perspectivas hispanas y anglosajonas.",
@@ -1386,13 +1502,36 @@
       "title": "Tus Crónicas",
       "body": "Fotos y notas que has compartido con la comunidad, de la más reciente a la más antigua.",
       "appreciations": "{count, plural, =1 {# Apreciación} other {# Apreciaciones}}",
-      "empty": "Todavía no has compartido ninguna crónica.",
+      "empty": {
+        "active": "Todavía no hay publicaciones activas.",
+        "archived": "Nada archivado.",
+        "removed": "Nada retirado."
+      },
       "textOnly": "Publicación de texto",
       "openPost": "Abrir publicación",
       "delete": "Eliminar publicación",
       "loadMore": "Mostrar {count} publicaciones más",
       "deleteTitle": "¿Eliminar esta publicación?",
-      "deleteBody": "La publicación desaparecerá del feed y de tu archivo. No se puede deshacer."
+      "deleteBody": "La publicación desaparecerá del feed y de tu archivo. No se puede deshacer.",
+      "filtersLabel": "Filtrar publicaciones por estado",
+      "filters": {
+        "active": "Activas",
+        "archived": "Archivadas",
+        "removed": "Retiradas"
+      },
+      "badgeArchived": "Archivada",
+      "badgeRemoved": "Retirada",
+      "archive": "Archivar",
+      "unarchive": "Devolver al feed",
+      "removedReason": "Retirada por moderación: {reason}",
+      "purgeCountdown": "Se eliminará definitivamente en {count} días",
+      "locked": "En revisión",
+      "appeal": "Apelar esta retirada",
+      "appealPlaceholder": "Explica por qué debería restaurarse (10–500 caracteres).",
+      "appealSubmit": "Enviar apelación",
+      "appealSent": "Apelación enviada — en revisión.",
+      "appealDeclined": "Apelación rechazada.",
+      "appealAccepted": "Apelación aceptada — la publicación volvió."
     },
     "circles": {
       "title": "Círculos Mutuos",
@@ -1424,6 +1563,49 @@
       "noticeTitle": "Los estándares de la comunidad están en preparación",
       "noticeBody": "Los estándares de la comunidad se publicarán aquí. Mientras tanto, siguen vigentes los Términos del Servicio y la Política de Privacidad.",
       "backHome": "Volver al inicio"
+    }
+  },
+  "Notifications": {
+    "title": "Notificaciones",
+    "intro": "Decisiones de moderación y resultados de revisión que te afectan.",
+    "bell": "Notificaciones",
+    "bellWithCount": "Notificaciones ({count} sin leer)",
+    "emptyTitle": "Nada todavía",
+    "emptyBody": "Aquí aparecen las decisiones sobre tus publicaciones, perfil e intereses.",
+    "types": {
+      "post": {
+        "removed": "Publicación retirada",
+        "restored": "Publicación restaurada"
+      },
+      "appeal": {
+        "declined": "Apelación rechazada"
+      },
+      "persona": {
+        "approved": "Perfil aprobado",
+        "rejected": "Perfil rechazado",
+        "suspended": "Cuenta suspendida"
+      },
+      "interest": {
+        "approved": "Interés aprobado",
+        "rejected": "Interés rechazado"
+      }
+    }
+  },
+  "AcceptInvite": {
+    "title": "Elige tu contraseña",
+    "body": "Te invitaron al equipo de GlobalLinkup. Elige una contraseña para terminar de configurar tu cuenta.",
+    "password": "Contraseña",
+    "confirm": "Confirmar contraseña",
+    "submit": "Activar cuenta",
+    "working": "Activando…",
+    "expired": "A este enlace le falta el token. Pide uno nuevo a quien te invitó.",
+    "errors": {
+      "invalid": "A este enlace le falta el token.",
+      "link": "El enlace no es válido o ya se usó. Pide uno nuevo.",
+      "weak": "Elige una contraseña más fuerte.",
+      "unknown": "Algo salió mal.",
+      "password": "Usa 8+ caracteres con mayúsculas, minúsculas y un número.",
+      "mismatch": "Las contraseñas no coinciden."
     }
   }
 }

@@ -1,6 +1,6 @@
 # ADR 0004 — In-app notifications
 
-- **Status:** proposed
+- **Status:** accepted (implemented 2026-10-28)
 - **Date:** 2026-10-27
 - **Related:** [round 1, item 4](../feedback/2026-10-27-client-review.md),
   [ADR 0001 (lifecycle)](./0001-content-lifecycle.md)

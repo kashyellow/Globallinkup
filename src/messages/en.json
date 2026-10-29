@@ -1,7 +1,7 @@
 {
   "Metadata": {
     "title": "GlobalLinkup — Bilingual Discovery",
-    "description": "Discover verified personas across the globe, share posts, connect mutually, and browse the curated marketplace. Bilingual EN/ES."
+    "description": "Discover verified people across the globe, share posts, connect mutually, and browse the curated marketplace. Bilingual EN/ES."
   },
   "Legal": {
     "eyebrow": "Legal",
@@ -46,7 +46,8 @@
     "label": "Theme",
     "light": "Light",
     "dark": "Dark",
-    "system": "System (follows device)"
+    "system": "System (follows device)",
+    "switchTo": "Switch theme to {mode}"
   },
   "Common": {
     "connect": "Connect",
@@ -122,8 +123,8 @@
   "Discover": {
     "eyebrow": "Cross-Cultural Curation",
     "title": "Discover People",
-    "intro": "Explore verified personas across the globe and exchange cross-cultural perspectives. Connect mutually to unveil direct social contacts.",
-    "activePersonas": "{count, plural, =0 {No active personas abroad} =1 {# Active Persona Abroad} other {# Active Personas Abroad}}",
+    "intro": "Explore verified people across the globe and exchange cross-cultural perspectives. Connect mutually to unveil direct social contacts.",
+    "activePersonas": "{count, plural, =0 {No active profiles abroad} =1 {# Active profile abroad} other {# Active profiles abroad}}",
     "searchPlaceholder": "Search by name, city, language, or interest (e.g. Barcelona, Architecture, Spanish)...",
     "refineCriteria": "Refine Criteria",
     "clearFilters": "Clear Filters",
@@ -138,7 +139,7 @@
       "badge": "Privacy Guard Protocol",
       "title": "The 4-Step Respectful Exchange",
       "body": "Zero unsolicited spam or intrusive messages. Personal WhatsApp and Instagram profiles stay encrypted until both individuals deliberately confirm interest.",
-      "step1Title": "Review Persona",
+      "step1Title": "Review profile",
       "step1Body": "Browse genuine biographies and published visual journals.",
       "step2Title": "Send Request",
       "step2Body": "Transmit a single polite inquiry with context.",
@@ -193,7 +194,7 @@
       "activeDossier": "Active Dossier",
       "meta": "27 · Born & based in Barcelona, Spain",
       "photoCount": "1 / 4 Photos",
-      "personaNote": "Persona Note",
+      "personaNote": "Profile note",
       "bio": "“Photographer & architectural researcher based in Barcelona. Fluent in Spanish & learning conversational English. Looking to connect with creatives worldwide for cultural trades and local walks.”",
       "contactLayer": "Social Contact Security Layer",
       "lockedTitle": "Private Handles Protected",
@@ -210,14 +211,14 @@
       "sendRequest": "Send Connection Request"
     },
     "trustSeal": "GlobalLinkup Human Verification Seal",
-    "searchEmpty": "No personas match these filters.",
+    "searchEmpty": "No profiles match these filters.",
     "sendError": "That request could not be sent. Please try again.",
     "detail": {
       "back": "Back",
       "about": "About",
       "contactNote": "Contact details stay hidden until you are mutually connected.",
-      "report": "Report persona",
-      "metaTitle": "Persona",
+      "report": "Report profile",
+      "metaTitle": "Profile",
       "editProfile": "Edit profile"
     },
     "regionsButton": "Regions",
@@ -225,8 +226,8 @@
     "regionSearchPlaceholder": "Search regions…",
     "noRegionResults": "No regions match that search.",
     "searching": "Searching…",
-    "loadError": "We could not load personas. Please try again.",
-    "loadMore": "Load more personas",
+    "loadError": "We could not load profiles. Please try again.",
+    "loadMore": "Load more profiles",
     "loadingMore": "Loading more…",
     "allCaughtUp": "You have seen everyone matching these filters."
   },
@@ -362,10 +363,9 @@
     "controls": {
       "searchPlaceholder": "Search products, artisan goods, language guides...",
       "sortBy": "Sort by:",
-      "sortFeatured": "Featured Curations",
       "sortPriceLow": "Price: Low to High",
       "sortPriceHigh": "Price: High to Low",
-      "sortNewest": "Newest Arrivals",
+      "sortNewest": "Newest first",
       "loadError": "We could not load the catalog. Please try again.",
       "loading": "Loading catalog…",
       "showing": "Showing {shown} of {total}",
@@ -398,19 +398,18 @@
       "howToOrderTitle": "How to Order / Direct Inquiries",
       "howToOrderBody": "GlobalLinkup facilitates orders personally with our regional makers. Because quantities are limited and made in small batches, orders are confirmed directly via our multilingual concierge. No shopping cart checkout or user reselling.",
       "contactCta": "Contact Concierge / Inquire to Buy",
-      "whatsappMessage": "Hello GlobalLinkup Concierge, I would like to inquire about ordering the {product}.",
       "trust": {
         "fairCompensation": "Fair Compensation",
         "customsInsured": "Customs Insured",
         "directMaker": "Direct Maker Trace"
       },
-      "sellerPhone": "Seller contact",
       "openImage": "Open product image",
       "previousImage": "Previous product image",
       "nextImage": "Next product image",
       "imageOf": "Product image {number} of {total}",
       "imageLightbox": "Product image preview",
-      "closeImage": "Close image preview"
+      "closeImage": "Close image preview",
+      "emailSubject": "Inquiry about {product}"
     },
     "inquiry": {
       "eyebrow": "CONCIERGE DESK",
@@ -435,12 +434,14 @@
     "eyebrow": "Administrative Desk · Monitoring & Verification",
     "title": "Governance & Content Control",
     "tabs": {
-      "users": "Users & Personas",
+      "users": "Users & Profiles",
       "marketplace": "Marketplace Catalog",
       "moderation": "Reports & Moderation",
       "interests": "Interest Catalog",
       "label": "Admin sections",
-      "dashboard": "Dashboard"
+      "dashboard": "Dashboard",
+      "team": "Team",
+      "audit": "Audit"
     },
     "users": {
       "searchLabel": "Search members",
@@ -454,7 +455,6 @@
       "filterPhoto": "Requires Photo Inspection (3)",
       "filterVerifiedToday": "Verified Today (8)",
       "registeredAgo": "Registered {time} ago",
-      "phoneVerified": "Phone Verified:",
       "yes": "Yes",
       "photoIntegrity": "Photo Integrity Score:",
       "photoIntegrityHigh": "98% High",
@@ -480,7 +480,7 @@
       "suspend": "Suspend",
       "emptyTitle": "No member profiles yet",
       "eyebrow": "People desk",
-      "title": "Users & Personas",
+      "title": "Users & Profiles",
       "body": "Review identities, inspect the full bilingual dossier, and record a reason when an account is rejected or suspended.",
       "bioEn": "English bio",
       "bioEs": "Spanish bio",
@@ -488,7 +488,7 @@
       "noChannels": "No contact channels submitted.",
       "moderationHistory": "Moderation history",
       "noHistory": "No moderation decisions yet.",
-      "dossierEyebrow": "Persona dossier",
+      "dossierEyebrow": "Personal profile dossier",
       "reasonBody": "Give {name} a clear explanation. It is stored with this decision and shown on their review screen.",
       "reasonLabel": "Reason",
       "reasonPlaceholder": "Explain what needs to change or why the account is being restricted…",
@@ -523,8 +523,6 @@
         "instantRelease": "Instant catalog release on confirm",
         "saveDraft": "Save as Draft",
         "publish": "Publish Product to Marketplace",
-        "phone": "Phone Number (Seller Contact)",
-        "phonePlaceholder": "+52 55 1234 5678",
         "images": "Product images",
         "imageCount": "{count} / {max} images",
         "removeImage": "Remove image {number}",
@@ -558,7 +556,6 @@
         "price": "Price",
         "origin": "Origin",
         "description": "Description",
-        "phone": "Seller phone",
         "created": "Created",
         "published": "Published",
         "previousImage": "Previous image",
@@ -602,7 +599,21 @@
       "targetAll": "All targets",
       "targetUser": "Members",
       "targetPost": "Posts",
-      "searchPlaceholder": "Search report reason or details…"
+      "searchPlaceholder": "Search report reason or details…",
+      "restorePost": "Restore post",
+      "removeReasonTitle": "Remove this post?",
+      "removeReasonBody": "The post is hidden immediately and permanently deleted after 14 days. The author sees your reason and can appeal once.",
+      "removeReasonLabel": "Reason",
+      "removeReasonPlaceholder": "Explain what breaks the guidelines (10–500 characters).",
+      "removeReasonHint": "Shared with the author.",
+      "removeReasonConfirm": "Remove post",
+      "appealsTitle": "Appeals ({count})",
+      "appealsEmpty": "No appeals waiting for a decision.",
+      "appealsBody": "One appeal per removal. Accepting restores the post; declining sends the author your note.",
+      "appealsUntitled": "Untitled post",
+      "appealNotePlaceholder": "Note for the author (optional when accepting)",
+      "appealAccept": "Accept and restore",
+      "appealDecline": "Decline"
     },
     "interests": {
       "title": "Cultural Interest Review",
@@ -638,7 +649,7 @@
       "body": "Review the queues that need a human decision, then jump straight into the relevant desk.",
       "cards": {
         "pendingProfiles": {
-          "title": "Pending personas",
+          "title": "Pending profiles",
           "body": "Profiles waiting for identity and portrait review."
         },
         "openReports": {
@@ -660,7 +671,112 @@
         "suspendedProfiles": "Suspended members",
         "reportedPosts": "Reported posts"
       }
-    }
+    },
+    "audit": {
+      "title": "Audit trail",
+      "body": "Append-only record of admin actions: ids, actions and reasons. No member content is stored here.",
+      "forbidden": "Your role cannot read the audit trail.",
+      "empty": "No audit events yet.",
+      "searchPlaceholder": "Search action, role or target id",
+      "allActions": "All actions",
+      "viewDetails": "View details",
+      "detailTitle": "Audit event",
+      "before": "Before",
+      "after": "After",
+      "changedHint": "Highlighted fields changed between the snapshots.",
+      "eventJson": "Event JSON",
+      "fields": {
+        "occurredAt": "When",
+        "actor": "Actor role",
+        "targetType": "Target type",
+        "targetId": "Target id",
+        "reason": "Reason"
+      },
+      "actions": {
+        "member": "Members",
+        "post": "Posts",
+        "appeal": "Appeals",
+        "interest": "Interests",
+        "product": "Products",
+        "report": "Reports",
+        "comment": "Comments",
+        "role": "Roles",
+        "admin": "Admins",
+        "system": "System"
+      },
+      "results": "{count, plural, =0 {No events} =1 {# event} other {# events}}",
+      "searchAction": "Search"
+    },
+    "team": {
+      "title": "Team & roles",
+      "body": "Create admin accounts with a one-time invite link and decide what each role can reach.",
+      "forbidden": "Your role cannot manage the team.",
+      "inviteTitle": "Invite an admin",
+      "inviteBody": "We generate a link you share yourself: no email is sent, and you never see their password.",
+      "emailPlaceholder": "person@example.com",
+      "generateLink": "Generate invite link",
+      "working": "Working…",
+      "linkOnce": "Copy this link now — it is shown once.",
+      "copy": "Copy",
+      "copied": "Copied",
+      "adminsTitle": "Admins",
+      "rolesTitle": "Roles",
+      "invitesTitle": "Pending invites",
+      "noInvites": "No pending invites.",
+      "systemRole": "System role",
+      "save": "Save",
+      "createRole": "Create role",
+      "newRoleTitle": "New role",
+      "roleNamePlaceholder": "Role name",
+      "saved": "Saved",
+      "saveError": "Could not save.",
+      "roleExists": "A role with that name already exists.",
+      "lastOwnerHint": "The last owner cannot be demoted.",
+      "errors": {
+        "forbidden": "You cannot manage the team.",
+        "invalid": "Check the email and role.",
+        "exists": "That account already exists.",
+        "unknown": "Something went wrong.",
+        "link": "That invite link is not valid anymore.",
+        "weak": "Choose a stronger password."
+      },
+      "assignLater": "Assign later —",
+      "noRole": "—",
+      "revoke": "Revoke",
+      "newLink": "New link",
+      "linkFailed": "Could not generate a link."
+    },
+    "capabilities": {
+      "members": {
+        "review": "Review members"
+      },
+      "posts": {
+        "moderate": "Moderate posts"
+      },
+      "comments": {
+        "moderate": "Moderate comments"
+      },
+      "interests": {
+        "review": "Review interests"
+      },
+      "reports": {
+        "manage": "Handle reports"
+      },
+      "marketplace": {
+        "manage": "Manage marketplace"
+      },
+      "admins": {
+        "manage": "Manage admins"
+      },
+      "settings": {
+        "manage": "Edit settings"
+      },
+      "audit": {
+        "read": "Read audit trail"
+      }
+    },
+    "pendingRoleTitle": "Your access is pending",
+    "pendingRoleBody": "An owner still has to assign your role. You can sign in again once that happens."
   },
   "Connections": {
     "header": {
@@ -740,7 +856,7 @@
       "yourNote": "Your note",
       "sentOn": "Sent {date}",
       "readNote": "Read full note",
-      "viewPersona": "View persona",
+      "viewPersona": "View profile",
       "closeNote": "Close note"
     },
     "tags": {
@@ -840,7 +956,7 @@
       "subtitle": "Enter your email and password to access your GlobalLinkup account.",
       "signedInTitle": "You're already signed in",
       "signedInBodyPending": "Signed in as {email}. Your account is awaiting administrator approval, so the app stays locked for now.",
-      "signedInBodyRejected": "Signed in as {email}. Your persona needs changes before it can be approved.",
+      "signedInBodyRejected": "Signed in as {email}. Your personal profile needs changes before it can be approved.",
       "signedInBodySuspended": "Signed in as {email}. Your account is currently suspended.",
       "signedInReview": "View review status",
       "signedInSignOut": "Sign out",
@@ -864,7 +980,7 @@
     "register": {
       "stepperLabel": "Initial Step / Onboarding",
       "step1": "01 Account",
-      "step2": "02 Persona",
+      "step2": "02 Personal",
       "step3": "03 Verification",
       "photoAlt": "Global community members connecting in a warm outdoor courtyard.",
       "photoBadge": "Verified Global Community",
@@ -898,7 +1014,7 @@
       "toggleConfirm": "Show or hide password confirmation",
       "confirmError": "Passwords must be exactly identical.",
       "terms": "I accept GlobalLinkup's <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>. I understand that identity verification completes after my profile is reviewed.",
-      "submit": "Continue to Persona",
+      "submit": "Continue to Personal",
       "haveAccount": "Already have an account?",
       "logIn": "Log in",
       "submitting": "Creating account…",
@@ -906,7 +1022,7 @@
       "errorWeakPassword": "Choose a stronger password: 8+ characters with upper, lower and a number.",
       "errorRateLimited": "Too many attempts. Please wait a moment and try again.",
       "errorGeneric": "We could not create your account. Please try again.",
-      "errorConfirmEmail": "Check your email to confirm your account, then sign in to finish your persona."
+      "errorConfirmEmail": "Check your email to confirm your account, then sign in to finish your personal profile."
     },
     "verify": {
       "progressLabel": "Onboarding Progress",
@@ -924,14 +1040,14 @@
       "actionBadge": "Action 1 of 1",
       "actionBody": "Our reviewer noticed your portrait image contains heavy artistic blur or sunglasses. To maintain community trust, please provide a natural photo clearly displaying your facial contours.",
       "actionCta": "Update Dossier Portrait",
-      "title": "Your persona has been submitted",
+      "title": "Your personal profile has been submitted",
       "statusPending": "Status: Pending Administrator Review",
       "statusApproved": "Status: Identity Verified & Active",
       "statusAction": "Status: Clarification Required",
       "timeline": "Estimated wait time:",
       "timelineStrong": "Usually verified within 4–12 hours",
       "timelineHint": "(Usual response time)",
-      "reassurePrimary": "Thanks for creating your GlobalLinkup Persona. To protect our community from spam, bots, and automated scraping, every new member dossier is personally reviewed by our team before you can start connecting with people.",
+      "reassurePrimary": "Thanks for creating your GlobalLinkup personal profile. To protect our community from spam, bots, and automated scraping, every new member dossier is personally reviewed by our team before you can start connecting with people.",
       "reassureSecondary": "We appreciate your patience. Every request is reviewed by hand to keep this community warm, safe, and 100% authentic.",
       "dossierTitle": "Submitted Dossier Preview",
       "dossierBadge": "Encrypted Capsule",
@@ -950,7 +1066,7 @@
       "next3Body": "Full unmasked access to bilingual salons, curated travel dispatches, and private connection requests unlocks instantly.",
       "next3Footer": "Ready upon pass",
       "exploreStories": "Explore Public Community Stories",
-      "editPersona": "Edit Submitted Persona",
+      "editPersona": "Edit Submitted Personal Profile",
       "suspendedTitle": "Account Suspended",
       "suspendedBadge": "Access paused",
       "suspendedBody": "Your account has been suspended. If you believe this is a mistake, contact the review desk.",
@@ -1017,14 +1133,14 @@
   "PersonaForm": {
     "eyebrow": "Registration Phase • Step 02",
     "eyebrowMeta": "Bilingual Editorial Curation",
-    "title": "Create Your Persona",
+    "title": "Create Your Personal Profile",
     "editEyebrow": "Profile",
-    "editTitle": "Edit Your Persona",
+    "editTitle": "Edit Your Personal Profile",
     "editBack": "Back to profile",
     "editSubmit": "Save Changes",
     "editSubmitting": "Saving…",
     "pipeStep1": "01 Account",
-    "pipeStep2": "02 Persona",
+    "pipeStep2": "02 Personal",
     "pipeStep3": "03 Review",
     "photoLabel": "Profile Photo",
     "photoHint": "A candid, authentic photo of yourself in natural light.",
@@ -1084,14 +1200,14 @@
     "instagramPlaceholder": "sofia.arquitectura",
     "vaultNote": "Stored with sovereign key encryption. You retain the ability to revoke access at any time.",
     "back": "Back to Step 1",
-    "submit": "Submit Persona for Review",
+    "submit": "Submit Personal Profile for Review",
     "optional": "Optional",
     "dobLabel": "Date of birth",
     "dobMeta": "Optional",
     "submitting": "Submitting…",
     "errorInvalid": "Please check the highlighted fields and try again.",
     "errorUpload": "We could not upload that photo. Try a JPG, PNG or WEBP under 5 MB.",
-    "errorUnknown": "We could not save your persona. Please try again.",
+    "errorUnknown": "We could not save your personal profile. Please try again.",
     "whatsapp": "WhatsApp",
     "whatsappPlaceholder": "Country code + number",
     "telegram": "Telegram",
@@ -1164,7 +1280,7 @@
       "trust3": "Mutual consent channels",
       "cardAlt": "Sofia Martínez, photographed on a sunlit street in Barcelona.",
       "city": "Barcelona, Spain",
-      "verified": "Verified persona",
+      "verified": "Verified profile",
       "name": "Sofia Martínez, 27",
       "role": "Architect and cultural documentary maker",
       "bio": "Curious about brutalist restoration, sunlit terraces, and analog film walks through the Gothic Quarter. Looking for genuine exchange across Spanish and English perspectives.",
@@ -1175,7 +1291,7 @@
       "eyebrow": "Simple & respectful",
       "title": "A natural way to connect",
       "body": "No endless swiping or unsolicited messages. A respectful ritual built around shared interests, native languages, and real conversation.",
-      "step1Title": "Discover verified personas",
+      "step1Title": "Discover verified people",
       "step1Body": "Read real dossiers: languages spoken, places lived, and what people actually spend their time on. Every profile is reviewed by a human before it goes live.",
       "step1Meta": "Identity authenticated",
       "step2Title": "Send one polite request",
@@ -1191,8 +1307,8 @@
     "people": {
       "eyebrow": "Community directory",
       "title": "Find people exploring where you are going",
-      "body": "Verified members and local voices across Latin America, Europe, and beyond. Every persona is reviewed by a human before it goes live.",
-      "exploreAll": "Explore all personas",
+      "body": "Verified members and local voices across Latin America, Europe, and beyond. Every profile is reviewed by a human before it goes live.",
+      "exploreAll": "Explore all profiles",
       "requestConnect": "Request Connect",
       "status": {
         "activeThisWeek": "Active this week",
@@ -1386,13 +1502,36 @@
       "title": "Your Dispatches",
       "body": "Photos and notes you have shared with the community, newest first.",
       "appreciations": "{count, plural, =1 {# Appreciation} other {# Appreciations}}",
-      "empty": "You have not shared a dispatch yet.",
+      "empty": {
+        "active": "No active posts yet.",
+        "archived": "Nothing archived.",
+        "removed": "Nothing removed."
+      },
       "textOnly": "Text dispatch",
       "openPost": "Open post",
       "delete": "Delete post",
       "loadMore": "Show {count} more dispatches",
       "deleteTitle": "Delete this post?",
-      "deleteBody": "The post will disappear from the feed and your archive. This cannot be undone."
+      "deleteBody": "The post will disappear from the feed and your archive. This cannot be undone.",
+      "filtersLabel": "Filter posts by state",
+      "filters": {
+        "active": "Active",
+        "archived": "Archived",
+        "removed": "Removed"
+      },
+      "badgeArchived": "Archived",
+      "badgeRemoved": "Removed",
+      "archive": "Archive",
+      "unarchive": "Restore to feed",
+      "removedReason": "Removed by moderation: {reason}",
+      "purgeCountdown": "Permanently deleted in {count} days",
+      "locked": "Awaiting review",
+      "appeal": "Appeal this removal",
+      "appealPlaceholder": "Explain why this post should be restored (10–500 characters).",
+      "appealSubmit": "Send appeal",
+      "appealSent": "Appeal sent — awaiting review.",
+      "appealDeclined": "Appeal declined.",
+      "appealAccepted": "Appeal accepted — the post is back."
     },
     "circles": {
       "title": "Mutual Circles",
@@ -1424,6 +1563,49 @@
       "noticeTitle": "Community standards are being finalized",
       "noticeBody": "The community standards will be published here. Until then, the Terms of Service and Privacy Policy remain in force.",
       "backHome": "Back to home"
+    }
+  },
+  "Notifications": {
+    "title": "Notifications",
+    "intro": "Moderation decisions and review outcomes that involve you.",
+    "bell": "Notifications",
+    "bellWithCount": "Notifications ({count} unread)",
+    "emptyTitle": "Nothing yet",
+    "emptyBody": "Decisions about your posts, personal profile, and interests land here.",
+    "types": {
+      "post": {
+        "removed": "Post removed",
+        "restored": "Post restored"
+      },
+      "appeal": {
+        "declined": "Appeal declined"
+      },
+      "persona": {
+        "approved": "Personal profile approved",
+        "rejected": "Personal profile rejected",
+        "suspended": "Account suspended"
+      },
+      "interest": {
+        "approved": "Interest approved",
+        "rejected": "Interest rejected"
+      }
+    }
+  },
+  "AcceptInvite": {
+    "title": "Set your password",
+    "body": "You were invited to the GlobalLinkup team. Choose a password to finish setting up your account.",
+    "password": "Password",
+    "confirm": "Confirm password",
+    "submit": "Activate account",
+    "working": "Activating…",
+    "expired": "This link is missing its token. Ask the person who invited you for a fresh link.",
+    "errors": {
+      "invalid": "This invite link is missing its token.",
+      "link": "This invite link is invalid or already used. Ask for a new one.",
+      "weak": "Choose a stronger password.",
+      "unknown": "Something went wrong.",
+      "password": "Use 8+ characters with upper and lower case and a number.",
+      "mismatch": "The passwords do not match."
     }
   }
 }

@@ -37,12 +37,14 @@ export function PersonaFeed({
   hasMore,
   loadingMore,
   onLoadMore,
+  canConnect,
 }: {
   personas: Persona[];
   total: number;
   hasMore: boolean;
   loadingMore: boolean;
   onLoadMore: () => void;
+  canConnect: boolean;
 }) {
   const t = useTranslations("Discover");
   const { refresh } = useRefresh();
@@ -139,6 +141,7 @@ export function PersonaFeed({
             persona={persona}
             state={effectiveState(states[persona.id], persona.state)}
             pending={isPending(`decision:${persona.connectionId ?? persona.id}`)}
+            canConnect={canConnect}
             onConnect={() => setTarget(persona)}
             onAccept={() => void decide(persona.id, persona.connectionId, true)}
             onDecline={() => void decide(persona.id, persona.connectionId, false)}
@@ -171,7 +174,7 @@ export function PersonaFeed({
 
       <ConnectDialog
         target={target}
-        open={target !== null}
+        open={target !== null && canConnect}
         onClose={closeDialog}
         onSend={sendRequest}
       />
@@ -183,6 +186,7 @@ function PersonaCard({
   persona,
   state,
   pending,
+  canConnect,
   onConnect,
   onAccept,
   onDecline,
@@ -190,6 +194,7 @@ function PersonaCard({
   persona: Persona;
   state: ConnectState;
   pending: boolean;
+  canConnect: boolean;
   onConnect: () => void;
   onAccept: () => void;
   onDecline: () => void;
@@ -264,7 +269,7 @@ function PersonaCard({
             <Icon name="check_circle" className="text-lg" />
             <span>{tCommon("connected")}</span>
           </div>
-        ) : state === "received" ? (
+        ) : state === "received" && canConnect ? (
           <div className="mt-space-sm flex gap-2">
             <button
               type="button"
@@ -296,7 +301,7 @@ function PersonaCard({
             <Icon name="schedule" className="text-lg text-primary" />
             <span>{tCommon("requestSent")}</span>
           </div>
-        ) : (
+        ) : canConnect ? (
           <button
             type="button"
             onClick={onConnect}
@@ -308,7 +313,7 @@ function PersonaCard({
             <Icon name="person_add" className="text-lg" />
             <span>{tCommon("connect")}</span>
           </button>
-        )}
+        ) : null}
       </div>
     </article>
   );

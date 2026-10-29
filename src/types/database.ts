@@ -437,10 +437,15 @@ export type Database = {
           caption: string | null;
           created_at: string;
           id: string;
+          archived_at: string | null;
           image_path: string | null;
           moderation_status: Database["public"]["Enums"]["moderation_status"];
+          previous_state: Database["public"]["Enums"]["post_state"] | null;
+          purge_after: string | null;
           removed_at: string | null;
           removed_by: string | null;
+          removed_reason: string | null;
+          state: Database["public"]["Enums"]["post_state"];
           updated_at: string;
         };
         Insert: {
@@ -448,10 +453,15 @@ export type Database = {
           caption?: string | null;
           created_at?: string;
           id?: string;
+          archived_at?: string | null;
           image_path?: string | null;
           moderation_status?: Database["public"]["Enums"]["moderation_status"];
+          previous_state?: Database["public"]["Enums"]["post_state"] | null;
+          purge_after?: string | null;
           removed_at?: string | null;
           removed_by?: string | null;
+          removed_reason?: string | null;
+          state?: Database["public"]["Enums"]["post_state"];
           updated_at?: string;
         };
         Update: {
@@ -459,10 +469,15 @@ export type Database = {
           caption?: string | null;
           created_at?: string;
           id?: string;
+          archived_at?: string | null;
           image_path?: string | null;
           moderation_status?: Database["public"]["Enums"]["moderation_status"];
+          previous_state?: Database["public"]["Enums"]["post_state"] | null;
+          purge_after?: string | null;
           removed_at?: string | null;
           removed_by?: string | null;
+          removed_reason?: string | null;
+          state?: Database["public"]["Enums"]["post_state"];
           updated_at?: string;
         };
         Relationships: [
@@ -587,6 +602,7 @@ export type Database = {
       };
       profiles: {
         Row: {
+          admin_role_id: string | null;
           approval_status: Database["public"]["Enums"]["approval_status"];
           avatar_url: string | null;
           badge: string | null;
@@ -609,6 +625,7 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          admin_role_id?: string | null;
           approval_status?: Database["public"]["Enums"]["approval_status"];
           avatar_url?: string | null;
           badge?: string | null;
@@ -631,6 +648,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          admin_role_id?: string | null;
           approval_status?: Database["public"]["Enums"]["approval_status"];
           avatar_url?: string | null;
           badge?: string | null;
@@ -768,6 +786,174 @@ export type Database = {
           },
         ];
       };
+      audit_events: {
+        Row: {
+          action: string;
+          actor_id: string | null;
+          actor_role: string | null;
+          id: string;
+          metadata: Json;
+          occurred_at: string;
+          reason: string | null;
+          target_id: string | null;
+          target_type: string | null;
+        };
+        Insert: {
+          action: string;
+          actor_id?: string | null;
+          actor_role?: string | null;
+          id?: string;
+          metadata?: Json;
+          occurred_at?: string;
+          reason?: string | null;
+          target_id?: string | null;
+          target_type?: string | null;
+        };
+        Update: {
+          action?: string;
+          actor_id?: string | null;
+          actor_role?: string | null;
+          id?: string;
+          metadata?: Json;
+          occurred_at?: string;
+          reason?: string | null;
+          target_id?: string | null;
+          target_type?: string | null;
+        };
+        Relationships: [];
+      };
+      admin_invites: {
+        Row: {
+          accepted_at: string | null;
+          admin_role_id: string | null;
+          created_at: string;
+          email: string;
+          id: string;
+          invited_by: string | null;
+        };
+        Insert: {
+          accepted_at?: string | null;
+          admin_role_id?: string | null;
+          created_at?: string;
+          email: string;
+          id?: string;
+          invited_by?: string | null;
+        };
+        Update: {
+          accepted_at?: string | null;
+          admin_role_id?: string;
+          created_at?: string;
+          email?: string;
+          id?: string;
+          invited_by?: string | null;
+        };
+        Relationships: [];
+      };
+      admin_roles: {
+        Row: {
+          capabilities: string[];
+          created_at: string;
+          description: string | null;
+          id: string;
+          is_system: boolean;
+          name: string;
+          slug: string;
+          updated_at: string;
+        };
+        Insert: {
+          capabilities?: string[];
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          is_system?: boolean;
+          name: string;
+          slug: string;
+          updated_at?: string;
+        };
+        Update: {
+          capabilities?: string[];
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          is_system?: boolean;
+          name?: string;
+          slug?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      notifications: {
+        Row: {
+          created_at: string;
+          expires_at: string;
+          id: string;
+          read_at: string | null;
+          reason: string | null;
+          recipient_id: string;
+          target_id: string | null;
+          target_type: string | null;
+          type: Database["public"]["Enums"]["notification_type"];
+        };
+        Insert: {
+          created_at?: string;
+          expires_at?: string;
+          id?: string;
+          read_at?: string | null;
+          reason?: string | null;
+          recipient_id: string;
+          target_id?: string | null;
+          target_type?: string | null;
+          type: Database["public"]["Enums"]["notification_type"];
+        };
+        Update: {
+          created_at?: string;
+          expires_at?: string;
+          id?: string;
+          read_at?: string | null;
+          reason?: string | null;
+          recipient_id?: string;
+          target_id?: string | null;
+          target_type?: string | null;
+          type?: Database["public"]["Enums"]["notification_type"];
+        };
+        Relationships: [];
+      };
+      post_appeals: {
+        Row: {
+          admin_id: string | null;
+          admin_note: string | null;
+          author_id: string;
+          created_at: string;
+          id: string;
+          message: string;
+          post_id: string;
+          resolved_at: string | null;
+          status: Database["public"]["Enums"]["appeal_status"];
+        };
+        Insert: {
+          admin_id?: string | null;
+          admin_note?: string | null;
+          author_id: string;
+          created_at?: string;
+          id?: string;
+          message: string;
+          post_id: string;
+          resolved_at?: string | null;
+          status?: Database["public"]["Enums"]["appeal_status"];
+        };
+        Update: {
+          admin_id?: string | null;
+          admin_note?: string | null;
+          author_id?: string;
+          created_at?: string;
+          id?: string;
+          message?: string;
+          post_id?: string;
+          resolved_at?: string | null;
+          status?: Database["public"]["Enums"]["appeal_status"];
+        };
+        Relationships: [];
+      };
     };
     Views: {
       posts_feed: {
@@ -784,6 +970,11 @@ export type Database = {
           image_path: string | null;
           like_count: number | null;
           moderation_status: Database["public"]["Enums"]["moderation_status"] | null;
+          archived_at: string | null;
+          previous_state: Database["public"]["Enums"]["post_state"] | null;
+          purge_after: string | null;
+          removed_reason: string | null;
+          state: Database["public"]["Enums"]["post_state"] | null;
           updated_at: string | null;
         };
         Relationships: [
@@ -874,6 +1065,28 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: { country_code: string; member_count: number }[];
       };
+      purge_audit_events: {
+        Args: Record<PropertyKey, never>;
+        Returns: number;
+      };
+      record_audit: {
+        Args: {
+          p_action: string;
+          p_metadata?: Json;
+          p_reason?: string;
+          p_target_id?: string;
+          p_target_type?: string;
+        };
+        Returns: string;
+      };
+      my_capabilities: {
+        Args: Record<PropertyKey, never>;
+        Returns: string[];
+      };
+      purge_expired_content: {
+        Args: { p_dry_run?: boolean };
+        Returns: Json;
+      };
       discover_personas: {
         Args: {
           p_countries?: string[];
@@ -954,7 +1167,18 @@ export type Database = {
       connection_status: "requested" | "accepted" | "declined";
       interest_status: "pending" | "approved" | "rejected";
       marketplace_status: "draft" | "live" | "unpublished" | "trashed";
+      appeal_status: "open" | "accepted" | "declined";
       moderation_status: "visible" | "removed";
+      notification_type:
+        | "post.removed"
+        | "post.restored"
+        | "appeal.declined"
+        | "persona.approved"
+        | "persona.rejected"
+        | "persona.suspended"
+        | "interest.approved"
+        | "interest.rejected";
+      post_state: "visible" | "archived" | "removed";
       report_status: "open" | "resolved" | "dismissed";
       report_target_type: "user" | "post";
     };

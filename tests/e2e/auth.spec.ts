@@ -120,7 +120,7 @@ test("@auth an admin can reach the admin portal", async ({ page }) => {
   await page.goto("/en/admin");
   await expect(page).toHaveURL(/\/en\/admin$/);
   await expect(page.getByRole("heading", { name: /Control room overview/i })).toBeVisible();
-  await page.getByRole("link", { name: /users & personas/i }).click();
+  await page.getByRole("link", { name: /users & profiles/i }).click();
   await expect(page).toHaveURL(/\/en\/admin\/users$/);
 });
 
@@ -146,7 +146,7 @@ test("@auth discover shows real personas and viewer connect state", async ({ pag
   await expect(page).toHaveURL(/\/en\/discover$/);
 
   // The header count comes from the rows, not a hardcoded marketing number.
-  await expect(page.getByText(/^\d+ Active Personas Abroad$/).first()).toBeVisible();
+  await expect(page.getByText(/^\d+ Active profiles abroad$/).first()).toBeVisible();
   await expect(page.getByText(/Showing 10 of 12/i)).toBeVisible();
 
   const search = page.getByRole("searchbox", { name: /search by name/i });
@@ -322,6 +322,61 @@ test("@auth authors delete posts from the archive, not the feed", async ({ page 
     .getByRole("alertdialog")
     .getByRole("button", { name: /cancel/i })
     .click();
+});
+
+test("@auth an author archives and restores a post", async ({ page }) => {
+  await signIn(page, "sofia.martinez@example.com");
+  await page.goto("/en/profile");
+  await page.waitForTimeout(1000);
+
+  const archive = page.getByRole("button", { name: /^archive$/i }).first();
+  await expect(archive).toBeVisible();
+  await archive.click();
+
+  // The card moves out of Active and into Archived.
+  await page.getByRole("button", { name: /^archived/i }).click();
+  const restore = page.getByRole("button", { name: /restore to feed/i }).first();
+  await expect(restore).toBeVisible();
+  await restore.click();
+
+  await page.getByRole("button", { name: /^active/i }).click();
+  await expect(page.getByRole("button", { name: /^archive$/i }).first()).toBeVisible();
+});
+
+test("@auth the audit and team desks render cleanly", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") errors.push(message.text());
+  });
+
+  await signIn(page, "admin@globallinkup.test");
+  await page.goto("/en/admin/audit");
+  await expect(page.getByRole("heading", { name: /audit trail/i })).toBeVisible();
+
+  await page.goto("/en/admin/team");
+  await expect(page.getByRole("heading", { name: /team & roles/i })).toBeVisible();
+  // Roles are collapsible cards now: open the first one before checking the matrix.
+  await page.locator("summary").first().click();
+  await expect(page.getByRole("checkbox").first()).toBeVisible();
+
+  const relevant = errors.filter((error) =>
+    /MISSING_MESSAGE|is not a function|use\(\)/.test(error),
+  );
+  expect(relevant).toEqual([]);
+});
+
+test("@auth the notifications inbox renders without React use() warnings", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") errors.push(message.text());
+  });
+
+  await signIn(page, "sofia.martinez@example.com");
+  await page.goto("/en/notifications");
+  await expect(page.getByRole("heading", { name: /notifications/i })).toBeVisible();
+
+  const useWarnings = errors.filter((error) => error.includes("use()"));
+  expect(useWarnings).toEqual([]);
 });
 
 test("@auth admins can moderate posts and comments inline", async ({ page }) => {
@@ -503,7 +558,6 @@ test("@auth an admin creates, trashes, and restores a draft product", async ({ p
   await dialog.getByLabel(/Product Title/i).fill("E2E Draft Piece");
   await dialog.getByLabel(/Price/i).fill("18");
   await dialog.getByLabel(/Origin/i).fill("Barcelona, ES");
-  await dialog.getByLabel(/Phone Number/i).fill("+34 600 000 000");
   await dialog.getByRole("button", { name: /save as draft/i }).click();
   // The dialog closes only after the Server Action succeeds; waiting for that
   // avoids racing the list refresh that renders the new row.
@@ -558,7 +612,7 @@ test("@auth the profile shows the real dossier and unlocked channels", async ({ 
   // Editing opens the persona form in edit mode, not the onboarding flow.
   await page.getByRole("link", { name: /edit profile/i }).click();
   await expect(page).toHaveURL(/\/en\/profile\/edit$/);
-  await expect(page.getByRole("heading", { name: /edit your persona/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /edit your personal profile/i })).toBeVisible();
   await expect(page.locator("#persona-fullname")).toHaveValue("Sofia Martinez");
 });
 

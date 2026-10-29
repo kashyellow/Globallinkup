@@ -348,7 +348,7 @@ function ProductRow({
               ) : null}
             </div>
             <p className="truncate font-body-sm text-body-sm text-secondary">
-              {[product.origin, product.price, product.phone].filter(Boolean).join(" · ")}
+              {[product.origin, product.price].filter(Boolean).join(" · ")}
             </p>
           </div>
         </div>
@@ -432,7 +432,6 @@ function ProductFormDialog({
   const [name, setName] = useState(product?.name ?? "");
   const [price, setPrice] = useState(product ? (product.priceCents / 100).toFixed(2) : "");
   const [origin, setOrigin] = useState(product?.origin ?? "");
-  const [phone, setPhone] = useState(product?.phone ?? "");
   const [description, setDescription] = useState(product?.description ?? "");
   const [publishNow, setPublishNow] = useState(product?.isPublished ?? false);
   const [images, setImages] = useState<DraftImage[]>(() =>
@@ -532,7 +531,6 @@ function ProductFormDialog({
         priceCents: Math.round(amount * 100),
         currency: "USD",
         originLabel: origin.trim(),
-        sellerPhone: phone.trim(),
         description: description.trim(),
         isPublished: publishNow,
         imagePaths: paths,
@@ -622,16 +620,6 @@ function ProductFormDialog({
                 value={origin}
                 onChange={(event) => setOrigin(event.target.value)}
                 placeholder={t("originPlaceholder")}
-                className={INPUT}
-              />
-            </label>
-            <label className="flex flex-col gap-1.5">
-              <span className={LABEL}>{t("form.phone")}</span>
-              <input
-                value={phone}
-                onChange={(event) => setPhone(event.target.value)}
-                inputMode="tel"
-                placeholder={t("form.phonePlaceholder")}
                 className={INPUT}
               />
             </label>

@@ -261,25 +261,20 @@ export type IsoCountryCode = (typeof ISO_COUNTRY_CODES)[number];
 
 const ISO_SET: ReadonlySet<string> = new Set(ISO_COUNTRY_CODES);
 
-const displayNames = new Map<string, Intl.DisplayNames>();
+import { COUNTRY_LABELS } from "./country-labels";
 
 export function isIsoCountryCode(value: string | null | undefined): boolean {
   return typeof value === "string" && ISO_SET.has(value.toUpperCase());
 }
 
-/** Localised country name; falls back to the code when the runtime has none. */
+/**
+ * Localised country name from the static table. Deliberately does not touch
+ * `Intl.DisplayNames` at render time: server and browser ICU builds disagree on
+ * a few names, which made SSR and the client render different text.
+ */
 export function countryLabel(code: string, locale: string): string {
   if (!code) return "";
-  let names = displayNames.get(locale);
-  if (!names) {
-    try {
-      names = new Intl.DisplayNames([locale], { type: "region" });
-      displayNames.set(locale, names);
-    } catch {
-      return code;
-    }
-  }
-  return names.of(code) ?? code;
+  return COUNTRY_LABELS[locale]?.[code] ?? COUNTRY_LABELS.en[code] ?? code;
 }
 
 const sorted = new Map<string, string[]>();

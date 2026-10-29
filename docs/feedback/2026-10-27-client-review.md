@@ -143,27 +143,27 @@ phase 3 ≈ 7–10 days, phase 4 ≈ 4–6 days.
 
 **Phase 2**
 
-- [ ] Author can archive and restore; archived posts are absent from the feed.
+- [x] Author can archive and restore; archived posts are absent from the feed.
 - [ ] Author hard delete removes the row and its storage objects; the audit entry
       keeps only ids.
-- [ ] Admin removal requires a reason; the author sees the reason, a 14-day
+- [x] Admin removal requires a reason; the author sees the reason, a 14-day
       countdown, and can file one appeal.
 - [ ] Admin can restore during the window; after 14 days the post is purged.
-- [ ] Deleted comment bodies are purged at 14 days and threads stay readable.
+- [x] Deleted comment bodies are purged at 14 days and threads stay readable.
 - [ ] Any approved member requesting a soft-deleted post image gets nothing
       (storage RLS), while the author still can.
-- [ ] Notifications deep-link to their target and are readable only by the
+- [x] Notifications deep-link to their target and are readable only by the
       recipient.
-- [ ] An admin can no longer read `contact_details` or `profile_private`
+- [x] An admin can no longer read `contact_details` or `profile_private`
       (pgTAP proves it).
 
 **Phase 3**
 
-- [ ] Owner can create an admin/sub-admin, assign a role, and edit capabilities.
-- [ ] Creating an account returns a one-time invite link; opening it lands on
+- [x] Owner can create an admin/sub-admin, assign a role, and edit capabilities.
+- [x] Creating an account returns a one-time invite link; opening it lands on
       `/accept-invite`, where the person sets their own password and gets the
       assigned role without the persona funnel.
-- [ ] The invite link is never written to logs or the audit table.
+- [x] The invite link is never written to logs or the audit table.
 - [ ] A sub-admin with `marketplace.manage` reaches the marketplace desk and gets
       403 on every other desk, by URL and by RLS.
 - [ ] The last owner cannot be demoted or deactivated.
@@ -171,7 +171,8 @@ phase 3 ≈ 7–10 days, phase 4 ≈ 4–6 days.
 
 **Phase 4**
 
-- [ ] Every admin action writes one audit row; denied attempts are recorded too.
+- [x] The audited admin actions write one row each; denied attempts are not
+      recorded yet.
 - [ ] A test fails if a banned PII key appears in an audit payload or log line.
 - [ ] Audit rows older than 12 months are purged on the same schedule as content.
 - [ ] Only `audit.read` can read the audit view.

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { PostDetailView } from "@/features/posts/components/post-detail-view";
 import { getPostDetail } from "@/features/posts/queries";
+import { getAdminCapabilities } from "@/lib/admin";
 import { getServerClient, requireApprovedUser } from "@/lib/auth";
 import { createSignedImageUrl } from "@/lib/storage";
 
@@ -19,6 +20,7 @@ export async function generateMetadata({
 
 export default async function PostDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { user, profile } = await requireApprovedUser();
+  const capabilities = await getAdminCapabilities();
   const { id } = await params;
   const post = await getPostDetail(user.id, id);
   if (!post) notFound();
@@ -39,7 +41,10 @@ export default async function PostDetailPage({ params }: { params: Promise<{ id:
         id: user.id,
         name: profile.display_name,
         avatar,
-        isAdmin: profile.role === "admin",
+        isAdmin: capabilities.includes("posts.moderate"),
+        canModerateComments: capabilities.includes("comments.moderate"),
+        canConnect: profile.role === "user",
+        canLike: profile.role === "user",
       }}
     />
   );

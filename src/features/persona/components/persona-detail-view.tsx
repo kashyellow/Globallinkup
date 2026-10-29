@@ -24,9 +24,11 @@ import { Link } from "@/lib/i18n/navigation";
 export function PersonaDetailView({
   persona,
   isSelf = false,
+  canConnect = true,
 }: {
   persona: PersonaDetail;
   isSelf?: boolean;
+  canConnect?: boolean;
 }) {
   const t = useTranslations("Discover.detail");
   const tDiscover = useTranslations("Discover");
@@ -176,7 +178,7 @@ export function PersonaDetailView({
                 <Icon name="check_circle" className="text-lg" />
                 {tCommon("connected")}
               </span>
-            ) : state === "received" ? (
+            ) : state === "received" && canConnect ? (
               <>
                 <button
                   type="button"
@@ -207,7 +209,7 @@ export function PersonaDetailView({
                 <Icon name="schedule" className="text-lg text-primary" />
                 {tCommon("requestSent")}
               </span>
-            ) : (
+            ) : canConnect ? (
               <button
                 type="button"
                 onClick={() => setConnectOpen(true)}
@@ -216,9 +218,9 @@ export function PersonaDetailView({
                 <Icon name="person_add" className="text-lg" />
                 {tCommon("connect")}
               </button>
-            )}
+            ) : null}
 
-            {!isSelf ? (
+            {!isSelf && canConnect ? (
               <button
                 type="button"
                 onClick={() => setReportOpen(true)}
@@ -241,7 +243,7 @@ export function PersonaDetailView({
           image: persona.image,
           imageAlt: persona.imageAlt,
         }}
-        open={connectOpen}
+        open={canConnect && connectOpen}
         onClose={() => setConnectOpen(false)}
         onSend={send}
       />

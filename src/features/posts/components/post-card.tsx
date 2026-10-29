@@ -18,8 +18,9 @@ import { PostCarousel } from "./post-carousel";
 export function PostCard({
   post,
   isAuthor,
-  isAdmin = false,
   canDelete = false,
+  canConnect = true,
+  canLike = true,
   requested = false,
   busy = false,
   showComments = true,
@@ -29,8 +30,10 @@ export function PostCard({
 }: {
   post: FeedPost;
   isAuthor: boolean;
-  isAdmin?: boolean;
   canDelete?: boolean;
+  canConnect?: boolean;
+  /** Admins are operators: they may comment, but not like or connect. */
+  canLike?: boolean;
   requested?: boolean;
   busy?: boolean;
   showComments?: boolean;
@@ -169,7 +172,7 @@ export function PostCard({
                 {tCommon("connected")}
               </span>
             </div>
-          ) : state === "received" ? (
+          ) : state === "received" && canConnect ? (
             <button
               type="button"
               onClick={onAccept}
@@ -185,7 +188,7 @@ export function PostCard({
                 {busy ? tCommon("processing") : tCommon("accept")}
               </span>
             </button>
-          ) : (
+          ) : canConnect ? (
             <button
               type="button"
               onClick={onConnect}
@@ -208,7 +211,7 @@ export function PostCard({
                 {state === "requested" ? t("postMeta.requested") : tCommon("connect")}
               </span>
             </button>
-          )}
+          ) : null}
         </div>
 
         <PostCarousel images={post.images} caption={post.caption} />
@@ -217,25 +220,34 @@ export function PostCard({
         <div className="flex flex-col gap-space-md p-space-lg">
           <div className="flex items-center justify-between gap-space-sm">
             <div className="flex min-w-0 items-center gap-space-md">
-              <button
-                type="button"
-                onClick={() => void like()}
-                disabled={liking}
-                aria-busy={liking || undefined}
-                className="group flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-1 text-on-surface-strong transition-colors duration-300 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
-              >
-                <Icon
-                  name="favorite"
-                  filled={liked}
-                  className={cn(
-                    "text-2xl transition-transform group-hover:scale-110",
-                    liked && "text-primary",
-                  )}
-                />
-                <span className="font-label-md text-label-md font-semibold">
-                  {t("postMeta.likes", { count: likes })}
+              {canLike ? (
+                <button
+                  type="button"
+                  onClick={() => void like()}
+                  disabled={liking}
+                  aria-busy={liking || undefined}
+                  className="group flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-1 text-on-surface-strong transition-colors duration-300 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70"
+                >
+                  <Icon
+                    name="favorite"
+                    filled={liked}
+                    className={cn(
+                      "text-2xl transition-transform group-hover:scale-110",
+                      liked && "text-primary",
+                    )}
+                  />
+                  <span className="font-label-md text-label-md font-semibold">
+                    {t("postMeta.likes", { count: likes })}
+                  </span>
+                </button>
+              ) : (
+                <span className="flex min-h-11 shrink-0 items-center gap-1.5 px-1 text-text-muted">
+                  <Icon name="favorite_border" className="text-2xl" />
+                  <span className="font-label-md text-label-md font-semibold">
+                    {t("postMeta.likes", { count: likes })}
+                  </span>
                 </span>
-              </button>
+              )}
               <button
                 type="button"
                 onClick={() => void share()}
@@ -247,7 +259,7 @@ export function PostCard({
               </button>
             </div>
             <div className="flex items-center gap-1">
-              {!isAuthor && !isAdmin ? (
+              {!isAuthor && canConnect ? (
                 <button
                   type="button"
                   onClick={() => setReportOpen(true)}

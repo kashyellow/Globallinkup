@@ -163,12 +163,6 @@ export function AdminProductPreview({
                     {product.description || "—"}
                   </p>
                 </div>
-                <div>
-                  <p className="font-label-md text-label-md text-text-muted">{t("phone")}</p>
-                  <p className="font-body-sm text-body-sm text-on-surface-strong">
-                    {product.phone || "—"}
-                  </p>
-                </div>
                 <div className="grid grid-cols-2 gap-space-sm border-t border-outline-variant pt-space-sm font-body-sm text-body-sm text-secondary">
                   <div>
                     <p className="text-text-muted">{t("created")}</p>

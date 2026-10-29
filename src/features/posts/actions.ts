@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { uuidSchema } from "@/lib/validation/ids";
 
@@ -70,6 +71,58 @@ export async function toggleLikeAction(input: unknown): Promise<PostResult> {
 
 const idSchema = z.object({ postId: uuidSchema });
 
+/** Hide a post without losing it; the author can undo this at any time. */
+export async function archivePostAction(input: unknown): Promise<PostResult> {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false, error: "unauthenticated" };
+
+  const parsed = idSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid" };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("posts")
+    .update({ state: "archived", archived_at: new Date().toISOString() })
+    .eq("id", parsed.data.postId)
+    .eq("author_id", user.id)
+    .select("id");
+
+  if (error) return { ok: false, error: "unknown" };
+  if (!data || data.length === 0) return { ok: false, error: "forbidden" };
+
+  revalidatePath("/profile");
+  revalidatePath("/posts");
+  return { ok: true };
+}
+
+export async function unarchivePostAction(input: unknown): Promise<PostResult> {
+  const user = await getCurrentUser();
+  if (!user) return { ok: false, error: "unauthenticated" };
+
+  const parsed = idSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid" };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("posts")
+    .update({ state: "visible", archived_at: null })
+    .eq("id", parsed.data.postId)
+    .eq("author_id", user.id)
+    .select("id");
+
+  if (error) return { ok: false, error: "unknown" };
+  if (!data || data.length === 0) return { ok: false, error: "forbidden" };
+
+  revalidatePath("/profile");
+  revalidatePath("/posts");
+  return { ok: true };
+}
+
+/**
+ * Permanent delete (ADR 0001): storage objects first, then the row. A storage
+ * failure does not block the row delete — the bucket policy keys reads off the
+ * owning post, so residue becomes unreadable and the purge job sweeps orphans.
+ */
 export async function deletePostAction(input: unknown): Promise<PostResult> {
   const user = await getCurrentUser();
   if (!user) return { ok: false, error: "unauthenticated" };
@@ -78,15 +131,44 @@ export async function deletePostAction(input: unknown): Promise<PostResult> {
   if (!parsed.success) return { ok: false, error: "invalid" };
 
   const supabase = await createClient();
-  // Soft removal (FR-6.5); the moderation guard blocks un-removing it.
+  const { data: post, error: readError } = await supabase
+    .from("posts")
+    .select("id, image_path")
+    .eq("id", parsed.data.postId)
+    .eq("author_id", user.id)
+    .maybeSingle();
+
+  if (readError) return { ok: false, error: "unknown" };
+  if (!post) return { ok: false, error: "forbidden" };
+
+  const { data: images } = await supabase
+    .from("post_images")
+    .select("storage_path")
+    .eq("post_id", parsed.data.postId);
+
+  const paths = new Set<string>();
+  for (const row of images ?? []) {
+    if (row.storage_path) paths.add(row.storage_path);
+  }
+  if (post.image_path && !post.image_path.startsWith("http")) {
+    paths.add(post.image_path);
+  }
+
+  if (paths.size > 0) {
+    await supabase.storage.from("post-images").remove([...paths]);
+  }
+
   const { data, error } = await supabase
     .from("posts")
-    .update({ moderation_status: "removed" })
+    .delete()
     .eq("id", parsed.data.postId)
     .eq("author_id", user.id)
     .select("id");
 
   if (error) return { ok: false, error: "unknown" };
   if (!data || data.length === 0) return { ok: false, error: "forbidden" };
+
+  revalidatePath("/profile");
+  revalidatePath("/posts");
   return { ok: true };
 }

@@ -46,6 +46,8 @@ implementation. Where this summary and the PRD disagree, the PRD wins.
   suite (pgTAP, `supabase/tests/`). This project runs on the **545xx** port block
   (see `docs/plan/api-layer/README.md` §2);
   `.env.local` is created from `supabase status -o env`.
+- `npm run purge` — run the retention job (`-- --dry-run` to preview). Vercel
+  Cron calls `/api/cron/purge` at 03:00 UTC; both share the same SQL function.
 - `npm run admin:bootstrap` — create or promote the `ADMIN_EMAIL` account to
   `admin` on a deployed project (`db push` never runs `seed.sql`, so the cloud has
   no admin). `--create` skips the persona funnel and makes the account in one
@@ -121,7 +123,12 @@ These are confirmed and supersede the PRD where it disagrees:
   makes the account (Supabase Auth user + minimal `profiles` row) without the
   persona funnel. RLS keeps admin profiles out of Discover, dossiers,
   `profiles_public`, and the connection graph; admin posts stay on the feed
-  (announcements) with the author masked behind the platform label.
+  (announcements) with the author masked behind the platform label. Admins
+  cannot connect, like, report, or edit a persona; they may comment. Support
+  can still read and remove member connections with `members.review`.
+- **Header controls are single cycling buttons**: theme (system → light → dark)
+  and language (EN ⇄ ES). Both stay visible at every breakpoint; the burger menu
+  does not duplicate them.
 - **Discover order is a seeded shuffle**, stable across load-more for one search
   session and reshuffled on a new search.
 
@@ -131,25 +138,35 @@ Approved scope from the first client review. Details and acceptance criteria liv
 in `docs/feedback/2026-10-27-client-review.md`; each item has an ADR. Nothing here
 is implemented yet unless the code says so.
 
-- **Content lifecycle** (ADR 0001): author _archive_ (permanent, revertible),
-  author _delete_ (hard delete after a hard confirmation), admin _remove_ (soft,
-  14 days, reason required, one bounded appeal), comment content purged at 14
-  days while the tombstone stays. `post-images` storage reads must be gated on the
-  post state.
+- **Content lifecycle** (ADR 0001) — **data model and server actions
+  implemented**: `post_state` (`visible | archived | removed`), the guard that
+  keeps removal admin-only, hard delete for authors, admin remove/restore with a
+  14-day deadline, and storage reads already gated on the owning post. The
+  profile archive splits Active / Archived / Removed, the moderation desk asks
+  for a removal reason and can restore, one appeal per removal is answered by an
+  admin, and `npm run purge` (@ 03:00 UTC via Vercel Cron) enforces the 14-day
+  window. Notifications announce every decision in an in-app inbox. The audit
+  trail is ADR 0003 and still pending.
 - **Notifications inbox** (ADR 0004): DB-backed notices with deep links. This is
   moderation feedback, **not chat**: no threads, realtime, or user-to-user
   messaging.
-- **Granular admin roles** (ADR 0002): roles are capability sets
-  (`members.review`, `posts.moderate`, `comments.moderate`, `interests.review`,
-  `reports.manage`, `marketplace.manage`, `admins.manage`, `settings.manage`,
-  `audit.read`). The first admin manages accounts and permissions in the UI, and
-  hands out a one-time invite link so the person sets their own password (no SMTP
-  needed).
-- **Audit + PII-safe logging** (ADR 0003): append-only `audit_events` with ids,
-  actions, reasons and whitelisted metadata only; 12-month retention; gated by
-  `audit.read`.
-- **No admin access to PII** (ADR 0005): drop the admin policies on
-  `contact_details` and `profile_private`.
+- **Granular admin roles** (ADR 0002) — **data model, RLS and shell
+  implemented**: `admin_roles` + `profiles.admin_role_id`, `has_capability()`,
+  policies rewritten per area, admin tabs filtered by capability, and
+  `admin:bootstrap --role=<slug>` assigns a role. `is_admin()` now means owner, so
+  anything not yet migrated stays owner-only. `/admin/team` creates accounts with
+  a one-time invite link (`auth.admin.generateLink`, shared by the owner — no
+  SMTP), edits role capabilities and reassigns roles.
+- **Audit + PII-safe logging** (ADR 0003) — **table and wiring implemented**:
+  append-only `audit_events` (ids, actions, reasons, state metadata only),
+  `record_audit()` for admins, 12-month retention via the purge job, and rows for
+  every admin mutation — member, post, comment, report, interest, product, role,
+  invite — with `before`/`after` snapshots. The `/admin/audit` viewer is gated by
+  `audit.read`, aligns both snapshots, highlights changed keys, and shows the full
+  event JSON; a structured logger strips banned PII keys (unit-tested).
+- **No admin access to PII** (ADR 0005) — **implemented**: the admin policies
+  on `contact_details` and `profile_private` are gone, and the dossier no longer
+  renders contact channels.
 - **Theme modes** (ADR 0006) — **implemented**: `light | dark | system`, default
   `system`, dark colours taken only from `baefd24^`; layout unaffected. Cookie +
   pre-paint script, toggle in both headers.

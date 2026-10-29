@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { Instrument_Sans, Manrope } from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages, getTranslations } from "next-intl/server";
+import Script from "next/script";
 import { notFound } from "next/navigation";
 
 import { ICON_FONT_HREF } from "@/components/ui/icon-names";
@@ -85,10 +86,14 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
             Subset via `icon_names` keeps this at ~15 KB instead of ~4 MB. */}
         <link rel="stylesheet" href={ICON_FONT_HREF} />
         <meta name="theme-color" content={THEME_COLORS.light} />
-        {/* Resolves `system` before first paint so the palette never flashes. */}
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body className="flex min-h-full flex-col bg-background font-body-md text-body-md text-on-surface">
+        {/* Resolves `system` before first paint so the palette never flashes.
+            `next/script` injects it into the initial HTML; a raw <script> in a
+            React component never runs on the client (React 19 warns about it). */}
+        <Script id="theme-init" strategy="beforeInteractive">
+          {THEME_INIT_SCRIPT}
+        </Script>
         {/* Shell chrome (Navbar/Footer vs public header/footer) lives in the
             (app) and (public) route-group layouts below. */}
         <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>

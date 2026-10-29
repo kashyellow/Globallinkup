@@ -5,7 +5,7 @@ import { getLocale } from "next-intl/server";
 
 import { redirect } from "@/lib/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { isMissingSessionError } from "@/lib/supabase/auth-errors";
+import { isAuthUnavailable, isMissingSessionError } from "@/lib/supabase/auth-errors";
 import { QueryError } from "@/lib/supabase/unwrap";
 import type { Database } from "@/types/database";
 
@@ -48,13 +48,15 @@ export const getCurrentUser = cache(async () => {
   try {
     const { data, error } = await supabase.auth.getUser();
     if (error) {
-      // A missing/stale session is not an outage: treat it as logged out.
-      if (isMissingSessionError(error)) return null;
+      // A missing session and an unreachable auth service both degrade to
+      // "logged out"; only a real, unexpected error surfaces.
+      if (isMissingSessionError(error) || isAuthUnavailable(error)) return null;
       throw new QueryError(error.message, error.code);
     }
     return data.user;
   } catch (error) {
     if (error instanceof QueryError) throw error;
+    if (error instanceof Error && isAuthUnavailable(error)) return null;
     throw new QueryError(error instanceof Error ? error.message : "auth request failed");
   }
 });

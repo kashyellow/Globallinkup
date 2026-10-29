@@ -1,6 +1,6 @@
 # ADR 0003 — Audit log and PII-safe logging
 
-- **Status:** proposed
+- **Status:** accepted (partial) — table, `record_audit()`, retention and admin-action wiring landed 2026-10-28; the audit viewer (`/admin/audit`, `audit.read`) and the structured logger with `redact()` landed 2026-10-28
 - **Date:** 2026-10-27
 - **Related:** [round 1, closing note](../feedback/2026-10-27-client-review.md),
   [ADR 0002](./0002-granular-admin-rbac.md), [ADR 0005](./0005-pii-access-boundaries.md)
@@ -76,6 +76,14 @@ public.audit_events from anon, authenticated;` — no client can forge or edit a
 
 `auth.denied` is deliberate: knowing that someone repeatedly tried a desk they
 cannot access is security signal, and it stores no content.
+
+**Implementation note (2026-10-29).** Emitted rows use
+`metadata: { before, after }` snapshots. Each snapshot is a flat object of ids,
+states, timestamps, prices and capability names — never names, emails, captions,
+comment bodies or contact channels. The audit viewer aligns both snapshots on the
+same keys, highlights the values that differ, and still shows the full event
+envelope as JSON. Legacy rows that stored `from_state`/`to_state` are normalised
+by the viewer.
 
 ### Retention
 

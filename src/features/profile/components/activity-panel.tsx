@@ -8,7 +8,7 @@ import { DefaultAvatar } from "@/components/ui/default-avatar";
 import { Icon } from "@/components/ui/icon";
 import { InlineAlert } from "@/components/ui/inline-alert";
 import { MediaImage } from "@/components/ui/media-image";
-import { deletePostAction } from "@/features/posts/actions";
+import { archivePostAction, deletePostAction, unarchivePostAction } from "@/features/posts/actions";
 import { useRefresh } from "@/features/shared/refresh-provider";
 import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
@@ -22,6 +22,9 @@ const CIRCLE_PAGE = 8;
 
 const TABS = ["dispatches", "circles"] as const;
 type TabId = (typeof TABS)[number];
+
+const DISPATCH_FILTERS = ["active", "archived", "removed"] as const;
+type DispatchFilter = (typeof DISPATCH_FILTERS)[number];
 
 function PanelHeading({ title, body }: { title: string; body: string }) {
   return (
@@ -52,16 +55,49 @@ export function ProfileActivity({
   const [deleteTarget, setDeleteTarget] = useState<ProfileDispatch | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<DispatchFilter>("active");
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [stateOverrides, setStateOverrides] = useState<Record<string, ProfileDispatch["state"]>>(
+    {},
+  );
 
-  const visibleDispatches = dispatches.filter((dispatch) => !removedIds.has(dispatch.id));
-  const shownDispatches = visibleDispatches.slice(0, dispatchCount);
+  const liveDispatches = dispatches.filter((dispatch) => !removedIds.has(dispatch.id));
+  const stateOf = (dispatch: ProfileDispatch) => stateOverrides[dispatch.id] ?? dispatch.state;
+  const byState = {
+    active: liveDispatches.filter((dispatch) => stateOf(dispatch) === "visible"),
+    archived: liveDispatches.filter((dispatch) => stateOf(dispatch) === "archived"),
+    removed: liveDispatches.filter((dispatch) => stateOf(dispatch) === "removed"),
+  } satisfies Record<DispatchFilter, ProfileDispatch[]>;
+
+  const shownDispatches = byState[filter].slice(0, dispatchCount);
   const shownCircles = circles.slice(0, circleCount);
 
   const counts: Record<TabId, number> = {
-    dispatches: visibleDispatches.length,
+    dispatches: liveDispatches.length,
     circles: circles.length,
   };
   const tabLabels = TABS.map((id) => t(`tabs.${id}`, { count: counts[id] }));
+
+  async function changeState(dispatch: ProfileDispatch, next: "archived" | "visible") {
+    setBusyId(dispatch.id);
+    setError(null);
+    try {
+      const result =
+        next === "archived"
+          ? await archivePostAction({ postId: dispatch.id })
+          : await unarchivePostAction({ postId: dispatch.id });
+      if (!result.ok) {
+        setError(tCommon("actionError"));
+        return;
+      }
+      setStateOverrides((previous) => ({ ...previous, [dispatch.id]: next }));
+      refresh();
+    } catch {
+      setError(tCommon("actionError"));
+    } finally {
+      setBusyId(null);
+    }
+  }
 
   async function removeDispatch() {
     if (!deleteTarget) return;
@@ -96,6 +132,36 @@ export function ProfileActivity({
           <div className="space-y-space-md">
             <PanelHeading title={t("dispatches.title")} body={t("dispatches.body")} />
 
+            <div
+              role="group"
+              aria-label={t("dispatches.filtersLabel")}
+              className="flex flex-wrap gap-1.5"
+            >
+              {DISPATCH_FILTERS.map((value) => {
+                const active = filter === value;
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => {
+                      setFilter(value);
+                      setDispatchCount(DISPATCH_PAGE);
+                    }}
+                    aria-pressed={active}
+                    className={cn(
+                      "inline-flex min-h-9 items-center gap-1.5 rounded-full border px-3 font-label-md text-label-md transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                      active
+                        ? "border-primary bg-primary/15 font-semibold text-primary"
+                        : "border-outline-variant text-secondary hover:bg-surface-container hover:text-on-surface",
+                    )}
+                  >
+                    {t(`dispatches.filters.${value}`)}
+                    <span className="tabular-nums opacity-70">{byState[value].length}</span>
+                  </button>
+                );
+              })}
+            </div>
+
             {shownDispatches.length > 0 ? (
               <>
                 <div className="grid grid-cols-1 gap-space-md sm:grid-cols-2">
@@ -104,11 +170,15 @@ export function ProfileActivity({
                       key={dispatch.id}
                       dispatch={dispatch}
                       index={index}
+                      state={stateOf(dispatch)}
+                      busy={busyId === dispatch.id}
+                      onArchive={() => changeState(dispatch, "archived")}
+                      onUnarchive={() => changeState(dispatch, "visible")}
                       onDelete={() => setDeleteTarget(dispatch)}
                     />
                   ))}
                 </div>
-                {visibleDispatches.length > dispatchCount ? (
+                {byState[filter].length > dispatchCount ? (
                   <div className="flex justify-center">
                     <button
                       type="button"
@@ -117,14 +187,14 @@ export function ProfileActivity({
                     >
                       <Icon name="expand_more" className="text-lg" />
                       {t("dispatches.loadMore", {
-                        count: visibleDispatches.length - dispatchCount,
+                        count: byState[filter].length - dispatchCount,
                       })}
                     </button>
                   </div>
                 ) : null}
               </>
             ) : (
-              <p className={EMPTY_STATE}>{t("dispatches.empty")}</p>
+              <p className={EMPTY_STATE}>{t(`dispatches.empty.${filter}`)}</p>
             )}
           </div>
         ) : null}

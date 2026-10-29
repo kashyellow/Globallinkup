@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+
+import { getAdminCapabilities } from "@/lib/admin";
 
 import { AdminUsersTab } from "@/features/admin/components/users-tab";
 import {
@@ -28,6 +31,7 @@ export default async function AdminUsersPage({
 }: {
   searchParams: Promise<SearchParams>;
 }) {
+  if (!(await getAdminCapabilities()).includes("members.review")) notFound();
   const sp = await searchParams;
   const query = parseQuery(sp.q);
   const status = parseEnum<AdminProfileFilter>(sp.status, STATUSES, "all");

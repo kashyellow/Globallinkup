@@ -17,7 +17,7 @@ export async function generateMetadata({
 }
 
 export default async function DiscoverPage() {
-  const { user } = await requireApprovedUser();
+  const { user, profile } = await requireApprovedUser();
   const seed = randomUUID();
   const [countries, initial] = await Promise.all([
     getDiscoverCountries(),
@@ -37,6 +37,7 @@ export default async function DiscoverPage() {
       total={initial.total}
       seed={seed}
       countries={countries}
+      canConnect={profile.role === "user"}
     />
   );
 }

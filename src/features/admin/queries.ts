@@ -9,7 +9,6 @@ import { unwrap, unwrapCount } from "@/lib/supabase/unwrap";
 export type AdminProfileStatus = "pending" | "approved" | "rejected" | "suspended";
 export type AdminProfileFilter = AdminProfileStatus | "all";
 
-export type AdminChannel = { key: string; value: string };
 export type AdminModerationEvent = {
   decision: AdminProfileStatus;
   reason: string | null;
@@ -30,7 +29,6 @@ export type AdminProfileDto = {
   languages: string[];
   interests: string[];
   submittedAt: string | null;
-  channels: AdminChannel[];
   moderation: AdminModerationEvent[];
 };
 
@@ -70,6 +68,7 @@ export type AdminReportDto = {
   targetId: string | null;
   targetLabel: string;
   targetImage: string | null;
+  targetState: "visible" | "archived" | "removed" | null;
   reporterName: string;
 };
 
@@ -121,29 +120,6 @@ function parseLanguages(value: unknown): string[] {
     const code = (entry as { code?: unknown }).code;
     return typeof code === "string" && code.length > 0 ? [code] : [];
   });
-}
-
-function buildChannels(contact: {
-  whatsapp: string | null;
-  instagram: string | null;
-  email: string | null;
-  other: unknown;
-}): AdminChannel[] {
-  const channels: AdminChannel[] = [];
-  const push = (key: string, value: unknown) => {
-    if (typeof value === "string" && value.trim().length > 0) {
-      channels.push({ key, value: value.trim() });
-    }
-  };
-  const other = (contact.other ?? {}) as Record<string, unknown>;
-  push("whatsapp", contact.whatsapp);
-  push("telegram", other.telegram);
-  push("instagram", contact.instagram);
-  push("facebook", other.facebook);
-  push("tiktok", other.tiktok);
-  push("x", other.x);
-  push("email", contact.email);
-  return channels;
 }
 
 export async function getAdminMetrics(): Promise<AdminMetrics> {
@@ -248,11 +224,8 @@ export async function getAdminUsers({
   if (rows.length === 0) return { users: [], total };
 
   const ids = rows.map((row) => row.id).filter((id): id is string => Boolean(id));
-  const [contacts, events, avatars] = await Promise.all([
-    supabase
-      .from("contact_details")
-      .select("profile_id, whatsapp, instagram, email, other")
-      .in("profile_id", ids),
+  // Contact channels are PII and are not readable by admins (ADR 0005).
+  const [events, avatars] = await Promise.all([
     supabase
       .from("profile_moderation_events")
       .select("profile_id, decision, reason, created_at")
@@ -265,7 +238,6 @@ export async function getAdminUsers({
     ),
   ]);
 
-  const contactById = new Map((unwrap(contacts) ?? []).map((row) => [row.profile_id, row]));
   const eventsById = new Map<string, AdminModerationEvent[]>();
   for (const event of unwrap(events) ?? []) {
     const list = eventsById.get(event.profile_id) ?? [];
@@ -280,7 +252,6 @@ export async function getAdminUsers({
   return {
     users: rows.map((row) => {
       const id = row.id ?? "";
-      const contact = contactById.get(id);
       return {
         id,
         name: row.display_name ?? "",
@@ -295,14 +266,6 @@ export async function getAdminUsers({
         languages: parseLanguages(row.languages),
         interests: row.interests ?? [],
         submittedAt: row.submitted_at,
-        channels: contact
-          ? buildChannels({
-              whatsapp: contact.whatsapp,
-              instagram: contact.instagram,
-              email: contact.email,
-              other: contact.other,
-            })
-          : [],
         moderation: eventsById.get(id) ?? [],
       } satisfies AdminProfileDto;
     }),
@@ -451,7 +414,7 @@ export async function getAdminModeration({
       ? supabase.from("profiles_public").select("id, display_name").in("id", profileIds)
       : Promise.resolve({ data: [], error: null }),
     postIds.length > 0
-      ? supabase.from("posts").select("id, caption, image_path, author_id").in("id", postIds)
+      ? supabase.from("posts").select("id, caption, image_path, author_id, state").in("id", postIds)
       : Promise.resolve({ data: [], error: null }),
   ]);
 
@@ -492,11 +455,57 @@ export async function getAdminModeration({
           ? `${authorNameById.get(post.author_id) ?? "Member"}: ${post.caption}`
           : (profileName ?? "Member"),
         targetImage: post ? resolveImageUrl(post.image_path, signed) : null,
+        targetState: post?.state ?? null,
         reporterName: nameById.get(row.reporter_id) ?? "",
       } satisfies AdminReportDto;
     }),
     total,
   };
+}
+
+export type AdminAppealDto = {
+  id: string;
+  postId: string;
+  authorName: string;
+  postCaption: string;
+  message: string;
+  createdAt: string;
+};
+
+/** Open appeals waiting for a moderator decision (ADR 0001). */
+export async function getOpenAppeals(): Promise<AdminAppealDto[]> {
+  const supabase = await createClient();
+  const rows =
+    unwrap(
+      await supabase
+        .from("post_appeals")
+        .select("id, post_id, author_id, message, created_at")
+        .eq("status", "open")
+        .order("created_at", { ascending: true })
+        .limit(5),
+    ) ?? [];
+
+  if (rows.length === 0) return [];
+
+  const authorIds = [...new Set(rows.map((row) => row.author_id))];
+  const postIds = [...new Set(rows.map((row) => row.post_id))];
+  const [authors, posts] = await Promise.all([
+    supabase.from("profiles_public").select("id, display_name").in("id", authorIds),
+    supabase.from("posts").select("id, caption").in("id", postIds),
+  ]);
+  const authorById = new Map(
+    (unwrap(authors) ?? []).map((row) => [row.id, row.display_name ?? ""]),
+  );
+  const postById = new Map((unwrap(posts) ?? []).map((row) => [row.id, row.caption ?? ""]));
+
+  return rows.map((row) => ({
+    id: row.id,
+    postId: row.post_id,
+    authorName: authorById.get(row.author_id) ?? "",
+    postCaption: postById.get(row.post_id) ?? "",
+    message: row.message,
+    createdAt: row.created_at,
+  }));
 }
 
 export async function getAdminInterests({
@@ -573,5 +582,71 @@ export async function getAdminInterestCounts(): Promise<Record<AdminInterestFilt
     pending: unwrapCount(pending),
     approved: unwrapCount(approved),
     rejected: unwrapCount(rejected),
+  };
+}
+
+export type AdminAuditEvent = {
+  id: string;
+  occurredAt: string;
+  actorRole: string | null;
+  action: string;
+  targetType: string | null;
+  targetId: string | null;
+  reason: string | null;
+  /** Content-free state snapshot recorded by `record_audit()` (ADR 0003). */
+  metadata: Record<string, unknown>;
+};
+
+function asMetadata(value: unknown): Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
+/** Newest first. RLS denies this read without `audit.read`. */
+export async function getAuditEvents({
+  query = "",
+  actionType = "all",
+  page = 1,
+  pageSize = 15,
+}: {
+  query?: string;
+  actionType?: string;
+  page?: number;
+  pageSize?: number;
+} = {}): Promise<{ events: AdminAuditEvent[]; total: number }> {
+  const supabase = await createClient();
+  let request = supabase
+    .from("audit_events")
+    .select("id, occurred_at, actor_role, action, target_type, target_id, reason, metadata", {
+      count: "exact",
+    });
+
+  if (actionType !== "all") request = request.like("action", `${actionType}.%`);
+
+  const needle = safeNeedle(query);
+  if (needle.length > 0) {
+    request = request.or(
+      `action.ilike.%${needle}%,actor_role.ilike.%${needle}%,target_id::text.ilike.%${needle}%`,
+    );
+  }
+
+  const response = await request
+    .order("occurred_at", { ascending: false })
+    .range((page - 1) * pageSize, page * pageSize - 1);
+
+  const rows = unwrap(response) ?? [];
+  return {
+    total: response.count ?? rows.length,
+    events: rows.map((row) => ({
+      id: row.id,
+      occurredAt: row.occurred_at,
+      actorRole: row.actor_role,
+      action: row.action,
+      targetType: row.target_type,
+      targetId: row.target_id,
+      reason: row.reason,
+      metadata: asMetadata(row.metadata),
+    })),
   };
 }

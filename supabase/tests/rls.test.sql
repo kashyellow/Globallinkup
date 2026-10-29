@@ -9,7 +9,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(93);
+select plan(95);
 
 -- Fixed ids from the seed.
 --   admin   11111111-…  sofia 22222222-…  mateo 33333333-…
@@ -80,13 +80,16 @@ select is_empty(
 );
 reset role;
 
--- 8. admin reads every contact_details row (4 seeded).
+-- 8. admins cannot read contact_details or date of birth (ADR 0005).
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated"}';
--- Relative so a database mutated by the app (e2e onboarding) does not break it.
-select ok(
-  (select count(*) from public.contact_details) >= 4,
-  'admin reads all contact_details'
+select is_empty(
+  $$ select 1 from public.contact_details where profile_id = '22222222-2222-2222-2222-222222222222' $$,
+  'admin cannot read a member''s contact_details'
+);
+select is_empty(
+  $$ select 1 from public.profile_private where profile_id = '22222222-2222-2222-2222-222222222222' $$,
+  'admin cannot read a member''s date of birth'
 );
 reset role;
 
@@ -273,22 +276,36 @@ select is(
 );
 reset role;
 
--- 25. F-3: an author can soft-remove their own post (FR-6.5).
+-- 25. F-3: an author can archive their own post (ADR 0001).
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"22222222-2222-2222-2222-222222222222","role":"authenticated"}';
 select lives_ok(
-  $$ update public.posts set moderation_status = 'removed'
+  $$ update public.posts set state = 'archived'
      where id = 'a0000000-0000-0000-0000-000000000001' $$,
-  'author can soft-remove their own post'
+  'author can archive their own post'
 );
 
--- 26. F-3: …but cannot un-remove it.
+-- 26. …but removal is an admin decision; the author cannot set it.
 select throws_ok(
-  $$ update public.posts set moderation_status = 'visible'
+  $$ update public.posts set state = 'removed'
      where id = 'a0000000-0000-0000-0000-000000000001' $$,
   42501,
   null,
-  'author cannot un-remove a post'
+  'author cannot remove their own post'
+);
+reset role;
+
+-- 27. An admin removes it, which the rest of the suite relies on.
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated"}';
+select lives_ok(
+  $$ update public.posts
+       set state = 'removed',
+           removed_by = '11111111-1111-1111-1111-111111111111',
+           removed_at = now(),
+           removed_reason = 'Removed by the RLS suite.'
+     where id = 'a0000000-0000-0000-0000-000000000001' $$,
+  'admin can remove a post'
 );
 reset role;
 

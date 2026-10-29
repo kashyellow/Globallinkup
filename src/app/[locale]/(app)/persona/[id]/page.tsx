@@ -21,10 +21,16 @@ export default async function PersonaDetailPage({
   params: Promise<{ locale: string; id: string }>;
 }) {
   const { locale, id } = await params;
-  const { user } = await requireApprovedUser();
+  const { user, profile } = await requireApprovedUser();
   const persona = await getPersonaDetail(user.id, id, locale);
 
   if (!persona) notFound();
 
-  return <PersonaDetailView persona={persona} isSelf={persona.id === user.id} />;
+  return (
+    <PersonaDetailView
+      persona={persona}
+      isSelf={persona.id === user.id}
+      canConnect={profile.role === "user"}
+    />
+  );
 }

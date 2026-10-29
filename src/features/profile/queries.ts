@@ -21,11 +21,20 @@ export type ProfileDispatch = {
   caption: string;
   createdAt: string;
   likes: number;
+  state: "visible" | "archived" | "removed";
+  removedReason: string | null;
+  purgeAfter: string | null;
+  appeal: {
+    status: "open" | "accepted" | "declined";
+    message: string;
+    adminNote: string | null;
+  } | null;
 };
 
 export type OwnProfile = {
   id: string;
   name: string;
+  role: "user" | "admin";
   age: number;
   headline: string;
   location: string;
@@ -87,9 +96,8 @@ export async function getOwnProfile(
       .eq("status", "accepted"),
     supabase
       .from("posts")
-      .select("id, image_path, caption, created_at")
+      .select("id, image_path, caption, created_at, state, removed_reason, purge_after")
       .eq("author_id", viewerId)
-      .eq("moderation_status", "visible")
       .order("created_at", { ascending: false }),
   ]);
 
@@ -154,8 +162,8 @@ export async function getOwnProfile(
     };
   });
 
-  // The archive is the member's own visible posts. Like counts are read for
-  // those posts only, and images are signed in one batch.
+  // The archive is every post the member owns, whatever its lifecycle state;
+  // the UI splits them into Active / Archived / Removed.
   const posts = unwrap(postsRes) ?? [];
   const postIds = posts.map((post) => post.id);
   const likes =
@@ -174,12 +182,37 @@ export async function getOwnProfile(
     posts.map((post) => post.image_path),
   );
 
+  const removedIds = posts.filter((post) => post.state === "removed").map((post) => post.id);
+  const appealByPost = new Map<string, NonNullable<ProfileDispatch["appeal"]>>();
+  if (removedIds.length > 0) {
+    const appeals = unwrap(
+      await supabase
+        .from("post_appeals")
+        .select("post_id, message, status, admin_note, created_at")
+        .in("post_id", removedIds)
+        .order("created_at", { ascending: false }),
+    );
+    for (const row of appeals ?? []) {
+      if (!appealByPost.has(row.post_id)) {
+        appealByPost.set(row.post_id, {
+          status: row.status,
+          message: row.message,
+          adminNote: row.admin_note,
+        });
+      }
+    }
+  }
+
   const dispatches: ProfileDispatch[] = posts.map((post) => ({
     id: post.id,
     image: resolveImageUrl(post.image_path, postImages),
     caption: post.caption ?? "",
     createdAt: post.created_at ?? "",
     likes: likeCount.get(post.id) ?? 0,
+    state: post.state,
+    removedReason: post.removed_reason,
+    purgeAfter: post.purge_after,
+    appeal: appealByPost.get(post.id) ?? null,
   }));
 
   const languages = Array.isArray(profile.languages)
@@ -192,6 +225,7 @@ export async function getOwnProfile(
   return {
     id: profile.id,
     name: profile.display_name ?? "",
+    role: profile.role,
     age,
     headline: profile.headline ?? "",
     location: [profile.city, profile.country_code].filter(Boolean).join(", "),

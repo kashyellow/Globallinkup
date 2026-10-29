@@ -22,7 +22,15 @@ export function PostDetailView({
   viewer,
 }: {
   post: PostDetail;
-  viewer: { id: string; name: string; avatar: string | null; isAdmin: boolean };
+  viewer: {
+    id: string;
+    name: string;
+    avatar: string | null;
+    isAdmin: boolean;
+    canModerateComments: boolean;
+    canConnect: boolean;
+    canLike: boolean;
+  };
 }) {
   const t = useTranslations("Posts.detail");
   const tCommon = useTranslations("Common");
@@ -112,8 +120,9 @@ export function PostDetailView({
         <PostCard
           post={post}
           isAuthor={isAuthor}
-          isAdmin={viewer.isAdmin}
           canDelete={viewer.isAdmin}
+          canConnect={viewer.canConnect}
+          canLike={viewer.canLike}
           requested={requested}
           busy={isPending(`accept:${post.connectionId ?? post.id}`)}
           showComments={false}
@@ -130,7 +139,12 @@ export function PostDetailView({
           onDelete={() => setDeleteOpen(true)}
         />
 
-        <PostComments postId={post.id} comments={post.comments} viewer={viewer} />
+        <PostComments
+          postId={post.id}
+          comments={post.comments}
+          viewer={viewer}
+          canModerate={viewer.canModerateComments}
+        />
       </div>
 
       <ConnectDialog

@@ -1,6 +1,6 @@
 # ADR 0005 — PII access boundaries
 
-- **Status:** proposed
+- **Status:** accepted (implemented 2026-10-27)
 - **Date:** 2026-10-27
 - **Related:** [round 1, item E](../feedback/2026-10-27-client-review.md),
   [ADR 0003 (audit)](./0003-audit-log-and-pii.md),

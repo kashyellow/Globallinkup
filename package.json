@@ -29,7 +29,8 @@
     "admin:bootstrap": "node --env-file-if-exists=.env scripts/bootstrap-admin.mjs",
     "commitlint": "commitlint --edit",
     "prepare": "husky",
-    "deploy": "./scripts/deploy.sh"
+    "deploy": "./scripts/deploy.sh",
+    "purge": "node --env-file-if-exists=.env scripts/purge.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

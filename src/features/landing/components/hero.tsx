@@ -22,10 +22,7 @@ export async function Hero() {
   ] as const;
 
   return (
-    <section
-      id="hero"
-      className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-space-lg pb-section-mobile md:px-margin md:pt-section md:pb-section"
-    >
+    <section className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-space-lg pb-section-mobile md:px-margin md:pt-section md:pb-section">
       <link rel="preload" as="image" href={IMAGES.hero} />
       <div className="grid grid-cols-1 items-center gap-space-xl lg:grid-cols-12 lg:gap-x-space-xl">
         <div className="flex flex-col items-start lg:col-span-7">
@@ -75,10 +72,7 @@ export async function Hero() {
                 loading="eager"
                 fetchPriority="high"
               />
-              <div
-                aria-hidden
-                className="absolute inset-x-0 bottom-0 hidden h-44 bg-gradient-to-t from-primary/45 to-transparent lg:block"
-              />
+              <div aria-hidden className="absolute inset-0 bg-transparent/25" />
 
               <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-primary/80 px-2.5 py-1 font-label-md text-label-md text-white backdrop-blur-sm">
                 <Icon name="location_on" className="text-[14px] text-gold" />
