@@ -77,6 +77,14 @@ public.audit_events from anon, authenticated;` — no client can forge or edit a
 `auth.denied` is deliberate: knowing that someone repeatedly tried a desk they
 cannot access is security signal, and it stores no content.
 
+**Implementation note (2026-10-29).** Emitted rows use
+`metadata: { before, after }` snapshots. Each snapshot is a flat object of ids,
+states, timestamps, prices and capability names — never names, emails, captions,
+comment bodies or contact channels. The audit viewer aligns both snapshots on the
+same keys, highlights the values that differ, and still shows the full event
+envelope as JSON. Legacy rows that stored `from_state`/`to_state` are normalised
+by the viewer.
+
 ### Retention
 
 12 months. The daily purge job deletes older rows in batches and writes one
