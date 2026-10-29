@@ -21,7 +21,7 @@ export default async function MarketplacePage() {
   const [page, contact] = await Promise.all([
     getMarketplacePage({
       query: "",
-      sort: "featured",
+      sort: "newest",
       limit: MARKETPLACE_PAGE_SIZE,
       offset: 0,
     }),

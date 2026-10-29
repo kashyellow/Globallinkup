@@ -535,7 +535,7 @@ values
   ('b0000000-0000-0000-0000-000000000006', 'Minimalist Passport & Document Wallet', 4500, 'USD',
    'RFID-shielded vegetable-tanned leather wallet cut and stitched in Madrid.',
    'Madrid, ES',
-   '+34 612 345 680', true, '11111111-1111-1111-1111-111111111111');
+   null, true, '11111111-1111-1111-1111-111111111111');
 
 -- A few more live pieces give the public grid a second page.
 insert into public.marketplace_products (
@@ -548,7 +548,7 @@ values
    'Oaxaca, MX', '+52 951 100 2210', true, '11111111-1111-1111-1111-111111111111'),
   ('b0000000-0000-0000-0000-000000000011', 'Linen & Cotton Market Tote', 4200, 'USD',
    'A sturdy everyday tote woven and finished in a small Barcelona atelier.',
-   'Barcelona, ES', '+34 612 345 682', true, '11111111-1111-1111-1111-111111111111'),
+   'Barcelona, ES', null, true, '11111111-1111-1111-1111-111111111111'),
   ('b0000000-0000-0000-0000-000000000012', 'Bilingual Letterpress Notebook', 2800, 'USD',
    'A pocket notebook printed in Lisbon with a linen cover and warm cream pages.',
    'Lisbon, PT', '+351 913 440 221', true, '11111111-1111-1111-1111-111111111111'),
@@ -569,7 +569,7 @@ values
    '11111111-1111-1111-1111-111111111111'),
   ('b0000000-0000-0000-0000-000000000008', 'Limited Stoneware Serving Bowl', 7200, 'USD',
    'A small-batch bowl taken down while the next glaze firing is scheduled.',
-   'Barcelona, ES', '+34 612 345 681', false, now() - interval '10 days', null,
+   'Barcelona, ES', null, false, now() - interval '10 days', null,
    '11111111-1111-1111-1111-111111111111'),
   ('b0000000-0000-0000-0000-000000000009', 'Archived Linen Table Runner', 3900, 'USD',
    'Retired sample kept in Trash for reference.',
@@ -674,7 +674,7 @@ values
 -- ----------------------------------------------------------------------------
 insert into public.platform_settings (key, value)
 values
-  ('marketplace.contact', '{"whatsapp":"+34 612 345 678","whatsappLink":"https://wa.me/34612345678","email":"concierge@globallinkup.com"}'::jsonb),
+  ('marketplace.contact', '{"email":"concierge@globallinkup.com"}'::jsonb),
   ('marketplace.currency', '"USD"'::jsonb);
 
 commit;

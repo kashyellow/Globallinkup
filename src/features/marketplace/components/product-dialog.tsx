@@ -9,8 +9,6 @@ import { useDialogA11y } from "@/features/shared/use-dialog-a11y";
 import { cn } from "@/lib/utils";
 import type { MarketplaceContact, MarketplaceProduct } from "../queries";
 
-const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
-
 export function ProductDialog({
   product,
   contact,
@@ -70,9 +68,6 @@ function DialogContent({
 
   const images = product.images;
   const active = images.length > 0 ? Math.min(index, images.length - 1) : 0;
-  const whatsappHref = `${contact.whatsappLink}?text=${encodeURIComponent(
-    t("whatsappMessage", { product: product.name }),
-  )}`;
 
   function move(next: number) {
     if (images.length < 2) return;
@@ -204,30 +199,14 @@ function DialogContent({
             </p>
           </div>
 
-          {product.sellerPhone ? (
-            <div className="flex items-center gap-space-sm rounded-2xl border border-outline-variant bg-surface-container p-space-md">
-              <Icon name="call" className="text-lg text-tertiary" />
-              <span className="font-label-md text-label-md text-secondary">{t("sellerPhone")}</span>
-              <a
-                href={`tel:${product.sellerPhone.replace(/\s/g, "")}`}
-                className="ml-auto rounded font-semibold text-on-surface transition-colors duration-300 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-              >
-                {product.sellerPhone}
-              </a>
-            </div>
-          ) : null}
-
           <div className="flex flex-col gap-space-sm">
             <a
-              href={whatsappHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={cn(
-                "flex h-12 w-full items-center justify-center gap-2 rounded-full bg-primary font-label-lg text-label-lg font-semibold text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
-                EASE,
-              )}
+              href={`mailto:${contact.email}?subject=${encodeURIComponent(
+                t("emailSubject", { product: product.name }),
+              )}`}
+              className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-primary font-label-lg text-label-lg font-semibold text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
             >
-              <Icon name="forum" className="text-xl" />
+              <Icon name="email" className="text-xl" />
               {t("contactCta")}
             </a>
           </div>

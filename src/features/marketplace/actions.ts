@@ -9,7 +9,7 @@ import { getMarketplacePage, type MarketplaceProduct } from "./queries";
 
 const querySchema = z.object({
   query: z.string().trim().max(100).default(""),
-  sort: z.enum(MARKETPLACE_SORTS).default("featured"),
+  sort: z.enum(MARKETPLACE_SORTS).default("newest"),
   offset: z.number().int().min(0).max(10_000).default(0),
   limit: z.number().int().min(1).max(24).default(MARKETPLACE_PAGE_SIZE),
 });

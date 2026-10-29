@@ -14,14 +14,11 @@ export type MarketplaceProduct = {
   createdAt: string;
   price: number;
   description: string;
-  sellerPhone: string;
   images: string[];
   imageAlt: string;
 };
 
 export type MarketplaceContact = {
-  whatsappNumber: string;
-  whatsappLink: string;
   email: string;
 };
 
@@ -116,7 +113,6 @@ export async function getMarketplacePage({
         createdAt: row.created_at ?? "",
         price: (row.price_cents ?? 0) / 100,
         description: row.description ?? "",
-        sellerPhone: row.contact_information ?? "",
         images: urls,
         imageAlt: row.name,
       } satisfies MarketplaceProduct;
@@ -136,17 +132,10 @@ export async function getMarketplaceContact(): Promise<MarketplaceContact> {
       .maybeSingle(),
   );
 
-  const value = (data?.value ?? {}) as {
-    whatsapp?: string;
-    whatsappLink?: string;
-    email?: string;
-  };
+  const value = (data?.value ?? {}) as { email?: string };
 
-  // The admin-editable settings row wins; env is the easy-to-find fallback for
-  // local/staging environments where settings have not been seeded yet.
+  // Email is the only concierge channel: phone numbers were removed by request.
   return {
-    whatsappNumber: value.whatsapp ?? process.env.NEXT_PUBLIC_MARKETPLACE_WHATSAPP ?? "",
-    whatsappLink: value.whatsappLink ?? process.env.NEXT_PUBLIC_MARKETPLACE_WHATSAPP_LINK ?? "",
     email: value.email ?? process.env.NEXT_PUBLIC_MARKETPLACE_EMAIL ?? "",
   };
 }

@@ -15,6 +15,12 @@ import type { MarketplaceContact, MarketplaceProduct } from "../queries";
 import { MarketplaceInquiryDialog } from "./marketplace-inquiry-dialog";
 import { ProductDialog } from "./product-dialog";
 
+const SORT_LABEL: Record<MarketplaceSort, string> = {
+  newest: "sortNewest",
+  "price-low": "sortPriceLow",
+  "price-high": "sortPriceHigh",
+};
+
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
 export function MarketplaceView({
@@ -31,7 +37,7 @@ export function MarketplaceView({
   const [dialogOpen, setDialogOpen] = useState(false);
   const [inquiryOpen, setInquiryOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [sort, setSort] = useState<MarketplaceSort>("featured");
+  const [sort, setSort] = useState<MarketplaceSort>("newest");
   const [products, setProducts] = useState(initialProducts);
   const [total, setTotal] = useState(initialTotal);
   const [hasMore, setHasMore] = useState(initialProducts.length < initialTotal);
@@ -193,9 +199,7 @@ export function MarketplaceView({
               >
                 {MARKETPLACE_SORTS.map((key) => (
                   <option key={key} value={key}>
-                    {t(
-                      `controls.sort${key === "price-low" ? "PriceLow" : key === "price-high" ? "PriceHigh" : key === "newest" ? "Newest" : "Featured"}`,
-                    )}
+                    {t(`controls.${SORT_LABEL[key]}`)}
                   </option>
                 ))}
               </select>
