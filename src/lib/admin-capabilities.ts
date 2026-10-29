@@ -7,7 +7,6 @@ export const ADMIN_CAPABILITIES = [
   "members.review",
   "posts.moderate",
   "comments.moderate",
-  "interests.review",
   "reports.manage",
   "marketplace.manage",
   "admins.manage",

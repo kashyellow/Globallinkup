@@ -143,11 +143,9 @@ function AuditDetail({
 
   return (
     <>
-      <div className="sticky top-0 z-10 flex items-start justify-between gap-space-sm border-b border-outline-variant bg-surface-low/95 px-space-lg py-space-md backdrop-blur-md">
+      <div className="sticky top-0 z-10 flex items-start justify-between gap-space-sm border-b border-outline-variant bg-surface-low px-space-lg py-space-md">
         <div className="min-w-0">
-          <p className="font-label-caps text-label-caps tracking-[0.16em] text-primary uppercase">
-            {t("detailTitle")}
-          </p>
+          <p className="font-label-caps text-label-caps text-primary">{t("detailTitle")}</p>
           <h2
             id="audit-detail-title"
             className="mt-0.5 font-headline-sm text-headline-sm font-semibold break-words text-on-surface"

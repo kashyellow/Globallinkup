@@ -364,7 +364,7 @@ function TabBar({
               aria-pressed={active}
               onClick={() => onChange(id)}
               className={cn(
-                "relative min-h-11 px-1 pb-2 text-center font-label-md text-label-md tracking-[0.08em] uppercase sm:whitespace-nowrap",
+                "relative min-h-11 px-1 pb-2 text-center font-label-md text-label-md sm:whitespace-nowrap",
                 "transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
                 EASE,
                 active ? "font-bold text-primary" : "text-text-muted hover:text-on-surface",

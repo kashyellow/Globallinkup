@@ -105,7 +105,7 @@ export function PersonaDetailView({
         </div>
 
         <div className="md:col-span-7">
-          <h1 className="font-display-md text-display-md-mobile font-bold text-balance text-on-surface md:text-display-md">
+          <h1 className="font-title text-title-mobile font-bold text-balance text-on-surface md:text-title">
             {persona.age > 0 ? `${persona.name}, ${persona.age}` : persona.name}
           </h1>
           {persona.headline ? (
@@ -121,7 +121,7 @@ export function PersonaDetailView({
           </p>
 
           <div className="mt-space-md space-y-space-sm">
-            <span className="block font-label-md text-label-md font-semibold tracking-[0.08em] text-text-muted uppercase">
+            <span className="block font-label-md text-label-md font-semibold text-text-muted">
               {tCommon("languages")}
             </span>
             <div className="flex flex-wrap gap-1.5">
@@ -134,24 +134,6 @@ export function PersonaDetailView({
                   {tDiscover.has(`fluency.${language.level}`)
                     ? tDiscover(`fluency.${language.level}`)
                     : language.level}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-space-md space-y-space-sm">
-            <span className="block font-label-md text-label-md font-semibold tracking-[0.08em] text-text-muted uppercase">
-              {tCommon("interests")}
-            </span>
-            <div className="flex flex-wrap gap-1.5">
-              {persona.interests.map((interest) => (
-                <span
-                  key={interest}
-                  className="rounded-full border border-outline-variant bg-surface-container px-2.5 py-1 font-label-md text-label-md text-on-surface-strong"
-                >
-                  {tDiscover.has(`interests.${interest}`)
-                    ? tDiscover(`interests.${interest}`)
-                    : interest}
                 </span>
               ))}
             </div>

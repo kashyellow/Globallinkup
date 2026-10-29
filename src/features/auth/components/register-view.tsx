@@ -82,7 +82,7 @@ export function RegisterView() {
               </div>
 
               <div className="flex flex-col gap-1">
-                <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
+                <h1 className="font-title text-title-mobile text-on-surface md:text-title">
                   {t("title")}
                 </h1>
                 <p className="font-body-md text-body-md text-secondary">{t("subtitle")}</p>

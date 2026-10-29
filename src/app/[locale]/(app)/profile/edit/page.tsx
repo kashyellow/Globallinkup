@@ -4,7 +4,6 @@ import { getTranslations } from "next-intl/server";
 import { RegistrationDraftProvider } from "@/features/auth/components/registration-draft-provider";
 import { CreatePersonaView } from "@/features/persona/components/create-persona-view";
 import { loadPersonaInitial } from "@/features/persona/initial";
-import { getInterestCatalog } from "@/features/persona/queries";
 import { requireApprovedUser } from "@/lib/auth";
 
 export async function generateMetadata({
@@ -26,19 +25,11 @@ export default async function EditPersonaPage() {
   // Admins are operators, not members: they have no persona to edit.
   if (profile.role === "admin") notFound();
 
-  const [initial, interestCatalog] = await Promise.all([
-    loadPersonaInitial(),
-    getInterestCatalog(),
-  ]);
+  const initial = await loadPersonaInitial();
 
   return (
     <RegistrationDraftProvider>
-      <CreatePersonaView
-        initial={initial}
-        interestCatalog={interestCatalog}
-        isAuthenticated
-        mode="edit"
-      />
+      <CreatePersonaView initial={initial} isAuthenticated mode="edit" />
     </RegistrationDraftProvider>
   );
 }

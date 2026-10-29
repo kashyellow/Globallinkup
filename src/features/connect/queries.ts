@@ -26,7 +26,6 @@ export type ActiveConnectionDto = {
   avatar: string | null;
   languages: Language[];
   connectedSince: string;
-  interests: string[];
   channels: ContactChannel[];
 };
 
@@ -63,7 +62,7 @@ export type ConnectionsData = {
 const LEVELS = new Set(["native", "fluent", "advanced", "conversational", "proficient", "basic"]);
 
 const PROFILE_COLUMNS =
-  "id, display_name, age, city, country_code, neighborhood, avatar_url, languages, interests";
+  "id, display_name, age, city, country_code, neighborhood, avatar_url, languages";
 
 function parseLanguages(value: unknown): Language[] {
   if (!Array.isArray(value)) return [];
@@ -179,7 +178,6 @@ export async function getConnectionsData(viewerId: string): Promise<ConnectionsD
         ...shared,
         countryCode: profile.country_code ?? "",
         connectedSince: row.updated_at ?? row.created_at ?? "",
-        interests: profile.interests ?? [],
         channels: buildChannels(contactById.get(peerId)),
       });
     } else if (row.status === "requested" && row.recipient_id === viewerId) {

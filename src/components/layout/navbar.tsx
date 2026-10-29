@@ -55,8 +55,8 @@ export function Navbar({
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-outline-variant bg-background/90 backdrop-blur-xl">
-      <div className="mx-auto flex h-20 w-full max-w-[1240px] items-center justify-between gap-space-sm px-margin-mobile md:px-margin">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-outline-variant bg-background">
+      <div className="mx-auto flex h-14 w-full max-w-[1240px] items-center justify-between gap-space-sm px-margin-mobile md:px-margin lg:h-16">
         <Link
           href="/discover"
           className="flex min-h-11 min-w-0 items-center gap-2.5 rounded-full focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
@@ -68,7 +68,7 @@ export function Navbar({
             <span className="truncate font-headline-sm text-headline-sm font-bold tracking-tight text-on-surface">
               GlobalLinkup
             </span>
-            <span className="mt-0.5 hidden truncate font-label-md text-label-md text-secondary sm:block">
+            <span className="mt-0.5 hidden truncate font-label-md text-label-md text-secondary lg:block">
               {t("tagline")}
             </span>
           </span>
@@ -172,7 +172,7 @@ export function Navbar({
             aria-label={t("toggleMenu")}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((value) => !value)}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-outline-variant bg-surface-container text-secondary transition-colors duration-300 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-secondary transition-colors duration-300 hover:bg-surface-container hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden"
           >
             <Icon name={menuOpen ? "close" : "menu"} className="text-[20px]" />
           </button>
@@ -180,58 +180,70 @@ export function Navbar({
       </div>
 
       {menuOpen ? (
-        <div className="border-t border-outline-variant bg-background px-margin-mobile py-2 md:px-margin lg:hidden">
-          <nav
-            aria-label={t("primaryNavigation")}
-            className="mx-auto max-h-[calc(100dvh-5rem)] w-full max-w-[1240px] overflow-y-auto"
-          >
-            <Link
-              href="/profile"
-              onClick={() => setMenuOpen(false)}
-              aria-current={isActive("/profile") ? "page" : undefined}
-              className={cn(
-                "flex min-h-12 items-center justify-between rounded-[0.75rem] px-3 py-2.5 font-label-lg text-label-lg transition-colors duration-200",
-                isActive("/profile")
-                  ? "bg-surface-container-high font-semibold text-on-surface"
-                  : "text-secondary hover:bg-surface-container hover:text-on-surface",
-              )}
+        <>
+          {/* Scrim: dims the page under the open menu and closes it on tap. */}
+          <button
+            type="button"
+            tabIndex={-1}
+            aria-hidden
+            onClick={() => setMenuOpen(false)}
+            className="fixed inset-0 -z-10 cursor-default bg-inverse-surface/30 lg:hidden"
+          />
+          <div className="border-t border-outline-variant bg-background px-margin-mobile py-2 md:px-margin lg:hidden">
+            <nav
+              aria-label={t("primaryNavigation")}
+              className="mx-auto max-h-[calc(100dvh-3.5rem)] w-full max-w-[1240px] overflow-y-auto"
             >
-              {t("profile")}
-              {viewerAvatar ? (
-                <MediaImage
-                  alt=""
-                  src={viewerAvatar}
-                  wrapperClassName="h-6 w-6 rounded-full ring-1 ring-outline-variant"
-                  loading="eager"
-                />
-              ) : (
-                <DefaultAvatar className="h-6 w-6 rounded-full ring-1 ring-outline-variant" />
-              )}
-            </Link>
-            {isAdmin ? (
               <Link
-                href="/admin"
+                href="/profile"
                 onClick={() => setMenuOpen(false)}
-                className="flex min-h-12 items-center justify-between rounded-[0.75rem] px-3 py-2.5 font-label-lg text-label-lg text-secondary transition-colors duration-200 hover:bg-surface-container hover:text-on-surface md:hidden"
+                aria-current={isActive("/profile") ? "page" : undefined}
+                className={cn(
+                  "flex min-h-12 items-center justify-between rounded-[0.75rem] px-3 py-2.5 font-label-lg text-label-lg transition-colors duration-200",
+                  isActive("/profile")
+                    ? "bg-surface-container-high font-semibold text-on-surface"
+                    : "text-secondary hover:bg-surface-container hover:text-on-surface",
+                )}
               >
-                {t("adminPortal")}
+                {t("profile")}
+                {viewerAvatar ? (
+                  <MediaImage
+                    alt=""
+                    src={viewerAvatar}
+                    wrapperClassName="h-6 w-6 rounded-full ring-1 ring-outline-variant"
+                    loading="eager"
+                  />
+                ) : (
+                  <DefaultAvatar className="h-6 w-6 rounded-full ring-1 ring-outline-variant" />
+                )}
               </Link>
-            ) : null}
-            <div className="my-1 h-px bg-outline-variant" />
-            <div className="flex items-center justify-between gap-2 px-3 py-2 sm:hidden">
-              <span className="font-label-lg text-label-lg text-secondary">{tTheme("label")}</span>
-              <div className="flex items-center gap-1">
-                <ThemeToggle />
-                <LocaleSwitch
-                  locale={locale}
-                  onSwitch={switchLocale}
-                  disabled={localePending}
-                  label={t("language")}
-                />
+              {isAdmin ? (
+                <Link
+                  href="/admin"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex min-h-12 items-center justify-between rounded-[0.75rem] px-3 py-2.5 font-label-lg text-label-lg text-secondary transition-colors duration-200 hover:bg-surface-container hover:text-on-surface md:hidden"
+                >
+                  {t("adminPortal")}
+                </Link>
+              ) : null}
+              <div className="my-1 h-px bg-outline-variant" />
+              <div className="flex items-center justify-between gap-2 px-3 py-2 sm:hidden">
+                <span className="font-label-lg text-label-lg text-secondary">
+                  {tTheme("label")}
+                </span>
+                <div className="flex items-center gap-1">
+                  <ThemeToggle />
+                  <LocaleSwitch
+                    locale={locale}
+                    onSwitch={switchLocale}
+                    disabled={localePending}
+                    label={t("language")}
+                  />
+                </div>
               </div>
-            </div>
-          </nav>
-        </div>
+            </nav>
+          </div>
+        </>
       ) : null}
     </header>
   );

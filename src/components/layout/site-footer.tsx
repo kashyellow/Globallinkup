@@ -16,9 +16,7 @@ function isAnchor(href: string) {
 function Column({ column }: { column: FooterColumn }) {
   return (
     <div className="min-w-0">
-      <h2 className="font-label-caps text-label-caps tracking-[0.14em] text-primary uppercase">
-        {column.title}
-      </h2>
+      <h2 className="font-label-caps text-label-caps text-primary">{column.title}</h2>
       <ul className="mt-space-sm space-y-1">
         {column.links?.map((link) => (
           <li key={link.href}>
@@ -62,6 +60,40 @@ export async function SiteFooter({ variant }: { variant: FooterVariant }) {
   const tPublic = await getTranslations("PublicFooter");
   const tNav = await getTranslations("Nav");
 
+  // Signed-in screens already carry the four destinations in the navbar and
+  // the tab bar, so their footer is one quiet row: resources, legal, ©.
+  if (variant === "app") {
+    const resources = [
+      { label: tPublic("support"), href: "/support" },
+      { label: tPublic("safety"), href: "/safety" },
+      { label: tPublic("standards"), href: "/standards" },
+    ];
+    return (
+      <footer className="w-full border-t border-outline-variant">
+        <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-space-sm px-margin-mobile py-space-lg md:flex-row md:items-center md:justify-between md:px-margin">
+          <nav
+            aria-label={tPublic("resourcesTitle")}
+            className="flex flex-wrap items-center gap-x-space-md gap-y-1"
+          >
+            {resources.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="inline-flex min-h-11 items-center font-body-sm text-body-sm text-on-surface-variant transition-colors duration-200 hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+          <div className="flex flex-wrap items-center gap-x-space-md gap-y-1">
+            <LegalLinks />
+            <p className="font-body-sm text-body-sm text-text-muted">{tPublic("copyright")}</p>
+          </div>
+        </div>
+      </footer>
+    );
+  }
+
   const columns: FooterColumn[] = [];
 
   if (variant === "marketing") {
@@ -87,14 +119,13 @@ export async function SiteFooter({ variant }: { variant: FooterVariant }) {
     );
   }
 
-  if (variant === "public" || variant === "app") {
+  if (variant === "public") {
     columns.push({
-      title: variant === "app" ? tMarketing("communityTitle") : tPublic("productTitle"),
+      title: tPublic("productTitle"),
       links: [
         { label: tNav("discover"), href: "/discover" },
         { label: tNav("posts"), href: "/posts" },
         { label: tNav("marketplace"), href: "/marketplace" },
-        ...(variant === "app" ? [{ label: tNav("connections"), href: "/connections" }] : []),
       ],
     });
   }
@@ -145,9 +176,7 @@ export async function SiteFooter({ variant }: { variant: FooterVariant }) {
         <div className="mt-space-lg flex flex-col gap-space-sm border-t border-outline-variant pt-space-md sm:flex-row sm:items-center sm:justify-between">
           <p className="font-body-sm text-body-sm text-text-muted">{tPublic("copyright")}</p>
           <div className="flex flex-col gap-1 sm:items-end">
-            <p className="font-label-md text-label-md tracking-[0.08em] text-text-muted">
-              {tPublic("motto")}
-            </p>
+            <p className="font-label-md text-label-md text-text-muted">{tPublic("motto")}</p>
             <LegalLinks />
           </div>
         </div>

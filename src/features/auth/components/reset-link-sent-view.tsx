@@ -15,9 +15,7 @@ export function ResetLinkSentView() {
           <Icon name="mark_email_read" filled className="text-3xl" />
         </span>
 
-        <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
-          {t("title")}
-        </h1>
+        <h1 className="font-title text-title-mobile text-on-surface md:text-title">{t("title")}</h1>
 
         <p className="max-w-md font-body-md text-body-md text-secondary">{t("body")}</p>
         <p className="max-w-md font-body-sm text-body-sm text-text-muted">{t("spamHint")}</p>

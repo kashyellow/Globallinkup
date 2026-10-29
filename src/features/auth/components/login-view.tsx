@@ -149,7 +149,7 @@ export function LoginView({ currentAccount }: { currentAccount?: BlockedAccount 
             <div className="flex flex-col gap-space-lg">
               <AuthBackLink />
               <div className="flex flex-col gap-space-xs">
-                <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
+                <h1 className="font-title text-title-mobile text-on-surface md:text-title">
                   {t("title")}
                 </h1>
                 <p className="font-body-md text-body-md text-secondary">{t("subtitle")}</p>

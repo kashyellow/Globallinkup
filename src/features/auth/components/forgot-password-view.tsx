@@ -45,7 +45,7 @@ export function ForgotPasswordView() {
     <RecoveryShell step={1} back={{ href: "/login", label: t("returnToLogin") }}>
       <div className="flex flex-col gap-space-lg">
         <div className="flex flex-col gap-space-xs">
-          <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
+          <h1 className="font-title text-title-mobile text-on-surface md:text-title">
             {t("title")}
           </h1>
         </div>

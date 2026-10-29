@@ -64,12 +64,9 @@ export function AdminProductPreview({
           <>
             <div className="flex items-start justify-between gap-space-sm border-b border-outline-variant p-space-lg">
               <div>
-                <p className="font-label-caps text-label-caps tracking-[0.16em] text-primary uppercase">
-                  {t("eyebrow")}
-                </p>
                 <h2
                   id="admin-product-preview-title"
-                  className="mt-1 font-headline-sm text-headline-sm font-semibold text-on-surface"
+                  className="font-headline-sm text-headline-sm font-semibold text-on-surface"
                 >
                   {product.name}
                 </h2>

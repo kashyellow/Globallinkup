@@ -43,9 +43,7 @@ export function MarketplaceInquiryDialog({
       >
         <div className="flex items-start justify-between gap-space-sm">
           <div>
-            <p className="font-label-caps text-label-caps tracking-[0.16em] text-primary uppercase">
-              {t("eyebrow")}
-            </p>
+            <p className="font-label-caps text-label-caps text-primary">{t("eyebrow")}</p>
             <h2
               id="marketplace-inquiry-title"
               className="mt-1 font-headline-sm text-headline-sm font-semibold text-on-surface"

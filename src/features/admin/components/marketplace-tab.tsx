@@ -145,8 +145,7 @@ export function AdminMarketplaceTab({
     <div className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
       <div className="flex flex-col justify-between gap-space-md lg:flex-row lg:items-end">
         <div>
-          <p className="font-label-md text-label-md font-semibold text-primary">{t("eyebrow")}</p>
-          <h1 className="mt-1 font-display-md text-display-md-mobile text-on-surface md:text-display-md">
+          <h1 className="font-title text-title-mobile text-on-surface md:text-title">
             {t("title")}
           </h1>
           <p className="mt-2 max-w-[62ch] font-body-md text-body-md text-secondary">{t("body")}</p>
@@ -355,13 +354,14 @@ function ProductRow({
           </div>
         </div>
 
-        <div className="flex shrink-0 flex-wrap items-center gap-space-xs lg:flex-nowrap">
+        {/* Phones: one even row of actions under the details, the trash icon last. */}
+        <div className="grid w-full grid-cols-[1fr_1fr_1fr_auto] items-center gap-space-xs border-t border-outline-variant pt-space-sm lg:flex lg:w-auto lg:shrink-0 lg:border-t-0 lg:pt-0">
           {product.status === "trashed" ? (
             <button
               type="button"
               onClick={onRestore}
               disabled={pending}
-              className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-outline-variant bg-surface-dim px-4 font-label-md text-label-md text-on-surface transition-colors hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-60"
+              className="col-span-4 inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-outline-variant bg-surface-dim px-4 font-label-md text-label-md text-on-surface transition-colors hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-60"
             >
               {pending ? (
                 <Spinner className="h-4 w-4 text-current" label={t("restore")} />
@@ -375,7 +375,7 @@ function ProductRow({
               <button
                 type="button"
                 onClick={onPreview}
-                className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-outline-variant bg-surface-dim px-4 font-label-md text-label-md text-on-surface transition-colors hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
+                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-outline-variant bg-surface-dim px-3 font-label-md text-label-md text-on-surface transition-colors hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px lg:px-4"
               >
                 <Icon name="visibility" className="text-base" />
                 {t("previewAction")}
@@ -383,7 +383,7 @@ function ProductRow({
               <button
                 type="button"
                 onClick={onEdit}
-                className="inline-flex min-h-11 items-center rounded-full border border-outline-variant bg-surface-dim px-4 font-label-md text-label-md text-on-surface transition-colors hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
+                className="inline-flex min-h-11 items-center justify-center rounded-full border border-outline-variant bg-surface-dim px-3 font-label-md text-label-md text-on-surface transition-colors hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px lg:px-4"
               >
                 {t("edit")}
               </button>
@@ -391,7 +391,7 @@ function ProductRow({
                 type="button"
                 onClick={onToggle}
                 disabled={pending}
-                className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-outline-variant bg-surface-dim px-4 font-label-md text-label-md text-on-surface transition-colors hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-60"
+                className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full border border-outline-variant bg-surface-dim px-3 font-label-md text-label-md text-on-surface transition-colors hover:border-outline-hover hover:bg-surface-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-60 lg:px-4"
               >
                 {pending ? <Spinner className="h-4 w-4 text-current" label={t("update")} /> : null}
                 {product.isPublished ? t("unpublish") : t("publish")}
@@ -570,12 +570,9 @@ function ProductFormDialog({
       >
         <div className="flex items-start justify-between gap-space-md border-b border-outline-variant p-space-lg">
           <div>
-            <p className="font-label-caps text-label-caps tracking-[0.16em] text-primary uppercase">
-              {t("formEyebrow")}
-            </p>
             <h2
               id="admin-product-title"
-              className="mt-1 font-headline-sm text-headline-sm font-semibold text-on-surface"
+              className="font-headline-sm text-headline-sm font-semibold text-on-surface"
             >
               {product ? t("editTitle") : t("form.title")}
             </h2>

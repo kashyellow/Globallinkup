@@ -32,11 +32,9 @@ export default async function AdminDashboardPage() {
         ? "/admin/marketplace"
         : capabilities.includes("posts.moderate")
           ? "/admin/moderation"
-          : capabilities.includes("interests.review")
-            ? "/admin/interests"
-            : capabilities.includes("audit.read")
-              ? "/admin/audit"
-              : "/discover";
+          : capabilities.includes("audit.read")
+            ? "/admin/audit"
+            : "/discover";
     redirect({ href: target, locale });
     return null;
   }
@@ -62,14 +60,6 @@ export default async function AdminDashboardPage() {
       capability: "reports.manage",
     },
     {
-      key: "pendingInterests",
-      value: metrics.pendingInterests,
-      href: "/admin/interests?status=pending",
-      icon: "tag",
-      tone: "primary",
-      capability: "interests.review",
-    },
-    {
       key: "liveProducts",
       value: metrics.curatedProducts,
       href: "/admin/marketplace?status=live",
@@ -81,55 +71,51 @@ export default async function AdminDashboardPage() {
 
   // Sub-admins only see the desks their role can actually read.
   const visibleCards = cards.filter((card) => capabilities.includes(card.capability));
+  // One column per visible queue on wide screens, so no cell is left empty.
+  const wideColumns =
+    visibleCards.length >= 3 ? "xl:grid-cols-3" : visibleCards.length === 2 ? "" : "xl:grid-cols-1";
 
   return (
     <div className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
       <div className="max-w-2xl">
-        <p className="font-label-md text-label-md font-semibold text-primary">{t("eyebrow")}</p>
-        <h1 className="mt-1 font-display-md text-display-md-mobile text-on-surface md:text-display-md">
-          {t("title")}
-        </h1>
-        <p className="mt-2 font-body-md text-body-md text-secondary">{t("body")}</p>
+        <h1 className="font-title text-title-mobile text-on-surface md:text-title">{t("title")}</h1>
+        <p className="mt-1 font-body-md text-body-md text-on-surface-variant">{t("body")}</p>
       </div>
 
-      <div className="mt-space-xl grid grid-cols-1 gap-space-md sm:grid-cols-2 xl:grid-cols-4">
+      {/*
+       * The queues as one divided strip: a label, the count, what it means, and
+       * the whole cell links to its desk. Colour only marks reports that need a
+       * decision; a zero stays in ink.
+       */}
+      <div
+        className={`mt-space-lg grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-outline-variant bg-outline-variant md:mt-space-xl ${wideColumns}`}
+      >
         {visibleCards.map((card) => (
           <Link
             key={card.key}
             href={card.href}
-            className="group relative bezel-tray focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="group relative flex flex-col gap-1 bg-surface-low p-space-md transition-colors duration-200 hover:bg-surface-container focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary md:p-space-lg [&:last-child:nth-child(odd)]:col-span-2 xl:[&:last-child:nth-child(odd)]:col-span-1"
           >
-            <LinkPending className="rounded-[1.25rem]" />
-            <div className="flex h-full flex-col justify-between gap-space-lg bezel-core p-space-lg">
-              <div className="flex items-start justify-between gap-space-sm">
-                <span
-                  className={
-                    card.tone === "danger"
-                      ? "flex h-11 w-11 items-center justify-center rounded-full border border-danger-border bg-danger-surface text-danger-text"
-                      : card.tone === "success"
-                        ? "flex h-11 w-11 items-center justify-center rounded-full border border-success-border bg-success-surface text-success-text"
-                        : "flex h-11 w-11 items-center justify-center rounded-full border border-primary/25 bg-admin-surface text-primary"
-                  }
-                >
-                  <Icon name={card.icon} />
-                </span>
-                <Icon
-                  name="arrow_forward"
-                  className="text-lg text-secondary transition-transform duration-300 group-hover:translate-x-0.5"
-                />
-              </div>
-              <div>
-                <p className="font-display-md text-display-md-mobile font-bold text-on-surface tabular-nums">
-                  {card.value}
-                </p>
-                <p className="mt-1 font-label-lg text-label-lg font-semibold text-on-surface">
-                  {t(`cards.${card.key}.title`)}
-                </p>
-                <p className="mt-0.5 font-body-sm text-body-sm text-secondary">
-                  {t(`cards.${card.key}.body`)}
-                </p>
-              </div>
-            </div>
+            <LinkPending className="rounded-none" />
+            <span className="flex items-center justify-between gap-space-xs font-label-lg text-label-lg font-semibold text-on-surface">
+              {t(`cards.${card.key}.title`)}
+              <Icon
+                name="arrow_forward"
+                className="text-base text-secondary transition-transform duration-200 group-hover:translate-x-0.5"
+              />
+            </span>
+            <span
+              className={
+                card.tone === "danger" && card.value > 0
+                  ? "font-title text-title font-bold text-danger-text tabular-nums"
+                  : "font-title text-title font-bold text-on-surface tabular-nums"
+              }
+            >
+              {card.value}
+            </span>
+            <span className="font-body-sm text-body-sm text-pretty text-on-surface-variant">
+              {t(`cards.${card.key}.body`)}
+            </span>
           </Link>
         ))}
       </div>

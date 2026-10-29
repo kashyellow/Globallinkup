@@ -20,7 +20,6 @@ function daysUntil(iso: string | null): number | null {
 
 export function DispatchCard({
   dispatch,
-  index,
   state,
   busy,
   onArchive,
@@ -28,7 +27,8 @@ export function DispatchCard({
   onDelete,
 }: {
   dispatch: ProfileDispatch;
-  index: number;
+  /** Position in the archive; accepted from callers, no longer printed. */
+  index?: number;
   state: ProfileDispatch["state"];
   busy: boolean;
   onArchive: () => void;
@@ -76,10 +76,7 @@ export function DispatchCard({
 
       <div className="flex flex-1 flex-col justify-between gap-space-sm p-space-md">
         <div>
-          <div className="flex items-center justify-between gap-space-sm font-label-md text-label-md text-text-muted">
-            <span className="tracking-[0.08em] uppercase">
-              D-{String(index + 1).padStart(2, "0")}
-            </span>
+          <div className="flex items-center gap-space-sm font-label-md text-label-md text-text-muted">
             {date && !Number.isNaN(date.getTime()) ? (
               <span suppressHydrationWarning>{format.dateTime(date, "dayMonth")}</span>
             ) : null}
@@ -88,7 +85,7 @@ export function DispatchCard({
           {state !== "visible" ? (
             <span
               className={cn(
-                "mt-2 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-label-caps text-label-caps uppercase",
+                "mt-2 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-label-caps text-label-caps",
                 state === "archived"
                   ? "border-outline-variant bg-surface-container text-secondary"
                   : "border-danger-border bg-danger-surface text-danger-text",

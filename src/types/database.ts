@@ -23,6 +23,142 @@ export type Database = {
   };
   public: {
     Tables: {
+      admin_invites: {
+        Row: {
+          accepted_at: string | null;
+          admin_role_id: string | null;
+          created_at: string;
+          email: string;
+          id: string;
+          invited_by: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          accepted_at?: string | null;
+          admin_role_id?: string | null;
+          created_at?: string;
+          email: string;
+          id?: string;
+          invited_by?: string | null;
+        };
+        Update: {
+          accepted_at?: string | null;
+          admin_role_id?: string | null;
+          created_at?: string;
+          email?: string;
+          id?: string;
+          invited_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "admin_invites_admin_role_id_fkey";
+            columns: ["admin_role_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_roles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "admin_invites_invited_by_fkey";
+            columns: ["invited_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "admin_invites_invited_by_fkey";
+            columns: ["invited_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      admin_roles: {
+        Row: {
+          capabilities: string[];
+          created_at: string;
+          description: string | null;
+          id: string;
+          is_system: boolean;
+          name: string;
+          slug: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          capabilities?: string[];
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          is_system?: boolean;
+          name: string;
+          slug: string;
+          updated_at?: string;
+        };
+        Update: {
+          capabilities?: string[];
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          is_system?: boolean;
+          name?: string;
+          slug?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      audit_events: {
+        Row: {
+          action: string;
+          actor_id: string | null;
+          actor_role: string | null;
+          id: string;
+          metadata: NonNullable<Json>;
+          occurred_at: string;
+          reason: string | null;
+          target_id: string | null;
+          target_type: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          action: string;
+          actor_id?: string | null;
+          actor_role?: string | null;
+          id?: string;
+          metadata?: NonNullable<Json>;
+          occurred_at?: string;
+          reason?: string | null;
+          target_id?: string | null;
+          target_type?: string | null;
+        };
+        Update: {
+          action?: string;
+          actor_id?: string | null;
+          actor_role?: string | null;
+          id?: string;
+          metadata?: NonNullable<Json>;
+          occurred_at?: string;
+          reason?: string | null;
+          target_id?: string | null;
+          target_type?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "audit_events_actor_id_fkey";
+            columns: ["actor_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "audit_events_actor_id_fkey";
+            columns: ["actor_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       connections: {
         Row: {
           created_at: string;
@@ -34,6 +170,7 @@ export type Database = {
           topic: string | null;
           updated_at: string;
         };
+        ComputedFields: never;
         Insert: {
           created_at?: string;
           id?: string;
@@ -94,6 +231,7 @@ export type Database = {
           updated_at: string;
           whatsapp: string | null;
         };
+        ComputedFields: never;
         Insert: {
           email?: string | null;
           instagram?: string | null;
@@ -127,42 +265,6 @@ export type Database = {
           },
         ];
       };
-      interest_catalog: {
-        Row: {
-          created_at: string;
-          created_by: string | null;
-          id: string;
-          label: string;
-          normalized: string;
-          reviewed_at: string | null;
-          reviewed_by: string | null;
-          status: Database["public"]["Enums"]["interest_status"];
-          updated_at: string;
-        };
-        Insert: {
-          created_at?: string;
-          created_by?: string | null;
-          id?: string;
-          label: string;
-          normalized: string;
-          reviewed_at?: string | null;
-          reviewed_by?: string | null;
-          status?: Database["public"]["Enums"]["interest_status"];
-          updated_at?: string;
-        };
-        Update: {
-          created_at?: string;
-          created_by?: string | null;
-          id?: string;
-          label?: string;
-          normalized?: string;
-          reviewed_at?: string | null;
-          reviewed_by?: string | null;
-          status?: Database["public"]["Enums"]["interest_status"];
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
       marketplace_product_images: {
         Row: {
           id: string;
@@ -170,6 +272,7 @@ export type Database = {
           sort: number;
           storage_path: string;
         };
+        ComputedFields: never;
         Insert: {
           id?: string;
           product_id: string;
@@ -209,6 +312,7 @@ export type Database = {
           published_at: string | null;
           updated_at: string;
         };
+        ComputedFields: never;
         Insert: {
           catalog_status?: never;
           contact_information?: string | null;
@@ -258,12 +362,65 @@ export type Database = {
           },
         ];
       };
+      notifications: {
+        Row: {
+          created_at: string;
+          expires_at: string;
+          id: string;
+          read_at: string | null;
+          reason: string | null;
+          recipient_id: string;
+          target_id: string | null;
+          target_type: string | null;
+          type: Database["public"]["Enums"]["notification_type"];
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          expires_at?: string;
+          id?: string;
+          read_at?: string | null;
+          reason?: string | null;
+          recipient_id: string;
+          target_id?: string | null;
+          target_type?: string | null;
+          type: Database["public"]["Enums"]["notification_type"];
+        };
+        Update: {
+          created_at?: string;
+          expires_at?: string;
+          id?: string;
+          read_at?: string | null;
+          reason?: string | null;
+          recipient_id?: string;
+          target_id?: string | null;
+          target_type?: string | null;
+          type?: Database["public"]["Enums"]["notification_type"];
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notifications_recipient_id_fkey";
+            columns: ["recipient_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "notifications_recipient_id_fkey";
+            columns: ["recipient_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       platform_settings: {
         Row: {
           key: string;
           updated_at: string;
           value: NonNullable<Json>;
         };
+        ComputedFields: never;
         Insert: {
           key: string;
           updated_at?: string;
@@ -276,35 +433,119 @@ export type Database = {
         };
         Relationships: [];
       };
+      post_appeals: {
+        Row: {
+          admin_id: string | null;
+          admin_note: string | null;
+          author_id: string;
+          created_at: string;
+          id: string;
+          message: string;
+          post_id: string;
+          resolved_at: string | null;
+          status: Database["public"]["Enums"]["appeal_status"];
+        };
+        ComputedFields: never;
+        Insert: {
+          admin_id?: string | null;
+          admin_note?: string | null;
+          author_id: string;
+          created_at?: string;
+          id?: string;
+          message: string;
+          post_id: string;
+          resolved_at?: string | null;
+          status?: Database["public"]["Enums"]["appeal_status"];
+        };
+        Update: {
+          admin_id?: string | null;
+          admin_note?: string | null;
+          author_id?: string;
+          created_at?: string;
+          id?: string;
+          message?: string;
+          post_id?: string;
+          resolved_at?: string | null;
+          status?: Database["public"]["Enums"]["appeal_status"];
+        };
+        Relationships: [
+          {
+            foreignKeyName: "post_appeals_admin_id_fkey";
+            columns: ["admin_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "post_appeals_admin_id_fkey";
+            columns: ["admin_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "post_appeals_author_id_fkey";
+            columns: ["author_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "post_appeals_author_id_fkey";
+            columns: ["author_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "post_appeals_post_id_fkey";
+            columns: ["post_id"];
+            isOneToOne: false;
+            referencedRelation: "posts";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "post_appeals_post_id_fkey";
+            columns: ["post_id"];
+            isOneToOne: false;
+            referencedRelation: "posts_feed";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       post_comments: {
         Row: {
           author_id: string;
-          body: string;
+          body: string | null;
           created_at: string;
           deleted_at: string | null;
           id: string;
           parent_id: string | null;
           post_id: string;
+          purged_at: string | null;
           updated_at: string;
         };
+        ComputedFields: never;
         Insert: {
           author_id: string;
-          body: string;
+          body?: string | null;
           created_at?: string;
           deleted_at?: string | null;
           id?: string;
           parent_id?: string | null;
           post_id: string;
+          purged_at?: string | null;
           updated_at?: string;
         };
         Update: {
           author_id?: string;
-          body?: string;
+          body?: string | null;
           created_at?: string;
           deleted_at?: string | null;
           id?: string;
           parent_id?: string | null;
           post_id?: string;
+          purged_at?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -353,6 +594,7 @@ export type Database = {
           sort: number;
           storage_path: string;
         };
+        ComputedFields: never;
         Insert: {
           created_at?: string;
           id?: string;
@@ -390,6 +632,7 @@ export type Database = {
           post_id: string;
           user_id: string;
         };
+        ComputedFields: never;
         Insert: {
           created_at?: string;
           post_id: string;
@@ -433,11 +676,11 @@ export type Database = {
       };
       posts: {
         Row: {
+          archived_at: string | null;
           author_id: string;
           caption: string | null;
           created_at: string;
           id: string;
-          archived_at: string | null;
           image_path: string | null;
           moderation_status: Database["public"]["Enums"]["moderation_status"];
           previous_state: Database["public"]["Enums"]["post_state"] | null;
@@ -448,12 +691,13 @@ export type Database = {
           state: Database["public"]["Enums"]["post_state"];
           updated_at: string;
         };
+        ComputedFields: never;
         Insert: {
+          archived_at?: string | null;
           author_id: string;
           caption?: string | null;
           created_at?: string;
           id?: string;
-          archived_at?: string | null;
           image_path?: string | null;
           moderation_status?: Database["public"]["Enums"]["moderation_status"];
           previous_state?: Database["public"]["Enums"]["post_state"] | null;
@@ -465,11 +709,11 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          archived_at?: string | null;
           author_id?: string;
           caption?: string | null;
           created_at?: string;
           id?: string;
-          archived_at?: string | null;
           image_path?: string | null;
           moderation_status?: Database["public"]["Enums"]["moderation_status"];
           previous_state?: Database["public"]["Enums"]["post_state"] | null;
@@ -520,6 +764,7 @@ export type Database = {
           profile_id: string;
           reason: string | null;
         };
+        ComputedFields: never;
         Insert: {
           admin_id?: string | null;
           created_at?: string;
@@ -573,6 +818,7 @@ export type Database = {
           profile_id: string;
           updated_at: string;
         };
+        ComputedFields: never;
         Insert: {
           date_of_birth?: string | null;
           profile_id: string;
@@ -614,7 +860,6 @@ export type Database = {
           display_name: string;
           headline: string | null;
           id: string;
-          interests: string[];
           languages: NonNullable<Json>;
           neighborhood: string | null;
           reviewed_at: string | null;
@@ -624,6 +869,7 @@ export type Database = {
           submitted_at: string | null;
           updated_at: string;
         };
+        ComputedFields: never;
         Insert: {
           admin_role_id?: string | null;
           approval_status?: Database["public"]["Enums"]["approval_status"];
@@ -637,7 +883,6 @@ export type Database = {
           display_name: string;
           headline?: string | null;
           id: string;
-          interests?: string[];
           languages?: NonNullable<Json>;
           neighborhood?: string | null;
           reviewed_at?: string | null;
@@ -660,7 +905,6 @@ export type Database = {
           display_name?: string;
           headline?: string | null;
           id?: string;
-          interests?: string[];
           languages?: NonNullable<Json>;
           neighborhood?: string | null;
           reviewed_at?: string | null;
@@ -671,6 +915,13 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "profiles_admin_role_id_fkey";
+            columns: ["admin_role_id"];
+            isOneToOne: false;
+            referencedRelation: "admin_roles";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "profiles_reviewed_by_fkey";
             columns: ["reviewed_by"];
@@ -701,6 +952,7 @@ export type Database = {
           target_type: Database["public"]["Enums"]["report_target_type"];
           target_user_id: string | null;
         };
+        ComputedFields: never;
         Insert: {
           created_at?: string;
           details?: string | null;
@@ -786,197 +1038,29 @@ export type Database = {
           },
         ];
       };
-      audit_events: {
-        Row: {
-          action: string;
-          actor_id: string | null;
-          actor_role: string | null;
-          id: string;
-          metadata: Json;
-          occurred_at: string;
-          reason: string | null;
-          target_id: string | null;
-          target_type: string | null;
-        };
-        Insert: {
-          action: string;
-          actor_id?: string | null;
-          actor_role?: string | null;
-          id?: string;
-          metadata?: Json;
-          occurred_at?: string;
-          reason?: string | null;
-          target_id?: string | null;
-          target_type?: string | null;
-        };
-        Update: {
-          action?: string;
-          actor_id?: string | null;
-          actor_role?: string | null;
-          id?: string;
-          metadata?: Json;
-          occurred_at?: string;
-          reason?: string | null;
-          target_id?: string | null;
-          target_type?: string | null;
-        };
-        Relationships: [];
-      };
-      admin_invites: {
-        Row: {
-          accepted_at: string | null;
-          admin_role_id: string | null;
-          created_at: string;
-          email: string;
-          id: string;
-          invited_by: string | null;
-        };
-        Insert: {
-          accepted_at?: string | null;
-          admin_role_id?: string | null;
-          created_at?: string;
-          email: string;
-          id?: string;
-          invited_by?: string | null;
-        };
-        Update: {
-          accepted_at?: string | null;
-          admin_role_id?: string;
-          created_at?: string;
-          email?: string;
-          id?: string;
-          invited_by?: string | null;
-        };
-        Relationships: [];
-      };
-      admin_roles: {
-        Row: {
-          capabilities: string[];
-          created_at: string;
-          description: string | null;
-          id: string;
-          is_system: boolean;
-          name: string;
-          slug: string;
-          updated_at: string;
-        };
-        Insert: {
-          capabilities?: string[];
-          created_at?: string;
-          description?: string | null;
-          id?: string;
-          is_system?: boolean;
-          name: string;
-          slug: string;
-          updated_at?: string;
-        };
-        Update: {
-          capabilities?: string[];
-          created_at?: string;
-          description?: string | null;
-          id?: string;
-          is_system?: boolean;
-          name?: string;
-          slug?: string;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
-      notifications: {
-        Row: {
-          created_at: string;
-          expires_at: string;
-          id: string;
-          read_at: string | null;
-          reason: string | null;
-          recipient_id: string;
-          target_id: string | null;
-          target_type: string | null;
-          type: Database["public"]["Enums"]["notification_type"];
-        };
-        Insert: {
-          created_at?: string;
-          expires_at?: string;
-          id?: string;
-          read_at?: string | null;
-          reason?: string | null;
-          recipient_id: string;
-          target_id?: string | null;
-          target_type?: string | null;
-          type: Database["public"]["Enums"]["notification_type"];
-        };
-        Update: {
-          created_at?: string;
-          expires_at?: string;
-          id?: string;
-          read_at?: string | null;
-          reason?: string | null;
-          recipient_id?: string;
-          target_id?: string | null;
-          target_type?: string | null;
-          type?: Database["public"]["Enums"]["notification_type"];
-        };
-        Relationships: [];
-      };
-      post_appeals: {
-        Row: {
-          admin_id: string | null;
-          admin_note: string | null;
-          author_id: string;
-          created_at: string;
-          id: string;
-          message: string;
-          post_id: string;
-          resolved_at: string | null;
-          status: Database["public"]["Enums"]["appeal_status"];
-        };
-        Insert: {
-          admin_id?: string | null;
-          admin_note?: string | null;
-          author_id: string;
-          created_at?: string;
-          id?: string;
-          message: string;
-          post_id: string;
-          resolved_at?: string | null;
-          status?: Database["public"]["Enums"]["appeal_status"];
-        };
-        Update: {
-          admin_id?: string | null;
-          admin_note?: string | null;
-          author_id?: string;
-          created_at?: string;
-          id?: string;
-          message?: string;
-          post_id?: string;
-          resolved_at?: string | null;
-          status?: Database["public"]["Enums"]["appeal_status"];
-        };
-        Relationships: [];
-      };
     };
     Views: {
       posts_feed: {
         Row: {
+          archived_at: string | null;
           author_avatar_url: string | null;
           author_city: string | null;
           author_country_code: string | null;
-          author_id: string | null;
+          author_id: string;
           author_name: string | null;
           caption: string | null;
           comment_count: number | null;
-          created_at: string | null;
-          id: string | null;
+          created_at: string;
+          id: string;
           image_path: string | null;
           like_count: number | null;
-          moderation_status: Database["public"]["Enums"]["moderation_status"] | null;
-          archived_at: string | null;
-          previous_state: Database["public"]["Enums"]["post_state"] | null;
+          moderation_status: Database["public"]["Enums"]["moderation_status"];
           purge_after: string | null;
           removed_reason: string | null;
-          state: Database["public"]["Enums"]["post_state"] | null;
-          updated_at: string | null;
+          state: Database["public"]["Enums"]["post_state"];
+          updated_at: string;
         };
+        ComputedFields: never;
         Relationships: [
           {
             foreignKeyName: "posts_author_id_fkey";
@@ -997,24 +1081,24 @@ export type Database = {
       profiles_public: {
         Row: {
           age: number | null;
-          approval_status: Database["public"]["Enums"]["approval_status"] | null;
+          approval_status: Database["public"]["Enums"]["approval_status"];
           avatar_url: string | null;
           badge: string | null;
           bio_en: string | null;
           bio_es: string | null;
           city: string | null;
           country_code: string | null;
-          created_at: string | null;
-          display_name: string | null;
+          created_at: string;
+          display_name: string;
           headline: string | null;
-          id: string | null;
-          interests: string[] | null;
-          languages: Json | null;
+          id: string;
+          languages: NonNullable<Json>;
           neighborhood: string | null;
-          role: Database["public"]["Enums"]["app_role"] | null;
-          search_text: string | null;
+          role: Database["public"]["Enums"]["app_role"];
+          search_text: string;
           submitted_at: string | null;
         };
+        ComputedFields: never;
         Insert: {
           age?: never;
           approval_status?: Database["public"]["Enums"]["approval_status"] | null;
@@ -1028,7 +1112,6 @@ export type Database = {
           display_name?: string | null;
           headline?: string | null;
           id?: string | null;
-          interests?: string[] | null;
           languages?: Json | null;
           neighborhood?: string | null;
           role?: Database["public"]["Enums"]["app_role"] | null;
@@ -1048,7 +1131,6 @@ export type Database = {
           display_name?: string | null;
           headline?: string | null;
           id?: string | null;
-          interests?: string[] | null;
           languages?: Json | null;
           neighborhood?: string | null;
           role?: Database["public"]["Enums"]["app_role"] | null;
@@ -1060,32 +1142,14 @@ export type Database = {
     };
     Functions: {
       are_connected: { Args: { a: string; b: string }; Returns: boolean };
+      can_read_post_image: { Args: { p_path: string }; Returns: boolean };
       create_post: { Args: { p_caption: string; p_image_paths: string[] }; Returns: string };
       discover_countries: {
         Args: Record<PropertyKey, never>;
-        Returns: { country_code: string; member_count: number }[];
-      };
-      purge_audit_events: {
-        Args: Record<PropertyKey, never>;
-        Returns: number;
-      };
-      record_audit: {
-        Args: {
-          p_action: string;
-          p_metadata?: Json;
-          p_reason?: string;
-          p_target_id?: string;
-          p_target_type?: string;
-        };
-        Returns: string;
-      };
-      my_capabilities: {
-        Args: Record<PropertyKey, never>;
-        Returns: string[];
-      };
-      purge_expired_content: {
-        Args: { p_dry_run?: boolean };
-        Returns: Json;
+        Returns: {
+          country_code: string;
+          member_count: number;
+        }[];
       };
       discover_personas: {
         Args: {
@@ -1104,16 +1168,17 @@ export type Database = {
           country_code: string;
           display_name: string;
           id: string;
-          interests: string[];
           languages: Json;
           total_count: number;
         }[];
       };
-      interest_search_text: { Args: { p_interests: string[] }; Returns: string };
+      has_capability: { Args: { p_capability: string }; Returns: boolean };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
+      is_admin_author: { Args: { p_id: string }; Returns: boolean };
       is_approved: { Args: Record<PropertyKey, never>; Returns: boolean };
+      is_visible_member: { Args: { p_id: string }; Returns: boolean };
       language_search_text: { Args: { p_languages: Json }; Returns: string };
-      normalize_interest_label: { Args: { value: string }; Returns: string };
+      my_capabilities: { Args: Record<PropertyKey, never>; Returns: string[] };
       profile_age: { Args: { p_profile_id: string }; Returns: number };
       profile_search_text: {
         Args: {
@@ -1121,15 +1186,21 @@ export type Database = {
           p_country_code: string;
           p_display_name: string;
           p_headline: string;
-          p_interests: string[];
           p_languages: Json;
         };
         Returns: string;
       };
-      register_custom_interests: { Args: { p_labels: string[] }; Returns: Json };
-      review_interest: {
-        Args: { p_decision: Database["public"]["Enums"]["interest_status"]; p_interest_id: string };
-        Returns: boolean;
+      purge_audit_events: { Args: Record<PropertyKey, never>; Returns: number };
+      purge_expired_content: { Args: { p_dry_run?: boolean }; Returns: Json };
+      record_audit: {
+        Args: {
+          p_action: string;
+          p_metadata?: Json;
+          p_reason?: string;
+          p_target_id?: string;
+          p_target_type?: string;
+        };
+        Returns: string;
       };
       review_persona: {
         Args: {
@@ -1151,7 +1222,6 @@ export type Database = {
           p_facebook?: string;
           p_headline?: string;
           p_instagram?: string;
-          p_interests?: string[];
           p_languages?: Json;
           p_telegram?: string;
           p_tiktok?: string;
@@ -1163,11 +1233,10 @@ export type Database = {
     };
     Enums: {
       app_role: "user" | "admin";
+      appeal_status: "open" | "accepted" | "declined";
       approval_status: "pending" | "approved" | "rejected" | "suspended";
       connection_status: "requested" | "accepted" | "declined";
-      interest_status: "pending" | "approved" | "rejected";
       marketplace_status: "draft" | "live" | "unpublished" | "trashed";
-      appeal_status: "open" | "accepted" | "declined";
       moderation_status: "visible" | "removed";
       notification_type:
         | "post.removed"
@@ -1175,9 +1244,7 @@ export type Database = {
         | "appeal.declined"
         | "persona.approved"
         | "persona.rejected"
-        | "persona.suspended"
-        | "interest.approved"
-        | "interest.rejected";
+        | "persona.suspended";
       post_state: "visible" | "archived" | "removed";
       report_status: "open" | "resolved" | "dismissed";
       report_target_type: "user" | "post";
@@ -1296,11 +1363,20 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["user", "admin"],
+      appeal_status: ["open", "accepted", "declined"],
       approval_status: ["pending", "approved", "rejected", "suspended"],
       connection_status: ["requested", "accepted", "declined"],
-      interest_status: ["pending", "approved", "rejected"],
       marketplace_status: ["draft", "live", "unpublished", "trashed"],
       moderation_status: ["visible", "removed"],
+      notification_type: [
+        "post.removed",
+        "post.restored",
+        "appeal.declined",
+        "persona.approved",
+        "persona.rejected",
+        "persona.suspended",
+      ],
+      post_state: ["visible", "archived", "removed"],
       report_status: ["open", "resolved", "dismissed"],
       report_target_type: ["user", "post"],
     },

@@ -182,15 +182,13 @@ export function PostsView({
 
   return (
     <div className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
-      <div className="flex flex-col justify-between gap-space-md lg:flex-row lg:items-end">
-        <div className="flex max-w-2xl flex-col gap-space-sm">
-          <p className="font-label-caps text-label-caps tracking-[0.16em] text-primary uppercase">
-            {t("eyebrowPrimary")}
-          </p>
-          <h1 className="font-display-md text-display-md-mobile font-bold text-balance text-on-surface md:text-display-md">
+      {/* Title and action share the first row; the intro runs the full width below on phones. */}
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-space-md gap-y-space-xs">
+        <div className="contents">
+          <h1 className="font-title text-title-mobile font-bold text-balance text-on-surface md:text-title">
             {t("title")}
           </h1>
-          <p className="max-w-[58ch] font-body-lg text-body-lg text-pretty text-on-surface-variant">
+          <p className="col-span-2 row-start-2 max-w-[58ch] font-body-sm text-body-sm text-pretty text-on-surface-variant md:col-span-1 md:font-body-md md:text-body-md">
             {t("intro")}
           </p>
         </div>
@@ -199,7 +197,7 @@ export function PostsView({
           type="button"
           onClick={() => setComposerOpen(true)}
           className={cn(
-            "hidden min-h-12 shrink-0 items-center gap-2 self-start rounded-full bg-primary px-5 font-label-lg text-label-lg font-semibold text-on-primary shadow-lift-sm transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px lg:inline-flex",
+            "col-start-2 row-start-1 inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full bg-primary px-4 font-label-lg text-label-lg font-semibold text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px md:min-h-12 md:px-5",
             EASE,
           )}
         >
@@ -210,41 +208,36 @@ export function PostsView({
 
       {error ? <InlineAlert className="mt-space-md">{error}</InlineAlert> : null}
 
-      <div className="mt-block-mobile grid grid-cols-1 items-start gap-space-lg md:mt-block lg:grid-cols-12">
+      <div className="mt-space-lg grid grid-cols-1 items-start gap-space-lg md:mt-space-xl lg:grid-cols-12">
         <div className="mx-auto flex w-full max-w-[700px] flex-col gap-space-lg lg:col-span-8 lg:mx-0 lg:max-w-none">
-          <div className="bezel-tray">
-            <div
-              className="flex flex-col gap-space-sm bezel-core p-space-md sm:flex-row sm:items-center sm:justify-between"
-              style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
-            >
-              <div className="flex flex-wrap items-center gap-2">
-                {POST_FILTERS.map((key) => (
-                  <button
-                    key={key}
-                    type="button"
-                    onClick={() => changeFilter(key)}
-                    aria-pressed={filter === key}
-                    className={cn(
-                      "flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 font-label-lg text-label-lg whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
-                      EASE,
-                      filter === key
-                        ? "bg-primary font-semibold text-on-primary"
-                        : "border border-outline-variant bg-surface-low text-secondary hover:border-outline-hover hover:bg-surface-container hover:text-on-surface",
-                    )}
-                  >
-                    <span>{t(`filters.${key}`)}</span>
-                    {filter === key ? (
-                      <span className="rounded-full bg-on-primary/20 px-1.5 py-0.5 font-label-caps text-label-caps text-on-primary tabular-nums">
-                        {total}
-                      </span>
-                    ) : null}
-                  </button>
-                ))}
-              </div>
-              <span aria-live="polite" className="font-body-sm text-body-sm text-text-muted">
-                {loading ? t("feed.loading") : t("feed.showing", { shown: posts.length, total })}
-              </span>
+          <div className="flex flex-col gap-space-xs sm:flex-row sm:items-center sm:justify-between">
+            <div className="-mx-margin-mobile no-scrollbar flex items-center gap-2 overflow-x-auto px-margin-mobile sm:mx-0 sm:px-0">
+              {POST_FILTERS.map((key) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => changeFilter(key)}
+                  aria-pressed={filter === key}
+                  className={cn(
+                    "flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 font-label-lg text-label-lg whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+                    EASE,
+                    filter === key
+                      ? "bg-primary font-semibold text-on-primary"
+                      : "border border-outline-variant bg-surface-low text-secondary hover:border-outline-hover hover:bg-surface-container hover:text-on-surface",
+                  )}
+                >
+                  <span>{t(`filters.${key}`)}</span>
+                  {filter === key ? (
+                    <span className="rounded-full bg-on-primary/20 px-1.5 py-0.5 font-label-caps text-label-caps text-on-primary tabular-nums">
+                      {total}
+                    </span>
+                  ) : null}
+                </button>
+              ))}
             </div>
+            <span aria-live="polite" className="font-body-sm text-body-sm text-text-muted">
+              {loading ? t("feed.loading") : t("feed.showing", { shown: posts.length, total })}
+            </span>
           </div>
 
           {posts.map((post) => (
@@ -322,7 +315,7 @@ export function PostsView({
           </div>
         </div>
 
-        <aside className="flex flex-col gap-space-lg lg:sticky lg:top-24 lg:col-span-4">
+        <aside className="hidden flex-col gap-space-lg lg:sticky lg:top-24 lg:col-span-4 lg:flex">
           <div className="bezel-tray">
             <div
               className="flex flex-col gap-space-sm bezel-core p-space-lg"
@@ -369,18 +362,6 @@ export function PostsView({
           </div>
         </aside>
       </div>
-
-      <button
-        type="button"
-        onClick={() => setComposerOpen(true)}
-        aria-label={t("composer.newPost")}
-        className={cn(
-          "fixed right-margin-mobile bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-40 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-on-primary shadow-lift-lg transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:scale-95 lg:hidden",
-          EASE,
-        )}
-      >
-        <Icon name="add" className="text-2xl" />
-      </button>
 
       <PostComposerDialog
         open={composerOpen}

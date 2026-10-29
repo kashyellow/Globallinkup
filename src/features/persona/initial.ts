@@ -74,7 +74,6 @@ export async function loadPersonaInitial(): Promise<PersonaInitial | undefined> 
     city: profile.city ?? "",
     dateOfBirth,
     languages,
-    interests: profile.interests ?? [],
     bio: profile.bio_en ?? profile.bio_es ?? "",
     avatarUrl,
     hasStoredAvatar: Boolean(profile.avatar_url),

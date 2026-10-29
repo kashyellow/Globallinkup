@@ -9,7 +9,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(95);
+select plan(82);
 
 -- Fixed ids from the seed.
 --   admin   11111111-…  sofia 22222222-…  mateo 33333333-…
@@ -388,7 +388,7 @@ set local role anon;
 set local request.jwt.claims = '{}';
 select throws_ok(
   $$ select public.save_persona('X','ES','X','bio text','en','[]'::jsonb,
-       array['architecture','literature','hikingNature'], null, null, null, null, null, null, null) $$,
+       null, null, null, null, null, null, null) $$,
   42501,
   null,
   'save_persona rejects anonymous callers'
@@ -402,7 +402,7 @@ set local role authenticated;
 set local request.jwt.claims = '{"sub":"99999999-9999-9999-9999-999999999999","role":"authenticated"}';
 select results_eq(
   $$ select public.save_persona('Rejected Applicant','PT','Lisbon','New bio text.','en',
-       '[]'::jsonb, array['architecture','literature','hikingNature'], '1993-09-14',
+       '[]'::jsonb, '1993-09-14',
        '+351 912 000 000', '@tg', '@x', null, null, null)::text $$,
   $$ values ('pending') $$,
   'save_persona resubmits a rejected profile to pending'
@@ -414,7 +414,7 @@ set local role authenticated;
 set local request.jwt.claims = '{"sub":"22222222-2222-2222-2222-222222222222","role":"authenticated"}';
 select results_eq(
   $$ select public.save_persona('Sofia Martinez','ES','Barcelona','Updated bio.','en',
-       '[]'::jsonb, array['architecture','literature','hikingNature'], null,
+       '[]'::jsonb, null,
        null, null, '@s', null, null, null)::text $$,
   $$ values ('approved') $$,
   'save_persona keeps an approved profile approved'
@@ -434,11 +434,11 @@ reset role;
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"22222222-2222-2222-2222-222222222222","role":"authenticated"}';
 select public.save_persona('Sofia Martinez','ES','Barcelona','Updated bio.','en',
-  '[]'::jsonb, array['architecture','literature','hikingNature'], null,
+  '[]'::jsonb, null,
   null, null, '@s', null, null, null,
   '22222222-2222-2222-2222-222222222222/aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa.jpg');
 select public.save_persona('Sofia Martinez','ES','Barcelona','Updated bio.','en',
-  '[]'::jsonb, array['architecture','literature','hikingNature'], null,
+  '[]'::jsonb, null,
   null, null, '@s', null, null, null);
 select is(
   (select avatar_url from public.profiles where id = '22222222-2222-2222-2222-222222222222'),
@@ -452,153 +452,12 @@ set local role authenticated;
 set local request.jwt.claims = '{"sub":"22222222-2222-2222-2222-222222222222","role":"authenticated"}';
 select throws_ok(
   $$ select public.save_persona('Sofia Martinez','ES','Barcelona','Updated bio.','en',
-       '[]'::jsonb, array['architecture','literature','hikingNature'], null,
+       '[]'::jsonb, null,
        null, null, '@s', null, null, null,
        '33333333-3333-3333-3333-333333333333/stolen.jpg') $$,
   22023,
   null,
   'save_persona rejects an avatar path outside the caller folder'
-);
-reset role;
-
--- ============================================================================
--- S6 — moderated cultural-interest catalog
--- ============================================================================
-
--- 40b. Anonymous visitors see approved suggestions (the persona form renders
--- before sign-up) but never pending rows.
-set local role anon;
-set local request.jwt.claims = '{}';
-select isnt_empty(
-  $$ select 1 from public.interest_catalog
-     where label = 'Storytelling' and status = 'approved' $$,
-  'anon reads approved interest suggestions'
-);
-select is_empty(
-  $$ select 1 from public.interest_catalog where label = 'Bookbinding' $$,
-  'anon cannot read pending interests'
-);
-reset role;
-
--- 41. An approved member sees approved suggestions, never another member's
--- pending row.
-set local role authenticated;
-set local request.jwt.claims = '{"sub":"22222222-2222-2222-2222-222222222222","role":"authenticated"}';
-select isnt_empty(
-  $$ select 1 from public.interest_catalog
-     where label = 'Storytelling' and status = 'approved' $$,
-  'approved member reads approved interest suggestions'
-);
-select is_empty(
-  $$ select 1 from public.interest_catalog where label = 'Bookbinding' $$,
-  'approved member cannot read another member pending interest'
-);
-reset role;
-
--- 42. The creator sees their own pending label (the form needs it).
-set local role authenticated;
-set local request.jwt.claims = '{"sub":"77777777-7777-7777-7777-777777777777","role":"authenticated"}';
-select isnt_empty(
-  $$ select 1 from public.interest_catalog where label = 'Bookbinding' and status = 'pending' $$,
-  'creator reads their own pending interest'
-);
-reset role;
-
--- 43. A member cannot append to the global catalog directly.
-set local role authenticated;
-set local request.jwt.claims = '{"sub":"22222222-2222-2222-2222-222222222222","role":"authenticated"}';
-select throws_ok(
-  $$ insert into public.interest_catalog (label) values ('Hacked interest') $$,
-  42501,
-  null,
-  'non-admin cannot insert an interest into the catalog'
-);
-reset role;
-
--- 44. A member cannot approve/reject, even through the RPC.
-set local role authenticated;
-set local request.jwt.claims = '{"sub":"22222222-2222-2222-2222-222222222222","role":"authenticated"}';
-select throws_ok(
-  $$ select public.review_interest('cdcdcdcd-cdcd-cdcd-cdcd-cdcdcdcdcdcd'::uuid, 'approved') $$,
-  42501,
-  null,
-  'non-admin cannot review an interest'
-);
-reset role;
-
--- 45. An admin can publish a pending suggestion.
-set local role authenticated;
-set local request.jwt.claims = '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated"}';
-select lives_ok(
-  $$ select public.review_interest('cdcdcdcd-cdcd-cdcd-cdcd-cdcdcdcdcdcd'::uuid, 'approved') $$,
-  'admin approves a pending interest'
-);
-reset role;
-select is(
-  (select status::text from public.interest_catalog
-    where id = 'cdcdcdcd-cdcd-cdcd-cdcd-cdcdcdcdcdcd'),
-  'approved',
-  'approved interest status is persisted'
-);
-
--- 45b. Unpublishing an approved interest hides it but keeps it on profiles.
-set local role authenticated;
-set local request.jwt.claims = '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated"}';
-select public.review_interest('cdcdcdcd-cdcd-cdcd-cdcd-cdcdcdcdcdcd'::uuid, 'rejected');
-reset role;
-select is(
-  (select status::text from public.interest_catalog
-    where id = 'cdcdcdcd-cdcd-cdcd-cdcd-cdcdcdcdcdcd'),
-  'rejected',
-  'unpublishing an approved interest changes its status'
-);
-select is(
-  (
-    select 'Bookbinding' = any(interests)
-    from public.profiles
-    where id = '77777777-7777-7777-7777-777777777777'
-  ),
-  true,
-  'unpublishing an approved interest keeps it on existing profiles'
-);
-
--- 46. Rejecting a pending interest removes its label from the creator profile.
-set local role authenticated;
-set local request.jwt.claims = '{"sub":"77777777-7777-7777-7777-777777777777","role":"authenticated"}';
-select public.register_custom_interests(array['Zine Making']);
-update public.profiles
-  set interests = array_append(interests, 'Zine Making')
-  where id = '77777777-7777-7777-7777-777777777777';
-reset role;
-
-set local role authenticated;
-set local request.jwt.claims = '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated"}';
-select public.review_interest(
-  (select id from public.interest_catalog where label = 'Zine Making'),
-  'rejected'
-);
-reset role;
-
-select is(
-  (
-    select 'Zine Making' = any(interests)
-    from public.profiles
-    where id = '77777777-7777-7777-7777-777777777777'
-  ),
-  false,
-  'rejecting a pending interest removes it from the creator profile'
-);
-
--- 47. The fourth new pending suggestion in 24 hours is rate-limited.
-set local role authenticated;
-set local request.jwt.claims = '{"sub":"66666666-6666-6666-6666-666666666666","role":"authenticated"}';
-select public.register_custom_interests(array['Letterpress']);
-select public.register_custom_interests(array['Paper Making']);
-select public.register_custom_interests(array['Small Press']);
-select is(
-  public.register_custom_interests(array['Book Arts'])->>'status',
-  'rate_limited',
-  'fourth new interest in 24 hours is rate-limited'
 );
 reset role;
 

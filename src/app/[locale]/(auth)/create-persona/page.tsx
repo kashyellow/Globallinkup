@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { CreatePersonaView } from "@/features/persona/components/create-persona-view";
 import { loadPersonaInitial } from "@/features/persona/initial";
-import { getInterestCatalog } from "@/features/persona/queries";
 import { getCurrentUser } from "@/lib/auth";
 
 export async function generateMetadata({
@@ -16,14 +15,8 @@ export async function generateMetadata({
 }
 
 export default async function CreatePersonaPage() {
-  const [user, interestCatalog] = await Promise.all([getCurrentUser(), getInterestCatalog()]);
+  const user = await getCurrentUser();
   const initial = user ? await loadPersonaInitial() : undefined;
 
-  return (
-    <CreatePersonaView
-      initial={initial}
-      interestCatalog={interestCatalog}
-      isAuthenticated={Boolean(user)}
-    />
-  );
+  return <CreatePersonaView initial={initial} isAuthenticated={Boolean(user)} />;
 }

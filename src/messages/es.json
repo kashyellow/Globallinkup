@@ -59,8 +59,7 @@
     "unlocked": "Desbloqueado",
     "guidelines": "Normas",
     "close": "Cerrar",
-    "languages": "Idiomas: EN / ES",
-    "interests": "Intereses",
+    "languages": "Idiomas",
     "connectDialog": {
       "eyebrow": "Solicitud de Conexión",
       "body": "Envía a {name} una nota breve y respetuosa. Tus datos de contacto permanecen privados hasta que acepte.",
@@ -125,7 +124,7 @@
     "title": "Descubrir Personas",
     "intro": "Explora personas verificadas de todo el mundo e intercambia perspectivas interculturales. Conecta mutuamente para descubrir contactos sociales directos.",
     "activePersonas": "{count, plural, =0 {Sin personas activas en el extranjero} =1 {# Persona activa en el extranjero} other {# Personas activas en el extranjero}}",
-    "searchPlaceholder": "Busca por nombre, ciudad, idioma o interés (p. ej. Barcelona, Arquitectura, Español)...",
+    "searchPlaceholder": "Busca por nombre, ciudad o idioma (p. ej. Barcelona, Español)...",
     "refineCriteria": "Refinar Criterios",
     "clearFilters": "Limpiar Filtros",
     "allRegions": "Todas las Regiones",
@@ -166,29 +165,6 @@
       "english": "Inglés",
       "nativeC2": "Nativo (C2)",
       "conversationalB2": "Conversacional (B2)"
-    },
-    "interests": {
-      "architecture": "Arquitectura",
-      "photography": "Fotografía",
-      "espresso": "Espresso",
-      "artDirection": "Dirección de Arte",
-      "gastronomy": "Gastronomía",
-      "cinema": "Cine",
-      "textiles": "Textiles",
-      "hiking": "Senderismo",
-      "botanicals": "Botánica",
-      "soundArt": "Arte Sonoro",
-      "literature": "Literatura",
-      "vinyl": "Vinilo",
-      "documentary": "Documental",
-      "culinaryArts": "Artes Culinarias",
-      "ceramics": "Cerámica",
-      "analogPhotography": "Fotografía analógica",
-      "ceramicsCraft": "Cerámica y artesanía",
-      "independentCinema": "Cine independiente",
-      "culinaryHeritage": "Herencia culinaria",
-      "hikingNature": "Senderismo y naturaleza",
-      "latinMusic": "Música latina y ritmos"
     },
     "dossier": {
       "activeDossier": "Expediente Activo",
@@ -428,8 +404,7 @@
       "pendingProfiles": "<b>{count}</b> Perfiles Pendientes",
       "reportedPosts": "<b>{count}</b> Publicaciones Reportadas",
       "curatedProducts": "<b>{count}</b> Productos Curados",
-      "openReports": "<b>{count}</b> Reportes Abiertos",
-      "pendingInterests": "<b>{count}</b> Afinidades Pendientes"
+      "openReports": "<b>{count}</b> Reportes Abiertos"
     },
     "eyebrow": "Mesa Administrativa · Monitoreo y Verificación",
     "title": "Gobernanza y Control de Contenido",
@@ -437,7 +412,6 @@
       "users": "Usuarios y perfiles",
       "marketplace": "Catálogo del Mercado",
       "moderation": "Reportes y Moderación",
-      "interests": "Catálogo de Afinidades",
       "label": "Secciones de administración",
       "dashboard": "Panel",
       "team": "Equipo",
@@ -446,7 +420,6 @@
       "usersShort": "Usuarios",
       "marketplaceShort": "Marketplace",
       "moderationShort": "Moderación",
-      "interestsShort": "Intereses",
       "auditShort": "Auditoría",
       "teamShort": "Equipo"
     },
@@ -461,7 +434,7 @@
       "filterAll": "Todos los miembros",
       "filterPhoto": "Requiere Inspección de Foto (3)",
       "filterVerifiedToday": "Verificados Hoy (8)",
-      "registeredAgo": "Registrado hace {time}",
+      "registeredAgo": "Registrado {time}",
       "yes": "Sí",
       "photoIntegrity": "Puntaje de Integridad de Foto:",
       "photoIntegrityHigh": "98% Alto",
@@ -622,30 +595,6 @@
       "appealAccept": "Aceptar y restaurar",
       "appealDecline": "Rechazar"
     },
-    "interests": {
-      "title": "Revisión de Afinidades Culturales",
-      "body": "Las afinidades creadas por usuarios son sugerencias hasta que un administrador las aprueba.",
-      "needsReview": "{count} por revisar",
-      "pendingTitle": "Pendientes de revisión",
-      "publishedTitle": "Sugerencias publicadas",
-      "pendingBadge": "Pendiente",
-      "publishedBadge": "Publicada",
-      "createdBy": "Sugerida por {name}",
-      "approve": "Aprobar",
-      "reject": "Rechazar",
-      "unpublish": "Retirar",
-      "emptyTitle": "No hay afinidades pendientes",
-      "rejectPendingTitle": "¿Rechazar esta afinidad?",
-      "rejectPendingBody": "“{label}” se eliminará del perfil de su creador y no aparecerá en las sugerencias. Puede que necesite elegir otra afinidad en su próxima edición.",
-      "unpublishTitle": "¿Retirar esta afinidad?",
-      "unpublishBody": "“{label}” dejará de aparecer en las sugerencias. Los perfiles que ya la usan conservan el texto.",
-      "platform": "GlobalLinkup",
-      "eyebrow": "Mesa de taxonomía",
-      "filterAll": "Todos los intereses",
-      "rejectedBadge": "Rechazado",
-      "resultsCount": "Mostrando {shown} de {total} intereses",
-      "searchPlaceholder": "Buscar en el catálogo de intereses…"
-    },
     "common": {
       "search": "Buscar",
       "clear": "Limpiar"
@@ -662,10 +611,6 @@
         "openReports": {
           "title": "Reportes abiertos",
           "body": "Reportes de miembros que aún necesitan moderación."
-        },
-        "pendingInterests": {
-          "title": "Intereses pendientes",
-          "body": "Etiquetas culturales personalizadas esperando publicación."
         },
         "liveProducts": {
           "title": "Productos publicados",
@@ -686,6 +631,7 @@
       "empty": "Todavía no hay eventos.",
       "searchPlaceholder": "Buscar acción, rol o id de destino",
       "allActions": "Todas las acciones",
+      "actionFilter": "Tipo de acción",
       "viewDetails": "Ver detalles",
       "detailTitle": "Evento de auditoría",
       "before": "Antes",
@@ -703,7 +649,6 @@
         "member": "Miembros",
         "post": "Publicaciones",
         "appeal": "Apelaciones",
-        "interest": "Intereses",
         "product": "Productos",
         "report": "Reportes",
         "comment": "Comentarios",
@@ -763,9 +708,6 @@
       "comments": {
         "moderate": "Moderar comentarios"
       },
-      "interests": {
-        "review": "Revisar intereses"
-      },
       "reports": {
         "manage": "Gestionar reportes"
       },
@@ -801,7 +743,7 @@
     },
     "privacyChip": "Cero Compartición Sin Consentimiento",
     "search": {
-      "placeholder": "Busca por nombre, ciudad (Medellín, Madrid, CDMX) o etiquetas culturales..."
+      "placeholder": "Busca por nombre o ciudad (Medellín, Madrid, CDMX)..."
     },
     "regionFilters": {
       "all": "Todas las Regiones",
@@ -843,7 +785,7 @@
       "guidanceTitle": "Garantía de Confidencialidad Sin Presión",
       "guidanceBody": "Rechazar una invitación es 100% silencioso y confidencial. Los canales de contacto directo nunca se exponen sin tu consentimiento bilateral explícito.",
       "awaitingDecision": "{count} Esperando Decisión",
-      "sentAgo": "Enviada hace {time}",
+      "sentAgo": "Enviada {time}",
       "personalIntroduction": "Presentación Personal",
       "masked": "Enmascarado",
       "accept": "Aceptar",
@@ -858,7 +800,7 @@
       "body": "Contactaste a estos miembros de la comunidad. Cuando otorguen su consentimiento bilateral, sus canales directos se revelarán automáticamente aquí.",
       "emptyTitle": "No hay invitaciones pendientes",
       "emptyBody": "Todas las invitaciones que has enviado han sido respondidas. Las nuevas solicitudes aparecerán aquí mientras esperas.",
-      "sentAgoAwaiting": "Enviada hace {time} · Esperando revisión",
+      "sentAgoAwaiting": "Enviada {time} · Esperando revisión",
       "viewNote": "Ver Nota Enviada",
       "withdraw": "Retirar",
       "awaiting": "Esperando respuesta",
@@ -1179,18 +1121,6 @@
     "bioCounter": "{count} / {max}",
     "bioPlaceholder": "Cuéntales a los demás sobre tus pasiones culturales, experiencias de viaje u oficio...",
     "bioHint": "Comparte qué tipo de intercambios te inspiran: colaboraciones artísticas, consejos de viaje o conversaciones pausadas.",
-    "interestsLabel": "Afinidades Culturales",
-    "interestsHint": "Selecciona al menos 3 ({count} seleccionados)",
-    "interests": {
-      "architecture": "Arquitectura",
-      "analogPhotography": "Fotografía Analógica",
-      "ceramicsCraft": "Cerámica y Oficio",
-      "independentCinema": "Cine Independiente",
-      "culinaryHeritage": "Herencia Culinaria",
-      "hikingNature": "Senderismo y Naturaleza",
-      "literature": "Literatura",
-      "latinMusic": "Música y Ritmos Latinos"
-    },
     "countries": {
       "ES": "España",
       "MX": "México",
@@ -1234,30 +1164,13 @@
     "cityRequired": "Añade la ciudad donde vives.",
     "bioRequired": "Escribe una semblanza breve antes de enviar.",
     "languagesRequired": "Selecciona al menos un idioma.",
-    "interestsRequired": "Selecciona al menos 3 afinidades culturales.",
-    "interestsMax": "Puedes elegir hasta 20 afinidades.",
-    "interestsDuplicate": "Cada afinidad solo puede seleccionarse una vez.",
-    "interestInvalid": "Usa entre 2 y 40 letras, espacios, apóstrofos, guiones, ampersands o puntos.",
-    "interestSearchPlaceholder": "Busca o crea una afinidad…",
-    "interestSearchHint": "Busca en el catálogo o crea una nueva afinidad. Las nuevas se revisan antes de aparecer para todos (hasta 3 sugerencias nuevas al día).",
-    "interestEmpty": "Ninguna afinidad coincide con esa búsqueda.",
-    "interestCreate": "Crear “{label}”",
-    "interestNew": "Nueva",
-    "interestPending": "En revisión",
-    "interestPendingShort": "Pendiente",
-    "interestMax": "Puedes seleccionar hasta {max} afinidades.",
-    "interestRateLimit": "Puedes sugerir hasta 3 afinidades nuevas cada 24 horas. Inténtalo más tarde.",
-    "interestRejected": "Estas afinidades no fueron aprobadas: {labels}. Elimínalas o cámbialas antes de enviar.",
-    "interestRejectedGeneric": "Una de tus afinidades no fue aprobada. Elige otra.",
     "missingTitle": "Faltan algunos datos obligatorios.",
     "missingFields": "Completa: {fields}.",
-    "removeInterest": "Quitar {label}",
     "missing": {
       "photo": "Foto de perfil",
       "fullName": "Nombre completo",
       "city": "Ciudad",
       "bio": "Semblanza breve",
-      "interests": "Afinidades culturales",
       "languages": "Idiomas",
       "contacts": "Un canal de contacto"
     },
@@ -1299,7 +1212,7 @@
     "steps": {
       "eyebrow": "Simple y respetuoso",
       "title": "Una forma natural de conectar",
-      "body": "Sin deslizar sin fin ni mensajes no solicitados. Un ritual respetuoso basado en intereses compartidos, idiomas nativos y conversación real.",
+      "body": "Sin deslizar sin fin ni mensajes no solicitados. Un ritual respetuoso basado en idiomas nativos y conversación real.",
       "step1Title": "Explora personas verificadas",
       "step1Body": "Lee expedientes reales: idiomas, lugares donde han vivido y aquello a lo que dedican su tiempo. Cada perfil pasa por revisión humana antes de publicarse.",
       "step1Meta": "Identidad autenticada",
@@ -1457,8 +1370,7 @@
       "unlockRate": "Tasa de Desbloqueo Mutuo"
     },
     "bio": {
-      "title": "Perfil",
-      "culturalFocus": "Enfoque Cultural"
+      "title": "Perfil"
     },
     "tags": {
       "architecture": "Arquitectura",
@@ -1580,7 +1492,7 @@
     "bell": "Notificaciones",
     "bellWithCount": "Notificaciones ({count} sin leer)",
     "emptyTitle": "Nada todavía",
-    "emptyBody": "Aquí aparecen las decisiones sobre tus publicaciones, perfil e intereses.",
+    "emptyBody": "Aquí aparecen las decisiones sobre tus publicaciones y tu perfil.",
     "types": {
       "post": {
         "removed": "Publicación retirada",
@@ -1593,10 +1505,6 @@
         "approved": "Perfil aprobado",
         "rejected": "Perfil rechazado",
         "suspended": "Cuenta suspendida"
-      },
-      "interest": {
-        "approved": "Interés aprobado",
-        "rejected": "Interés rechazado"
       }
     }
   },

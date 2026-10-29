@@ -41,7 +41,6 @@ export type OwnProfile = {
   languages: string;
   avatar: string | null;
   bio: string;
-  interests: string[];
   channels: ProfileChannel[];
   metrics: { connections: number; dispatches: number };
   unveiled: UnveiledPeer[];
@@ -70,7 +69,7 @@ export async function getOwnProfile(
     await supabase
       .from("profiles")
       .select(
-        "id, display_name, city, country_code, headline, avatar_url, bio_en, bio_es, languages, interests",
+        "id, display_name, city, country_code, headline, avatar_url, bio_en, bio_es, languages",
       )
       .eq("id", viewerId)
       .maybeSingle(),
@@ -235,7 +234,6 @@ export async function getOwnProfile(
       locale === "es"
         ? (profile.bio_es ?? profile.bio_en ?? "")
         : (profile.bio_en ?? profile.bio_es ?? ""),
-    interests: profile.interests ?? [],
     channels,
     metrics: { connections: connections.length, dispatches: dispatches.length },
     unveiled,

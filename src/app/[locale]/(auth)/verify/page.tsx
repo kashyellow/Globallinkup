@@ -41,7 +41,6 @@ export default async function VerifyPage() {
         displayName: profile?.display_name ?? "",
         location,
         languages,
-        interests: profile?.interests ?? [],
       }}
     />
   );

@@ -11,7 +11,7 @@ import { SectionHead } from "./section-head";
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
 const STAMP_ACTIVE =
-  "rounded-md border border-success-border px-2 py-0.5 font-label-md text-label-md font-semibold tracking-[0.08em] uppercase text-success-text";
+  "rounded-md border border-success-border px-2 py-0.5 font-label-md text-label-md font-semibold text-success-text";
 
 const ROW = cn(
   "flex items-center justify-between gap-space-sm rounded-md border border-outline-variant bg-surface-low px-space-sm py-2",

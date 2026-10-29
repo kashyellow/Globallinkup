@@ -21,8 +21,6 @@ export type Persona = {
   image: string | null;
   imageAlt: string;
   languages: PersonaLanguage[];
-  /** Interest keys resolved against `Discover.interests.*`. */
-  interests: string[];
   state: ConnectState;
   /** Present when a connection row already exists (requested/received/declined). */
   connectionId?: string;
@@ -44,7 +42,6 @@ export const PERSONAS: Persona[] = [
       { code: "ES", level: "native" },
       { code: "EN", level: "fluent" },
     ],
-    interests: ["architecture", "photography", "espresso"],
     state: "none",
     badge: "previewed",
   },
@@ -61,7 +58,6 @@ export const PERSONAS: Persona[] = [
       { code: "ES", level: "native" },
       { code: "EN", level: "conversational" },
     ],
-    interests: ["artDirection", "gastronomy", "cinema"],
     state: "requested",
   },
   {
@@ -76,7 +72,6 @@ export const PERSONAS: Persona[] = [
       { code: "ES", level: "native" },
       { code: "EN", level: "proficient" },
     ],
-    interests: ["textiles", "hiking", "botanicals"],
     state: "connected",
     badge: "directContact",
   },
@@ -93,7 +88,6 @@ export const PERSONAS: Persona[] = [
       { code: "ES", level: "native" },
       { code: "EN", level: "conversational" },
     ],
-    interests: ["soundArt", "literature", "vinyl"],
     state: "none",
   },
   {
@@ -109,7 +103,6 @@ export const PERSONAS: Persona[] = [
       { code: "ES", level: "native" },
       { code: "EN", level: "fluent" },
     ],
-    interests: ["documentary", "culinaryArts", "ceramics"],
     state: "none",
   },
 ];

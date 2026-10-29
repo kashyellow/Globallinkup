@@ -6,7 +6,11 @@ import type { ConnectState, LanguageLevel, Persona, PersonaLanguage } from "./da
 
 type ProfilePublicRow = Database["public"]["Views"]["profiles_public"]["Row"];
 
-/** The narrow column set the list queries actually select. */
+/**
+ * The narrow column set the list queries actually select. `languages` is
+ * widened because the Discover RPC types it as nullable `Json` while the view
+ * types it non-null; `parseLanguages` accepts either.
+ */
 export type PersonaRow = Pick<
   ProfilePublicRow,
   | "id"
@@ -14,12 +18,10 @@ export type PersonaRow = Pick<
   | "country_code"
   | "city"
   | "avatar_url"
-  | "languages"
-  | "interests"
   | "badge"
   | "approval_status"
   | "age"
->;
+> & { languages: unknown };
 
 const LANGUAGE_LEVELS: readonly LanguageLevel[] = [
   "native",
@@ -58,7 +60,6 @@ export function mapPersonaRow(
     image: options.imageUrl,
     imageAlt: row.display_name ?? "",
     languages: parseLanguages(row.languages),
-    interests: row.interests ?? [],
     state: options.connectState,
     connectionId: options.connectionId,
     badge: options.connectState === "connected" ? "directContact" : undefined,

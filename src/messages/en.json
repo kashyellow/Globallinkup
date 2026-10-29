@@ -59,8 +59,7 @@
     "unlocked": "Unlocked",
     "guidelines": "Guidelines",
     "close": "Close",
-    "languages": "Languages: EN / ES",
-    "interests": "Interests",
+    "languages": "Languages",
     "connectDialog": {
       "eyebrow": "Connection Request",
       "body": "Send {name} one short, respectful note. Contact details stay private until they accept.",
@@ -125,7 +124,7 @@
     "title": "Discover People",
     "intro": "Explore verified people across the globe and exchange cross-cultural perspectives. Connect mutually to unveil direct social contacts.",
     "activePersonas": "{count, plural, =0 {No active profiles abroad} =1 {# Active profile abroad} other {# Active profiles abroad}}",
-    "searchPlaceholder": "Search by name, city, language, or interest (e.g. Barcelona, Architecture, Spanish)...",
+    "searchPlaceholder": "Search by name, city, or language (e.g. Barcelona, Spanish)...",
     "refineCriteria": "Refine Criteria",
     "clearFilters": "Clear Filters",
     "allRegions": "All Regions",
@@ -166,29 +165,6 @@
       "english": "English",
       "nativeC2": "Native (C2)",
       "conversationalB2": "Conversational (B2)"
-    },
-    "interests": {
-      "architecture": "Architecture",
-      "photography": "Photography",
-      "espresso": "Espresso",
-      "artDirection": "Art Direction",
-      "gastronomy": "Gastronomy",
-      "cinema": "Cinema",
-      "textiles": "Textiles",
-      "hiking": "Hiking",
-      "botanicals": "Botanicals",
-      "soundArt": "Sound Art",
-      "literature": "Literature",
-      "vinyl": "Vinyl",
-      "documentary": "Documentary",
-      "culinaryArts": "Culinary Arts",
-      "ceramics": "Ceramics",
-      "analogPhotography": "Analog Photography",
-      "ceramicsCraft": "Ceramics & Craft",
-      "independentCinema": "Independent Cinema",
-      "culinaryHeritage": "Culinary Heritage",
-      "hikingNature": "Hiking & Nature",
-      "latinMusic": "Latin Music & Rhythms"
     },
     "dossier": {
       "activeDossier": "Active Dossier",
@@ -428,8 +404,7 @@
       "pendingProfiles": "<b>{count}</b> Pending Profiles",
       "reportedPosts": "<b>{count}</b> Reported Posts",
       "curatedProducts": "<b>{count}</b> Curated Products",
-      "openReports": "<b>{count}</b> Open Reports",
-      "pendingInterests": "<b>{count}</b> Pending Interests"
+      "openReports": "<b>{count}</b> Open Reports"
     },
     "eyebrow": "Administrative Desk · Monitoring & Verification",
     "title": "Governance & Content Control",
@@ -437,7 +412,6 @@
       "users": "Users & Profiles",
       "marketplace": "Marketplace Catalog",
       "moderation": "Reports & Moderation",
-      "interests": "Interest Catalog",
       "label": "Admin sections",
       "dashboard": "Dashboard",
       "team": "Team",
@@ -446,7 +420,6 @@
       "usersShort": "Users",
       "marketplaceShort": "Marketplace",
       "moderationShort": "Moderation",
-      "interestsShort": "Interests",
       "auditShort": "Audit",
       "teamShort": "Team"
     },
@@ -461,7 +434,7 @@
       "filterAll": "All members",
       "filterPhoto": "Requires Photo Inspection (3)",
       "filterVerifiedToday": "Verified Today (8)",
-      "registeredAgo": "Registered {time} ago",
+      "registeredAgo": "Registered {time}",
       "yes": "Yes",
       "photoIntegrity": "Photo Integrity Score:",
       "photoIntegrityHigh": "98% High",
@@ -622,30 +595,6 @@
       "appealAccept": "Accept and restore",
       "appealDecline": "Decline"
     },
-    "interests": {
-      "title": "Cultural Interest Review",
-      "body": "User-created interests are suggestions until an administrator approves them.",
-      "needsReview": "{count} awaiting review",
-      "pendingTitle": "Awaiting review",
-      "publishedTitle": "Published suggestions",
-      "pendingBadge": "Pending",
-      "publishedBadge": "Published",
-      "createdBy": "Suggested by {name}",
-      "approve": "Approve",
-      "reject": "Reject",
-      "unpublish": "Unpublish",
-      "emptyTitle": "No interests waiting for review",
-      "rejectPendingTitle": "Reject this interest?",
-      "rejectPendingBody": "“{label}” will be removed from its creator's profile and will not appear in suggestions. They may need to choose another interest on their next edit.",
-      "unpublishTitle": "Unpublish this interest?",
-      "unpublishBody": "“{label}” will stop appearing in suggestions. Profiles that already use it keep the text.",
-      "platform": "GlobalLinkup",
-      "eyebrow": "Taxonomy desk",
-      "filterAll": "All interests",
-      "rejectedBadge": "Rejected",
-      "resultsCount": "Showing {shown} of {total} interests",
-      "searchPlaceholder": "Search the interest catalog…"
-    },
     "common": {
       "search": "Search",
       "clear": "Clear"
@@ -662,10 +611,6 @@
         "openReports": {
           "title": "Open reports",
           "body": "Member flags still needing a moderation decision."
-        },
-        "pendingInterests": {
-          "title": "Pending interests",
-          "body": "Custom cultural labels awaiting publication."
         },
         "liveProducts": {
           "title": "Live products",
@@ -686,6 +631,7 @@
       "empty": "No audit events yet.",
       "searchPlaceholder": "Search action, role or target id",
       "allActions": "All actions",
+      "actionFilter": "Action type",
       "viewDetails": "View details",
       "detailTitle": "Audit event",
       "before": "Before",
@@ -703,7 +649,6 @@
         "member": "Members",
         "post": "Posts",
         "appeal": "Appeals",
-        "interest": "Interests",
         "product": "Products",
         "report": "Reports",
         "comment": "Comments",
@@ -763,9 +708,6 @@
       "comments": {
         "moderate": "Moderate comments"
       },
-      "interests": {
-        "review": "Review interests"
-      },
       "reports": {
         "manage": "Handle reports"
       },
@@ -801,7 +743,7 @@
     },
     "privacyChip": "Zero Unconsented Sharing Enforced",
     "search": {
-      "placeholder": "Search by name, city (Medellín, Madrid, CDMX), or cultural tags..."
+      "placeholder": "Search by name or city (Medellín, Madrid, CDMX)..."
     },
     "regionFilters": {
       "all": "All Regions",
@@ -843,7 +785,7 @@
       "guidanceTitle": "Zero-Pressure Confidentiality Guarantee",
       "guidanceBody": "Declining an invitation is 100% silent and confidential. Direct contact channels are never exposed without your explicit bilateral consent.",
       "awaitingDecision": "{count} Awaiting Decision",
-      "sentAgo": "Sent {time} ago",
+      "sentAgo": "Sent {time}",
       "personalIntroduction": "Personal Introduction",
       "masked": "Masked",
       "accept": "Accept",
@@ -858,7 +800,7 @@
       "body": "You reached out to these community members. Once they grant bilateral consent, their direct channels will automatically unveil here.",
       "emptyTitle": "No pending invitations",
       "emptyBody": "Every invitation you have sent has been answered. New requests will appear here while you wait.",
-      "sentAgoAwaiting": "Sent {time} ago · Awaiting review",
+      "sentAgoAwaiting": "Sent {time} · Awaiting review",
       "viewNote": "View Sent Note",
       "withdraw": "Withdraw",
       "awaiting": "Awaiting reply",
@@ -1179,18 +1121,6 @@
     "bioCounter": "{count} / {max}",
     "bioPlaceholder": "Tell others about your cultural passions, travel experiences, or craft...",
     "bioHint": "Share what kind of exchanges inspire you—artistic collaborations, travel tips, or slow conversations.",
-    "interestsLabel": "Cultural Interests",
-    "interestsHint": "Select at least 3 ({count} selected)",
-    "interests": {
-      "architecture": "Architecture",
-      "analogPhotography": "Analog Photography",
-      "ceramicsCraft": "Ceramics & Craft",
-      "independentCinema": "Independent Cinema",
-      "culinaryHeritage": "Culinary Heritage",
-      "hikingNature": "Hiking & Nature",
-      "literature": "Literature",
-      "latinMusic": "Latin Music & Rhythms"
-    },
     "countries": {
       "ES": "Spain (España)",
       "MX": "Mexico (México)",
@@ -1234,30 +1164,13 @@
     "cityRequired": "Add the city you call home.",
     "bioRequired": "Write a short bio before submitting.",
     "languagesRequired": "Select at least one language.",
-    "interestsRequired": "Select at least 3 cultural interests.",
-    "interestsMax": "You can choose up to 20 interests.",
-    "interestsDuplicate": "Each interest can only be selected once.",
-    "interestInvalid": "Use 2–40 letters, spaces, apostrophes, hyphens, ampersands or periods.",
-    "interestSearchPlaceholder": "Search or create an interest…",
-    "interestSearchHint": "Search the catalog or create a new interest. New interests are reviewed before they appear for everyone (up to 3 new suggestions per day).",
-    "interestEmpty": "No interests match that search.",
-    "interestCreate": "Create “{label}”",
-    "interestNew": "New",
-    "interestPending": "Awaiting review",
-    "interestPendingShort": "Pending",
-    "interestMax": "You can select up to {max} interests.",
-    "interestRateLimit": "You can suggest up to 3 new interests every 24 hours. Try again later.",
-    "interestRejected": "These interests were not approved: {labels}. Remove or replace them before submitting.",
-    "interestRejectedGeneric": "One of your interests was not approved. Choose another.",
     "missingTitle": "A few required details are missing.",
     "missingFields": "Complete: {fields}.",
-    "removeInterest": "Remove {label}",
     "missing": {
       "photo": "Profile photo",
       "fullName": "Full name",
       "city": "City",
       "bio": "Short bio",
-      "interests": "Cultural interests",
       "languages": "Languages",
       "contacts": "A contact channel"
     },
@@ -1299,7 +1212,7 @@
     "steps": {
       "eyebrow": "Simple & respectful",
       "title": "A natural way to connect",
-      "body": "No endless swiping or unsolicited messages. A respectful ritual built around shared interests, native languages, and real conversation.",
+      "body": "No endless swiping or unsolicited messages. A respectful ritual built around native languages and real conversation.",
       "step1Title": "Discover verified people",
       "step1Body": "Read real dossiers: languages spoken, places lived, and what people actually spend their time on. Every profile is reviewed by a human before it goes live.",
       "step1Meta": "Identity authenticated",
@@ -1457,8 +1370,7 @@
       "unlockRate": "Mutual Unlock Rate"
     },
     "bio": {
-      "title": "Bio",
-      "culturalFocus": "Cultural Focus"
+      "title": "Bio"
     },
     "tags": {
       "architecture": "Architecture",
@@ -1580,7 +1492,7 @@
     "bell": "Notifications",
     "bellWithCount": "Notifications ({count} unread)",
     "emptyTitle": "Nothing yet",
-    "emptyBody": "Decisions about your posts, personal profile, and interests land here.",
+    "emptyBody": "Decisions about your posts and personal profile land here.",
     "types": {
       "post": {
         "removed": "Post removed",
@@ -1593,10 +1505,6 @@
         "approved": "Personal profile approved",
         "rejected": "Personal profile rejected",
         "suspended": "Account suspended"
-      },
-      "interest": {
-        "approved": "Interest approved",
-        "rejected": "Interest rejected"
       }
     }
   },

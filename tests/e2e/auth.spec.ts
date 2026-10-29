@@ -35,11 +35,6 @@ async function uploadAvatar(page: Page) {
   await expect(page.locator('img[alt*="portrait" i]')).toBeVisible();
 }
 
-async function addInterest(page: Page, value: string) {
-  await page.locator("#persona-interests input").click();
-  await page.locator(`#persona-interests [cmdk-item][data-value="${value}"]`).click();
-}
-
 // Sign-in finishes on one of the three post-auth destinations. Waiting for the
 // navigation beats a fixed sleep: a cold dev server can take seconds to compile
 // `/en/login` and the redirect, which is what made this suite flaky.
@@ -590,18 +585,6 @@ test("@auth the admin moderation desk shows seeded reports", async ({ page }) =>
   await expect(page.getByText(/Reported by/i).first()).toBeVisible();
 });
 
-test("@auth an admin approves a pending cultural interest", async ({ page }) => {
-  await signIn(page, "admin@globallinkup.test");
-  await page.goto("/en/admin/interests");
-  await page.waitForTimeout(1200);
-
-  const row = page.locator('[data-interest-label="Bookbinding"]');
-  await expect(row).toBeVisible();
-  await row.getByRole("button", { name: /^approve$/i }).click();
-  await page.waitForTimeout(1500);
-  await expect(row).toHaveCount(0);
-});
-
 test("@auth the profile shows the real dossier and unlocked channels", async ({ page }) => {
   await signIn(page, "sofia.martinez@example.com");
   await page.goto("/en/profile");
@@ -671,11 +654,8 @@ test("@auth onboarding creates a persona for a new account", async ({ page }) =>
   await page.fill("#persona-fullname", "E2E Onboarding");
   await page.fill("#persona-city", "Lisbon");
   await page.fill("#persona-bio", "Created by the end-to-end onboarding spec.");
-  // Languages and interests no longer have defaults.
+  // Languages no longer have defaults.
   await page.locator("#persona-language-ES").click();
-  await addInterest(page, "architecture");
-  await addInterest(page, "literature");
-  await addInterest(page, "hikingNature");
   // The vault now requires at least one channel.
   await page.fill("#persona-whatsapp", "+351 900 000 000");
   await uploadAvatar(page);

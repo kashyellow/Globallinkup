@@ -11,12 +11,11 @@ import { signOutAction } from "@/features/auth/actions";
 import { getPathname, Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import type { OwnProfile } from "../queries";
-import { SectionHead } from "./section-head";
 
 const EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
 
 const CONTROL = cn(
-  "inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-md border border-outline-variant bg-transparent px-3 font-label-md text-label-md whitespace-nowrap text-on-surface",
+  "inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-md border border-outline-variant bg-transparent px-3 font-label-md text-label-md whitespace-nowrap text-on-surface",
   "transition-[background-color,border-color,color,transform] duration-300",
   EASE,
   "hover:border-outline-hover hover:bg-surface-low focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px active:scale-[0.98]",
@@ -88,139 +87,119 @@ export function DossierHeader({
     { id: "dispatches", value: String(profile.metrics.dispatches), accent: false },
   ];
 
+  // Phones: three equal buttons on one row (labels only); from sm, icon + label.
+  const actions = (
+    <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap">
+      {canShare ? (
+        <button type="button" onClick={share} className={CONTROL}>
+          <Icon
+            name={copied ? "check" : "share"}
+            className={cn(
+              "text-base max-sm:hidden!",
+              copied ? "text-success-text" : "text-text-muted",
+            )}
+          />
+          <span>{copied ? t("actions.shared") : t("actions.share")}</span>
+        </button>
+      ) : null}
+      {canEdit ? (
+        <Link href="/profile/edit" className={CONTROL_PRIMARY}>
+          <Icon name="edit_square" className="text-base max-sm:hidden!" />
+          <span>{t("actions.edit")}</span>
+        </Link>
+      ) : null}
+      <button
+        type="button"
+        onClick={() => void logout()}
+        disabled={loggingOut}
+        aria-busy={loggingOut || undefined}
+        className={CONTROL_DANGER}
+      >
+        {loggingOut ? (
+          <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
+        ) : (
+          <Icon name="logout" className="text-base max-sm:hidden!" />
+        )}
+        <span>{loggingOut ? tCommon("processing") : t("actions.logout")}</span>
+      </button>
+    </div>
+  );
+
   return (
     <section className="relative w-full">
-      <div className="mx-auto flex max-w-[1240px] flex-col px-margin-mobile pt-block-mobile md:px-margin md:pt-block">
-        {/* Action bar — after the identity block on phones, above it from lg up. */}
-        <div className="order-2 flex flex-wrap items-center justify-end gap-y-space-sm border-y border-outline-variant py-space-sm lg:order-1">
-          <div className="flex w-full flex-wrap gap-2 sm:w-auto sm:flex-nowrap sm:items-center">
-            {canShare ? (
-              <button type="button" onClick={share} className={CONTROL}>
-                <Icon
-                  name={copied ? "check" : "share"}
-                  className={cn("text-base", copied ? "text-success-text" : "text-text-muted")}
-                />
-                <span>{copied ? t("actions.shared") : t("actions.share")}</span>
-              </button>
-            ) : null}
-            {canEdit ? (
-              <Link href="/profile/edit" className={CONTROL_PRIMARY}>
-                <Icon name="edit_square" className="text-base" />
-                <span>{t("actions.edit")}</span>
-              </Link>
-            ) : null}
-            <button
-              type="button"
-              onClick={() => void logout()}
-              disabled={loggingOut}
-              aria-busy={loggingOut || undefined}
-              className={CONTROL_DANGER}
-            >
-              {loggingOut ? (
-                <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
-              ) : (
-                <Icon name="logout" className="text-base" />
-              )}
-              <span>{loggingOut ? tCommon("processing") : t("actions.logout")}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* 01 — Identity */}
-        <Reveal delay={60} className="order-1 lg:order-2">
-          <div className="mt-space-lg">
-            <SectionHead index="01" title={t("sections.identity")} />
-
-            <div className="mt-space-md grid grid-cols-1 gap-space-lg lg:grid-cols-12 lg:items-end">
-              <div className="lg:col-span-7">
-                <h1 className="font-display-lg text-display-lg-mobile font-bold tracking-tight text-balance text-on-surface md:text-display-lg">
-                  {profile.name}{" "}
-                  {profile.age > 0 ? (
-                    <span className="align-baseline font-headline-md text-headline-md font-normal text-text-muted">
-                      {profile.age}
-                    </span>
-                  ) : null}
-                </h1>
-
-                {profile.headline ? (
-                  <p className="mt-2 font-body-lg text-body-lg text-text-muted">
-                    {profile.headline}
-                  </p>
-                ) : null}
-
-                <p className="mt-space-sm flex flex-wrap items-center gap-x-2 gap-y-1 font-label-md text-label-md text-on-surface-variant">
-                  <span className="flex items-center gap-1 text-on-surface">
-                    <Icon name="location_on" className="text-base text-primary" />
-                    {profile.location}
-                  </span>
-                  {profile.languages ? (
-                    <>
-                      <Sep />
-                      <span>{profile.languages}</span>
-                    </>
-                  ) : null}
-                  <Sep />
-                  <span className="flex items-center gap-1.5 text-success-text">
-                    <span className="h-1.5 w-1.5 rounded-full bg-success-text" />
-                    {t("identity.mutualConsent")}
-                  </span>
-                </p>
-              </div>
-
-              <div className="lg:col-span-5">
-                <div className="group relative mx-auto w-full max-w-[19rem] lg:mx-0 lg:ml-auto lg:max-w-none">
-                  <div className="aspect-square w-full overflow-hidden border border-outline-variant bg-surface-low sm:aspect-[4/5]">
-                    {profile.avatar ? (
-                      <MediaImage
-                        alt={profile.name}
-                        src={profile.avatar}
-                        wrapperClassName="h-full w-full"
-                        className="transition-transform duration-700 group-hover:scale-105 motion-reduce:transform-none"
-                      />
-                    ) : (
-                      <DefaultAvatar className="h-full w-full" />
-                    )}
-                  </div>
-                </div>
+      <div className="mx-auto max-w-[1240px] px-margin-mobile pt-block-mobile md:px-margin md:pt-block">
+        {/*
+         * Identity as one row at every width: the portrait beside the name, the
+         * facts and the actions, so nothing on the first screen is left empty.
+         */}
+        <Reveal delay={60}>
+          <div className="flex items-start gap-space-md md:gap-space-xl">
+            <div className="group w-24 shrink-0 overflow-hidden rounded-xl border border-outline-variant bg-surface-low sm:w-32 md:w-44 lg:w-52">
+              <div className="aspect-[4/5] w-full">
+                {profile.avatar ? (
+                  <MediaImage
+                    alt={profile.name}
+                    src={profile.avatar}
+                    wrapperClassName="h-full w-full"
+                    className="transition-transform duration-700 group-hover:scale-105 motion-reduce:transform-none"
+                  />
+                ) : (
+                  <DefaultAvatar className="h-full w-full" />
+                )}
               </div>
             </div>
-          </div>
-        </Reveal>
 
-        {/* 02 — Ledger */}
-        <Reveal delay={140} className="order-3">
-          <div className="mt-space-lg">
-            <SectionHead index="02" title={t("sections.record")} />
+            <div className="min-w-0 flex-1">
+              <h1 className="font-title text-title-mobile font-bold text-balance text-on-surface md:text-headline-lg">
+                {profile.name}{" "}
+                {profile.age > 0 ? (
+                  <span className="font-normal text-on-surface-variant">{profile.age}</span>
+                ) : null}
+              </h1>
 
-            <dl className="grid grid-cols-2 sm:grid-cols-4">
-              {metrics.map((metric, index) => (
-                <div
-                  key={metric.id}
-                  className={cn(
-                    "px-space-sm py-space-sm",
-                    index % 2 === 1 && "border-l border-outline-variant",
-                    index >= 2 && "border-t border-outline-variant sm:border-t-0",
-                    index > 0 && "sm:border-l sm:border-outline-variant",
-                  )}
-                >
-                  <span className="block font-label-caps text-label-caps text-primary tabular-nums">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <dt className="mt-1 font-label-md text-label-md text-text-muted">
-                    {t(`metrics.${metric.id}`)}
-                  </dt>
-                  <dd
-                    className={cn(
-                      "mt-0.5 font-headline-md text-headline-md font-semibold tabular-nums",
-                      metric.accent ? "text-success-text" : "text-on-surface",
-                    )}
-                  >
-                    {metric.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
+              {profile.headline ? (
+                <p className="mt-1 font-body-md text-body-md text-on-surface-variant md:font-body-lg md:text-body-lg">
+                  {profile.headline}
+                </p>
+              ) : null}
+
+              <p className="mt-space-sm flex flex-wrap items-center gap-x-2 gap-y-1 font-label-md text-label-md text-on-surface-variant">
+                <span className="flex items-center gap-1 text-on-surface">
+                  <Icon name="location_on" className="text-base text-primary" />
+                  {profile.location}
+                </span>
+                {profile.languages ? (
+                  <>
+                    <Sep />
+                    <span>{profile.languages}</span>
+                  </>
+                ) : null}
+                <Sep />
+                <span className="flex items-center gap-1.5 text-success-text">
+                  <span className="h-1.5 w-1.5 rounded-full bg-success-text" />
+                  {t("identity.mutualConsent")}
+                </span>
+              </p>
+
+              {/* The record: two counts read as one line, not a numbered ledger. */}
+              <dl className="mt-space-sm flex flex-wrap gap-x-space-lg gap-y-1">
+                {metrics.map((metric) => (
+                  <div key={metric.id} className="flex items-baseline gap-1.5">
+                    <dt className="font-body-sm text-body-sm text-on-surface-variant">
+                      {t(`metrics.${metric.id}`)}
+                    </dt>
+                    <dd className="order-first font-headline-sm text-headline-sm font-semibold text-on-surface tabular-nums">
+                      {metric.value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+
+              {/* Beside the identity from sm up; under the portrait row on a phone. */}
+              <div className="mt-space-md hidden sm:block">{actions}</div>
+            </div>
           </div>
+          <div className="mt-space-md sm:hidden">{actions}</div>
         </Reveal>
       </div>
     </section>

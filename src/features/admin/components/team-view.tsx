@@ -46,9 +46,7 @@ export function TeamView({
   return (
     <div className="mx-auto w-full max-w-[1000px] space-y-space-xl px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
       <header className="space-y-1">
-        <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
-          {t("title")}
-        </h1>
+        <h1 className="font-title text-title-mobile text-on-surface md:text-title">{t("title")}</h1>
         <p className="max-w-[70ch] font-body-md text-body-md text-secondary">{t("body")}</p>
       </header>
 

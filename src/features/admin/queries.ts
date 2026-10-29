@@ -27,7 +27,6 @@ export type AdminProfileDto = {
   avatar: string | null;
   status: AdminProfileStatus;
   languages: string[];
-  interests: string[];
   submittedAt: string | null;
   moderation: AdminModerationEvent[];
 };
@@ -72,17 +71,6 @@ export type AdminReportDto = {
   reporterName: string;
 };
 
-export type AdminInterestStatus = "pending" | "approved" | "rejected";
-export type AdminInterestFilter = AdminInterestStatus | "all";
-
-export type AdminInterestDto = {
-  id: string;
-  label: string;
-  status: AdminInterestStatus;
-  createdByName: string;
-  createdAt: string;
-};
-
 export type AdminMetrics = {
   pendingProfiles: number;
   approvedProfiles: number;
@@ -91,19 +79,16 @@ export type AdminMetrics = {
   reportedPosts: number;
   curatedProducts: number;
   openReports: number;
-  pendingInterests: number;
 };
 
 const USERS_PAGE_SIZE = 10;
 const PRODUCTS_PAGE_SIZE = 10;
 const REPORTS_PAGE_SIZE = 10;
-const INTERESTS_PAGE_SIZE = 12;
 
 export const ADMIN_PAGE_SIZES = {
   users: USERS_PAGE_SIZE,
   marketplace: PRODUCTS_PAGE_SIZE,
   moderation: REPORTS_PAGE_SIZE,
-  interests: INTERESTS_PAGE_SIZE,
 } as const;
 
 function safeNeedle(value: string) {
@@ -133,7 +118,6 @@ export async function getAdminMetrics(): Promise<AdminMetrics> {
     reportedPosts,
     curatedProducts,
     openReports,
-    pendingInterests,
   ] = await Promise.all([
     supabase
       .from("profiles")
@@ -166,10 +150,6 @@ export async function getAdminMetrics(): Promise<AdminMetrics> {
       .eq("is_published", true)
       .is("deleted_at", null),
     supabase.from("reports").select("id", { count: "exact", head: true }).eq("status", "open"),
-    supabase
-      .from("interest_catalog")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "pending"),
   ]);
 
   return {
@@ -180,7 +160,6 @@ export async function getAdminMetrics(): Promise<AdminMetrics> {
     reportedPosts: unwrapCount(reportedPosts),
     curatedProducts: unwrapCount(curatedProducts),
     openReports: unwrapCount(openReports),
-    pendingInterests: unwrapCount(pendingInterests),
   };
 }
 
@@ -200,7 +179,7 @@ export async function getAdminUsers({
   let request = supabase
     .from("profiles_public")
     .select(
-      "id, display_name, country_code, city, neighborhood, avatar_url, bio_en, bio_es, headline, languages, interests, approval_status, submitted_at, age, role",
+      "id, display_name, country_code, city, neighborhood, avatar_url, bio_en, bio_es, headline, languages, approval_status, submitted_at, age, role",
       { count: "exact" },
     )
     .eq("role", "user");
@@ -264,7 +243,6 @@ export async function getAdminUsers({
         avatar: resolveImageUrl(row.avatar_url, avatars),
         status: row.approval_status ?? "pending",
         languages: parseLanguages(row.languages),
-        interests: row.interests ?? [],
         submittedAt: row.submitted_at,
         moderation: eventsById.get(id) ?? [],
       } satisfies AdminProfileDto;
@@ -506,83 +484,6 @@ export async function getOpenAppeals(): Promise<AdminAppealDto[]> {
     message: row.message,
     createdAt: row.created_at,
   }));
-}
-
-export async function getAdminInterests({
-  query,
-  status,
-  page,
-  pageSize = INTERESTS_PAGE_SIZE,
-}: {
-  query: string;
-  status: AdminInterestFilter;
-  page: number;
-  pageSize?: number;
-}): Promise<{ interests: AdminInterestDto[]; total: number }> {
-  const supabase = await createClient();
-
-  let request = supabase
-    .from("interest_catalog")
-    .select("id, label, status, created_by, created_at", { count: "exact" });
-
-  if (status !== "all") request = request.eq("status", status);
-  const needle = safeNeedle(query);
-  if (needle.length > 0) request = request.ilike("label", `%${needle}%`);
-
-  const response = await request
-    .order("created_at", { ascending: false })
-    .range((page - 1) * pageSize, page * pageSize - 1);
-
-  const rows = unwrap(response) ?? [];
-  const total = response.count ?? rows.length;
-  if (rows.length === 0) return { interests: [], total };
-
-  const creatorIds = [...new Set(rows.map((row) => row.created_by))].filter((id): id is string =>
-    Boolean(id),
-  );
-  const creators =
-    creatorIds.length > 0
-      ? (unwrap(
-          await supabase.from("profiles_public").select("id, display_name").in("id", creatorIds),
-        ) ?? [])
-      : [];
-  const creatorById = new Map(creators.map((row) => [row.id, row.display_name ?? ""]));
-
-  return {
-    interests: rows.map((row) => ({
-      id: row.id,
-      label: row.label,
-      status: row.status,
-      createdByName: creatorById.get(row.created_by ?? "") ?? "",
-      createdAt: row.created_at,
-    })),
-    total,
-  };
-}
-
-export async function getAdminInterestCounts(): Promise<Record<AdminInterestFilter, number>> {
-  const supabase = await createClient();
-  const [all, pending, approved, rejected] = await Promise.all([
-    supabase.from("interest_catalog").select("id", { count: "exact", head: true }),
-    supabase
-      .from("interest_catalog")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "pending"),
-    supabase
-      .from("interest_catalog")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "approved"),
-    supabase
-      .from("interest_catalog")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "rejected"),
-  ]);
-  return {
-    all: unwrapCount(all),
-    pending: unwrapCount(pending),
-    approved: unwrapCount(approved),
-    rejected: unwrapCount(rejected),
-  };
 }
 
 export type AdminAuditEvent = {

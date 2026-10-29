@@ -166,27 +166,23 @@ export function PostCard({
               <Icon name="delete" className="text-lg" />
             </button>
           ) : state === "connected" ? (
-            <div className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-success-border bg-success-surface text-success-text sm:h-auto sm:w-auto sm:gap-1 sm:px-3 sm:py-1">
-              <Icon name="check_circle" className="text-sm text-tertiary" />
-              <span className="sr-only font-medium text-tertiary sm:not-sr-only">
-                {tCommon("connected")}
-              </span>
+            <div className="inline-flex min-h-11 shrink-0 items-center gap-1 font-label-md text-label-md font-semibold text-success-text">
+              <Icon name="check_circle" className="text-base" />
+              <span>{tCommon("connected")}</span>
             </div>
           ) : state === "received" && canConnect ? (
             <button
               type="button"
               onClick={onAccept}
               disabled={busy}
-              className="inline-flex h-11 w-11 shrink-0 items-center justify-center gap-1.5 rounded-full border border-success-border bg-success-surface font-label-md text-label-md text-success-text transition-colors duration-300 hover:bg-success-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-60 sm:h-auto sm:w-auto sm:px-3.5 sm:py-2"
+              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-full border border-success-border bg-success-surface px-3.5 font-label-md text-label-md font-semibold text-success-text transition-colors duration-300 hover:bg-success-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-60"
             >
               {busy ? (
                 <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
               ) : (
                 <Icon name="check" className="text-base" />
               )}
-              <span className="sr-only sm:not-sr-only">
-                {busy ? tCommon("processing") : tCommon("accept")}
-              </span>
+              <span>{busy ? tCommon("processing") : tCommon("accept")}</span>
             </button>
           ) : canConnect ? (
             <button
@@ -194,7 +190,7 @@ export function PostCard({
               onClick={onConnect}
               disabled={busy || state === "requested"}
               className={cn(
-                "inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full font-label-md text-label-md transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-60 sm:h-auto sm:w-auto sm:gap-1.5 sm:px-3.5 sm:py-2",
+                "inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-full px-3.5 font-label-md text-label-md font-semibold transition-colors duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:opacity-60",
                 state === "requested"
                   ? "border border-success-border bg-success-surface text-success-text"
                   : "border border-outline-variant bg-surface-container text-on-surface-strong hover:bg-surface-variant hover:text-on-surface",
@@ -204,12 +200,10 @@ export function PostCard({
                 name={state === "requested" ? "check" : "person_add"}
                 className={cn(
                   "text-base",
-                  state === "requested" ? "text-sm text-tertiary" : "text-primary",
+                  state === "requested" ? "text-success-text" : "text-primary",
                 )}
               />
-              <span className="sr-only sm:not-sr-only">
-                {state === "requested" ? t("postMeta.requested") : tCommon("connect")}
-              </span>
+              <span>{state === "requested" ? t("postMeta.requested") : tCommon("connect")}</span>
             </button>
           ) : null}
         </div>

@@ -14,7 +14,7 @@ export function AppFooterSpace({ children }: { children: ReactNode }) {
   const isAdmin = pathname.startsWith("/admin");
 
   return (
-    <div className={isAdmin ? undefined : "pb-[calc(6rem+env(safe-area-inset-bottom))] lg:pb-0"}>
+    <div className={isAdmin ? undefined : "pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0"}>
       {children}
     </div>
   );

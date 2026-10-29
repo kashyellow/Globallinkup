@@ -80,11 +80,8 @@ implementation. Where this summary and the PRD disagree, the PRD wins.
   gated by RLS on an accepted connection. **Admins are not an exception**: the
   admin read policy is being removed so only the owner and an accepted connection
   can read those channels (ADR 0005).
-- Custom cultural interests stay in `profiles.interests text[]`. New labels are
-  registered in `interest_catalog` as `pending` (max 3 new per member per 24h)
-  and only become suggestions after admin approval. Rejecting a pending label
-  removes it from the creator's profile; unpublishing an approved label keeps
-  existing profiles intact.
+- There are no cultural interests: the field, the catalog, its admin desk and
+  the `interests.review` capability were removed (ADR 0008).
 
 ## Non-negotiable rules
 
@@ -100,6 +97,11 @@ implementation. Where this summary and the PRD disagree, the PRD wins.
 
 These are confirmed and supersede the PRD where it disagrees:
 
+- **No cultural interests** (ADR 0008, 2026-10-30). Removed end to end at the
+  project owner's request: persona field (PRD FR-2.2/FR-3.2), interest search
+  and filter (FR-4.2, OQ-6), the S6 catalog and review desk, the
+  `interests.review` capability and the interest notifications. The migration
+  deletes existing interest data.
 - Package manager is **npm**, not pnpm.
 - Foundational docs live under `docs/` (not the repo root).
 - Runtime pinned to the versions above (`src/` layout adopted per PRD §9.1).
@@ -160,7 +162,7 @@ is implemented yet unless the code says so.
 - **Audit + PII-safe logging** (ADR 0003) — **table and wiring implemented**:
   append-only `audit_events` (ids, actions, reasons, state metadata only),
   `record_audit()` for admins, 12-month retention via the purge job, and rows for
-  every admin mutation — member, post, comment, report, interest, product, role,
+  every admin mutation — member, post, comment, report, product, role,
   invite — with `before`/`after` snapshots. The `/admin/audit` viewer is gated by
   `audit.read`, aligns both snapshots, highlights changed keys, and shows the full
   event JSON; a structured logger strips banned PII keys (unit-tested).

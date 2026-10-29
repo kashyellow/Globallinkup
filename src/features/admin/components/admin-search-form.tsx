@@ -44,7 +44,7 @@ export function AdminSearchForm({
     <form
       onSubmit={submit}
       aria-busy={pending || undefined}
-      className="flex min-w-0 flex-1 flex-col gap-space-xs sm:flex-row"
+      className="flex min-w-0 flex-1 items-center gap-space-xs"
     >
       <div className="relative min-w-0 flex-1">
         <Icon
@@ -60,19 +60,20 @@ export function AdminSearchForm({
           className="h-11 w-full rounded-full border border-outline-variant bg-surface-dim pr-4 pl-11 font-body-sm text-body-sm text-on-surface transition-colors duration-300 placeholder:text-placeholder hover:border-outline-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         />
       </div>
-      <div className="flex items-center gap-space-xs">
+      <div className="flex shrink-0 items-center gap-space-xs">
         <button
           type="submit"
           disabled={pending}
           aria-busy={pending || undefined}
-          className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full bg-primary px-4 font-label-md text-label-md font-semibold text-on-primary transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:cursor-wait disabled:opacity-60"
+          className="inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-full bg-primary px-3 font-label-md text-label-md font-semibold text-on-primary transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px disabled:cursor-wait disabled:opacity-60 sm:px-4"
         >
           {pending ? (
             <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
           ) : (
             <Icon name="search" className="text-base" />
           )}
-          {t("search")}
+          {/* Icon-only on phones so the field keeps the row; the label stays for screen readers. */}
+          <span className="sr-only sm:not-sr-only">{t("search")}</span>
         </button>
         {query ? (
           <button

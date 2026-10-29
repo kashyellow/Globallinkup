@@ -72,14 +72,15 @@ export function RegionFilter({
         aria-haspopup="dialog"
         onClick={() => setOpen((value) => !value)}
         className={cn(
-          "flex min-h-12 w-full items-center justify-center gap-2 rounded-full border px-space-md font-label-lg text-label-lg shadow-lift-sm transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px sm:w-auto",
+          "flex min-h-12 min-w-12 items-center justify-center gap-2 rounded-full border px-3 font-label-lg text-label-lg transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px sm:px-space-md",
           selected.length > 0
             ? "border-primary/40 bg-admin-surface text-on-surface"
             : "border-outline-variant bg-surface-low text-on-surface-variant hover:border-outline-hover hover:bg-surface-container",
         )}
       >
         <Icon name="tune" className="text-lg text-primary" />
-        <span>{t("regionsButton")}</span>
+        {/* Icon-only on phones so search keeps the row; the label stays for screen readers. */}
+        <span className="sr-only sm:not-sr-only">{t("regionsButton")}</span>
         {selected.length > 0 ? (
           <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 font-label-caps text-label-caps font-semibold text-on-primary tabular-nums">
             {selected.length}
@@ -87,7 +88,10 @@ export function RegionFilter({
         ) : null}
         <Icon
           name="expand_more"
-          className={cn("text-lg text-secondary transition-transform", open && "rotate-180")}
+          className={cn(
+            "text-lg text-secondary transition-transform max-sm:hidden!",
+            open && "rotate-180",
+          )}
         />
       </button>
 

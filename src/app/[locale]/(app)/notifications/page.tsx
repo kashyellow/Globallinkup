@@ -26,8 +26,6 @@ const HREF: Record<string, string> = {
   "persona.approved": "/profile",
   "persona.rejected": "/profile",
   "persona.suspended": "/profile",
-  "interest.approved": "/profile/edit",
-  "interest.rejected": "/profile/edit",
 };
 
 export default async function NotificationsPage({
@@ -50,13 +48,13 @@ export default async function NotificationsPage({
 
   return (
     <div className="mx-auto w-full max-w-3xl px-margin-mobile py-block-mobile md:px-margin md:py-block">
-      <h1 className="font-headline-lg text-headline-lg-mobile font-semibold text-on-surface md:text-headline-lg">
+      <h1 className="font-title text-title-mobile font-bold text-on-surface md:text-title">
         {t("title")}
       </h1>
-      <p className="mt-1 font-body-md text-body-md text-secondary">{t("intro")}</p>
+      <p className="mt-1 font-body-md text-body-md text-on-surface-variant">{t("intro")}</p>
 
       {notifications.length === 0 ? (
-        <div className="mt-block flex flex-col items-center gap-space-sm rounded-2xl border border-dashed border-outline-variant px-space-lg py-block text-center">
+        <div className="mt-space-lg flex flex-col items-center gap-space-sm rounded-2xl border border-dashed border-outline-variant px-space-lg py-space-xl text-center">
           <Icon name="notifications" className="text-3xl text-secondary" />
           <p className="font-label-lg text-label-lg font-semibold text-on-surface">
             {t("emptyTitle")}

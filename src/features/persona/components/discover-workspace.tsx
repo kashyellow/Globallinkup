@@ -153,7 +153,7 @@ export function DiscoverWorkspace({
         loading={loading}
       />
 
-      <div className="mt-space-md">{trustStrip}</div>
+      <div className="mt-space-xs">{trustStrip}</div>
 
       {error ? (
         <div className="mt-space-md">
@@ -161,7 +161,7 @@ export function DiscoverWorkspace({
         </div>
       ) : null}
 
-      <div className="mt-page-mobile md:mt-page">
+      <div className="mt-space-lg md:mt-block">
         <PersonaFeed
           canConnect={canConnect}
           personas={personas}

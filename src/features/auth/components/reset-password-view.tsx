@@ -81,7 +81,7 @@ export function ResetPasswordView({ hasRecoverySession }: { hasRecoverySession: 
           <span className="flex h-16 w-16 items-center justify-center rounded-full border border-danger-border bg-danger-surface text-danger-text">
             <Icon name="link_off" className="text-3xl" />
           </span>
-          <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
+          <h1 className="font-title text-title-mobile text-on-surface md:text-title">
             {t("invalidTitle")}
           </h1>
           <p className="max-w-md font-body-md text-body-md text-secondary">{t("invalidBody")}</p>
@@ -100,7 +100,7 @@ export function ResetPasswordView({ hasRecoverySession }: { hasRecoverySession: 
       ) : (
         <div className="flex flex-col gap-space-lg">
           <div className="flex flex-col gap-space-xs">
-            <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
+            <h1 className="font-title text-title-mobile text-on-surface md:text-title">
               {t("title")}
             </h1>
             <p className="font-body-md text-body-md text-secondary">{t("subtitle")}</p>

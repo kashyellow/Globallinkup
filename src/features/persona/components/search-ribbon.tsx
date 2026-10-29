@@ -35,8 +35,8 @@ export function SearchRibbon({
   const hasFilters = query.trim().length > 0 || countries.length > 0;
 
   return (
-    <section className="mt-block-mobile space-y-space-md md:mt-block">
-      <div className="flex flex-col gap-space-sm sm:flex-row sm:items-center">
+    <section className="mt-space-lg space-y-space-md md:mt-space-xl">
+      <div className="flex items-center gap-space-sm">
         <div className="relative min-w-0 flex-1">
           {loading ? (
             <span className="pointer-events-none absolute top-1/2 left-space-md -translate-y-1/2">
@@ -60,7 +60,7 @@ export function SearchRibbon({
         </div>
 
         <div className="flex items-center gap-space-xs">
-          <div className="min-w-0 flex-1 sm:flex-none">
+          <div className="shrink-0">
             <RegionFilter
               selected={countries}
               onChange={onCountriesChange}

@@ -203,9 +203,11 @@ function PersonaCard({
   const tCommon = useTranslations("Common");
 
   return (
-    <article className="group flex flex-col justify-between overflow-hidden rounded-[1.25rem] border border-outline-variant bg-surface-low transition-colors duration-300 hover:border-outline">
-      <Link href={`/persona/${persona.id}`} className="block">
-        <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface-container">
+    <article className="group grid grid-cols-[6.5rem_minmax(0,1fr)] gap-x-space-md gap-y-space-sm overflow-hidden rounded-2xl border border-outline-variant bg-surface-low p-space-sm transition-colors duration-300 hover:border-outline sm:flex sm:flex-col sm:justify-between sm:gap-0 sm:p-0">
+      {/* Phones: a portrait thumbnail beside the details, the action across the
+          full width below, so three people fit on a screen instead of one. */}
+      <Link href={`/persona/${persona.id}`} className="block self-start sm:self-stretch">
+        <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-surface-container sm:aspect-[4/3] sm:rounded-none">
           {persona.image ? (
             <MediaImage
               src={persona.image}
@@ -218,7 +220,7 @@ function PersonaCard({
           )}
 
           {persona.badge === "directContact" ? (
-            <div className="absolute bottom-3 left-3 flex items-center gap-1 rounded-full border border-success-border bg-success-surface px-2.5 py-1 font-label-md text-label-md text-success-text shadow-lift-sm">
+            <div className="absolute bottom-3 left-3 hidden items-center gap-1 rounded-full border border-success-border bg-success-surface px-2.5 py-1 font-label-md text-label-md text-success-text sm:flex">
               <Icon name="lock_open" className="text-sm" />
               <span>{t("feed.directContactVisible")}</span>
             </div>
@@ -226,8 +228,8 @@ function PersonaCard({
         </div>
       </Link>
 
-      <div className="flex flex-1 flex-col justify-between gap-space-sm p-space-md">
-        <div>
+      <div className="contents sm:flex sm:flex-1 sm:flex-col sm:justify-between sm:gap-space-sm sm:p-space-md">
+        <div className="min-w-0 pt-space-xs sm:pt-0">
           <Link href={`/persona/${persona.id}`} className="block">
             <h3 className="font-headline-sm text-headline-sm text-on-surface">
               {persona.age > 0 ? `${persona.name}, ${persona.age}` : persona.name}
@@ -236,6 +238,12 @@ function PersonaCard({
               <Icon name="location_on" className="text-sm" />
               <span className="font-body-sm text-body-sm">{persona.location}</span>
             </div>
+            {persona.badge === "directContact" ? (
+              <span className="mt-1 flex items-center gap-1 font-label-md text-label-md text-success-text sm:hidden">
+                <Icon name="lock_open" className="text-sm" />
+                {t("feed.directContactVisible")}
+              </span>
+            ) : null}
           </Link>
 
           <div className="mt-space-sm flex flex-wrap items-center gap-1.5">
@@ -251,26 +259,15 @@ function PersonaCard({
               </span>
             ))}
           </div>
-
-          <div className="mt-2.5 flex flex-wrap gap-1">
-            {persona.interests.map((interest) => (
-              <span
-                key={interest}
-                className="rounded-full border border-outline-variant bg-surface-container px-2 py-0.5 font-label-md text-label-md text-on-surface-strong"
-              >
-                {t.has(`interests.${interest}`) ? t(`interests.${interest}`) : interest}
-              </span>
-            ))}
-          </div>
         </div>
 
         {state === "connected" ? (
-          <div className="mt-space-sm flex w-full items-center justify-center gap-space-xs rounded-full border border-success-border bg-success-surface px-space-md py-2.5 font-label-lg text-label-lg font-semibold text-success-text">
+          <div className="col-span-2 flex w-full items-center justify-center gap-space-xs rounded-full border border-success-border bg-success-surface px-space-md py-2.5 font-label-lg text-label-lg font-semibold text-success-text sm:mt-space-sm">
             <Icon name="check_circle" className="text-lg" />
             <span>{tCommon("connected")}</span>
           </div>
         ) : state === "received" && canConnect ? (
-          <div className="mt-space-sm flex gap-2">
+          <div className="col-span-2 flex gap-2 sm:mt-space-sm">
             <button
               type="button"
               onClick={onAccept}
@@ -296,7 +293,7 @@ function PersonaCard({
         ) : state === "requested" ? (
           <div
             aria-live="polite"
-            className="mt-space-sm flex w-full items-center justify-center gap-space-xs rounded-full border border-outline-variant bg-surface-container px-space-md py-2.5 font-label-lg text-label-lg text-on-surface-strong"
+            className="col-span-2 flex w-full items-center justify-center gap-space-xs rounded-full border border-outline-variant bg-surface-container px-space-md py-2.5 font-label-lg text-label-lg text-on-surface-strong sm:mt-space-sm"
           >
             <Icon name="schedule" className="text-lg text-primary" />
             <span>{tCommon("requestSent")}</span>
@@ -306,7 +303,7 @@ function PersonaCard({
             type="button"
             onClick={onConnect}
             className={cn(
-              "mt-space-sm flex w-full items-center justify-center gap-space-xs rounded-full bg-primary px-space-md py-2.5 font-label-lg text-label-lg font-semibold text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
+              "col-span-2 flex w-full items-center justify-center gap-space-xs rounded-full bg-primary px-space-md py-2.5 font-label-lg text-label-lg font-semibold text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px sm:mt-space-sm",
               EASE,
             )}
           >

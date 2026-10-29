@@ -48,7 +48,7 @@ export function ContactVault({ channels }: { channels: ContactChannel[] }) {
 
   return (
     <div
-      className="space-y-space-sm rounded-2xl border border-success-border bg-success-surface/40 p-space-md"
+      className="space-y-space-sm rounded-2xl border border-jade-border/70 bg-success-surface/40 p-space-sm md:p-space-md"
       style={{ "--bezel-core-bg": "var(--color-success-surface)" } as CSSProperties}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">

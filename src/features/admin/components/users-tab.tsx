@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 import type { AdminProfileDto, AdminProfileFilter, AdminProfileStatus } from "../queries";
 
 const ACTION_BASE =
-  "inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 py-2 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-px disabled:opacity-60";
+  "inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 py-2 font-label-md text-label-md whitespace-nowrap transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-px disabled:opacity-60";
 
 const STATUS_KEY: Record<AdminProfileStatus, string> = {
   pending: "statusPending",
@@ -110,8 +110,7 @@ export function AdminUsersTab({
     <div className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
       <div className="flex flex-col justify-between gap-space-md lg:flex-row lg:items-end">
         <div>
-          <p className="font-label-md text-label-md font-semibold text-primary">{t("eyebrow")}</p>
-          <h1 className="mt-1 font-display-md text-display-md-mobile text-on-surface md:text-display-md">
+          <h1 className="font-title text-title-mobile text-on-surface md:text-title">
             {t("title")}
           </h1>
           <p className="mt-2 max-w-[62ch] font-body-md text-body-md text-secondary">{t("body")}</p>
@@ -207,7 +206,7 @@ function StatusChip({ status }: { status: AdminProfileStatus }) {
   return (
     <span
       className={cn(
-        "rounded-full border px-2.5 py-0.5 font-label-md text-label-md font-semibold",
+        "shrink-0 rounded-full border px-2.5 py-0.5 font-label-md text-label-md font-semibold whitespace-nowrap",
         status === "approved"
           ? "border-success-border bg-success-surface text-success-text"
           : status === "pending"
@@ -237,131 +236,139 @@ function UserCard({
   const tCommon = useTranslations("Common");
   const format = useFormatter();
 
+  const meta = [
+    user.location,
+    user.languages.length > 0 ? user.languages.join(" / ") : null,
+  ].filter(Boolean);
+
   return (
-    <div className="bezel-tray">
-      <article className="flex flex-col items-start justify-between gap-space-lg bezel-core p-space-lg lg:flex-row lg:items-center">
-        <div className="flex w-full flex-col items-start gap-space-md sm:flex-row sm:items-center lg:w-auto">
-          <div className="relative shrink-0">
-            {user.avatar ? (
-              <MediaImage
-                alt={user.name}
-                src={user.avatar}
-                wrapperClassName="h-24 w-20 rounded-2xl border border-outline-variant"
-                loading="lazy"
-              />
-            ) : (
-              <DefaultAvatar className="h-24 w-20 rounded-2xl border border-outline-variant" />
-            )}
-            <span className="absolute -right-2 -bottom-2">
-              <StatusChip status={status} />
-            </span>
-          </div>
+    <article className="flex flex-col gap-space-md rounded-2xl border border-outline-variant bg-surface-low p-space-md md:p-space-lg lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex min-w-0 items-start gap-space-md">
+        {user.avatar ? (
+          <MediaImage
+            alt={user.name}
+            src={user.avatar}
+            wrapperClassName="h-16 w-14 shrink-0 rounded-xl border border-outline-variant md:h-20 md:w-16"
+            loading="lazy"
+          />
+        ) : (
+          <DefaultAvatar className="h-16 w-14 shrink-0 rounded-xl border border-outline-variant md:h-20 md:w-16" />
+        )}
 
-          <div className="flex flex-col gap-1.5">
-            <div className="flex flex-wrap items-center gap-x-space-sm gap-y-2">
-              <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
-                {user.name}
-              </h2>
+        <div className="flex min-w-0 flex-col gap-1">
+          <div className="flex flex-wrap items-center gap-x-space-sm gap-y-1">
+            <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
+              {user.name}
               {user.age > 0 ? (
-                <span className="font-body-sm text-body-sm text-secondary">{user.age}</span>
-              ) : null}
-              <span className="inline-flex items-center gap-1 font-label-md text-label-md text-secondary">
-                <Icon name="location_on" className="text-sm" />
-                {user.location}
-              </span>
-              {user.languages.length > 0 ? (
-                <span className="rounded-full border border-outline-variant bg-surface-container px-2.5 py-0.5 font-label-md text-label-md text-secondary">
-                  {user.languages.join(" / ")}
+                <span className="ml-1.5 font-body-sm text-body-sm font-normal text-secondary">
+                  {user.age}
                 </span>
               ) : null}
-              {status === "pending" && user.submittedAt ? (
-                <span
-                  className="rounded-full border border-outline-variant bg-surface-container px-2.5 py-0.5 font-label-md text-label-md text-secondary"
-                  suppressHydrationWarning
-                >
-                  {t("registeredAgo", {
-                    time: format.relativeTime(new Date(user.submittedAt), new Date()),
-                  })}
-                </span>
-              ) : null}
-            </div>
-
-            {user.headline ? (
-              <p className="font-label-md text-label-md text-primary">{user.headline}</p>
-            ) : null}
-            <p className="line-clamp-2 max-w-xl font-body-sm text-body-sm text-text-muted">
-              {user.bioEn || user.bioEs}
-            </p>
+            </h2>
+            <StatusChip status={status} />
           </div>
-        </div>
 
-        <div className="flex w-full flex-wrap items-center justify-end gap-space-sm border-t border-outline-variant pt-space-sm lg:w-auto lg:shrink-0 lg:flex-nowrap lg:border-t-0 lg:pt-0">
+          <p className="flex flex-wrap items-center gap-x-1.5 font-body-sm text-body-sm text-on-surface-variant">
+            <Icon name="location_on" className="text-sm" />
+            {meta.join(" · ")}
+          </p>
+
+          {status === "pending" && user.submittedAt ? (
+            <p
+              className="font-body-sm text-body-sm text-on-surface-variant"
+              suppressHydrationWarning
+            >
+              {t("registeredAgo", {
+                time: format.relativeTime(new Date(user.submittedAt), new Date()),
+              })}
+            </p>
+          ) : null}
+
+          {user.headline ? (
+            <p className="font-label-md text-label-md text-primary">{user.headline}</p>
+          ) : null}
+          <p className="line-clamp-2 max-w-xl font-body-sm text-body-sm text-on-surface-variant">
+            {user.bioEn || user.bioEs}
+          </p>
+        </div>
+      </div>
+
+      {/*
+       * Phones: equal-width buttons in a grid under the details, the primary
+       * decision across the full width. From lg the actions sit on the right.
+       * Reject only applies to a pending review; a rejected or suspended member
+       * can only be reinstated, an approved one suspended.
+       */}
+      <div className="grid grid-cols-2 gap-space-xs border-t border-outline-variant pt-space-md lg:flex lg:shrink-0 lg:items-center lg:border-t-0 lg:pt-0">
+        <button
+          type="button"
+          onClick={onInspect}
+          className={cn(
+            ACTION_BASE,
+            "justify-center border border-outline-variant bg-surface-container text-on-surface hover:border-outline-hover hover:bg-surface-container-high",
+            status !== "pending" && status !== "approved" && "col-span-2",
+          )}
+        >
+          <Icon name="badge" className="text-base max-sm:hidden!" />
+          {t("inspectDossier")}
+        </button>
+
+        {status === "approved" ? (
           <button
             type="button"
-            onClick={onInspect}
+            onClick={() => onReview("suspended")}
+            disabled={pending}
             className={cn(
               ACTION_BASE,
-              "border border-outline-variant bg-surface-container text-on-surface hover:border-outline-hover hover:bg-surface-container-high",
+              "justify-center border border-outline-variant text-secondary hover:border-danger-border-strong/60 hover:text-danger focus-visible:outline-danger-border-strong",
             )}
           >
-            <Icon name="badge" className="text-base" />
-            {t("inspectDossier")}
+            {pending ? (
+              <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
+            ) : null}
+            {t("suspend")}
           </button>
+        ) : null}
 
-          {status === "approved" ? (
-            <button
-              type="button"
-              onClick={() => onReview("suspended")}
-              disabled={pending}
-              className={cn(
-                ACTION_BASE,
-                "border border-outline-variant text-secondary hover:border-danger-border-strong/60 hover:text-danger focus-visible:outline-danger-border-strong",
-              )}
-            >
-              {pending ? (
-                <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
-              ) : null}
-              {t("suspend")}
-            </button>
-          ) : (
-            <>
-              <button
-                type="button"
-                onClick={() => onReview("rejected")}
-                disabled={pending}
-                className={cn(
-                  ACTION_BASE,
-                  "border border-danger-border bg-danger-surface text-danger-text hover:border-danger-border-strong/60 focus-visible:outline-danger-border-strong",
-                )}
-              >
-                {pending ? (
-                  <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
-                ) : (
-                  <Icon name="close" className="text-base" />
-                )}
-                {t("reject")}
-              </button>
-              <button
-                type="button"
-                onClick={() => onReview("approved")}
-                disabled={pending}
-                className={cn(
-                  ACTION_BASE,
-                  "border border-success-ring/30 bg-success-strong text-white hover:bg-success-hover focus-visible:outline-success-ring",
-                )}
-              >
-                {pending ? (
-                  <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
-                ) : (
-                  <Icon name="check" className="text-base" />
-                )}
-                {t("approveProfile")}
-              </button>
-            </>
-          )}
-        </div>
-      </article>
-    </div>
+        {status === "pending" ? (
+          <button
+            type="button"
+            onClick={() => onReview("rejected")}
+            disabled={pending}
+            className={cn(
+              ACTION_BASE,
+              "justify-center border border-danger-border bg-danger-surface text-danger-text hover:border-danger-border-strong/60 focus-visible:outline-danger-border-strong",
+            )}
+          >
+            {pending ? (
+              <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
+            ) : (
+              <Icon name="close" className="text-base" />
+            )}
+            {t("reject")}
+          </button>
+        ) : null}
+
+        {status !== "approved" ? (
+          <button
+            type="button"
+            onClick={() => onReview("approved")}
+            disabled={pending}
+            className={cn(
+              ACTION_BASE,
+              "col-span-2 justify-center border border-success-ring/30 bg-success-strong text-white hover:bg-success-hover focus-visible:outline-success-ring",
+            )}
+          >
+            {pending ? (
+              <Spinner className="h-4 w-4 text-current" label={tCommon("processing")} />
+            ) : (
+              <Icon name="check" className="text-base" />
+            )}
+            {t("approveProfile")}
+          </button>
+        ) : null}
+      </div>
+    </article>
   );
 }
 
@@ -407,12 +414,9 @@ function PersonaDossierDialog({
               <DefaultAvatar className="h-20 w-16 shrink-0 rounded-xl border border-outline-variant" />
             )}
             <div className="min-w-0">
-              <p className="font-label-caps text-label-caps tracking-[0.16em] text-primary uppercase">
-                {t("dossierEyebrow")}
-              </p>
               <h2
                 id="admin-dossier-title"
-                className="mt-1 font-headline-md text-headline-md font-semibold text-on-surface"
+                className="font-headline-md text-headline-md font-semibold text-on-surface"
               >
                 {user.name}
                 {user.age > 0 ? (
@@ -447,7 +451,7 @@ function PersonaDossierDialog({
           ) : null}
 
           <section className="space-y-1.5">
-            <h3 className="font-label-md text-label-md font-semibold tracking-[0.08em] text-text-muted uppercase">
+            <h3 className="font-label-md text-label-md font-semibold text-text-muted">
               {t("bioLabel")}
             </h3>
             <p className="font-body-sm text-body-sm leading-relaxed text-on-surface-strong">
@@ -457,7 +461,7 @@ function PersonaDossierDialog({
 
           <div className="grid grid-cols-1 gap-space-md md:grid-cols-2">
             <section className="space-y-1.5">
-              <h3 className="font-label-md text-label-md font-semibold tracking-[0.08em] text-text-muted uppercase">
+              <h3 className="font-label-md text-label-md font-semibold text-text-muted">
                 {tCommon("languages")}
               </h3>
               <div className="flex flex-wrap gap-1.5">
@@ -475,29 +479,10 @@ function PersonaDossierDialog({
                 )}
               </div>
             </section>
-            <section className="space-y-1.5">
-              <h3 className="font-label-md text-label-md font-semibold tracking-[0.08em] text-text-muted uppercase">
-                {tCommon("interests")}
-              </h3>
-              <div className="flex flex-wrap gap-1.5">
-                {user.interests.length > 0 ? (
-                  user.interests.map((interest) => (
-                    <span
-                      key={interest}
-                      className="rounded-full border border-outline-variant bg-surface-container px-2.5 py-0.5 font-label-md text-label-md text-on-surface-strong"
-                    >
-                      {interest}
-                    </span>
-                  ))
-                ) : (
-                  <span className="font-body-sm text-body-sm text-secondary">—</span>
-                )}
-              </div>
-            </section>
           </div>
 
           <section className="space-y-2">
-            <h3 className="font-label-md text-label-md font-semibold tracking-[0.08em] text-text-muted uppercase">
+            <h3 className="font-label-md text-label-md font-semibold text-text-muted">
               {t("moderationHistory")}
             </h3>
             {user.moderation.length > 0 ? (
@@ -545,17 +530,19 @@ function PersonaDossierDialog({
             </button>
           ) : (
             <>
-              <button
-                type="button"
-                onClick={() => onReview("rejected")}
-                disabled={pending}
-                className={cn(
-                  ACTION_BASE,
-                  "border border-danger-border bg-danger-surface text-danger-text hover:border-danger-border-strong/60 focus-visible:outline-danger-border-strong",
-                )}
-              >
-                {t("reject")}
-              </button>
+              {user.status === "pending" ? (
+                <button
+                  type="button"
+                  onClick={() => onReview("rejected")}
+                  disabled={pending}
+                  className={cn(
+                    ACTION_BASE,
+                    "border border-danger-border bg-danger-surface text-danger-text hover:border-danger-border-strong/60 focus-visible:outline-danger-border-strong",
+                  )}
+                >
+                  {t("reject")}
+                </button>
+              ) : null}
               <button
                 type="button"
                 onClick={() => onReview("approved")}

@@ -40,32 +40,6 @@ export async function getDiscoverCountries(): Promise<string[]> {
     .filter((code): code is string => typeof code === "string" && code.length > 0);
 }
 
-/** S6 — approved suggestions plus the viewer's own pending labels (RLS-gated). */
-export type InterestCatalogItem = {
-  label: string;
-  status: "approved" | "pending";
-};
-
-export async function getInterestCatalog(): Promise<InterestCatalogItem[]> {
-  // Step 2 is reachable before sign-up, and builds without Supabase env must not
-  // fail the page; the seeded eight still render when the catalog is absent.
-  const supabase = await createClient().catch(() => null);
-  if (!supabase) return [];
-
-  const rows = unwrap(
-    await supabase
-      .from("interest_catalog")
-      .select("label, status")
-      .in("status", ["approved", "pending"])
-      .order("label", { ascending: true }),
-  );
-
-  return (rows ?? []).map((row) => ({
-    label: row.label,
-    status: row.status === "pending" ? "pending" : "approved",
-  }));
-}
-
 export async function getDiscoverPersonas({
   viewerId,
   query,
@@ -146,7 +120,7 @@ export async function getPersonaDetail(
     await supabase
       .from("profiles_public")
       .select(
-        "id, display_name, country_code, city, avatar_url, languages, interests, badge, approval_status, age, bio_en, bio_es, headline",
+        "id, display_name, country_code, city, avatar_url, languages, badge, approval_status, age, bio_en, bio_es, headline",
       )
       .eq("id", personaId)
       .eq("approval_status", "approved")

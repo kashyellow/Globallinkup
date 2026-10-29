@@ -117,54 +117,30 @@ export function MarketplaceView({
   return (
     <>
       {/* Editorial header */}
-      <section className="border-b border-outline-variant bg-surface-low">
-        <div className="mx-auto max-w-[1240px] px-margin-mobile pt-space-lg pb-space-lg md:px-margin md:pt-block md:pb-space-xl">
+      <section>
+        <div className="mx-auto max-w-[1240px] px-margin-mobile pt-block-mobile md:px-margin md:pt-block">
           <div className="flex flex-col justify-between gap-space-md lg:flex-row lg:items-end lg:gap-space-lg">
-            <div className="flex max-w-3xl flex-col gap-space-sm">
-              <p className="font-label-caps text-label-caps tracking-[0.16em] text-primary uppercase">
-                {t("banner.badge")}
-              </p>
-
-              <h1 className="font-display-md text-display-md-mobile font-bold text-balance text-on-surface md:text-display-md">
+            <div className="flex max-w-3xl flex-col gap-space-xs">
+              <h1 className="font-title text-title-mobile font-bold text-balance text-on-surface md:text-title">
                 {t("banner.title")}
               </h1>
-
-              <p className="max-w-[58ch] font-body-lg text-body-lg text-pretty text-on-surface-variant">
+              <p className="max-w-[58ch] font-body-sm text-body-sm text-pretty text-on-surface-variant md:font-body-md md:text-body-md">
                 {t("banner.intro")}
               </p>
             </div>
-
-            <div className="hidden shrink-0 self-start bezel-tray sm:block lg:self-auto">
-              <div
-                className="flex items-center gap-space-md bezel-core px-space-md py-space-sm"
-                style={{ "--bezel-core-bg": "var(--color-surface-container)" } as CSSProperties}
-              >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
-                  <Icon name="approval_delegation" className="text-xl" />
-                </span>
-                <div>
-                  <div className="font-label-lg text-label-lg font-semibold text-on-surface">
-                    {t("banner.statTitle")}
-                  </div>
-                  <div className="font-body-sm text-body-sm text-secondary">
-                    {t("banner.statSubtitle")}
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
 
-          <div className="mt-space-md flex items-center gap-2 font-body-sm text-body-sm text-secondary md:mt-space-lg">
-            <Icon name="lock" className="shrink-0 text-base text-tertiary" />
+          <div className="mt-space-sm flex items-start gap-2 font-body-sm text-body-sm text-on-surface-variant">
+            <Icon name="lock" className="mt-0.5 shrink-0 text-base text-tertiary" />
             <span>{t("banner.note")}</span>
           </div>
         </div>
       </section>
 
       {/* Controls */}
-      <section className="mx-auto max-w-[1240px] px-margin-mobile py-space-md md:px-margin md:py-space-lg">
-        <div className="flex flex-col items-stretch justify-between gap-space-md md:flex-row md:items-center">
-          <div className="relative max-w-xl flex-1">
+      <section className="mx-auto max-w-[1240px] px-margin-mobile py-space-lg md:px-margin md:py-space-xl">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-space-sm md:flex md:flex-wrap md:justify-between md:gap-x-space-md md:gap-y-space-sm">
+          <div className="relative col-span-2 max-w-xl min-w-0 md:flex-1">
             <Icon
               name="search"
               className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-xl text-text-muted"
@@ -180,20 +156,29 @@ export function MarketplaceView({
             />
           </div>
 
-          <div className="flex items-center gap-space-sm md:justify-end">
+          <div className="flex min-w-0 items-center gap-space-sm md:order-last md:w-full">
+            <span aria-live="polite" className="font-body-sm text-body-sm text-text-muted">
+              {loading
+                ? t("controls.loading")
+                : t("controls.showing", { shown: products.length, total })}
+            </span>
+            {loading ? <Spinner className="text-primary" label={t("controls.loading")} /> : null}
+          </div>
+
+          <div className="flex shrink-0 items-center gap-space-sm">
             <label
               htmlFor="marketplace-sort"
-              className="font-label-lg text-label-lg whitespace-nowrap text-secondary"
+              className="sr-only font-label-lg text-label-lg whitespace-nowrap text-on-surface-variant md:not-sr-only"
             >
               {t("controls.sortBy")}
             </label>
-            <div className="relative min-w-0 flex-1 md:flex-none">
+            <div className="relative">
               <select
                 id="marketplace-sort"
                 value={sort}
                 onChange={(event) => changeSort(event.target.value as MarketplaceSort)}
                 className={cn(
-                  "h-12 w-full cursor-pointer appearance-none rounded-full border border-outline-variant bg-surface-low pr-10 pl-4 font-label-lg text-label-lg text-on-surface transition-colors duration-300 hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:w-auto",
+                  "h-12 w-auto max-w-[9.5rem] cursor-pointer appearance-none rounded-full border border-outline-variant bg-surface-low pr-10 pl-4 font-label-lg text-label-lg text-on-surface transition-colors duration-300 hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:max-w-none",
                   EASE,
                 )}
               >
@@ -209,15 +194,6 @@ export function MarketplaceView({
               />
             </div>
           </div>
-        </div>
-
-        <div className="mt-space-sm flex items-center justify-between gap-space-sm">
-          <span aria-live="polite" className="font-body-sm text-body-sm text-text-muted">
-            {loading
-              ? t("controls.loading")
-              : t("controls.showing", { shown: products.length, total })}
-          </span>
-          {loading ? <Spinner className="text-primary" label={t("controls.loading")} /> : null}
         </div>
 
         {error ? <InlineAlert className="mt-space-sm">{error}</InlineAlert> : null}
@@ -241,7 +217,7 @@ export function MarketplaceView({
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-space-md sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-2 gap-space-sm sm:gap-space-md xl:grid-cols-3">
             {products.map((product) => (
               <ProductCard key={product.id} product={product} onOpen={() => openProduct(product)} />
             ))}
@@ -275,9 +251,6 @@ export function MarketplaceView({
             style={{ "--bezel-core-bg": "var(--color-surface-container)" } as CSSProperties}
           >
             <div className="flex items-start gap-space-md">
-              <span className="hidden h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary sm:flex">
-                <Icon name="handshake" className="text-2xl" />
-              </span>
               <div>
                 <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
                   {t("notice.title")}
@@ -334,10 +307,10 @@ function ProductCard({ product, onOpen }: { product: MarketplaceProduct; onOpen:
           onOpen();
         }
       }}
-      className="group flex cursor-pointer flex-col overflow-hidden rounded-[1.25rem] border border-outline-variant bg-surface-low transition-colors duration-300 hover:border-outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      className="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-outline-variant bg-surface-low transition-colors duration-300 hover:border-outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
     >
       <div className="relative block w-full overflow-hidden bg-surface-container">
-        <span className="block aspect-[4/3] w-full">
+        <span className="block aspect-square w-full sm:aspect-[4/3]">
           <MediaImage
             src={product.images[0] ?? null}
             alt={product.imageAlt}
@@ -347,37 +320,37 @@ function ProductCard({ product, onOpen }: { product: MarketplaceProduct; onOpen:
         </span>
 
         {product.images.length > 1 ? (
-          <span className="absolute top-3 left-3 inline-flex items-center gap-1 rounded-full border border-white/20 bg-black/45 px-2.5 py-1 font-label-md text-label-md text-white backdrop-blur-sm">
+          <span className="absolute top-3 left-3 inline-flex items-center gap-1 rounded-full border border-white/20 bg-black/60 px-2.5 py-1 font-label-md text-label-md text-white">
             <Icon name="photo_library" className="text-sm" />
             {product.images.length}
           </span>
         ) : null}
 
-        <span className="absolute top-3 right-3 rounded-full border border-outline-variant bg-surface-low/95 px-2.5 py-1 font-label-md text-label-md text-on-surface shadow-lift-sm">
+        <span className="absolute top-2 right-2 max-w-[calc(100%-1rem)] truncate rounded-full border border-outline-variant bg-surface-low px-2 py-0.5 font-label-md text-label-md text-on-surface sm:top-3 sm:right-3 sm:px-2.5 sm:py-1">
           {product.originLabel}
         </span>
       </div>
 
-      <div className="flex flex-1 flex-col justify-between gap-space-sm p-space-md">
+      <div className="flex flex-1 flex-col justify-between gap-space-xs p-space-sm sm:gap-space-sm sm:p-space-md">
         <div className="flex flex-col gap-1">
-          <h2 className="line-clamp-2 font-headline-sm text-headline-sm font-semibold text-balance text-on-surface transition-colors duration-300 group-hover:text-primary">
+          <h2 className="line-clamp-2 font-headline-sm text-label-lg font-semibold text-balance text-on-surface transition-colors duration-300 group-hover:text-primary sm:text-headline-sm">
             {product.name}
           </h2>
-          <p className="mt-0.5 line-clamp-2 font-body-sm text-body-sm text-pretty text-secondary">
+          <p className="mt-0.5 line-clamp-2 hidden font-body-sm text-body-sm text-pretty text-on-surface-variant sm:block">
             {product.description}
           </p>
         </div>
 
-        <div className="mt-space-xs flex items-center justify-between gap-space-sm border-t border-outline-variant pt-space-sm">
+        <div className="flex items-center justify-between gap-space-sm sm:mt-space-xs sm:border-t sm:border-outline-variant sm:pt-space-sm">
           <div>
-            <span className="block font-label-md text-label-md text-text-muted">
+            <span className="hidden font-label-md text-label-md text-text-muted sm:block">
               {t("card.priceLabel")}
             </span>
-            <span className="font-headline-sm text-headline-sm font-bold whitespace-nowrap text-on-surface tabular-nums">
+            <span className="font-headline-sm text-label-lg font-bold whitespace-nowrap text-on-surface tabular-nums sm:text-headline-sm">
               ${product.price} {t("drawer.currencyUsd")}
             </span>
           </div>
-          <span className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-outline bg-surface-container pr-1.5 pl-4 font-label-lg text-label-lg font-semibold whitespace-nowrap text-on-surface">
+          <span className="hidden min-h-11 items-center gap-1.5 rounded-full border border-outline bg-surface-container pr-1.5 pl-4 font-label-lg text-label-lg font-semibold whitespace-nowrap text-on-surface sm:inline-flex">
             {t("card.viewDetails")}
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-on-surface/10">
               <Icon name="arrow_forward" className="text-[15px]" />

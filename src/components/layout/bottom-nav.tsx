@@ -40,9 +40,9 @@ export function BottomNav({ pendingRequests = 0 }: { pendingRequests?: number })
   return (
     <nav
       aria-label={t("primaryNavigation")}
-      className="fixed inset-x-0 bottom-0 z-30 px-margin-mobile pb-[env(safe-area-inset-bottom)] lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-30 border-t border-outline-variant bg-background pb-[env(safe-area-inset-bottom)] lg:hidden"
     >
-      <div className="mx-auto mb-3 flex max-w-[1240px] items-stretch gap-0.5 rounded-full border border-outline-variant bg-surface-low/85 p-1 shadow-lift-sm backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-[1240px] items-stretch px-2">
         {NAV_ITEMS.map((item) => {
           const active = isActive(item.href);
           return (
@@ -51,13 +51,18 @@ export function BottomNav({ pendingRequests = 0 }: { pendingRequests?: number })
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "relative flex min-h-12 flex-1 flex-col items-center justify-center gap-0.5 rounded-full px-1 transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+                "group relative flex flex-1 flex-col items-center justify-center gap-1 px-1 transition-colors duration-200 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-primary",
                 EASE,
-                active ? "bg-surface-container-high" : "hover:bg-surface-container",
               )}
             >
               <LinkPending />
-              <span className="relative flex items-center justify-center">
+              {/* The active pill hugs the icon only, so the four labels stay on one line. */}
+              <span
+                className={cn(
+                  "relative flex h-8 w-14 items-center justify-center rounded-full transition-colors duration-200",
+                  active ? "bg-surface-container-high" : "group-hover:bg-surface-container",
+                )}
+              >
                 <Icon
                   name={item.icon}
                   filled={active}
@@ -67,19 +72,14 @@ export function BottomNav({ pendingRequests = 0 }: { pendingRequests?: number })
                   )}
                 />
                 {item.key === "connections" && pendingRequests > 0 ? (
-                  <span
-                    className={cn(
-                      "absolute -top-1 -right-[0.55rem] flex h-4 min-w-4 items-center justify-center rounded-full px-1 font-label-caps text-[11px] tabular-nums",
-                      active ? "bg-primary text-on-primary" : "bg-primary/15 text-primary",
-                    )}
-                  >
+                  <span className="absolute -top-1 right-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-primary px-1 font-label-caps text-[11px] leading-none text-on-primary tabular-nums">
                     {pendingRequests}
                   </span>
                 ) : null}
               </span>
               <span
                 className={cn(
-                  "max-w-full truncate text-[10px] leading-none min-[360px]:text-[11px] min-[390px]:text-[12px]",
+                  "max-w-full truncate text-[12px] leading-none",
                   active ? "font-semibold text-on-surface" : "font-medium text-secondary",
                 )}
               >

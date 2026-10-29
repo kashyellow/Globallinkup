@@ -25,7 +25,7 @@ export function ProfileView({ profile }: { profile: OwnProfile }) {
         <div className="grid grid-cols-1 items-start gap-space-lg lg:grid-cols-12">
           <div className="flex flex-col gap-space-lg lg:col-span-5">
             <Reveal delay={220}>
-              <BioCard bio={profile.bio} interests={profile.interests} />
+              <BioCard bio={profile.bio} />
             </Reveal>
             <Reveal delay={300}>
               <ContactLocker channels={profile.channels} unveiled={profile.unveiled} />

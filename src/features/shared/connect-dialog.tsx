@@ -118,9 +118,7 @@ export function ConnectDialog({
                   <DefaultAvatar className="h-12 w-12 shrink-0 rounded-full border border-outline-variant" />
                 )}
                 <div className="min-w-0">
-                  <p className="font-label-caps text-label-caps tracking-[0.16em] text-primary uppercase">
-                    {t("eyebrow")}
-                  </p>
+                  <p className="font-label-caps text-label-caps text-primary">{t("eyebrow")}</p>
                   <h2
                     id="connect-dialog-title"
                     className="mt-0.5 truncate font-headline-sm text-headline-sm font-semibold text-on-surface"

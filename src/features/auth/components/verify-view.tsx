@@ -20,12 +20,10 @@ export type VerifyPersona = {
   displayName: string;
   location: string;
   languages: string[];
-  interests: string[];
 };
 
 export function VerifyView({ status, persona }: { status: VerifyState; persona: VerifyPersona }) {
   const t = useTranslations("Auth.verify");
-  const tPersona = useTranslations("PersonaForm");
   const state = status;
 
   const progress = state === "approved" ? "100%" : "78%";
@@ -271,7 +269,7 @@ export function VerifyView({ status, persona }: { status: VerifyState; persona: 
                 </span>
               </div>
 
-              <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
+              <h1 className="font-title text-title-mobile text-on-surface md:text-title">
                 {t("title")}
               </h1>
 
@@ -381,16 +379,6 @@ export function VerifyView({ status, persona }: { status: VerifyState; persona: 
                             className="rounded-full border border-outline-variant bg-surface-container-high px-space-sm py-0.5 font-label-md text-label-md font-semibold text-on-surface"
                           >
                             {code}
-                          </span>
-                        ))}
-                      </div>
-                      <div className="mt-space-sm flex flex-wrap gap-1.5">
-                        {persona.interests.slice(0, 4).map((key) => (
-                          <span
-                            key={key}
-                            className="rounded-full border border-outline-variant bg-surface-container-high px-space-sm py-1 font-label-md text-label-md text-secondary"
-                          >
-                            {tPersona.has(`interests.${key}`) ? tPersona(`interests.${key}`) : key}
                           </span>
                         ))}
                       </div>

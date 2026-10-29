@@ -81,7 +81,7 @@ export function SentRequestsPanel({ requests }: { requests: SentRequestDto[] }) 
 
                 <div className="rounded-2xl border border-outline-variant bg-surface-low p-space-md">
                   <div className="flex items-center justify-between gap-space-sm">
-                    <span className="font-label-md text-label-md font-semibold tracking-[0.08em] text-text-muted uppercase">
+                    <span className="font-label-md text-label-md font-semibold text-text-muted">
                       {t("yourNote")}
                     </span>
                     <span
@@ -171,9 +171,7 @@ function SentNoteDialog({
           <>
             <div className="flex items-start justify-between gap-space-sm border-b border-outline-variant p-space-lg">
               <div>
-                <p className="font-label-caps text-label-caps tracking-[0.16em] text-primary uppercase">
-                  {t("yourNote")}
-                </p>
+                <p className="font-label-caps text-label-caps text-primary">{t("yourNote")}</p>
                 <h2
                   id="sent-note-title"
                   className="mt-1 font-headline-sm text-headline-sm font-semibold text-on-surface"

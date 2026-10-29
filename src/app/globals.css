@@ -188,10 +188,30 @@
   --text-label-md--letter-spacing: 0.02em;
   --text-label-md--font-weight: 500;
 
-  --text-label-caps: 11px;
+  /*
+   * Kept under its old name so existing call sites resolve, but no longer a
+   * tracked uppercase micro-label: small labels are sentence case at 12px.
+   */
+  --text-label-caps: 12px;
   --text-label-caps--line-height: 16px;
-  --text-label-caps--letter-spacing: 0.08em;
-  --text-label-caps--font-weight: 700;
+  --text-label-caps--letter-spacing: 0;
+  --text-label-caps--font-weight: 600;
+
+  /*
+   * ── App screen title ────────────────────────────────────────────────
+   * Signed-in screens are worked in, not read once: their h1 names the
+   * screen at 24px on phones and 28px from `md`, well below the display
+   * scale the marketing page uses.
+   */
+  --text-title: 28px;
+  --text-title--line-height: 34px;
+  --text-title--letter-spacing: -0.02em;
+  --text-title--font-weight: 700;
+
+  --text-title-mobile: 24px;
+  --text-title-mobile--line-height: 30px;
+  --text-title-mobile--letter-spacing: -0.015em;
+  --text-title-mobile--font-weight: 700;
 
   /*
    * ── Display scale (landing / marketing only) ────────────────────────
@@ -273,7 +293,12 @@
    * Shadows carry the ink hue rather than pure black, so panels sit on
    * the cream page instead of reading as grey smudges.
    */
-  --shadow-lift-sm: 0 1px 2px rgb(36 59 53 / 0.05), 0 2px 8px -2px rgb(36 59 53 / 0.08);
+  /*
+   * Resting controls sit flat on the page; only what truly floats (dialogs,
+   * menus, popovers) keeps `lift-lg`. `lift-sm` stays defined so call sites
+   * resolve, but it no longer draws anything.
+   */
+  --shadow-lift-sm: 0 0 #0000;
   --shadow-lift-md: 0 2px 4px rgb(36 59 53 / 0.05), 0 12px 28px -8px rgb(36 59 53 / 0.12);
   --shadow-lift-lg: 0 4px 8px rgb(36 59 53 / 0.05), 0 28px 60px -16px rgb(36 59 53 / 0.16);
   --shadow-bevel: inset 0 1px 0 rgb(255 255 255 / 0.7);
@@ -397,6 +422,8 @@
   --font-display-md: var(--font-manrope);
   --font-display-lg-mobile: var(--font-manrope);
   --font-display-md-mobile: var(--font-manrope);
+  --font-title: var(--font-manrope);
+  --font-title-mobile: var(--font-manrope);
   --font-body-lg: var(--font-body);
   --font-body-md: var(--font-body);
   --font-body-sm: var(--font-body);
@@ -520,17 +547,8 @@
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    background:
-      radial-gradient(
-        70rem 38rem at 6% -10%,
-        color-mix(in oklab, var(--color-gold) 12%, transparent),
-        transparent 70%
-      ),
-      radial-gradient(
-        56rem 30rem at 96% 0%,
-        color-mix(in oklab, var(--color-jade) 4%, transparent),
-        transparent 66%
-      );
+    /* Flat ground: the dossier reads as paper through the grain alone. */
+    background: none;
   }
 
   &::after {
@@ -545,22 +563,19 @@
 }
 
 /*
- * Double-bezel surface: an outer tinted tray holding an inner core, so panels
- * read as machined hardware rather than flat rectangles. Declared as one
- * utility because the outer/inner relationship cannot be expressed with a
- * single set of child utilities.
+ * Panel surface. This used to be a double bezel (a tinted tray holding an
+ * inner core); the tray drew a second border, a bevel and 6px of padding
+ * around every panel, which nested boxes three deep on phones. The tray is
+ * now a plain wrapper and the core is the one quiet panel: a single 1px edge,
+ * one radius, no shadow. Both names stay so existing markup keeps working.
  */
 @utility bezel-tray {
-  padding: 0.375rem;
-  border: 1px solid var(--color-outline-variant);
-  border-radius: 1.625rem;
-  background-color: color-mix(in oklab, var(--color-surface-low) 70%, transparent);
-  box-shadow: var(--shadow-bevel);
+  border-radius: 1rem;
 }
 
 @utility bezel-core {
-  border: 1px solid color-mix(in oklab, var(--color-outline-variant) 78%, transparent);
-  border-radius: 1.25rem;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: 1rem;
   /*
    * Defaults to the marketing core, but callers may set `--bezel-core-bg`
    * (e.g. the signed-in app uses `surface-low`/`surface-container`) so the same

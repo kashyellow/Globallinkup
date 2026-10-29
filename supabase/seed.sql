@@ -107,7 +107,7 @@ from seed_users u;
 -- Profiles  (admin first: later rows reference it via reviewed_by)
 -- ----------------------------------------------------------------------------
 insert into public.profiles (
-  id, display_name, country_code, city, bio_en, headline, languages, interests,
+  id, display_name, country_code, city, bio_en, headline, languages,
   approval_status, role, admin_role_id, submitted_at, reviewed_at
 )
 values (
@@ -116,13 +116,12 @@ values (
   'Platform steward for the GlobalLinkup community.',
   'Platform Steward',
   '[{"code":"ES","level":"native"},{"code":"EN","level":"fluent"}]'::jsonb,
-  array[]::text[],
   'approved', 'admin', (select id from public.admin_roles where slug = 'owner'), now(), now()
 );
 
 insert into public.profiles (
   id, display_name, country_code, city, neighborhood, avatar_url,
-  bio_en, bio_es, headline, languages, interests, badge,
+  bio_en, bio_es, headline, languages, badge,
   approval_status, role, submitted_at, reviewed_at, reviewed_by
 )
 values
@@ -133,7 +132,6 @@ values
     'Arquitecta y ceramista afincada en El Born. Apasionada de las formas brutalistas, los carretes analógicos y las catas de mezcal.',
     'Architect & Cultural Documentary Filmmaker',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"fluent"}]'::jsonb,
-    array['architecture', 'analogPhotography', 'ceramicsCraft'],
     'ambassador', 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -143,7 +141,6 @@ values
     'Director creativo que trabaja entre estudios de la CDMX y sitios arqueológicos, atraído por la fotografía urbana y la gastronomía.',
     'Creative Director',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"conversational"}]'::jsonb,
-    array['culinaryHeritage', 'independentCinema', 'architecture'],
     'ambassador', 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -153,7 +150,6 @@ values
     'Curadora textil que documenta las tradiciones del telar en el altiplano antioqueño.',
     'Textile Curator',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"proficient"}]'::jsonb,
-    array['ceramicsCraft', 'hikingNature', 'analogPhotography'],
     'ambassador', 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -163,7 +159,6 @@ values
     'Diseñador de sonido y autor que colecciona vinilos e historias orales en Buenos Aires.',
     'Sound Designer & Author',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"conversational"}]'::jsonb,
-    array['literature', 'independentCinema', 'analogPhotography'],
     'creator', 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -173,7 +168,6 @@ values
     'Productora de documentales afincada en Madrid, obsesionada con la cerámica y las librerías independientes.',
     'Documentary Film Producer',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"fluent"},{"code":"FR","level":"basic"}]'::jsonb,
-    array['independentCinema', 'culinaryHeritage', 'ceramicsCraft'],
     'resident', 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -183,7 +177,6 @@ values
     'Recién llegado y esperando que la mesa de revisión me dé paso.',
     'Photographer',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"basic"}]'::jsonb,
-    array['hikingNature', 'literature', 'architecture', 'Bookbinding'],
     null, 'pending', 'user', now(), null, null
   ),
   (
@@ -193,7 +186,6 @@ values
     'Cuenta dedicada a ejercitar el flujo de recuperación de contraseña.',
     'Product Tester',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"fluent"}]'::jsonb,
-    array['literature', 'architecture', 'hikingNature'],
     null, 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -203,7 +195,6 @@ values
     'La foto de perfil no cumplía las normas de revisión; listo para reenviar.',
     'Photographer',
     '[{"code":"PT","level":"native"},{"code":"EN","level":"fluent"}]'::jsonb,
-    array['analogPhotography', 'literature', 'ceramicsCraft'],
     null, 'rejected', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -213,7 +204,6 @@ values
     'Cuenta suspendida tras un reporte de la comunidad; en espera de revisión.',
     'Journalist',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"advanced"}]'::jsonb,
-    array['literature', 'independentCinema', 'architecture'],
     null, 'suspended', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   );
 
@@ -221,7 +211,7 @@ values
 -- board visible without having to manufacture connections in the browser.
 insert into public.profiles (
   id, display_name, country_code, city, neighborhood, avatar_url,
-  bio_en, bio_es, headline, languages, interests, badge,
+  bio_en, bio_es, headline, languages, badge,
   approval_status, role, submitted_at, reviewed_at, reviewed_by
 )
 values
@@ -232,7 +222,6 @@ values
     'Arquitecto que guía recorridos urbanos históricos por la Ciudad de México y colecciona historias de preservación.',
     'Architect & Urban Walk Guide',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"fluent"}]'::jsonb,
-    array['architecture', 'literature', 'culinaryHeritage'],
     null, 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -242,7 +231,6 @@ values
     'Periodista visual que documenta la cultura independiente, la migración y las texturas cotidianas de Bogotá.',
     'Visual Journalist',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"advanced"}]'::jsonb,
-    array['analogPhotography', 'literature', 'independentCinema'],
     null, 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -252,7 +240,6 @@ values
     'Ceramista que trabaja con arcillas locales y el ritmo lento de las tradiciones de taller oaxaqueñas.',
     'Ceramicist',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"conversational"}]'::jsonb,
-    array['ceramicsCraft', 'culinaryHeritage', 'hikingNature'],
     null, 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -262,7 +249,6 @@ values
     'Escritora y editora de viajes interesada en la edición independiente, los mercados y los largos trayectos en tren.',
     'Travel Writer & Editor',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"fluent"},{"code":"IT","level":"basic"}]'::jsonb,
-    array['literature', 'culinaryHeritage', 'architecture'],
     null, 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -272,7 +258,6 @@ values
     'Artista sonora que colecciona grabaciones de campo de puertos, mercados y el borde atlántico de Lisboa.',
     'Sound Artist',
     '[{"code":"PT","level":"native"},{"code":"EN","level":"fluent"},{"code":"ES","level":"conversational"}]'::jsonb,
-    array['latinMusic', 'independentCinema', 'literature'],
     null, 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -282,7 +267,6 @@ values
     'Fotógrafo documental que sigue los bordes cambiantes de Santiago y a quienes los construyen.',
     'Documentary Photographer',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"advanced"}]'::jsonb,
-    array['analogPhotography', 'architecture', 'hikingNature'],
     null, 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   ),
   (
@@ -292,7 +276,6 @@ values
     'Diseñadora textil y anfitriona de talleres comunitarios que explora tintes naturales y moda lenta.',
     'Textile Designer',
     '[{"code":"ES","level":"native"},{"code":"EN","level":"conversational"}]'::jsonb,
-    array['ceramicsCraft', 'hikingNature', 'literature'],
     null, 'approved', 'user', now(), now(), '11111111-1111-1111-1111-111111111111'
   );
 
@@ -339,30 +322,6 @@ values
   ('b6b6b6b6-b6b6-b6b6-b6b6-b6b6b6b6b6b6', '+56 9 6601 2288', '@tomas.bordes', 'tomas@bordes.cl', '{"telegram":"@tomas.bordes"}'::jsonb),
   ('b7b7b7b7-b7b7-b7b7-b7b7-b7b7b7b7b7b7', '+54 9 11 5502 9911', '@lucia.tintes', 'lucia@tintes.ar', '{}'::jsonb);
 
--- ----------------------------------------------------------------------------
--- Cultural-interest catalog (S6)
---
--- One approved row gives the combobox a custom suggestion; one pending row
--- exercises the admin review queue and its creator cleanup. The pending label
--- is also on its creator's profile, as it would be after a real save.
--- ----------------------------------------------------------------------------
-insert into public.interest_catalog (
-  id, label, status, created_by, reviewed_by, reviewed_at
-)
-values
-  (
-    'cdcdcdcd-cdcd-cdcd-cdcd-cdcdcdcdcdcd', 'Bookbinding', 'pending',
-    '77777777-7777-7777-7777-777777777777', null, null
-  ),
-  (
-    'efefefef-efef-efef-efef-efefefefefef', 'Storytelling', 'approved',
-    null, '11111111-1111-1111-1111-111111111111', now()
-  ),
-  (
-    'edededed-eded-eded-eded-edededededed', 'Crypto Art', 'rejected',
-    'b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1',
-    '11111111-1111-1111-1111-111111111111', now() - interval '5 days'
-  );
 
 -- ----------------------------------------------------------------------------
 -- Connections — one accepted, one pending inbound, one declined (re-request path)

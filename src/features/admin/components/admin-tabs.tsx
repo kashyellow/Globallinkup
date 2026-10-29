@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useEffect, useRef } from "react";
 
 import { LinkPending } from "@/components/layout/link-pending";
 import { Icon } from "@/components/ui/icon";
@@ -24,7 +25,6 @@ export const ADMIN_TABS = [
     requires: "reports.manage",
     requiresAny: ["reports.manage", "posts.moderate"],
   },
-  { href: "/admin/interests", key: "interests", icon: "tag", requires: "interests.review" },
   { href: "/admin/audit", key: "audit", icon: "article", requires: "audit.read" },
   { href: "/admin/team", key: "team", icon: "badge", requires: "admins.manage" },
 ] as const satisfies ReadonlyArray<{
@@ -38,11 +38,27 @@ export const ADMIN_TABS = [
 export function AdminTabs({ capabilities }: { capabilities: AdminCapability[] }) {
   const t = useTranslations("Admin.tabs");
   const pathname = usePathname();
+  const navRef = useRef<HTMLElement>(null);
+
+  // On a phone the row scrolls sideways, so a desk further right (Audit, Team)
+  // would open with its own tab off-screen. Bring the active tab into view by
+  // moving the row only, never the page.
+  useEffect(() => {
+    const nav = navRef.current;
+    const active = nav?.querySelector<HTMLElement>('[aria-current="page"]');
+    if (!nav || !active) return;
+    const overflowRight =
+      active.offsetLeft + active.offsetWidth - (nav.scrollLeft + nav.clientWidth);
+    const overflowLeft = nav.scrollLeft - active.offsetLeft;
+    if (overflowRight > 0) nav.scrollLeft += overflowRight + 24;
+    else if (overflowLeft > 0) nav.scrollLeft -= overflowLeft + 24;
+  }, [pathname]);
 
   return (
     <nav
       aria-label={t("label")}
-      className="grid grid-cols-4 items-stretch gap-1.5 sm:flex sm:flex-wrap sm:items-center"
+      ref={navRef}
+      className="relative -mx-margin-mobile -mb-space-md no-scrollbar flex items-stretch overflow-x-auto px-margin-mobile lg:mx-0 lg:px-0"
     >
       {ADMIN_TABS.filter((tab) =>
         "requiresAny" in tab
@@ -58,17 +74,18 @@ export function AdminTabs({ capabilities }: { capabilities: AdminCapability[] })
             aria-current={active ? "page" : undefined}
             aria-label={t(tab.key)}
             className={cn(
-              "relative inline-flex min-h-11 shrink-0 flex-col items-center justify-center gap-0.5 rounded-2xl px-2 py-1.5 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:flex-row sm:gap-2 sm:rounded-full sm:px-space-md sm:py-2",
+              "relative inline-flex min-h-12 shrink-0 items-center gap-2 border-b-2 px-3 font-label-lg text-label-lg whitespace-nowrap transition-colors duration-200 first:pl-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-primary",
               active
-                ? "bg-surface-container-high font-semibold text-on-surface"
-                : "text-secondary hover:bg-surface-container hover:text-on-surface",
+                ? "border-primary font-semibold text-on-surface"
+                : "border-transparent text-secondary hover:text-on-surface",
             )}
           >
             <LinkPending />
-            <Icon name={tab.icon} className={cn("text-lg", active && "text-primary")} />
-            <span className="max-w-full truncate text-[10px] leading-none sm:hidden">
-              {t(`${tab.key}Short`)}
-            </span>
+            <Icon
+              name={tab.icon}
+              className={cn("text-lg max-sm:hidden!", active && "text-primary")}
+            />
+            <span className="sm:hidden">{t(`${tab.key}Short`)}</span>
             <span className="hidden whitespace-nowrap sm:inline">{t(tab.key)}</span>
           </Link>
         );

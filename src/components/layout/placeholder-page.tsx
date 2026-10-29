@@ -2,12 +2,12 @@ import { BackLink } from "@/components/layout/back-link";
 
 /** Shared layout for not-yet-published resource pages (support/safety/standards). */
 export function PlaceholderPage({
-  eyebrow,
   title,
   noticeTitle,
   noticeBody,
   backLabel,
 }: {
+  /** Accepted for existing callers; no longer rendered (no label above the title). */
   eyebrow: string;
   title: string;
   noticeTitle: string;
@@ -19,10 +19,7 @@ export function PlaceholderPage({
       <BackLink label={backLabel} />
 
       <header className="mt-space-md flex flex-col gap-space-xs">
-        <p className="font-label-caps text-label-caps tracking-[0.16em] text-primary uppercase">
-          {eyebrow}
-        </p>
-        <h1 className="font-display-md text-display-md-mobile font-bold text-on-surface md:text-display-md">
+        <h1 className="font-title text-title-mobile font-bold text-on-surface md:text-title">
           {title}
         </h1>
       </header>

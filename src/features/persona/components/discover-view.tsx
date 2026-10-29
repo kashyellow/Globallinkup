@@ -37,11 +37,7 @@ export async function DiscoverView({
       >
         <div className="flex flex-col gap-space-lg lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-lg space-y-space-xs">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-success-border bg-success-surface px-2.5 py-0.5 font-label-caps text-label-caps text-success-text">
-              <Icon name="shield" className="text-sm" />
-              {t("privacy.badge")}
-            </span>
-            <h2 className="font-headline-lg text-headline-lg-mobile text-balance text-on-surface md:text-headline-lg">
+            <h2 className="font-headline-md text-headline-md text-balance text-on-surface">
               {t("privacy.title")}
             </h2>
             <p className="font-body-sm text-body-sm text-pretty text-on-surface-variant">
@@ -50,50 +46,43 @@ export async function DiscoverView({
           </div>
         </div>
 
-        {/* The rail: one hairline behind, four stops on top. */}
-        <div className="relative">
-          <div
-            aria-hidden
-            className="absolute top-5 right-0 left-0 hidden h-px bg-gradient-to-r from-outline-variant via-outline to-outline-variant md:block"
-          />
-          <ol className="grid grid-cols-1 gap-space-lg md:grid-cols-2 md:gap-y-space-xl lg:grid-cols-4">
-            {STEPS.map((step, index) => (
-              <li key={index} className="relative">
-                <div className="flex items-center gap-space-sm">
-                  <span
-                    className={cn(
-                      "relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border font-label-caps text-label-caps font-bold tabular-nums",
-                      step.accent
-                        ? "border-success-border bg-success-surface text-success-text"
-                        : "border-outline-variant bg-surface-low text-primary",
-                    )}
-                  >
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <span className="font-label-lg text-label-lg font-semibold text-on-surface">
-                    {t(`privacy.${step.label}Title`)}
-                  </span>
-                </div>
-                <p className="mt-space-sm max-w-[34ch] font-body-sm text-body-sm text-pretty text-secondary">
-                  {t(`privacy.${step.label}Body`)}
-                </p>
-              </li>
-            ))}
-          </ol>
-        </div>
+        {/* Order reads from position; the last two steps carry the privacy green. */}
+        <ol className="grid grid-cols-1 gap-space-md sm:grid-cols-2 lg:grid-cols-4">
+          {STEPS.map((step) => (
+            <li
+              key={step.label}
+              className={cn(
+                "border-l-2 pl-space-md",
+                step.accent ? "border-success-border" : "border-outline",
+              )}
+            >
+              <p
+                className={cn(
+                  "font-label-lg text-label-lg font-semibold",
+                  step.accent ? "text-success-text" : "text-on-surface",
+                )}
+              >
+                {t(`privacy.${step.label}Title`)}
+              </p>
+              <p className="mt-1 max-w-[34ch] font-body-sm text-body-sm text-pretty text-on-surface-variant">
+                {t(`privacy.${step.label}Body`)}
+              </p>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
 
   const trustStrip = (
-    <div className="flex flex-col justify-between gap-space-sm rounded-2xl border border-outline-variant bg-surface-low px-space-md py-space-sm sm:flex-row sm:items-center">
+    <div className="flex flex-wrap items-center gap-x-space-sm gap-y-1">
       <div className="flex items-center gap-space-xs">
         <Icon name="verified_user" className="text-base text-tertiary" />
-        <span className="font-body-sm text-body-sm text-secondary">{t("trustSeal")}</span>
+        <span className="font-body-sm text-body-sm text-on-surface-variant">{t("trustSeal")}</span>
       </div>
       <Link
         href="/standards"
-        className="inline-flex w-fit items-center gap-1 font-label-md text-label-md font-semibold text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        className="inline-flex min-h-11 w-fit items-center gap-1 font-label-md text-label-md font-semibold text-primary transition-colors hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
       >
         {tCommon("guidelines")}
         <Icon name="arrow_forward" className="text-sm" />
@@ -106,26 +95,18 @@ export async function DiscoverView({
       {/* Editorial header */}
       <header className="flex flex-col justify-between gap-space-md md:flex-row md:items-end">
         <div className="max-w-2xl space-y-space-sm">
-          <p className="font-label-caps text-label-caps tracking-[0.16em] text-primary uppercase">
-            {t("eyebrow")}
-          </p>
-          <h1 className="font-display-md text-display-md-mobile font-bold text-balance text-on-surface md:text-display-md">
+          <h1 className="font-title text-title-mobile font-bold text-balance text-on-surface md:text-title">
             {t("title")}
           </h1>
-          <p className="max-w-[58ch] font-body-lg text-body-lg text-pretty text-on-surface-variant">
+          <p className="max-w-[58ch] font-body-sm text-body-sm text-pretty text-on-surface-variant md:font-body-md md:text-body-md">
             {t("intro")}
           </p>
         </div>
 
-        <div className="flex w-fit shrink-0 items-center gap-space-sm rounded-full border border-outline-variant bg-surface-low px-space-md py-2 shadow-lift-sm">
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-tertiary opacity-60 motion-reduce:hidden" />
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-tertiary" />
-          </span>
-          <span className="font-label-lg text-label-lg font-semibold text-on-surface">
-            {t("activePersonas", { count: total })}
-          </span>
-        </div>
+        <p className="flex shrink-0 items-center gap-space-xs font-label-lg text-label-lg text-on-surface-variant">
+          <span aria-hidden className="h-2 w-2 rounded-full bg-tertiary" />
+          {t("activePersonas", { count: total })}
+        </p>
       </header>
 
       <DiscoverWorkspace

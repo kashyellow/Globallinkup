@@ -13,12 +13,10 @@ import { useRegistrationDraft } from "@/features/auth/components/registration-dr
 import { savePersonaAction, type PersonaError } from "@/features/persona/actions";
 import { uploadImageAction } from "@/features/media/actions";
 import { countryLabel, sortedCountryCodes } from "@/lib/persona/countries";
-import { INTEREST_MAX } from "@/lib/persona/interests";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 import { AvatarCropDialog } from "./avatar-crop-dialog";
-import { InterestCombobox, type InterestCatalogItem } from "./interest-combobox";
 
 const LANGUAGES = [
   { code: "ES", defaultLevel: "native" },
@@ -46,24 +44,15 @@ type LanguageState = Record<string, { active: boolean; level: string }>;
 const BIO_MAX = 160;
 const AVATAR_MAX_BYTES = 5 * 1024 * 1024;
 
-type FormField = "photo" | "fullName" | "city" | "bio" | "interests" | "languages" | "contacts";
+type FormField = "photo" | "fullName" | "city" | "bio" | "languages" | "contacts";
 
-const FIELD_ORDER: FormField[] = [
-  "photo",
-  "fullName",
-  "city",
-  "bio",
-  "interests",
-  "languages",
-  "contacts",
-];
+const FIELD_ORDER: FormField[] = ["photo", "fullName", "city", "bio", "languages", "contacts"];
 
 const FIELD_INPUT_ID: Record<FormField, string> = {
   photo: "persona-photo",
   fullName: "persona-fullname",
   city: "persona-city",
   bio: "persona-bio",
-  interests: "persona-interests",
   languages: "persona-language-ES",
   contacts: "persona-whatsapp",
 };
@@ -75,7 +64,6 @@ export type PersonaInitial = {
   city: string;
   dateOfBirth: string;
   languages: { code: string; level: string }[];
-  interests: string[];
   bio: string;
   /** Signed URL of the stored avatar, for the edit/resubmit preview. */
   avatarUrl?: string | null;
@@ -85,12 +73,10 @@ export type PersonaInitial = {
 
 export function CreatePersonaView({
   initial,
-  interestCatalog,
   isAuthenticated,
   mode = "create",
 }: {
   initial?: PersonaInitial;
-  interestCatalog: InterestCatalogItem[];
   isAuthenticated: boolean;
   /** `edit` swaps the onboarding chrome for profile-editing copy. */
   mode?: "create" | "edit";
@@ -112,11 +98,6 @@ export function CreatePersonaView({
       }),
     ),
   );
-  const [interests, setInterests] = useState<string[]>(() =>
-    initial
-      ? Array.from(new Set(initial.interests.map((interest) => interest.trim()).filter(Boolean)))
-      : [],
-  );
   const [bio, setBio] = useState(initial?.bio ?? "");
   const [headline, setHeadline] = useState(initial?.headline ?? "");
   const [fullName, setFullName] = useState(initial?.fullName ?? "");
@@ -130,8 +111,6 @@ export function CreatePersonaView({
     x: initial?.x ?? "",
   }));
   const [error, setError] = useState<PersonaError | AuthError | "upload" | null>(null);
-  const [rejectedInterests, setRejectedInterests] = useState<string[]>([]);
-  const [interestError, setInterestError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Partial<Record<FormField, string>>>({});
   const [showValidation, setShowValidation] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -203,7 +182,6 @@ export function CreatePersonaView({
     closeCropSource();
   }
 
-  const selectedInterests = interests.length;
   const selectedLanguages = Object.values(languages).filter((entry) => entry.active).length;
   const hasContact = Object.values(contacts).some((value) => value.trim().length > 0);
   const requiresPhoto = !initial?.hasStoredAvatar;
@@ -226,7 +204,6 @@ export function CreatePersonaView({
     if (fullName.trim().length < 2) errors.fullName = t("fullNameRequired");
     if (city.trim().length === 0) errors.city = t("cityRequired");
     if (bio.trim().length === 0) errors.bio = t("bioRequired");
-    if (selectedInterests < 3) errors.interests = t("interestsRequired");
     if (selectedLanguages < 1) errors.languages = t("languagesRequired");
     if (!hasContact) errors.contacts = t("contactRequired");
 
@@ -257,8 +234,6 @@ export function CreatePersonaView({
     if (submitting) return;
 
     setError(null);
-    setRejectedInterests([]);
-    setInterestError(null);
 
     const nextErrors = validateForm();
     setFieldErrors(nextErrors);
@@ -326,7 +301,6 @@ export function CreatePersonaView({
             level: languages[language.code].level,
           }),
         ),
-        interests,
         bio,
         whatsapp: contacts.whatsapp,
         telegram: contacts.telegram,
@@ -348,21 +322,6 @@ export function CreatePersonaView({
           return;
         }
 
-        if (result.error === "interestRejected") {
-          setRejectedInterests(result.rejectedInterests ?? []);
-          setError("interestRejected");
-          setInterestError(t("interestRejectedGeneric"));
-          focusField("interests");
-          return;
-        }
-
-        if (result.error === "interestRateLimit") {
-          setError("interestRateLimit");
-          setInterestError(t("interestRateLimit"));
-          focusField("interests");
-          return;
-        }
-
         setError(result.error);
         return;
       }
@@ -380,14 +339,7 @@ export function CreatePersonaView({
   );
 
   let errorMessage: string | null = null;
-  if (error === "interestRejected") {
-    errorMessage =
-      rejectedInterests.length > 0
-        ? t("interestRejected", { labels: rejectedInterests.join(", ") })
-        : t("interestRejectedGeneric");
-  } else if (error === "interestRateLimit") {
-    errorMessage = t("interestRateLimit");
-  } else if (error === "emailInUse") {
+  if (error === "emailInUse") {
     errorMessage = tRegister("errorEmailInUse");
   } else if (error === "weakPassword") {
     errorMessage = tRegister("errorWeakPassword");
@@ -409,15 +361,15 @@ export function CreatePersonaView({
       <div className="mb-space-xl flex flex-col justify-between gap-space-md md:flex-row md:items-end">
         <div className="flex flex-col gap-space-xs">
           <div className="flex flex-wrap items-center gap-space-sm">
-            <span className="font-label-caps text-label-caps font-bold tracking-wider text-primary uppercase">
+            <span className="font-label-caps text-label-caps font-bold text-primary">
               {t(mode === "edit" ? "editEyebrow" : "eyebrow")}
             </span>
             <span className="h-1.5 w-1.5 rounded-full bg-outline-variant" />
-            <span className="font-label-caps text-label-caps tracking-widest text-secondary uppercase">
+            <span className="font-label-caps text-label-caps text-secondary">
               {t("eyebrowMeta")}
             </span>
           </div>
-          <h1 className="font-display-md text-display-md-mobile text-balance text-on-surface md:text-display-md">
+          <h1 className="font-title text-title-mobile text-balance text-on-surface md:text-title">
             {t(mode === "edit" ? "editTitle" : "title")}
           </h1>
         </div>
@@ -477,7 +429,7 @@ export function CreatePersonaView({
                 </div>
                 <span
                   className={cn(
-                    "rounded-lg border px-2 py-0.5 font-label-caps text-label-caps font-bold uppercase",
+                    "rounded-lg border px-2 py-0.5 font-label-caps text-label-caps font-bold",
                     requiresPhoto
                       ? "border-primary/30 bg-admin-surface text-primary"
                       : "border-outline-variant bg-surface-variant text-secondary",
@@ -513,9 +465,7 @@ export function CreatePersonaView({
                     )}
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-background/60 text-on-surface opacity-0 transition-opacity duration-200 group-hover:opacity-100">
                       <Icon name="photo_camera" className="text-[24px]" />
-                      <span className="font-label-caps text-label-caps uppercase">
-                        {t("change")}
-                      </span>
+                      <span className="font-label-caps text-label-caps">{t("change")}</span>
                     </div>
                   </button>
                   <div className="pointer-events-none absolute -right-1 -bottom-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary-container text-on-primary shadow-md">
@@ -715,7 +665,7 @@ export function CreatePersonaView({
                   </span>
                   <p className="font-body-sm text-body-sm text-secondary">{t("languagesHint")}</p>
                 </div>
-                <span className="rounded-lg border border-primary/30 bg-admin-surface px-2 py-0.5 font-label-caps text-label-caps font-bold text-primary uppercase">
+                <span className="rounded-lg border border-primary/30 bg-admin-surface px-2 py-0.5 font-label-caps text-label-caps font-bold text-primary">
                   {t("required")}
                 </span>
               </div>
@@ -800,7 +750,7 @@ export function CreatePersonaView({
                     *
                   </span>
                 </label>
-                <span className="font-label-caps text-label-caps font-medium tracking-wider text-secondary">
+                <span className="font-label-caps text-label-caps font-medium text-secondary">
                   {t("bioCounter", { count: bio.length, max: BIO_MAX })}
                 </span>
               </div>
@@ -838,47 +788,6 @@ export function CreatePersonaView({
               </p>
             </section>
 
-            {/* 5. Interests */}
-            <section className="flex flex-col gap-space-sm">
-              <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
-                <div>
-                  <span className="font-label-lg text-label-lg font-semibold text-on-surface">
-                    {t("interestsLabel")}
-                    <span aria-hidden className="ml-0.5 text-danger-text">
-                      *
-                    </span>
-                  </span>
-                  <p className="font-body-sm text-body-sm text-secondary">
-                    {t("interestsHint", { count: selectedInterests })}
-                  </p>
-                </div>
-                <span className="self-start rounded-lg border border-primary/30 bg-admin-surface px-2 py-0.5 font-label-caps text-label-caps font-bold text-primary uppercase">
-                  {t("required")}
-                </span>
-              </div>
-
-              <InterestCombobox
-                options={interestCatalog}
-                selected={interests}
-                onChange={(next) => {
-                  setInterests(next);
-                  setInterestError(null);
-                  if (error === "interestRejected" || error === "interestRateLimit") {
-                    setError(null);
-                    setRejectedInterests([]);
-                  }
-                  clearFieldError("interests");
-                }}
-                error={fieldErrors.interests ?? interestError ?? undefined}
-              />
-
-              {selectedInterests >= INTEREST_MAX ? (
-                <p className="font-body-sm text-body-sm text-secondary">
-                  {t("interestMax", { max: INTEREST_MAX })}
-                </p>
-              ) : null}
-            </section>
-
             {/* 6. Private contact vault */}
             <section className="flex flex-col gap-space-md rounded-xl border border-outline-variant bg-surface-container p-space-lg">
               <div className="flex flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:justify-between">
@@ -893,7 +802,7 @@ export function CreatePersonaView({
                     </span>
                   </h4>
                 </div>
-                <span className="shrink-0 rounded-lg bg-tertiary px-2 py-0.5 font-label-caps text-label-caps font-bold whitespace-nowrap text-on-tertiary uppercase">
+                <span className="shrink-0 rounded-lg bg-tertiary px-2 py-0.5 font-label-caps text-label-caps font-bold whitespace-nowrap text-on-tertiary">
                   {t("vaultBadge")}
                 </span>
               </div>

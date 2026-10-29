@@ -70,11 +70,8 @@ export function ActiveConnectionsPanel({
             style={{ "--bezel-core-bg": "var(--color-secondary-container-alt)" } as CSSProperties}
           >
             <div className="flex items-start gap-space-md">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-primary-container/40 bg-primary-container/10 text-primary">
-                <Icon name="contact_mail" className="text-xl" />
-              </div>
               <div>
-                <h3 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
+                <h3 className="font-headline-sm text-label-lg font-semibold text-on-surface md:text-headline-sm">
                   {t("calloutTitle", { count: requestCount })}
                 </h3>
                 <p className="mt-0.5 max-w-[60ch] font-body-sm text-body-sm text-on-surface-strong">
@@ -86,16 +83,14 @@ export function ActiveConnectionsPanel({
               type="button"
               onClick={onReviewInquiries}
               className={cn(
-                "inline-flex min-h-11 shrink-0 items-center gap-2.5 rounded-full bg-primary py-1.5 pr-1.5 pl-space-lg font-label-lg text-label-lg whitespace-nowrap text-on-primary",
+                "inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full bg-primary px-space-lg font-label-lg text-label-lg whitespace-nowrap text-on-primary",
                 "hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
                 "transition-colors duration-300",
                 EASE,
               )}
             >
               <span>{t("reviewInquiries")}</span>
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-on-primary/15">
-                <Icon name="arrow_forward" className="text-sm text-on-primary" />
-              </span>
+              <Icon name="arrow_forward" className="text-sm text-on-primary" />
             </button>
           </div>
         </div>
@@ -174,16 +169,7 @@ function ConnectionCard({
         className="flex h-full flex-col justify-between overflow-hidden bezel-core"
         style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
       >
-        <div className="space-y-space-md p-space-lg">
-          {/* Tenure */}
-          <div className="flex justify-end">
-            <span className="font-label-md text-label-md text-secondary">
-              {t("connectedSince", {
-                date: format.dateTime(new Date(connection.connectedSince), "monthYear"),
-              })}
-            </span>
-          </div>
-
+        <div className="space-y-space-md p-space-md md:p-space-lg">
           {/* Profile snapshot */}
           <Link
             href={`/persona/${connection.profileId}`}
@@ -193,10 +179,10 @@ function ConnectionCard({
               <MediaImage
                 src={connection.avatar}
                 alt={connection.name}
-                wrapperClassName="h-20 w-20 shrink-0 rounded-full ring-1 ring-outline-variant"
+                wrapperClassName="h-14 w-14 shrink-0 rounded-full ring-1 ring-outline-variant md:h-20 md:w-20"
               />
             ) : (
-              <DefaultAvatar className="h-20 w-20 shrink-0 rounded-full ring-1 ring-outline-variant" />
+              <DefaultAvatar className="h-14 w-14 shrink-0 rounded-full ring-1 ring-outline-variant md:h-20 md:w-20" />
             )}
             <div className="flex min-w-0 flex-col">
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
@@ -227,29 +213,17 @@ function ConnectionCard({
             </div>
           </Link>
 
-          {/* Cultural tags */}
-          {connection.interests.length > 0 ? (
-            <div className="flex flex-wrap gap-1.5">
-              {connection.interests.map((interest) => (
-                <span
-                  key={interest}
-                  className="rounded-full bg-surface-container-highest px-2.5 py-1 font-label-md text-label-md text-secondary"
-                >
-                  {tDiscover.has(`interests.${interest}`)
-                    ? tDiscover(`interests.${interest}`)
-                    : interest}
-                </span>
-              ))}
-            </div>
-          ) : null}
-
           {/* Unlocked contact vault */}
           <ContactVault channels={connection.channels} />
         </div>
 
         {/* Action row */}
-        <div className="flex items-center justify-between gap-space-sm border-t border-outline-variant bg-surface-container p-space-md">
-          <p className="min-w-0 font-body-sm text-body-sm text-secondary">{t("vaultStatus")}</p>
+        <div className="flex items-center justify-between gap-space-sm border-t border-outline-variant px-space-md py-space-xs md:px-space-lg">
+          <p className="min-w-0 font-body-sm text-body-sm text-on-surface-variant">
+            {t("connectedSince", {
+              date: format.dateTime(new Date(connection.connectedSince), "monthYear"),
+            })}
+          </p>
           <button
             type="button"
             onClick={onDisconnect}

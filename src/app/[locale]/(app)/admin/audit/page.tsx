@@ -14,7 +14,6 @@ const ACTIONS = [
   "member",
   "post",
   "appeal",
-  "interest",
   "product",
   "report",
   "comment",
@@ -55,22 +54,26 @@ export default async function AdminAuditPage({
 
   return (
     <div className="mx-auto w-full max-w-[1000px] px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
-      <h1 className="font-display-md text-display-md-mobile text-on-surface md:text-display-md">
-        {t("title")}
-      </h1>
+      <h1 className="font-title text-title-mobile text-on-surface md:text-title">{t("title")}</h1>
       <p className="mt-2 max-w-[70ch] font-body-md text-body-md text-secondary">{t("body")}</p>
 
-      <form method="get" className="mt-space-lg flex flex-col gap-2 sm:flex-row">
+      {/* Phones: search on its own row, then the action filter and Search share one. */}
+      <form
+        method="get"
+        className="mt-space-lg grid grid-cols-[minmax(0,1fr)_auto] gap-2 sm:flex sm:flex-row"
+      >
         <input
           name="q"
           defaultValue={query}
           placeholder={t("searchPlaceholder")}
-          className="min-h-11 flex-1 rounded-full border border-outline-variant bg-surface-low px-4 font-body-sm text-body-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          aria-label={t("searchPlaceholder")}
+          className="col-span-2 min-h-11 min-w-0 flex-1 rounded-full border border-outline-variant bg-surface-low px-4 font-body-sm text-body-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         />
         <select
           name="action"
           defaultValue={actionType}
-          className="min-h-11 rounded-full border border-outline-variant bg-surface-low px-4 font-label-md text-label-md"
+          aria-label={t("actionFilter")}
+          className="min-h-11 min-w-0 rounded-full border border-outline-variant bg-surface-low px-4 font-label-md text-label-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <option value="all">{t("allActions")}</option>
           {ACTIONS.filter((value) => value !== "all").map((value) => (
@@ -81,7 +84,7 @@ export default async function AdminAuditPage({
         </select>
         <button
           type="submit"
-          className="inline-flex min-h-11 items-center justify-center rounded-full bg-primary px-5 font-label-md text-label-md font-semibold text-on-primary hover:bg-primary-hover"
+          className="inline-flex min-h-11 items-center justify-center rounded-full bg-primary px-5 font-label-md text-label-md font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           {t("searchAction")}
         </button>

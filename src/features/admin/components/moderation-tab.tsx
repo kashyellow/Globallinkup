@@ -30,7 +30,7 @@ import type {
 } from "../queries";
 
 const ACTION_BASE =
-  "inline-flex min-h-11 items-center gap-1.5 rounded-full px-4 py-2 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-px disabled:opacity-60";
+  "inline-flex min-h-11 items-center justify-center gap-1.5 rounded-full px-4 py-2 font-label-md text-label-md transition-colors duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-px disabled:opacity-60";
 
 type ResolveStatus = "resolved" | "dismissed";
 
@@ -151,9 +151,24 @@ export function AdminModerationTab({
 
   return (
     <div className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
+      <div className="flex flex-col justify-between gap-space-md lg:flex-row lg:items-end">
+        <div>
+          <h1 className="font-title text-title-mobile text-on-surface md:text-title">
+            {t("title")}
+          </h1>
+          <p className="mt-2 max-w-[62ch] font-body-md text-body-md text-secondary">{t("body")}</p>
+        </div>
+        {canManageReports ? (
+          <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-danger-border bg-danger-surface px-space-md py-1.5 font-label-md text-label-md font-semibold text-danger-text">
+            <span className="h-1.5 w-1.5 rounded-full bg-danger" />
+            {t("needsReview", { count: total })}
+          </span>
+        ) : null}
+      </div>
+
       {canModeratePosts ? (
         appeals.length > 0 ? (
-          <section className="mb-space-lg space-y-space-sm rounded-2xl border border-outline-variant bg-surface-low p-space-md">
+          <section className="mt-space-lg space-y-space-sm rounded-2xl border border-outline-variant bg-surface-low p-space-md">
             <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
               {t("appealsTitle", { count: appeals.length })}
             </h2>
@@ -212,32 +227,12 @@ export function AdminModerationTab({
             </ul>
           </section>
         ) : (
-          <div className="mb-space-lg bezel-tray">
-            <div className="flex flex-col items-center gap-2 bezel-core py-space-xl text-center">
-              <Icon name="verified_user" className="text-3xl text-success-text" />
-              <p className="font-label-lg text-label-lg font-semibold text-on-surface">
-                {t("appealsEmpty")}
-              </p>
-            </div>
-          </div>
+          <p className="mt-space-md flex items-center gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
+            <Icon name="verified_user" className="text-base text-success-text" />
+            {t("appealsEmpty")}
+          </p>
         )
       ) : null}
-
-      <div className="flex flex-col justify-between gap-space-md lg:flex-row lg:items-end">
-        <div>
-          <p className="font-label-md text-label-md font-semibold text-primary">{t("eyebrow")}</p>
-          <h1 className="mt-1 font-display-md text-display-md-mobile text-on-surface md:text-display-md">
-            {t("title")}
-          </h1>
-          <p className="mt-2 max-w-[62ch] font-body-md text-body-md text-secondary">{t("body")}</p>
-        </div>
-        {canManageReports ? (
-          <span className="inline-flex items-center gap-1.5 self-start rounded-full border border-danger-border bg-danger-surface px-space-md py-1.5 font-label-md text-label-md font-semibold text-danger-text">
-            <span className="h-1.5 w-1.5 rounded-full bg-danger" />
-            {t("needsReview", { count: total })}
-          </span>
-        ) : null}
-      </div>
 
       {canManageReports ? (
         <>
@@ -379,12 +374,14 @@ function ReportCard({
       className="bezel-tray"
       style={{ "--bezel-core-bg": "var(--color-surface-low)" } as CSSProperties}
     >
-      <article className="flex h-full flex-col justify-between gap-space-md bezel-core p-space-lg">
+      <article className="flex h-full flex-col justify-between gap-space-md bezel-core p-space-md md:p-space-lg">
         <div className="flex flex-col gap-space-sm">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div className="flex flex-wrap items-center gap-2">
               <span className="rounded-full border border-danger-border bg-danger-surface px-2.5 py-0.5 font-label-md text-label-md font-semibold text-danger-text">
-                {report.reason}
+                {tCommon.has(`report.reasons.${report.reason}`)
+                  ? tCommon(`report.reasons.${report.reason}`)
+                  : report.reason}
               </span>
               <span className="rounded-full border border-outline-variant bg-surface-container px-2.5 py-0.5 font-label-md text-label-md text-secondary">
                 {report.targetType === "post" ? t("targetPost") : t("targetUser")}
@@ -416,7 +413,8 @@ function ReportCard({
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center justify-end gap-space-sm border-t border-outline-variant pt-space-sm">
+        {/* Phones: the post action across the full width, then Dismiss | Resolve. */}
+        <div className="grid grid-cols-2 gap-space-xs border-t border-outline-variant pt-space-sm sm:flex sm:flex-wrap sm:items-center sm:justify-end sm:gap-space-sm">
           {canModeratePosts && report.targetType === "post" && report.targetState === "removed" ? (
             <button
               type="button"
@@ -424,7 +422,7 @@ function ReportCard({
               disabled={pending}
               className={cn(
                 ACTION_BASE,
-                "focus-visible:outline-success-border-strong border border-success-border bg-success-surface text-success-text hover:border-success",
+                "focus-visible:outline-success-border-strong col-span-2 border border-success-border bg-success-surface text-success-text hover:border-success",
               )}
             >
               {pending ? (
@@ -441,7 +439,7 @@ function ReportCard({
               disabled={pending}
               className={cn(
                 ACTION_BASE,
-                "bg-danger text-on-error hover:bg-danger-border-strong focus-visible:outline-danger-border-strong",
+                "col-span-2 bg-danger text-on-error hover:bg-danger-border-strong focus-visible:outline-danger-border-strong",
               )}
             >
               {pending ? (

@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 
 import { getCurrentProfile, getCurrentUser } from "@/lib/auth";
-import { SEEDED_INTEREST_KEYS } from "@/lib/persona/interests";
 import { createClient } from "@/lib/supabase/server";
 import { savePersonaSchema } from "@/lib/validation/persona";
 
@@ -16,18 +15,9 @@ import { savePersonaSchema } from "@/lib/validation/persona";
  * Locale arrives in the payload — never call `getLocale()` in a Server Action.
  */
 
-export type PersonaError =
-  "invalid" | "unknown" | "avatarRequired" | "interestRateLimit" | "interestRejected";
+export type PersonaError = "invalid" | "unknown" | "avatarRequired";
 
-export type PersonaResult =
-  | { ok: true; redirectTo: string }
-  | { ok: false; error: PersonaError; rejectedInterests?: string[] };
-
-type RegisterInterestResult = {
-  status?: "ok" | "rate_limited";
-  accepted?: string[];
-  rejected?: string[];
-};
+export type PersonaResult = { ok: true; redirectTo: string } | { ok: false; error: PersonaError };
 
 const nonEmpty = (value?: string) => (value && value.length > 0 ? value : null);
 
@@ -58,29 +48,6 @@ export async function savePersonaAction(input: unknown): Promise<PersonaResult> 
 
   const supabase = await createClient();
 
-  // Custom labels are registered before the profile write so a rejected label
-  // or the 24-hour suggestion limit cannot leave a half-saved persona behind.
-  const customInterests = data.interests.filter((interest) => !SEEDED_INTEREST_KEYS.has(interest));
-  if (customInterests.length > 0) {
-    const { data: registered, error: registerError } = await supabase.rpc(
-      "register_custom_interests",
-      { p_labels: customInterests },
-    );
-    if (registerError) return { ok: false, error: "unknown" };
-
-    const interestResult = (registered ?? {}) as RegisterInterestResult;
-    if (interestResult.status === "rate_limited") {
-      return { ok: false, error: "interestRateLimit" };
-    }
-    if (interestResult.rejected && interestResult.rejected.length > 0) {
-      return {
-        ok: false,
-        error: "interestRejected",
-        rejectedInterests: interestResult.rejected,
-      };
-    }
-  }
-
   const { data: status, error } = await supabase.rpc("save_persona", {
     p_display_name: data.fullName,
     p_country_code: data.country,
@@ -88,7 +55,6 @@ export async function savePersonaAction(input: unknown): Promise<PersonaResult> 
     p_bio: data.bio,
     p_bio_locale: data.locale,
     p_languages: data.languages,
-    p_interests: data.interests,
     p_date_of_birth: nonEmpty(data.dateOfBirth) ?? undefined,
     p_avatar_url: avatarPath ?? undefined,
     p_headline: data.headline ?? "",
