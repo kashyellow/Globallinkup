@@ -558,7 +558,6 @@ test("@auth an admin creates, trashes, and restores a draft product", async ({ p
   await dialog.getByLabel(/Product Title/i).fill("E2E Draft Piece");
   await dialog.getByLabel(/Price/i).fill("18");
   await dialog.getByLabel(/Origin/i).fill("Barcelona, ES");
-  await dialog.getByLabel(/Phone Number/i).fill("+34 600 000 000");
   await dialog.getByRole("button", { name: /save as draft/i }).click();
   // The dialog closes only after the Server Action succeeds; waiting for that
   // avoids racing the list refresh that renders the new row.
