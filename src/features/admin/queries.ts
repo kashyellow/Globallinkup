@@ -481,7 +481,8 @@ export async function getOpenAppeals(): Promise<AdminAppealDto[]> {
         .from("post_appeals")
         .select("id, post_id, author_id, message, created_at")
         .eq("status", "open")
-        .order("created_at", { ascending: true }),
+        .order("created_at", { ascending: true })
+        .limit(5),
     ) ?? [];
 
   if (rows.length === 0) return [];
@@ -592,25 +593,60 @@ export type AdminAuditEvent = {
   targetType: string | null;
   targetId: string | null;
   reason: string | null;
+  /** Content-free state snapshot recorded by `record_audit()` (ADR 0003). */
+  metadata: Record<string, unknown>;
 };
 
+function asMetadata(value: unknown): Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
 /** Newest first. RLS denies this read without `audit.read`. */
-export async function getAuditEvents(limit = 100): Promise<AdminAuditEvent[]> {
+export async function getAuditEvents({
+  query = "",
+  actionType = "all",
+  page = 1,
+  pageSize = 15,
+}: {
+  query?: string;
+  actionType?: string;
+  page?: number;
+  pageSize?: number;
+} = {}): Promise<{ events: AdminAuditEvent[]; total: number }> {
   const supabase = await createClient();
-  const rows = unwrap(
-    await supabase
-      .from("audit_events")
-      .select("id, occurred_at, actor_role, action, target_type, target_id, reason")
-      .order("occurred_at", { ascending: false })
-      .limit(limit),
-  );
-  return (rows ?? []).map((row) => ({
-    id: row.id,
-    occurredAt: row.occurred_at,
-    actorRole: row.actor_role,
-    action: row.action,
-    targetType: row.target_type,
-    targetId: row.target_id,
-    reason: row.reason,
-  }));
+  let request = supabase
+    .from("audit_events")
+    .select("id, occurred_at, actor_role, action, target_type, target_id, reason, metadata", {
+      count: "exact",
+    });
+
+  if (actionType !== "all") request = request.like("action", `${actionType}.%`);
+
+  const needle = safeNeedle(query);
+  if (needle.length > 0) {
+    request = request.or(
+      `action.ilike.%${needle}%,actor_role.ilike.%${needle}%,target_id::text.ilike.%${needle}%`,
+    );
+  }
+
+  const response = await request
+    .order("occurred_at", { ascending: false })
+    .range((page - 1) * pageSize, page * pageSize - 1);
+
+  const rows = unwrap(response) ?? [];
+  return {
+    total: response.count ?? rows.length,
+    events: rows.map((row) => ({
+      id: row.id,
+      occurredAt: row.occurred_at,
+      actorRole: row.actor_role,
+      action: row.action,
+      targetType: row.target_type,
+      targetId: row.target_id,
+      reason: row.reason,
+      metadata: asMetadata(row.metadata),
+    })),
+  };
 }
