@@ -20,6 +20,7 @@ import { AdminStatusLinks } from "@/features/admin/components/admin-status-links
 import { useDialogA11y } from "@/features/shared/use-dialog-a11y";
 import { usePendingAction } from "@/features/shared/use-pending-action";
 import { useRefresh } from "@/features/shared/refresh-provider";
+import { Link } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import type {
   AdminAppealDto,
@@ -339,6 +340,39 @@ function ReportCard({
   const t = useTranslations("Admin.moderation");
   const tCommon = useTranslations("Common");
   const format = useFormatter();
+  const postHref =
+    report.targetType === "post" &&
+    report.targetId &&
+    report.targetState !== null &&
+    (report.targetState !== "removed" || canModeratePosts)
+      ? `/posts/${report.targetId}`
+      : null;
+
+  const preview = (
+    <>
+      {report.targetImage ? (
+        <MediaImage
+          src={report.targetImage}
+          alt={report.targetLabel}
+          wrapperClassName="h-16 w-16 shrink-0 rounded-xl border border-outline-variant"
+        />
+      ) : (
+        <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-outline-variant bg-surface-variant text-secondary">
+          <Icon name={report.targetType === "post" ? "image" : "person"} />
+        </span>
+      )}
+      <div className="min-w-0">
+        <h3 className="line-clamp-2 font-headline-sm text-headline-sm font-semibold text-on-surface transition-colors group-hover:text-primary">
+          {report.targetLabel || t("targetPost")}
+        </h3>
+        {report.details ? (
+          <p className="mt-1 line-clamp-3 font-body-sm text-body-sm text-text-muted">
+            {report.details}
+          </p>
+        ) : null}
+      </div>
+    </>
+  );
 
   return (
     <div
@@ -366,29 +400,16 @@ function ReportCard({
             </span>
           </div>
 
-          <div className="flex items-start gap-space-sm">
-            {report.targetImage ? (
-              <MediaImage
-                src={report.targetImage}
-                alt={report.targetLabel}
-                wrapperClassName="h-16 w-16 shrink-0 rounded-xl border border-outline-variant"
-              />
-            ) : (
-              <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-outline-variant bg-surface-variant text-secondary">
-                <Icon name={report.targetType === "post" ? "image" : "person"} />
-              </span>
-            )}
-            <div className="min-w-0">
-              <h3 className="line-clamp-2 font-headline-sm text-headline-sm font-semibold text-on-surface">
-                {report.targetLabel || t("targetPost")}
-              </h3>
-              {report.details ? (
-                <p className="mt-1 line-clamp-3 font-body-sm text-body-sm text-text-muted">
-                  {report.details}
-                </p>
-              ) : null}
-            </div>
-          </div>
+          {postHref ? (
+            <Link
+              href={postHref}
+              className="group flex items-start gap-space-sm rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            >
+              {preview}
+            </Link>
+          ) : (
+            <div className="flex items-start gap-space-sm">{preview}</div>
+          )}
 
           <p className="font-label-md text-label-md text-secondary">
             {t("reportedBy")} <strong className="text-on-surface">{report.reporterName}</strong>
