@@ -20,6 +20,7 @@ export function DiscoverWorkspace({
   initialTotal,
   initialSeed,
   countryOptions,
+  canConnect,
   privacy,
   trustStrip,
 }: {
@@ -27,6 +28,7 @@ export function DiscoverWorkspace({
   initialTotal: number;
   initialSeed: string;
   countryOptions: string[];
+  canConnect: boolean;
   privacy: ReactNode;
   trustStrip: ReactNode;
 }) {
@@ -161,6 +163,7 @@ export function DiscoverWorkspace({
 
       <div className="mt-page-mobile md:mt-page">
         <PersonaFeed
+          canConnect={canConnect}
           personas={personas}
           total={total}
           hasMore={hasMore}

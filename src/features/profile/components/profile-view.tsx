@@ -15,7 +15,11 @@ import { DossierHeader } from "./dossier-header";
 export function ProfileView({ profile }: { profile: OwnProfile }) {
   return (
     <div className="dossier-backdrop flex w-full flex-col text-on-surface">
-      <DossierHeader profile={profile} />
+      <DossierHeader
+        profile={profile}
+        canShare={profile.role !== "admin"}
+        canEdit={profile.role !== "admin"}
+      />
 
       <div className="mx-auto w-full max-w-[1240px] px-margin-mobile pt-block-mobile pb-page-mobile md:px-margin md:pt-block md:pb-page">
         <div className="grid grid-cols-1 items-start gap-space-lg lg:grid-cols-12">

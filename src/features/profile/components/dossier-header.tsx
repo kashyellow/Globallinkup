@@ -37,7 +37,15 @@ function Sep() {
   );
 }
 
-export function DossierHeader({ profile }: { profile: OwnProfile }) {
+export function DossierHeader({
+  profile,
+  canShare = true,
+  canEdit = true,
+}: {
+  profile: OwnProfile;
+  canShare?: boolean;
+  canEdit?: boolean;
+}) {
   const t = useTranslations("Profile");
   const tCommon = useTranslations("Common");
   const locale = useLocale();
@@ -86,17 +94,21 @@ export function DossierHeader({ profile }: { profile: OwnProfile }) {
         {/* Action bar */}
         <div className="flex flex-wrap items-center justify-end gap-y-space-sm border-y border-outline-variant py-space-sm">
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
-            <button type="button" onClick={share} className={CONTROL}>
-              <Icon
-                name={copied ? "check" : "share"}
-                className={cn("text-base", copied ? "text-success-text" : "text-text-muted")}
-              />
-              <span>{copied ? t("actions.shared") : t("actions.share")}</span>
-            </button>
-            <Link href="/profile/edit" className={CONTROL_PRIMARY}>
-              <Icon name="edit_square" className="text-base" />
-              <span>{t("actions.edit")}</span>
-            </Link>
+            {canShare ? (
+              <button type="button" onClick={share} className={CONTROL}>
+                <Icon
+                  name={copied ? "check" : "share"}
+                  className={cn("text-base", copied ? "text-success-text" : "text-text-muted")}
+                />
+                <span>{copied ? t("actions.shared") : t("actions.share")}</span>
+              </button>
+            ) : null}
+            {canEdit ? (
+              <Link href="/profile/edit" className={CONTROL_PRIMARY}>
+                <Icon name="edit_square" className="text-base" />
+                <span>{t("actions.edit")}</span>
+              </Link>
+            ) : null}
             <button
               type="button"
               onClick={() => void logout()}

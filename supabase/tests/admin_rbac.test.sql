@@ -8,7 +8,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(8);
+select plan(10);
 
 -- A marketplace-less reviewer role, assigned to mateo.
 insert into public.admin_roles (slug, name, capabilities)
@@ -50,6 +50,26 @@ select lives_ok(
   'the reviewer approves a pending persona'
 );
 reset role;
+
+-- Even an owner cannot join the social graph.
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated"}';
+select throws_ok(
+  $$ insert into public.connections (requester_id, recipient_id, status)
+     values ('11111111-1111-1111-1111-111111111111', '22222222-2222-2222-2222-222222222222', 'requested') $$,
+  '42501',
+  null,
+  'an admin cannot request a connection'
+);
+reset role;
+
+select throws_ok(
+  $$ insert into public.connections (requester_id, recipient_id, status)
+     values ('55555555-5555-5555-5555-555555555555', '11111111-1111-1111-1111-111111111111', 'requested') $$,
+  '42501',
+  null,
+  'the trigger rejects a connection to an admin'
+);
 
 -- The seeded admin keeps full control; a member has nothing.
 set local role authenticated;

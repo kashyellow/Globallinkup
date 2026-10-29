@@ -31,7 +31,15 @@ export function PostsView({
 }: {
   initialPosts: FeedPost[];
   initialTotal: number;
-  viewer: { id: string; name: string; avatar: string | null; isAdmin: boolean };
+  viewer: {
+    id: string;
+    name: string;
+    avatar: string | null;
+    isAdmin: boolean;
+    canModerateComments: boolean;
+    canConnect: boolean;
+    canLike: boolean;
+  };
 }) {
   const t = useTranslations("Posts");
   const tCommon = useTranslations("Common");
@@ -244,8 +252,9 @@ export function PostsView({
               key={post.id}
               post={post}
               isAuthor={post.authorId === viewer.id}
-              isAdmin={viewer.isAdmin}
               canDelete={viewer.isAdmin}
+              canConnect={viewer.canConnect}
+              canLike={viewer.canLike}
               requested={requestedPeers.has(post.authorId)}
               busy={isPending(`accept:${post.connectionId ?? post.id}`)}
               onConnect={() =>

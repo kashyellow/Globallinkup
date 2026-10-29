@@ -20,10 +20,12 @@ export function PostComments({
   postId,
   comments: initialComments,
   viewer,
+  canModerate,
 }: {
   postId: string;
   comments: FeedComment[];
   viewer: { id: string; name: string; avatar: string | null; isAdmin: boolean };
+  canModerate: boolean;
 }) {
   const t = useTranslations("Posts.comments");
   const tPosts = useTranslations("Posts");
@@ -143,6 +145,7 @@ export function PostComments({
               <CommentItem
                 key={comment.id}
                 comment={comment}
+                canModerate={canModerate}
                 replies={repliesByParent.get(comment.id) ?? []}
                 viewer={viewer}
                 pending={pending}
@@ -245,6 +248,7 @@ function CommentItem({
   comment,
   replies,
   viewer,
+  canModerate,
   pending,
   sentAgo,
   onReply,
@@ -253,6 +257,7 @@ function CommentItem({
   comment: FeedComment;
   replies: FeedComment[];
   viewer: { id: string; name: string; avatar: string | null; isAdmin: boolean };
+  canModerate: boolean;
   pending: boolean;
   sentAgo: string;
   onReply: (comment: FeedComment) => void;
@@ -319,7 +324,7 @@ function CommentItem({
                 {t("replyAction")}
               </button>
             ) : null}
-            {!deleted && viewer.isAdmin ? (
+            {!deleted && canModerate ? (
               <button
                 type="button"
                 onClick={() => onDelete(comment)}
@@ -385,7 +390,7 @@ function CommentItem({
                     >
                       {replyDeleted ? t("deletedBody") : reply.body}
                     </p>
-                    {!replyDeleted && viewer.isAdmin ? (
+                    {!replyDeleted && canModerate ? (
                       <button
                         type="button"
                         onClick={() => onDelete(reply)}

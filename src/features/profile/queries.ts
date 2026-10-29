@@ -34,6 +34,7 @@ export type ProfileDispatch = {
 export type OwnProfile = {
   id: string;
   name: string;
+  role: "user" | "admin";
   age: number;
   headline: string;
   location: string;
@@ -224,6 +225,7 @@ export async function getOwnProfile(
   return {
     id: profile.id,
     name: profile.display_name ?? "",
+    role: profile.role,
     age,
     headline: profile.headline ?? "",
     location: [profile.city, profile.country_code].filter(Boolean).join(", "),
