@@ -230,9 +230,20 @@ test("@auth connections show accepted contact and pending requests", async ({ pa
   // All six persona channels render on Camila's card; the ones she left empty
   // say so, and the card no longer carries a verification badge.
   const camila = page.locator("article", { hasText: "Camila Osorio" });
-  await expect(camila.getByText(/not shared/i)).toHaveCount(4);
-  await expect(camila.getByText("Telegram")).toBeVisible();
+  const notShared = camila.getByText("Not shared", { exact: true });
+  await expect(notShared).toHaveCount(4);
+  await expect(camila.getByText("@camila.textiles")).toBeVisible();
   await expect(page.getByText(/verified ambassador/i)).toHaveCount(0);
+
+  // Below sm the unshared rows collapse behind a toggle naming the count.
+  await page.setViewportSize({ width: 375, height: 900 });
+  await expect(notShared).toHaveCount(4);
+  await expect(notShared.first()).toBeHidden();
+  await camila.getByRole("button", { name: /show 4 not shared/i }).click();
+  await expect(notShared.first()).toBeVisible();
+  await camila.getByRole("button", { name: /show shared channels only/i }).click();
+  await expect(notShared.first()).toBeHidden();
+  await page.setViewportSize({ width: 1280, height: 720 });
 
   // Requests tab: Mateo's pending request with an Accept action.
   await page.getByRole("button", { name: /received requests/i }).click();
