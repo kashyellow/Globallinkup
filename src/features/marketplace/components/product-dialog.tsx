@@ -8,6 +8,7 @@ import { MediaImage } from "@/components/ui/media-image";
 import { useDialogA11y } from "@/features/shared/use-dialog-a11y";
 import { cn } from "@/lib/utils";
 import type { MarketplaceContact, MarketplaceProduct } from "../queries";
+import { ConciergeActions } from "./concierge-actions";
 
 export function ProductDialog({
   product,
@@ -200,15 +201,17 @@ function DialogContent({
           </div>
 
           <div className="flex flex-col gap-space-sm">
-            <a
-              href={`mailto:${contact.email}?subject=${encodeURIComponent(
-                t("emailSubject", { product: product.name }),
-              )}`}
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-primary font-label-lg text-label-lg font-semibold text-on-primary transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
-            >
-              <Icon name="email" className="text-xl" />
-              {t("contactCta")}
-            </a>
+            <ConciergeActions
+              contact={contact}
+              emailSubject={t("emailSubject", { product: product.name })}
+              whatsappMessage={t("whatsappMessage", { product: product.name })}
+              labels={{
+                email: t("contactCta"),
+                whatsapp: t("whatsappCta"),
+                call: t("callCta", { phone: contact.phone }),
+                unavailable: t("contactUnavailable"),
+              }}
+            />
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-x-space-md gap-y-2 border-t border-outline-variant pt-space-md font-label-md text-label-md text-secondary">

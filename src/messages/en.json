@@ -385,7 +385,11 @@
       "imageOf": "Product image {number} of {total}",
       "imageLightbox": "Product image preview",
       "closeImage": "Close image preview",
-      "emailSubject": "Inquiry about {product}"
+      "emailSubject": "Inquiry about {product}",
+      "whatsappCta": "WhatsApp",
+      "whatsappMessage": "Hello, I would like to ask about {product}.",
+      "callCta": "Call {phone}",
+      "contactUnavailable": "The concierge contact is not available yet. Please check back soon."
     },
     "inquiry": {
       "eyebrow": "CONCIERGE DESK",
@@ -393,7 +397,11 @@
       "body": "Ask about a piece, artisan partnerships, shipping, or a custom request. We reply personally.",
       "close": "Close inquiry dialog",
       "emailCta": "Email the concierge",
-      "emailSubject": "GlobalLinkup concierge inquiry"
+      "emailSubject": "GlobalLinkup concierge inquiry",
+      "whatsappCta": "WhatsApp the concierge",
+      "whatsappMessage": "Hello, I would like to ask the GlobalLinkup concierge.",
+      "callCta": "Call {phone}",
+      "contactUnavailable": "The concierge contact is not available yet. Please check back soon."
     }
   },
   "Admin": {
@@ -480,6 +488,19 @@
       "curatedCatalog": "Curated Catalog",
       "title": "Curated Marketplace",
       "body": "Create drafts, publish finished pieces, unpublish a live item, or keep a retired piece in Trash.",
+      "contact": {
+        "title": "Concierge contact",
+        "body": "Members order every piece through these channels, so they are shared by the whole catalog. Leave a field empty to hide its button.",
+        "notConfigured": "No concierge contact is set yet, so members see a warning instead of the order buttons. Fill in an email, a phone number, or both.",
+        "emailLabel": "Email",
+        "emailPlaceholder": "concierge@yourdomain.com",
+        "phoneLabel": "Phone (with country code)",
+        "phonePlaceholder": "+34 612 345 678",
+        "phoneHint": "Include the country code: the call link and the WhatsApp link are both derived from this number.",
+        "save": "Save contact",
+        "saved": "Saved. The marketplace uses these channels immediately.",
+        "invalid": "Check the fields: the email must be a valid address and the phone needs 8–15 digits including the country code."
+      },
       "statusLive": "Live",
       "statusReserved": "Draft",
       "origin": "Origin (e.g. Oaxaca, MX)",

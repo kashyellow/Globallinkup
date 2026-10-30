@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { recordAudit } from "@/lib/audit";
 import { productSnapshot, reportSnapshot } from "@/features/admin/audit-snapshots";
+import { isDialablePhone } from "@/features/marketplace/contact";
 import { notifyMember } from "@/lib/notifications";
 import { z } from "zod";
 import { uuidSchema } from "@/lib/validation/ids";
@@ -440,7 +441,6 @@ const productSchema = z.object({
   currency: z.string().trim().length(3).default("USD"),
   description: z.string().trim().max(2000).optional(),
   originLabel: z.string().trim().max(120).optional(),
-  /** Phone for the seller contact line on the public catalog. */
   isPublished: z.boolean().default(false),
   imagePaths: z.array(z.string().trim().min(1).max(400)).max(10).default([]),
 });
@@ -695,6 +695,72 @@ export async function restoreProductAction(input: unknown): Promise<AdminResult>
   });
 
   revalidatePath("/admin");
+  revalidatePath("/admin/marketplace");
+  revalidatePath("/marketplace");
+  return { ok: true };
+}
+
+// ---------------------------------------------------------------------------
+// Marketplace concierge contact (platform_settings)
+// ---------------------------------------------------------------------------
+
+const CONTACT_KEY = "marketplace.contact";
+
+/**
+ * Both channels are optional so an admin can clear one, but a value that is
+ * present must be usable: the public side derives `wa.me` and `tel:` links from
+ * the number, so it has to carry a country code.
+ */
+const contactSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .max(200)
+    .pipe(z.union([z.literal(""), z.email()])),
+  phone: z
+    .string()
+    .trim()
+    .max(40)
+    .refine((value) => value === "" || isDialablePhone(value)),
+});
+
+export async function updateMarketplaceContactAction(input: unknown): Promise<AdminResult> {
+  const ctx = await requireCapabilityClient("marketplace.manage");
+  if (!ctx) return { ok: false, error: "forbidden" };
+
+  const parsed = contactSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid" };
+
+  const { data: current } = await ctx.supabase
+    .from("platform_settings")
+    .select("value")
+    .eq("key", CONTACT_KEY)
+    .maybeSingle();
+  const previous = (current?.value ?? {}) as { email?: string; phone?: string };
+
+  const { error } = await ctx.supabase
+    .from("platform_settings")
+    .upsert(
+      { key: CONTACT_KEY, value: { email: parsed.data.email, phone: parsed.data.phone } },
+      { onConflict: "key" },
+    );
+
+  if (error) return { ok: false, error: "unknown" };
+
+  // ADR 0003: the trail records that a channel changed, never its value.
+  await recordAudit({
+    action: "settings.updated",
+    targetType: "settings",
+    metadata: {
+      key: CONTACT_KEY,
+      changed: {
+        email: (previous.email ?? "") !== parsed.data.email,
+        phone: (previous.phone ?? "") !== parsed.data.phone,
+      },
+    },
+  });
+
   revalidatePath("/admin/marketplace");
   revalidatePath("/marketplace");
   return { ok: true };

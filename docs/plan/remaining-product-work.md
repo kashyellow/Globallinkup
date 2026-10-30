@@ -44,7 +44,7 @@
 | Marketplace delete     | Soft delete → Trash; restore supported                                        | Admin should not lose a product irreversibly by accident                                |
 | Product states         | `draft`, `live`, `unpublished`, `trashed`                                     | Distinguishes “never published” from “taken down”                                       |
 | Artisan inquiries      | Concierge inquiry dialog with Email + WhatsApp                                | The current mailto is mislabeled and fragile on devices without a mail client           |
-| Marketplace contact    | `platform_settings` is the source; env is fallback                            | Admin edits remain authoritative; env is easy to find                                   |
+| Marketplace contact    | `platform_settings`, edited in `/admin/marketplace`; no env fallback          | Admin edits are authoritative and the only path (ADR 0009)                              |
 | Connections region     | Searchable multi-select of countries present in the user’s active connections | Matches Discover and only offers useful choices                                         |
 | Archived Dialogues     | Remove the tab                                                                | It is a placeholder, not chat; no backing table or product definition                   |
 | Admin structure        | Separate routes per tab + shared layout                                       | Gives independent loading, URLs, back/refresh, and fewer over-fetches                   |

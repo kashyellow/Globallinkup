@@ -119,6 +119,11 @@ These are confirmed and supersede the PRD where it disagrees:
   render fitted rather than cropped.
 - **Marketplace products have a lifecycle** (`draft`, `live`, `unpublished`,
   `trashed`). Delete is a soft delete so an admin can restore a piece from Trash.
+  The marketplace **concierge contact** (one email + one phone for the whole
+  catalog) is edited in the `/admin/marketplace` panel and stored in
+  `platform_settings.marketplace.contact`; `marketplace.manage` may write that
+  key, and the public dialogs show a warning until an admin fills it in
+  (ADR 0009).
 - **Admin reject/suspend decisions require a reason** stored in
   `profile_moderation_events`; the member can read their latest reason.
 - **Admins are operators, not members.** `npm run admin:bootstrap -- --create`

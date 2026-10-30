@@ -385,7 +385,11 @@
       "imageOf": "Imagen {number} de {total} del producto",
       "imageLightbox": "Vista previa de la imagen",
       "closeImage": "Cerrar la vista previa",
-      "emailSubject": "Consulta sobre {product}"
+      "emailSubject": "Consulta sobre {product}",
+      "whatsappCta": "WhatsApp",
+      "whatsappMessage": "Hola, me gustaría preguntar por {product}.",
+      "callCta": "Llamar al {phone}",
+      "contactUnavailable": "El contacto del conserje aún no está disponible. Vuelve a intentarlo pronto."
     },
     "inquiry": {
       "eyebrow": "MESA DE CONCIERGE",
@@ -393,7 +397,11 @@
       "body": "Pregunta por una pieza, colaboraciones artesanas, envíos o un encargo especial. Respondemos personalmente.",
       "close": "Cerrar el diálogo de consulta",
       "emailCta": "Escribir al concierge",
-      "emailSubject": "Consulta al concierge de GlobalLinkup"
+      "emailSubject": "Consulta al concierge de GlobalLinkup",
+      "whatsappCta": "WhatsApp del concierge",
+      "whatsappMessage": "Hola, quisiera consultar al concierge de GlobalLinkup.",
+      "callCta": "Llamar al {phone}",
+      "contactUnavailable": "El contacto del conserje aún no está disponible. Vuelve a intentarlo pronto."
     }
   },
   "Admin": {
@@ -480,6 +488,19 @@
       "curatedCatalog": "Catálogo Curado",
       "title": "Marketplace Curado",
       "body": "Crea borradores, publica piezas terminadas, retira un producto publicado o conserva una pieza retirada en Papelera.",
+      "contact": {
+        "title": "Contacto del concierge",
+        "body": "Los miembros piden cada pieza a través de estos canales, así que los comparte todo el catálogo. Deja un campo vacío para ocultar su botón.",
+        "notConfigured": "Aún no hay un contacto del concierge, así que los miembros ven un aviso en lugar de los botones de compra. Añade un email, un teléfono o ambos.",
+        "emailLabel": "Email",
+        "emailPlaceholder": "concierge@tudominio.com",
+        "phoneLabel": "Teléfono (con código de país)",
+        "phonePlaceholder": "+34 612 345 678",
+        "phoneHint": "Incluye el código de país: el enlace de llamada y el de WhatsApp se derivan de este número.",
+        "save": "Guardar contacto",
+        "saved": "Guardado. El marketplace usa estos canales de inmediato.",
+        "invalid": "Revisa los campos: el email debe ser válido y el teléfono necesita entre 8 y 15 dígitos con el código de país."
+      },
       "statusLive": "Publicado",
       "statusReserved": "Borrador",
       "origin": "Origen (p. ej. Oaxaca, MX)",

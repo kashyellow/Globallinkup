@@ -6,6 +6,7 @@ import { Icon } from "@/components/ui/icon";
 import { useDialogA11y } from "@/features/shared/use-dialog-a11y";
 import { cn } from "@/lib/utils";
 import type { MarketplaceContact } from "../queries";
+import { ConciergeActions } from "./concierge-actions";
 
 export function MarketplaceInquiryDialog({
   contact,
@@ -63,15 +64,17 @@ export function MarketplaceInquiryDialog({
 
         <p className="font-body-sm text-body-sm text-secondary">{t("body")}</p>
 
-        <div className="flex flex-col gap-space-sm">
-          <a
-            href={`mailto:${contact.email}?subject=${encodeURIComponent(t("emailSubject"))}`}
-            className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-4 font-label-lg text-label-lg font-semibold text-on-primary transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px"
-          >
-            <Icon name="mail" className="text-lg" />
-            {t("emailCta")}
-          </a>
-        </div>
+        <ConciergeActions
+          contact={contact}
+          emailSubject={t("emailSubject")}
+          whatsappMessage={t("whatsappMessage")}
+          labels={{
+            email: t("emailCta"),
+            whatsapp: t("whatsappCta"),
+            call: t("callCta", { phone: contact.phone }),
+            unavailable: t("contactUnavailable"),
+          }}
+        />
       </div>
     </div>
   );

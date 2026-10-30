@@ -9,7 +9,7 @@ export function InlineAlert({
   children,
   className,
 }: {
-  tone?: "error" | "success" | "info";
+  tone?: "error" | "success" | "info" | "warning";
   children: ReactNode;
   className?: string;
 }) {
@@ -23,12 +23,22 @@ export function InlineAlert({
           ? "border-danger-border bg-danger-surface text-danger-text"
           : tone === "success"
             ? "border-success-border bg-success-surface text-success-text"
-            : "border-outline-variant bg-surface-container text-secondary",
+            : tone === "warning"
+              ? "border-warning-border bg-warning-surface text-warning-text"
+              : "border-outline-variant bg-surface-container text-secondary",
         className,
       )}
     >
       <Icon
-        name={isError ? "error_outline" : tone === "success" ? "check_circle" : "info"}
+        name={
+          isError
+            ? "error_outline"
+            : tone === "success"
+              ? "check_circle"
+              : tone === "warning"
+                ? "warning"
+                : "info"
+        }
         className="mt-0.5 shrink-0 text-base"
       />
       <span className="min-w-0">{children}</span>

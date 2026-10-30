@@ -3,6 +3,7 @@ import "server-only";
 import { createSignedImageUrls, resolveImageUrl } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
 import { unwrap, unwrapCount } from "@/lib/supabase/unwrap";
+import type { MarketplaceContact } from "@/features/marketplace/queries";
 
 /** Admin reads. Every request runs on the RLS client as an admin. */
 
@@ -41,7 +42,6 @@ export type AdminProductDto = {
   price: string;
   priceCents: number;
   currency: string;
-  phone: string;
   description: string;
   status: AdminProductStatus;
   isPublished: boolean;
@@ -323,7 +323,7 @@ export async function getAdminMarketplace({
   let request = supabase
     .from("marketplace_products")
     .select(
-      "id, name, origin_label, price_cents, currency, description, contact_information, is_published, published_at, deleted_at, catalog_status, created_at",
+      "id, name, origin_label, price_cents, currency, description, is_published, published_at, deleted_at, catalog_status, created_at",
       { count: "exact" },
     );
 
@@ -377,7 +377,6 @@ export async function getAdminMarketplace({
         price: `${(row.price_cents ?? 0) / 100} ${row.currency}`,
         priceCents: row.price_cents ?? 0,
         currency: row.currency,
-        phone: row.contact_information ?? "",
         description: row.description ?? "",
         status: row.catalog_status ?? "draft",
         isPublished: row.is_published,
@@ -390,6 +389,29 @@ export async function getAdminMarketplace({
       } satisfies AdminProductDto;
     }),
     total,
+  };
+}
+
+/**
+ * The concierge contact as stored, with no env fallback: the desk must show the
+ * operator what members actually see, including an unconfigured (empty) row.
+ */
+export async function getAdminMarketplaceContact(): Promise<MarketplaceContact> {
+  const supabase = await createClient();
+
+  const data = unwrap<{ value: unknown }>(
+    await supabase
+      .from("platform_settings")
+      .select("value")
+      .eq("key", "marketplace.contact")
+      .maybeSingle(),
+  );
+
+  const value = (data?.value ?? {}) as { email?: string; phone?: string };
+
+  return {
+    email: value.email ?? "",
+    phone: value.phone ?? "",
   };
 }
 

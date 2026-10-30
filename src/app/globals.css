@@ -87,6 +87,11 @@
   --color-danger-border-strong: #b42318;
   --color-danger-text: #a02a1f;
 
+  /* ── Warning (amber, for "not configured yet" states) ──────────────── */
+  --color-warning-surface: #fdf3e2;
+  --color-warning-border: #ecd6b0;
+  --color-warning-text: #8a5a12;
+
   /* ── Admin accent (clay-tinted) ────────────────────────────────────── */
   --color-admin-surface: #fbeee9;
   --color-admin-border: #f0d2c6;
@@ -376,6 +381,9 @@
   --color-danger-border: #5c1d1d;
   --color-danger-border-strong: #ba1a1a;
   --color-danger-text: #fca5a5;
+  --color-warning-surface: #3a2c13;
+  --color-warning-border: #5c451f;
+  --color-warning-text: #f0c886;
   --color-admin-surface: #2e201e;
   --color-admin-border: #482823;
   --color-admin-text: #ffb4a9;

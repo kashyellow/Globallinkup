@@ -18,8 +18,10 @@ export type MarketplaceProduct = {
   imageAlt: string;
 };
 
+/** Concierge channels, admin-editable. Both are empty until an admin fills them. */
 export type MarketplaceContact = {
   email: string;
+  phone: string;
 };
 
 export type MarketplacePage = {
@@ -27,8 +29,7 @@ export type MarketplacePage = {
   total: number;
 };
 
-const PAGE_COLUMNS =
-  "id, name, price_cents, description, origin_label, contact_information, created_at";
+const PAGE_COLUMNS = "id, name, price_cents, description, origin_label, created_at";
 
 function safeNeedle(value: string) {
   // PostgREST's `or` expression is comma/parenthesis-delimited; keep the search
@@ -132,10 +133,12 @@ export async function getMarketplaceContact(): Promise<MarketplaceContact> {
       .maybeSingle(),
   );
 
-  const value = (data?.value ?? {}) as { email?: string };
+  // Cloud projects have no seeded row: an admin fills these in from
+  // /admin/marketplace, and until then the public side warns instead of linking.
+  const value = (data?.value ?? {}) as { email?: string; phone?: string };
 
-  // Email is the only concierge channel: phone numbers were removed by request.
   return {
-    email: value.email ?? process.env.NEXT_PUBLIC_MARKETPLACE_EMAIL ?? "",
+    email: value.email ?? "",
+    phone: value.phone ?? "",
   };
 }

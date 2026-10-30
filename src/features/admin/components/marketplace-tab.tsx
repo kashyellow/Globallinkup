@@ -24,8 +24,10 @@ import { useDialogA11y } from "@/features/shared/use-dialog-a11y";
 import { usePendingAction } from "@/features/shared/use-pending-action";
 import { useRefresh } from "@/features/shared/refresh-provider";
 import { cn } from "@/lib/utils";
+import type { MarketplaceContact } from "@/features/marketplace/queries";
 import type { AdminProductDto, AdminProductFilter, AdminProductStatus } from "../queries";
 import { AdminProductPreview } from "./admin-product-preview";
+import { MarketplaceContactPanel } from "./marketplace-contact-panel";
 
 const INPUT =
   "h-11 w-full rounded-full border border-outline-variant bg-surface-dim px-space-md font-body-sm text-body-sm text-on-surface transition-colors duration-300 placeholder:text-text-muted hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
@@ -43,6 +45,7 @@ const STATUS_KEY: Record<AdminProductStatus, string> = {
 
 export function AdminMarketplaceTab({
   products,
+  contact,
   query,
   status,
   page,
@@ -50,6 +53,7 @@ export function AdminMarketplaceTab({
   totalPages,
 }: {
   products: AdminProductDto[];
+  contact: MarketplaceContact;
   query: string;
   status: AdminProductFilter;
   page: number;
@@ -160,6 +164,9 @@ export function AdminMarketplaceTab({
           </button>
         }
       />
+
+      {/* Contact details come first: without them the catalog has no way to order. */}
+      <MarketplaceContactPanel contact={contact} />
 
       {/* Phones: search and chips sit straight on the page; from md they get a panel. */}
       <div className="mt-space-md flex flex-col gap-space-sm md:mt-space-lg md:rounded-2xl md:border md:border-outline-variant md:bg-surface-low md:p-space-lg lg:flex-row lg:items-center lg:justify-between">

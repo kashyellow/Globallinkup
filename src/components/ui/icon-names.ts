@@ -120,6 +120,7 @@ export const ICON_NAMES = [
   "shield",
   "shield_person",
   "storefront",
+  "support_agent",
   "tag",
   "terms",
   "translate",
@@ -132,6 +133,7 @@ export const ICON_NAMES = [
   "videocam",
   "visibility",
   "visibility_off",
+  "warning",
 ] as const;
 
 const AXES = "opsz,wght,FILL,GRAD@24,400,0..1,0";

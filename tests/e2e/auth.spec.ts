@@ -492,6 +492,22 @@ test("@auth the marketplace paginates, filters, and opens details", async ({ pag
   const detail = page.getByRole("dialog", { name: /Handmade Oaxacan/i });
   await expect(detail).toBeVisible();
   await expect(detail.getByText(/Artisan Partner Direct/i)).toBeVisible();
+
+  // The concierge channels come from the admin-editable setting: email opens the
+  // Gmail composer, and the seeded phone drives the WhatsApp and call links.
+  await expect(detail.getByRole("link", { name: /contact concierge/i })).toHaveAttribute(
+    "href",
+    /^https:\/\/mail\.google\.com\/mail\/\?.*to=concierge%40globallinkup\.com/,
+  );
+  await expect(detail.getByRole("link", { name: /^whatsapp$/i })).toHaveAttribute(
+    "href",
+    /^https:\/\/wa\.me\/34612345678\?text=/,
+  );
+  await expect(detail.getByRole("link", { name: "Call +34 612 345 678" })).toHaveAttribute(
+    "href",
+    "tel:+34612345678",
+  );
+
   await detail.getByRole("button", { name: /close detail panel/i }).click();
 
   await page.getByRole("button", { name: /artisan partner inquiries/i }).click();
@@ -551,6 +567,31 @@ test("@auth an admin previews a product with its gallery", async ({ page }) => {
     .getByRole("button", { name: /close preview/i })
     .first()
     .click();
+});
+
+test("@auth an admin edits the marketplace concierge contact", async ({ page }) => {
+  await signIn(page, "admin@globallinkup.test");
+  await page.goto("/en/admin/marketplace");
+  await page.waitForTimeout(1200);
+
+  const panel = page
+    .locator("section")
+    .filter({ has: page.getByRole("heading", { name: /concierge contact/i }) });
+  const phone = panel.getByLabel(/phone/i);
+  await expect(phone).toHaveValue("+34 612 345 678");
+
+  await phone.fill("+34 600 999 888");
+  await panel.getByRole("button", { name: /save contact/i }).click();
+  await expect(panel.getByText(/saved\. the marketplace/i)).toBeVisible({ timeout: 15_000 });
+
+  // The save writes platform_settings, so a reload must read the new number.
+  await page.reload();
+  await expect(page.getByLabel(/phone/i)).toHaveValue("+34 600 999 888");
+
+  // Restore the seed so the member-side catalog assertions stay stable.
+  await page.getByLabel(/phone/i).fill("+34 612 345 678");
+  await page.getByRole("button", { name: /save contact/i }).click();
+  await expect(page.getByText(/saved\. the marketplace/i)).toBeVisible({ timeout: 15_000 });
 });
 
 test("@auth an admin creates, trashes, and restores a draft product", async ({ page }) => {

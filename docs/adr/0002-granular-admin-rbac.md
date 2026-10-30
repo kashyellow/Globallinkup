@@ -54,7 +54,7 @@ inheritance; a capability is either present or not.
 | `reports.manage`     | Read and resolve reports                                                                               |
 | `marketplace.manage` | Create/update/publish/unpublish/trash/restore products and images                                      |
 | `admins.manage`      | Create admin accounts, edit roles and capabilities, deactivate admins                                  |
-| `settings.manage`    | Edit `platform_settings`                                                                               |
+| `settings.manage`    | Edit `platform_settings` (see ADR 0009 for the `marketplace.contact` carve-out)                        |
 | `audit.read`         | Read `audit_events` (see ADR 0003)                                                                     |
 
 Start with these nine, as agreed. Splitting further (for example
@@ -78,6 +78,7 @@ model already allows it without a migration.
 | `reports`                                                                     | `reports.manage`     |
 | `marketplace_products`, `marketplace_product_images`, `product-images` bucket | `marketplace.manage` |
 | `platform_settings`                                                           | `settings.manage`    |
+| `platform_settings` (`marketplace.contact` key only)                          | `marketplace.manage` |
 | `audit_events`                                                                | `audit.read`         |
 | `admin_roles` writes, admin account mutations                                 | `admins.manage`      |
 

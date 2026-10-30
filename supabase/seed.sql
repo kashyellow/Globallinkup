@@ -633,7 +633,7 @@ values
 -- ----------------------------------------------------------------------------
 insert into public.platform_settings (key, value)
 values
-  ('marketplace.contact', '{"email":"concierge@globallinkup.com"}'::jsonb),
+  ('marketplace.contact', '{"email":"concierge@globallinkup.com","phone":"+34 612 345 678"}'::jsonb),
   ('marketplace.currency', '"USD"'::jsonb);
 
 commit;
