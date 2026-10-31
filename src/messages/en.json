@@ -371,14 +371,9 @@
       "close": "Close detail panel",
       "artisanPartnerDirect": "Artisan Partner Direct",
       "currencyUsd": "USD",
-      "howToOrderTitle": "How to Order / Direct Inquiries",
-      "howToOrderBody": "GlobalLinkup facilitates orders personally with our regional makers. Because quantities are limited and made in small batches, orders are confirmed directly via our multilingual concierge. No shopping cart checkout or user reselling.",
+      "howToOrderTitle": "Disclaimer",
+      "howToOrderBody": "All transactions are made directly between the seller and the purchaser. GlobalLinkup only connects buyers and sellers and is not a party to any sale, payment, delivery or dispute.",
       "contactCta": "Contact Concierge / Inquire to Buy",
-      "trust": {
-        "fairCompensation": "Fair Compensation",
-        "customsInsured": "Customs Insured",
-        "directMaker": "Direct Maker Trace"
-      },
       "openImage": "Open product image",
       "previousImage": "Previous product image",
       "nextImage": "Next product image",
@@ -388,7 +383,6 @@
       "emailSubject": "Inquiry about {product}",
       "whatsappCta": "WhatsApp",
       "whatsappMessage": "Hello, I would like to ask about {product}.",
-      "callCta": "Call {phone}",
       "contactUnavailable": "The concierge contact is not available yet. Please check back soon."
     },
     "inquiry": {
@@ -400,7 +394,6 @@
       "emailSubject": "GlobalLinkup concierge inquiry",
       "whatsappCta": "WhatsApp the concierge",
       "whatsappMessage": "Hello, I would like to ask the GlobalLinkup concierge.",
-      "callCta": "Call {phone}",
       "contactUnavailable": "The concierge contact is not available yet. Please check back soon."
     }
   },
@@ -488,19 +481,6 @@
       "curatedCatalog": "Curated Catalog",
       "title": "Curated Marketplace",
       "body": "Create drafts, publish finished pieces, unpublish a live item, or keep a retired piece in Trash.",
-      "contact": {
-        "title": "Concierge contact",
-        "body": "Members order every piece through these channels, so they are shared by the whole catalog. Leave a field empty to hide its button.",
-        "notConfigured": "No concierge contact is set yet, so members see a warning instead of the order buttons. Fill in an email, a phone number, or both.",
-        "emailLabel": "Email",
-        "emailPlaceholder": "concierge@yourdomain.com",
-        "phoneLabel": "Phone (with country code)",
-        "phonePlaceholder": "+34 612 345 678",
-        "phoneHint": "Include the country code: the call link and the WhatsApp link are both derived from this number.",
-        "save": "Save contact",
-        "saved": "Saved. The marketplace uses these channels immediately.",
-        "invalid": "Check the fields: the email must be a valid address and the phone needs 8–15 digits including the country code."
-      },
       "statusLive": "Live",
       "statusReserved": "Draft",
       "origin": "Origin (e.g. Oaxaca, MX)",
@@ -514,6 +494,12 @@
         "body": "Curated products undergo admin verification prior to public display.",
         "productTitle": "Product Title (Bilingual or English)",
         "productTitlePlaceholder": "e.g. Handmade Oaxacan Leather Bag",
+        "contactEmail": "Contact email",
+        "contactEmailPlaceholder": "concierge@yourdomain.com",
+        "contactPhone": "Contact phone (with country code)",
+        "contactPhonePlaceholder": "+34 612 345 678",
+        "contactHint": "Optional. Members use these to order this piece; the call and WhatsApp links come from the phone. Leave both empty to use the catalog-wide concierge contact.",
+        "contactInvalid": "Check the contact: the email must be valid and the phone needs 8–15 digits including the country code.",
         "price": "Price ($ USD)",
         "image": "Product Image",
         "imageUpload": "Upload a photo",
