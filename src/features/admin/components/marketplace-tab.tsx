@@ -19,15 +19,14 @@ import { AdminPagination } from "@/features/admin/components/admin-pagination";
 import { AdminPageHeader } from "@/features/admin/components/admin-page-header";
 import { AdminSearchForm } from "@/features/admin/components/admin-search-form";
 import { AdminStatusLinks } from "@/features/admin/components/admin-status-links";
+import { isDialablePhone } from "@/features/marketplace/contact";
 import { uploadImageAction } from "@/features/media/actions";
 import { useDialogA11y } from "@/features/shared/use-dialog-a11y";
 import { usePendingAction } from "@/features/shared/use-pending-action";
 import { useRefresh } from "@/features/shared/refresh-provider";
 import { cn } from "@/lib/utils";
-import type { MarketplaceContact } from "@/features/marketplace/queries";
 import type { AdminProductDto, AdminProductFilter, AdminProductStatus } from "../queries";
 import { AdminProductPreview } from "./admin-product-preview";
-import { MarketplaceContactPanel } from "./marketplace-contact-panel";
 
 const INPUT =
   "h-11 w-full rounded-full border border-outline-variant bg-surface-dim px-space-md font-body-sm text-body-sm text-on-surface transition-colors duration-300 placeholder:text-text-muted hover:border-outline focus:border-primary focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
@@ -45,7 +44,6 @@ const STATUS_KEY: Record<AdminProductStatus, string> = {
 
 export function AdminMarketplaceTab({
   products,
-  contact,
   query,
   status,
   page,
@@ -53,7 +51,6 @@ export function AdminMarketplaceTab({
   totalPages,
 }: {
   products: AdminProductDto[];
-  contact: MarketplaceContact;
   query: string;
   status: AdminProductFilter;
   page: number;
@@ -164,9 +161,6 @@ export function AdminMarketplaceTab({
           </button>
         }
       />
-
-      {/* Contact details come first: without them the catalog has no way to order. */}
-      <MarketplaceContactPanel contact={contact} />
 
       {/* Phones: search and chips sit straight on the page; from md they get a panel. */}
       <div className="mt-space-md flex flex-col gap-space-sm md:mt-space-lg md:rounded-2xl md:border md:border-outline-variant md:bg-surface-low md:p-space-lg lg:flex-row lg:items-center lg:justify-between">
@@ -446,6 +440,8 @@ function ProductFormDialog({
   const [name, setName] = useState(product?.name ?? "");
   const [price, setPrice] = useState(product ? (product.priceCents / 100).toFixed(2) : "");
   const [origin, setOrigin] = useState(product?.origin ?? "");
+  const [contactEmail, setContactEmail] = useState(product?.contactEmail ?? "");
+  const [contactPhone, setContactPhone] = useState(product?.contactPhone ?? "");
   const [description, setDescription] = useState(product?.description ?? "");
   const [publishNow, setPublishNow] = useState(product?.isPublished ?? false);
   const [images, setImages] = useState<DraftImage[]>(() =>
@@ -513,6 +509,16 @@ function ProductFormDialog({
       setError(t("errorInvalid"));
       return;
     }
+    const email = contactEmail.trim();
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError(t("form.contactInvalid"));
+      return;
+    }
+    const phone = contactPhone.trim();
+    if (phone && !isDialablePhone(phone)) {
+      setError(t("form.contactInvalid"));
+      return;
+    }
     if (publishNow && images.length === 0) {
       setError(t("errorImageRequired"));
       return;
@@ -545,6 +551,8 @@ function ProductFormDialog({
         priceCents: Math.round(amount * 100),
         currency: "USD",
         originLabel: origin.trim(),
+        contactEmail: email,
+        contactPhone: phone,
         description: description.trim(),
         isPublished: publishNow,
         imagePaths: paths,
@@ -633,6 +641,37 @@ function ProductFormDialog({
                 placeholder={t("originPlaceholder")}
                 className={INPUT}
               />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className={LABEL}>{t("form.contactEmail")}</span>
+              <input
+                type="email"
+                inputMode="email"
+                autoComplete="off"
+                value={contactEmail}
+                onChange={(event) => setContactEmail(event.target.value)}
+                placeholder={t("form.contactEmailPlaceholder")}
+                className={INPUT}
+              />
+            </label>
+            <label className="flex flex-col gap-1.5">
+              <span className={LABEL}>{t("form.contactPhone")}</span>
+              <input
+                type="tel"
+                inputMode="tel"
+                autoComplete="off"
+                value={contactPhone}
+                onChange={(event) => setContactPhone(event.target.value)}
+                aria-describedby="admin-product-phone-hint"
+                placeholder={t("form.contactPhonePlaceholder")}
+                className={INPUT}
+              />
+              <span
+                id="admin-product-phone-hint"
+                className="font-body-sm text-body-sm text-text-muted"
+              >
+                {t("form.contactHint")}
+              </span>
             </label>
           </div>
 

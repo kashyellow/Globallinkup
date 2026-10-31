@@ -5,6 +5,13 @@
 - **Related:** [ADR 0002](./0002-granular-admin-rbac.md) (capabilities),
   [ADR 0003](./0003-audit-log-and-pii.md) (audit metadata)
 
+> **Amendment 2026-10-31:** the admin edits the contact per product, in the
+> product create/edit form (`marketplace_products.contact_email` /
+> `contact_phone`, migration `20261031120000`). The "Concierge contact" panel is
+> gone from `/admin/marketplace`. The product dialog shows the piece's own
+> contact and falls back to `platform_settings.marketplace.contact` when both
+> fields are blank; the artisan-inquiry dialog still uses the catalog-wide row.
+
 ## Context
 
 The curated marketplace is ordered through a human concierge, never a cart. The

@@ -298,7 +298,9 @@ export type Database = {
       marketplace_products: {
         Row: {
           catalog_status: Database["public"]["Enums"]["marketplace_status"] | null;
+          contact_email: string | null;
           contact_information: string | null;
+          contact_phone: string | null;
           created_at: string;
           created_by: string | null;
           currency: string;
@@ -315,7 +317,9 @@ export type Database = {
         ComputedFields: never;
         Insert: {
           catalog_status?: never;
+          contact_email?: string | null;
           contact_information?: string | null;
+          contact_phone?: string | null;
           created_at?: string;
           created_by?: string | null;
           currency?: string;
@@ -331,7 +335,9 @@ export type Database = {
         };
         Update: {
           catalog_status?: never;
+          contact_email?: string | null;
           contact_information?: string | null;
+          contact_phone?: string | null;
           created_at?: string;
           created_by?: string | null;
           currency?: string;

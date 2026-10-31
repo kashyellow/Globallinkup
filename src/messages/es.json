@@ -371,14 +371,9 @@
       "close": "Cerrar panel de detalles",
       "artisanPartnerDirect": "Socio Artesano Directo",
       "currencyUsd": "USD",
-      "howToOrderTitle": "Cómo Pedir / Consultas Directas",
-      "howToOrderBody": "GlobalLinkup gestiona los pedidos personalmente con nuestros makers regionales. Como las cantidades son limitadas y se producen en lotes pequeños, los pedidos se confirman directamente a través de nuestro conserje multilingüe. Sin pago mediante carrito ni reventa entre usuarios.",
+      "howToOrderTitle": "Aviso legal",
+      "howToOrderBody": "Todas las transacciones se realizan directamente entre el vendedor y el comprador. GlobalLinkup solo conecta a compradores y vendedores y no es parte de ninguna venta, pago, entrega ni disputa.",
       "contactCta": "Contactar al Conserje / Consultar Compra",
-      "trust": {
-        "fairCompensation": "Compensación Justa",
-        "customsInsured": "Aduana Asegurada",
-        "directMaker": "Trazabilidad Directa"
-      },
       "openImage": "Abrir imagen del producto",
       "previousImage": "Imagen anterior del producto",
       "nextImage": "Imagen siguiente del producto",
@@ -388,7 +383,6 @@
       "emailSubject": "Consulta sobre {product}",
       "whatsappCta": "WhatsApp",
       "whatsappMessage": "Hola, me gustaría preguntar por {product}.",
-      "callCta": "Llamar al {phone}",
       "contactUnavailable": "El contacto del conserje aún no está disponible. Vuelve a intentarlo pronto."
     },
     "inquiry": {
@@ -400,7 +394,6 @@
       "emailSubject": "Consulta al concierge de GlobalLinkup",
       "whatsappCta": "WhatsApp del concierge",
       "whatsappMessage": "Hola, quisiera consultar al concierge de GlobalLinkup.",
-      "callCta": "Llamar al {phone}",
       "contactUnavailable": "El contacto del conserje aún no está disponible. Vuelve a intentarlo pronto."
     }
   },
@@ -488,19 +481,6 @@
       "curatedCatalog": "Catálogo Curado",
       "title": "Marketplace Curado",
       "body": "Crea borradores, publica piezas terminadas, retira un producto publicado o conserva una pieza retirada en Papelera.",
-      "contact": {
-        "title": "Contacto del concierge",
-        "body": "Los miembros piden cada pieza a través de estos canales, así que los comparte todo el catálogo. Deja un campo vacío para ocultar su botón.",
-        "notConfigured": "Aún no hay un contacto del concierge, así que los miembros ven un aviso en lugar de los botones de compra. Añade un email, un teléfono o ambos.",
-        "emailLabel": "Email",
-        "emailPlaceholder": "concierge@tudominio.com",
-        "phoneLabel": "Teléfono (con código de país)",
-        "phonePlaceholder": "+34 612 345 678",
-        "phoneHint": "Incluye el código de país: el enlace de llamada y el de WhatsApp se derivan de este número.",
-        "save": "Guardar contacto",
-        "saved": "Guardado. El marketplace usa estos canales de inmediato.",
-        "invalid": "Revisa los campos: el email debe ser válido y el teléfono necesita entre 8 y 15 dígitos con el código de país."
-      },
       "statusLive": "Publicado",
       "statusReserved": "Borrador",
       "origin": "Origen (p. ej. Oaxaca, MX)",
@@ -514,6 +494,12 @@
         "body": "Los productos curados pasan por verificación del administrador antes de su exhibición pública.",
         "productTitle": "Título del Producto (Bilingüe o Inglés)",
         "productTitlePlaceholder": "p. ej. Bolso de Piel Oaxaqueño Hecho a Mano",
+        "contactEmail": "Email de contacto",
+        "contactEmailPlaceholder": "concierge@tudominio.com",
+        "contactPhone": "Teléfono de contacto (con código de país)",
+        "contactPhonePlaceholder": "+34 612 345 678",
+        "contactHint": "Opcional. Los miembros los usan para pedir esta pieza; los enlaces de llamada y WhatsApp salen del teléfono. Déjalos vacíos para usar el contacto del concierge de todo el catálogo.",
+        "contactInvalid": "Revisa el contacto: el email debe ser válido y el teléfono necesita entre 8 y 15 dígitos con el código de país.",
         "price": "Precio ($ USD)",
         "image": "Imagen del Producto",
         "imageUpload": "Sube una foto",
@@ -681,44 +667,65 @@
       "searchAction": "Buscar"
     },
     "team": {
-      "title": "Equipo y roles",
-      "body": "Crea cuentas de administración con un enlace de invitación de un solo uso y decide a qué puede acceder cada rol.",
-      "forbidden": "Tu rol no puede gestionar el equipo.",
-      "inviteTitle": "Invitar a un administrador",
-      "inviteBody": "Generamos un enlace que compartes tú: no se envía correo y nunca ves su contraseña.",
+      "title": "Equipo",
+      "body": "Crea cuentas de subadministrador y elige en qué áreas puede trabajar cada uno.",
+      "subAdminCount": "{count, plural, =0 {Sin subadministradores} one {# subadministrador} other {# subadministradores}}",
+      "add": "Añadir subadministrador",
+      "edit": "Editar",
+      "remove": "Quitar",
+      "subAdminsTitle": "Subadministradores",
+      "noSubAdmins": "Aún no hay subadministradores",
+      "noSubAdminsBody": "Añade a alguien que ayude con miembros, moderación o el marketplace. Tú eliges su acceso y lo que puede ver.",
+      "ownersTitle": "Propietarios",
+      "ownerHint": "Acceso total, incluido el registro de auditoría, los ajustes y este equipo. No se pueden editar aquí.",
+      "createTitle": "Añadir un subadministrador",
+      "createBody": "Tú eliges su acceso. Comparte tú mismo el email y la contraseña.",
+      "editTitle": "Editar subadministrador",
+      "editBody": "Cambia su nombre, áreas o contraseña. El email de acceso no cambia.",
+      "nameLabel": "Nombre",
+      "namePlaceholder": "p. ej. María López",
+      "loginEmail": "Email de acceso",
       "emailPlaceholder": "persona@ejemplo.com",
-      "generateLink": "Generar enlace",
-      "working": "Procesando…",
-      "linkOnce": "Copia este enlace ahora — se muestra una sola vez.",
-      "copy": "Copiar",
-      "copied": "Copiado",
-      "adminsTitle": "Administradores",
-      "rolesTitle": "Roles",
-      "invitesTitle": "Invitaciones pendientes",
-      "noInvites": "No hay invitaciones pendientes.",
-      "systemRole": "Rol del sistema",
-      "permissionsCount": "{count, plural, one {# permiso} other {# permisos}}",
+      "passwordLabel": "Contraseña",
+      "passwordHint": "8+ caracteres con mayúsculas, minúsculas y un número.",
+      "newPasswordLabel": "Nueva contraseña",
+      "newPasswordHint": "Déjala vacía para mantener la contraseña actual.",
+      "showPassword": "Mostrar contraseña",
+      "hidePassword": "Ocultar contraseña",
+      "generate": "Generar",
+      "desksLabel": "Acceso",
+      "members": {
+        "label": "Miembros",
+        "hint": "Aceptar, rechazar y suspender usuarios."
+      },
+      "moderation": {
+        "label": "Moderación",
+        "hint": "Moderar publicaciones, comentarios y reportes."
+      },
+      "marketplace": {
+        "label": "Marketplace",
+        "hint": "Crear, editar, publicar y archivar productos."
+      },
+      "noAccess": "Sin acceso",
+      "create": "Crear",
       "save": "Guardar",
-      "createRole": "Crear rol",
-      "newRoleTitle": "Nuevo rol",
-      "roleNamePlaceholder": "Nombre del rol",
-      "saved": "Guardado",
-      "saveError": "No se pudo guardar.",
-      "roleExists": "Ya existe un rol con ese nombre.",
-      "lastOwnerHint": "El último propietario no puede ser degradado.",
+      "working": "Procesando…",
+      "createdTitle": "Subadministrador creado",
+      "createdOnce": "Cópialos ahora. La contraseña solo se muestra esta vez y no se puede consultar después.",
+      "copy": "Copiar",
+      "copyBoth": "Copiar ambos",
+      "copied": "Copiado",
+      "done": "Listo",
+      "removeTitle": "¿Quitar a {name}?",
+      "removeHint": "Se elimina su acceso y ya no puede iniciar sesión. No se puede deshacer.",
+      "confirmRemove": "Quitar",
       "errors": {
         "forbidden": "No puedes gestionar el equipo.",
-        "invalid": "Revisa el correo y el rol.",
-        "exists": "Esa cuenta ya existe.",
-        "unknown": "Algo salió mal.",
-        "link": "Ese enlace ya no es válido.",
-        "weak": "Elige una contraseña más fuerte."
-      },
-      "assignLater": "Asignar después —",
-      "noRole": "—",
-      "revoke": "Revocar",
-      "newLink": "Nuevo enlace",
-      "linkFailed": "No se pudo generar el enlace."
+        "invalid": "Revisa el nombre y el email, usa una contraseña de 8+ caracteres con mayúsculas, minúsculas y un número, y elige al menos un área.",
+        "exists": "Ya existe una cuenta con ese email.",
+        "owner": "Los propietarios no se pueden cambiar aquí.",
+        "unknown": "Algo salió mal."
+      }
     },
     "capabilities": {
       "members": {
@@ -1528,23 +1535,6 @@
         "rejected": "Perfil rechazado",
         "suspended": "Cuenta suspendida"
       }
-    }
-  },
-  "AcceptInvite": {
-    "title": "Elige tu contraseña",
-    "body": "Te invitaron al equipo de GlobalLinkup. Elige una contraseña para terminar de configurar tu cuenta.",
-    "password": "Contraseña",
-    "confirm": "Confirmar contraseña",
-    "submit": "Activar cuenta",
-    "working": "Activando…",
-    "expired": "A este enlace le falta el token. Pide uno nuevo a quien te invitó.",
-    "errors": {
-      "invalid": "A este enlace le falta el token.",
-      "link": "El enlace no es válido o ya se usó. Pide uno nuevo.",
-      "weak": "Elige una contraseña más fuerte.",
-      "unknown": "Algo salió mal.",
-      "password": "Usa 8+ caracteres con mayúsculas, minúsculas y un número.",
-      "mismatch": "Las contraseñas no coinciden."
     }
   }
 }

@@ -435,12 +435,31 @@ async function productImageCount(
     .eq("product_id", productId);
   return count ?? 0;
 }
+/**
+ * Both channels are optional, but a value that is present must be usable: the
+ * public side derives `wa.me` and `tel:` links from the number, so it has to
+ * carry a country code.
+ */
+const contactEmailSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .max(200)
+  .pipe(z.union([z.literal(""), z.email()]));
+const contactPhoneSchema = z
+  .string()
+  .trim()
+  .max(40)
+  .refine((value) => value === "" || isDialablePhone(value));
+
 const productSchema = z.object({
   name: z.string().trim().min(2).max(160),
   priceCents: z.number().int().min(0).max(100_000_000),
   currency: z.string().trim().length(3).default("USD"),
   description: z.string().trim().max(2000).optional(),
   originLabel: z.string().trim().max(120).optional(),
+  contactEmail: contactEmailSchema.default(""),
+  contactPhone: contactPhoneSchema.default(""),
   isPublished: z.boolean().default(false),
   imagePaths: z.array(z.string().trim().min(1).max(400)).max(10).default([]),
 });
@@ -464,6 +483,8 @@ export async function createProductAction(input: unknown): Promise<AdminResult> 
       currency: data.currency,
       description: data.description ?? null,
       origin_label: data.originLabel ?? null,
+      contact_email: data.contactEmail || null,
+      contact_phone: data.contactPhone || null,
       is_published: data.isPublished,
       created_by: ctx.user.id,
     })
@@ -535,6 +556,8 @@ export async function updateProductAction(input: unknown): Promise<AdminResult> 
       currency: data.currency,
       description: data.description ?? null,
       origin_label: data.originLabel ?? null,
+      contact_email: data.contactEmail || null,
+      contact_phone: data.contactPhone || null,
       is_published: data.isPublished,
     })
     .eq("id", data.productId)
@@ -695,72 +718,6 @@ export async function restoreProductAction(input: unknown): Promise<AdminResult>
   });
 
   revalidatePath("/admin");
-  revalidatePath("/admin/marketplace");
-  revalidatePath("/marketplace");
-  return { ok: true };
-}
-
-// ---------------------------------------------------------------------------
-// Marketplace concierge contact (platform_settings)
-// ---------------------------------------------------------------------------
-
-const CONTACT_KEY = "marketplace.contact";
-
-/**
- * Both channels are optional so an admin can clear one, but a value that is
- * present must be usable: the public side derives `wa.me` and `tel:` links from
- * the number, so it has to carry a country code.
- */
-const contactSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .max(200)
-    .pipe(z.union([z.literal(""), z.email()])),
-  phone: z
-    .string()
-    .trim()
-    .max(40)
-    .refine((value) => value === "" || isDialablePhone(value)),
-});
-
-export async function updateMarketplaceContactAction(input: unknown): Promise<AdminResult> {
-  const ctx = await requireCapabilityClient("marketplace.manage");
-  if (!ctx) return { ok: false, error: "forbidden" };
-
-  const parsed = contactSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: "invalid" };
-
-  const { data: current } = await ctx.supabase
-    .from("platform_settings")
-    .select("value")
-    .eq("key", CONTACT_KEY)
-    .maybeSingle();
-  const previous = (current?.value ?? {}) as { email?: string; phone?: string };
-
-  const { error } = await ctx.supabase
-    .from("platform_settings")
-    .upsert(
-      { key: CONTACT_KEY, value: { email: parsed.data.email, phone: parsed.data.phone } },
-      { onConflict: "key" },
-    );
-
-  if (error) return { ok: false, error: "unknown" };
-
-  // ADR 0003: the trail records that a channel changed, never its value.
-  await recordAudit({
-    action: "settings.updated",
-    targetType: "settings",
-    metadata: {
-      key: CONTACT_KEY,
-      changed: {
-        email: (previous.email ?? "") !== parsed.data.email,
-        phone: (previous.phone ?? "") !== parsed.data.phone,
-      },
-    },
-  });
-
   revalidatePath("/admin/marketplace");
   revalidatePath("/marketplace");
   return { ok: true };

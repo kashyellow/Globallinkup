@@ -371,14 +371,9 @@
       "close": "Close detail panel",
       "artisanPartnerDirect": "Artisan Partner Direct",
       "currencyUsd": "USD",
-      "howToOrderTitle": "How to Order / Direct Inquiries",
-      "howToOrderBody": "GlobalLinkup facilitates orders personally with our regional makers. Because quantities are limited and made in small batches, orders are confirmed directly via our multilingual concierge. No shopping cart checkout or user reselling.",
+      "howToOrderTitle": "Disclaimer",
+      "howToOrderBody": "All transactions are made directly between the seller and the purchaser. GlobalLinkup only connects buyers and sellers and is not a party to any sale, payment, delivery or dispute.",
       "contactCta": "Contact Concierge / Inquire to Buy",
-      "trust": {
-        "fairCompensation": "Fair Compensation",
-        "customsInsured": "Customs Insured",
-        "directMaker": "Direct Maker Trace"
-      },
       "openImage": "Open product image",
       "previousImage": "Previous product image",
       "nextImage": "Next product image",
@@ -388,7 +383,6 @@
       "emailSubject": "Inquiry about {product}",
       "whatsappCta": "WhatsApp",
       "whatsappMessage": "Hello, I would like to ask about {product}.",
-      "callCta": "Call {phone}",
       "contactUnavailable": "The concierge contact is not available yet. Please check back soon."
     },
     "inquiry": {
@@ -400,7 +394,6 @@
       "emailSubject": "GlobalLinkup concierge inquiry",
       "whatsappCta": "WhatsApp the concierge",
       "whatsappMessage": "Hello, I would like to ask the GlobalLinkup concierge.",
-      "callCta": "Call {phone}",
       "contactUnavailable": "The concierge contact is not available yet. Please check back soon."
     }
   },
@@ -488,19 +481,6 @@
       "curatedCatalog": "Curated Catalog",
       "title": "Curated Marketplace",
       "body": "Create drafts, publish finished pieces, unpublish a live item, or keep a retired piece in Trash.",
-      "contact": {
-        "title": "Concierge contact",
-        "body": "Members order every piece through these channels, so they are shared by the whole catalog. Leave a field empty to hide its button.",
-        "notConfigured": "No concierge contact is set yet, so members see a warning instead of the order buttons. Fill in an email, a phone number, or both.",
-        "emailLabel": "Email",
-        "emailPlaceholder": "concierge@yourdomain.com",
-        "phoneLabel": "Phone (with country code)",
-        "phonePlaceholder": "+34 612 345 678",
-        "phoneHint": "Include the country code: the call link and the WhatsApp link are both derived from this number.",
-        "save": "Save contact",
-        "saved": "Saved. The marketplace uses these channels immediately.",
-        "invalid": "Check the fields: the email must be a valid address and the phone needs 8–15 digits including the country code."
-      },
       "statusLive": "Live",
       "statusReserved": "Draft",
       "origin": "Origin (e.g. Oaxaca, MX)",
@@ -514,6 +494,12 @@
         "body": "Curated products undergo admin verification prior to public display.",
         "productTitle": "Product Title (Bilingual or English)",
         "productTitlePlaceholder": "e.g. Handmade Oaxacan Leather Bag",
+        "contactEmail": "Contact email",
+        "contactEmailPlaceholder": "concierge@yourdomain.com",
+        "contactPhone": "Contact phone (with country code)",
+        "contactPhonePlaceholder": "+34 612 345 678",
+        "contactHint": "Optional. Members use these to order this piece; the call and WhatsApp links come from the phone. Leave both empty to use the catalog-wide concierge contact.",
+        "contactInvalid": "Check the contact: the email must be valid and the phone needs 8–15 digits including the country code.",
         "price": "Price ($ USD)",
         "image": "Product Image",
         "imageUpload": "Upload a photo",
@@ -681,44 +667,65 @@
       "searchAction": "Search"
     },
     "team": {
-      "title": "Team & roles",
-      "body": "Create admin accounts with a one-time invite link and decide what each role can reach.",
-      "forbidden": "Your role cannot manage the team.",
-      "inviteTitle": "Invite an admin",
-      "inviteBody": "We generate a link you share yourself: no email is sent, and you never see their password.",
+      "title": "Team",
+      "body": "Create sub-admin accounts and choose which desks each one can work in.",
+      "subAdminCount": "{count, plural, =0 {No sub-admins} one {# sub-admin} other {# sub-admins}}",
+      "add": "Add sub-admin",
+      "edit": "Edit",
+      "remove": "Remove",
+      "subAdminsTitle": "Sub-admins",
+      "noSubAdmins": "No sub-admins yet",
+      "noSubAdminsBody": "Add someone to help with members, moderation or the marketplace. You choose their login and what they can reach.",
+      "ownersTitle": "Owners",
+      "ownerHint": "Full access, including the audit trail, settings and this team. Owners cannot be edited here.",
+      "createTitle": "Add a sub-admin",
+      "createBody": "You choose their login. Share the email and password with them yourself.",
+      "editTitle": "Edit sub-admin",
+      "editBody": "Change their name, desks or password. The login email stays the same.",
+      "nameLabel": "Name",
+      "namePlaceholder": "e.g. Maria López",
+      "loginEmail": "Login email",
       "emailPlaceholder": "person@example.com",
-      "generateLink": "Generate invite link",
-      "working": "Working…",
-      "linkOnce": "Copy this link now — it is shown once.",
-      "copy": "Copy",
-      "copied": "Copied",
-      "adminsTitle": "Admins",
-      "rolesTitle": "Roles",
-      "invitesTitle": "Pending invites",
-      "noInvites": "No pending invites.",
-      "systemRole": "System role",
-      "permissionsCount": "{count, plural, one {# permission} other {# permissions}}",
+      "passwordLabel": "Password",
+      "passwordHint": "8+ characters with upper and lower case and a number.",
+      "newPasswordLabel": "New password",
+      "newPasswordHint": "Leave empty to keep the current password.",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "generate": "Generate",
+      "desksLabel": "Access",
+      "members": {
+        "label": "Members",
+        "hint": "Accept, reject and suspend users."
+      },
+      "moderation": {
+        "label": "Moderation",
+        "hint": "Moderate posts, comments and reports."
+      },
+      "marketplace": {
+        "label": "Marketplace",
+        "hint": "Create, edit, publish and trash products."
+      },
+      "noAccess": "No access",
+      "create": "Create",
       "save": "Save",
-      "createRole": "Create role",
-      "newRoleTitle": "New role",
-      "roleNamePlaceholder": "Role name",
-      "saved": "Saved",
-      "saveError": "Could not save.",
-      "roleExists": "A role with that name already exists.",
-      "lastOwnerHint": "The last owner cannot be demoted.",
+      "working": "Working…",
+      "createdTitle": "Sub-admin created",
+      "createdOnce": "Copy these now. The password is shown only this once and cannot be looked up later.",
+      "copy": "Copy",
+      "copyBoth": "Copy both",
+      "copied": "Copied",
+      "done": "Done",
+      "removeTitle": "Remove {name}?",
+      "removeHint": "Their login is deleted and they can no longer sign in. This cannot be undone.",
+      "confirmRemove": "Remove",
       "errors": {
         "forbidden": "You cannot manage the team.",
-        "invalid": "Check the email and role.",
-        "exists": "That account already exists.",
-        "unknown": "Something went wrong.",
-        "link": "That invite link is not valid anymore.",
-        "weak": "Choose a stronger password."
-      },
-      "assignLater": "Assign later —",
-      "noRole": "—",
-      "revoke": "Revoke",
-      "newLink": "New link",
-      "linkFailed": "Could not generate a link."
+        "invalid": "Check the name and email, use a password with 8+ characters including upper and lower case and a number, and pick at least one desk.",
+        "exists": "An account with that email already exists.",
+        "owner": "Owners cannot be changed here.",
+        "unknown": "Something went wrong."
+      }
     },
     "capabilities": {
       "members": {
@@ -1528,23 +1535,6 @@
         "rejected": "Personal profile rejected",
         "suspended": "Account suspended"
       }
-    }
-  },
-  "AcceptInvite": {
-    "title": "Set your password",
-    "body": "You were invited to the GlobalLinkup team. Choose a password to finish setting up your account.",
-    "password": "Password",
-    "confirm": "Confirm password",
-    "submit": "Activate account",
-    "working": "Activating…",
-    "expired": "This link is missing its token. Ask the person who invited you for a fresh link.",
-    "errors": {
-      "invalid": "This invite link is missing its token.",
-      "link": "This invite link is invalid or already used. Ask for a new one.",
-      "weak": "Choose a stronger password.",
-      "unknown": "Something went wrong.",
-      "password": "Use 8+ characters with upper and lower case and a number.",
-      "mismatch": "The passwords do not match."
     }
   }
 }

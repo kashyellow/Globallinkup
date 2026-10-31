@@ -3,7 +3,7 @@
 import { Icon } from "@/components/ui/icon";
 import { InlineAlert } from "@/components/ui/inline-alert";
 import { cn } from "@/lib/utils";
-import { callHref, gmailComposeHref, whatsappHref } from "../contact";
+import { gmailComposeHref, whatsappHref } from "../contact";
 import type { MarketplaceContact } from "../queries";
 
 const PRIMARY =
@@ -15,7 +15,7 @@ type Action = { href: string; icon: string; label: string; external: boolean };
 
 /**
  * The marketplace is ordered through a human concierge, so the dialog links to
- * whichever channels an admin has configured. Until both are empty, members get
+ * whichever channels an admin has configured. While both are empty, members get
  * a warning instead of a button that goes nowhere.
  */
 export function ConciergeActions({
@@ -27,13 +27,12 @@ export function ConciergeActions({
   contact: MarketplaceContact;
   emailSubject: string;
   whatsappMessage: string;
-  labels: { email: string; whatsapp: string; call: string; unavailable: string };
+  labels: { email: string; whatsapp: string; unavailable: string };
 }) {
   const email = gmailComposeHref(contact.email, emailSubject);
   const whatsapp = whatsappHref(contact.phone, whatsappMessage);
-  const call = callHref(contact.phone);
 
-  if (!email && !whatsapp && !call) {
+  if (!email && !whatsapp) {
     return <InlineAlert tone="warning">{labels.unavailable}</InlineAlert>;
   }
 
@@ -42,7 +41,6 @@ export function ConciergeActions({
   if (whatsapp) {
     actions.push({ href: whatsapp, icon: "chat", label: labels.whatsapp, external: true });
   }
-  if (call) actions.push({ href: call, icon: "call", label: labels.call, external: false });
 
   const [primary, ...secondary] = actions;
 
@@ -70,11 +68,6 @@ export function ConciergeActions({
             </a>
           ))}
         </div>
-      ) : null}
-      {contact.email ? (
-        <p className="text-center font-body-sm text-body-sm break-all text-secondary">
-          {contact.email}
-        </p>
       ) : null}
     </div>
   );

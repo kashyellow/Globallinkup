@@ -71,7 +71,6 @@ export function MarketplaceInquiryDialog({
           labels={{
             email: t("emailCta"),
             whatsapp: t("whatsappCta"),
-            call: t("callCta", { phone: contact.phone }),
             unavailable: t("contactUnavailable"),
           }}
         />

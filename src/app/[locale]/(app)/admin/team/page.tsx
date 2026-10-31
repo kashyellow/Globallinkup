@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 
+import { accessFromCapabilities } from "@/features/admin/desks";
 import { TeamView } from "@/features/admin/components/team-view";
 import { getAdminCapabilities } from "@/lib/admin";
 import { requireAdmin } from "@/lib/auth";
@@ -30,47 +31,38 @@ export default async function AdminTeamPage() {
   // session client cannot list admins here. The capability check above already
   // authorized this screen; the service role only reads the account list.
   const adminClient = createAdminClient();
-  const [roleRows, adminRows, inviteRows] = await Promise.all([
-    supabase
-      .from("admin_roles")
-      .select("id, slug, name, capabilities, is_system")
-      .order("is_system", { ascending: false })
-      .order("name", { ascending: true }),
+  const [roleRows, adminRows] = await Promise.all([
+    supabase.from("admin_roles").select("id, capabilities"),
     adminClient
       .from("profiles")
       .select("id, display_name, admin_role_id")
       .eq("role", "admin")
       .order("display_name", { ascending: true }),
-    supabase
-      .from("admin_invites")
-      .select("id, email, admin_role_id")
-      .is("accepted_at", null)
-      .order("created_at", { ascending: false }),
   ]);
 
-  const roles = (unwrap(roleRows) ?? []).map((role) => ({
-    id: role.id,
-    slug: role.slug,
-    name: role.name,
-    capabilities: role.capabilities,
-    isSystem: role.is_system,
-  }));
-  const roleName = new Map(roles.map((role) => [role.id, role.name]));
+  const roles = new Map(
+    (unwrap(roleRows) ?? []).map((role) => [role.id, role.capabilities] as const),
+  );
+  const capabilitiesOf = (roleId: string | null) => (roleId ? (roles.get(roleId) ?? []) : []);
 
-  return (
-    <TeamView
-      roles={roles}
-      admins={(unwrap(adminRows) ?? []).map((admin) => ({
+  const admins = await Promise.all(
+    (unwrap(adminRows) ?? []).map(async (admin) => {
+      const capabilities = capabilitiesOf(admin.admin_role_id);
+      const isOwner = capabilities.includes("admins.manage");
+      // The owner reads each sub-admin's login email; passwords are hashed and
+      // cannot be read back.
+      const email = isOwner
+        ? ""
+        : ((await adminClient.auth.admin.getUserById(admin.id)).data.user?.email ?? "");
+      return {
         id: admin.id,
         name: admin.display_name,
-        roleId: admin.admin_role_id,
-      }))}
-      invites={(unwrap(inviteRows) ?? []).map((invite) => ({
-        id: invite.id,
-        email: invite.email,
-        roleName: invite.admin_role_id ? (roleName.get(invite.admin_role_id) ?? "") : "",
-        roleId: invite.admin_role_id,
-      }))}
-    />
+        email,
+        isOwner,
+        access: accessFromCapabilities(capabilities),
+      };
+    }),
   );
+
+  return <TeamView admins={admins} />;
 }

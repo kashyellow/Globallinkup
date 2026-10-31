@@ -15,7 +15,6 @@ import {
 import {
   ADMIN_PAGE_SIZES,
   getAdminMarketplace,
-  getAdminMarketplaceContact,
   type AdminProductFilter,
 } from "@/features/admin/queries";
 
@@ -47,12 +46,10 @@ export default async function AdminMarketplacePage({
     page,
     pageSize: ADMIN_PAGE_SIZES.marketplace,
   });
-  const contact = await getAdminMarketplaceContact();
 
   return (
     <AdminMarketplaceTab
       products={products}
-      contact={contact}
       query={query}
       status={status}
       page={page}

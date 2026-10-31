@@ -1,22 +1,21 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 
-import { isAdminCapability } from "@/lib/admin-capabilities";
 import { recordAudit } from "@/lib/audit";
-import { roleSnapshot } from "@/features/admin/audit-snapshots";
+import { deskCapabilities, deskRole, type DeskAccess } from "@/features/admin/desks";
 import { getCurrentProfile, getCurrentUser } from "@/lib/auth";
-import { getPublicEnv } from "@/lib/env";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { uuidSchema } from "@/lib/validation/ids";
 
-export type TeamState = { ok: boolean; error?: string; link?: string };
+export type TeamState = { ok: boolean; error?: string };
 
 const emailSchema = z.email();
-const passwordSchema = z.string().min(8).max(72);
+// Same rule the sign-up form enforces: 8+ characters with upper, lower and a digit.
+const passwordSchema = z.string().min(8).max(72).regex(/[a-z]/).regex(/[A-Z]/).regex(/\d/);
+const nameSchema = z.string().trim().min(2).max(60);
 
 async function requireAdminsManager() {
   const user = await getCurrentUser();
@@ -31,345 +30,204 @@ async function requireAdminsManager() {
   return { user, profile, supabase };
 }
 
-function readCapabilities(formData: FormData): string[] {
-  const values = formData.getAll("capability").map(String).filter(isAdminCapability);
-  return [...new Set(values)];
+function readAccess(formData: FormData): DeskAccess {
+  return {
+    members: formData.get("members") === "on",
+    moderation: formData.get("moderation") === "on",
+    marketplace: formData.get("marketplace") === "on",
+  };
 }
 
-function siteUrl() {
-  return getPublicEnv().NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+/**
+ * Each combination of desks is one hidden role, created on first use. Keeping
+ * the capabilities in sync here means a change to a desk reaches everyone on it.
+ */
+async function resolveDeskRole(access: DeskAccess) {
+  const desk = deskRole(access);
+  if (!desk) return null;
+  const { data } = await createAdminClient()
+    .from("admin_roles")
+    .upsert(
+      { slug: desk.slug, name: desk.name, capabilities: deskCapabilities(access) },
+      { onConflict: "slug" },
+    )
+    .select("id, slug")
+    .single();
+  return data;
 }
 
-/** Create the account shell and return a one-time invite link, shown once. */
-export async function inviteAdminAction(
+/** Create the account directly: the owner chooses the name, email and password. */
+export async function createSubAdminAction(
   _previous: TeamState,
   formData: FormData,
 ): Promise<TeamState> {
   const ctx = await requireAdminsManager();
   if (!ctx) return { ok: false, error: "forbidden" };
 
-  const rawRoleId = String(formData.get("roleId") ?? "").trim();
   const parsed = z
-    .object({ email: emailSchema, roleId: z.union([uuidSchema, z.literal("")]) })
-    .safeParse({ email: formData.get("email"), roleId: rawRoleId });
-  if (!parsed.success) return { ok: false, error: "invalid" };
-
-  const email = parsed.data.email.trim().toLowerCase();
-  // Empty means "assign later": the account starts with no role and shows "—".
-  const role = rawRoleId
-    ? ((await ctx.supabase.from("admin_roles").select("id, slug").eq("id", rawRoleId).maybeSingle())
-        .data ?? null)
-    : null;
-  if (rawRoleId && !role) return { ok: false, error: "invalid" };
+    .object({ name: nameSchema, email: emailSchema, password: passwordSchema })
+    .safeParse({
+      name: formData.get("name"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+    });
+  const role = await resolveDeskRole(readAccess(formData));
+  if (!parsed.success || !role) return { ok: false, error: "invalid" };
 
   const admin = createAdminClient();
-  const link = await admin.auth.admin.generateLink({ type: "invite", email });
-  if (link.error || !link.data.properties?.hashed_token) {
-    return { ok: false, error: link.error?.message.includes("already") ? "exists" : "unknown" };
-  }
-
-  const { data: invite, error } = await admin
-    .from("admin_invites")
-    .upsert(
-      {
-        email,
-        admin_role_id: role?.id ?? null,
-        invited_by: ctx.user.id,
-        accepted_at: null,
-      },
-      { onConflict: "email" },
-    )
-    .select("id")
-    .single();
-  if (error || !invite) return { ok: false, error: "unknown" };
-
-  await recordAudit({
-    action: "admin.invite_created",
-    targetType: "invite",
-    targetId: invite.id,
-    metadata: {
-      before: { status: null, role_slug: null },
-      after: { status: "pending", role_slug: role?.slug ?? null },
-    },
+  const created = await admin.auth.admin.createUser({
+    email: parsed.data.email.trim().toLowerCase(),
+    password: parsed.data.password,
+    email_confirm: true,
   });
-
-  revalidatePath("/admin/team");
-  return {
-    ok: true,
-    link: `${siteUrl()}/accept-invite?token_hash=${encodeURIComponent(link.data.properties.hashed_token)}`,
-  };
-}
-
-/** Consume the invite link, set the password, and create the admin profile. */
-export async function acceptInviteAction(
-  _previous: TeamState,
-  formData: FormData,
-): Promise<TeamState> {
-  const tokenHash = String(formData.get("token_hash") ?? "");
-
-  // Validate first: `verifyOtp` burns the single-use invite token, so a rejected
-  // password must not reach it.
-  const password = passwordSchema.safeParse(formData.get("password"));
-  if (!password.success) return { ok: false, error: "password" };
-  if (password.data !== formData.get("confirm")) return { ok: false, error: "mismatch" };
-
-  const parsed = z
-    .object({ tokenHash: z.string().min(10), password: z.string() })
-    .safeParse({ tokenHash, password: password.data });
-  if (!parsed.success) return { ok: false, error: "invalid" };
-
-  const supabase = await createClient();
-  const verified = await supabase.auth.verifyOtp({ type: "invite", token_hash: tokenHash });
-  if (verified.error || !verified.data.user) return { ok: false, error: "link" };
-
-  const user = verified.data.user;
-  const updated = await supabase.auth.updateUser({ password: parsed.data.password });
-  if (updated.error) return { ok: false, error: "weak" };
-
-  const email = (user.email ?? "").toLowerCase();
-  const admin = createAdminClient();
-  const { data: invite } = await admin
-    .from("admin_invites")
-    .select("id, admin_role_id, accepted_at")
-    .eq("email", email)
-    .maybeSingle();
-
-  if (!invite || invite.accepted_at) {
-    await supabase.auth.signOut();
-    return { ok: false, error: "link" };
+  if (created.error || !created.data.user) {
+    return { ok: false, error: created.error?.code === "email_exists" ? "exists" : "unknown" };
   }
 
-  const displayName = email.split("@")[0] || "Admin";
-  const { error: profileError } = await admin.from("profiles").upsert(
+  const userId = created.data.user.id;
+  const { error } = await admin.from("profiles").upsert(
     {
-      id: user.id,
-      display_name: displayName,
+      id: userId,
+      display_name: parsed.data.name,
       role: "admin",
       approval_status: "approved",
-      admin_role_id: invite.admin_role_id,
+      admin_role_id: role.id,
       reviewed_at: new Date().toISOString(),
     },
     { onConflict: "id" },
   );
-  if (profileError) return { ok: false, error: "unknown" };
-
-  await admin
-    .from("admin_invites")
-    .update({ accepted_at: new Date().toISOString() })
-    .eq("id", invite.id);
-
-  await recordInviteAudit(user.id, invite.admin_role_id);
-  await supabase.auth.signOut();
-  redirect("/login");
-}
-
-async function recordInviteAudit(actorId: string, roleId: string | null) {
-  const admin = createAdminClient();
-  const role = roleId
-    ? (await admin.from("admin_roles").select("slug").eq("id", roleId).maybeSingle()).data
-    : null;
-  await admin.from("audit_events").insert({
-    actor_id: actorId,
-    actor_role: role?.slug ?? null,
-    action: "admin.invite_accepted",
-    target_type: "profile",
-    target_id: actorId,
-    metadata: {
-      before: { status: "pending", role_slug: role?.slug ?? null },
-      after: { status: "accepted", role_slug: role?.slug ?? null },
-    },
-  });
-}
-
-export async function revokeInviteAction(formData: FormData): Promise<TeamState> {
-  const ctx = await requireAdminsManager();
-  if (!ctx) return { ok: false, error: "forbidden" };
-
-  const parsed = z
-    .object({ inviteId: uuidSchema })
-    .safeParse({ inviteId: formData.get("inviteId") });
-  if (!parsed.success) return { ok: false, error: "invalid" };
-
-  const { data: invite } = await ctx.supabase
-    .from("admin_invites")
-    .select("id, admin_role_id, accepted_at")
-    .eq("id", parsed.data.inviteId)
-    .maybeSingle();
-  if (!invite) return { ok: false, error: "invalid" };
-
-  const role = invite.admin_role_id
-    ? (
-        await ctx.supabase
-          .from("admin_roles")
-          .select("slug")
-          .eq("id", invite.admin_role_id)
-          .maybeSingle()
-      ).data
-    : null;
-  const status = invite.accepted_at ? "accepted" : "pending";
-
-  const { error } = await ctx.supabase
-    .from("admin_invites")
-    .delete()
-    .eq("id", parsed.data.inviteId);
-  if (error) return { ok: false, error: "unknown" };
-
-  await recordAudit({
-    action: "admin.invite_revoked",
-    targetType: "invite",
-    targetId: invite.id,
-    metadata: {
-      before: { status, role_slug: role?.slug ?? null },
-      after: { status: "revoked", role_slug: role?.slug ?? null },
-    },
-  });
-
-  revalidatePath("/admin/team");
-  return { ok: true };
-}
-
-export async function saveRoleAction(_previous: TeamState, formData: FormData): Promise<TeamState> {
-  const ctx = await requireAdminsManager();
-  if (!ctx) return { ok: false, error: "forbidden" };
-
-  const parsed = z.object({ roleId: uuidSchema }).safeParse({ roleId: formData.get("roleId") });
-  if (!parsed.success) return { ok: false, error: "invalid" };
-
-  const { data: before } = await ctx.supabase
-    .from("admin_roles")
-    .select("slug, capabilities")
-    .eq("id", parsed.data.roleId)
-    .maybeSingle();
-  if (!before) return { ok: false, error: "invalid" };
-
-  const capabilities = readCapabilities(formData);
-  // Audit before the write: the actor may remove admins.manage from their own
-  // role, and record_audit() would refuse the row afterwards.
-  await recordAudit({
-    action: "role.updated",
-    targetType: "role",
-    targetId: parsed.data.roleId,
-    metadata: {
-      before: roleSnapshot(before),
-      after: roleSnapshot({ ...before, capabilities }),
-    },
-  });
-
-  const { error } = await ctx.supabase
-    .from("admin_roles")
-    .update({ capabilities })
-    .eq("id", parsed.data.roleId);
-  if (error) return { ok: false, error: "unknown" };
-
-  revalidatePath("/admin/team");
-  return { ok: true };
-}
-
-export async function createRoleAction(
-  _previous: TeamState,
-  formData: FormData,
-): Promise<TeamState> {
-  const ctx = await requireAdminsManager();
-  if (!ctx) return { ok: false, error: "forbidden" };
-
-  const parsed = z
-    .object({ name: z.string().trim().min(2).max(40) })
-    .safeParse({ name: formData.get("name") });
-  if (!parsed.success) return { ok: false, error: "invalid" };
-
-  const name = parsed.data.name;
-  const slug = name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-
-  const { data: created, error } = await ctx.supabase
-    .from("admin_roles")
-    .insert({
-      slug,
-      name,
-      capabilities: readCapabilities(formData),
-    })
-    .select("id, slug, capabilities")
-    .single();
-  if (error) return { ok: false, error: error.code === "23505" ? "exists" : "unknown" };
-  if (!created) return { ok: false, error: "unknown" };
-
-  await recordAudit({
-    action: "role.created",
-    targetType: "role",
-    targetId: created.id,
-    metadata: {
-      before: { slug: null, capabilities: [] },
-      after: roleSnapshot(created),
-    },
-  });
-
-  revalidatePath("/admin/team");
-  return { ok: true };
-}
-
-export async function assignRoleAction(formData: FormData): Promise<TeamState> {
-  const ctx = await requireAdminsManager();
-  if (!ctx) return { ok: false, error: "forbidden" };
-
-  const parsed = z
-    .object({ profileId: uuidSchema, roleId: uuidSchema })
-    .safeParse({ profileId: formData.get("profileId"), roleId: formData.get("roleId") });
-  if (!parsed.success) return { ok: false, error: "invalid" };
-
-  const admin = createAdminClient();
-  const { data: ownerRole } = await admin
-    .from("admin_roles")
-    .select("id")
-    .eq("slug", "owner")
-    .maybeSingle();
-  const { data: target } = await admin
-    .from("profiles")
-    .select("admin_role_id")
-    .eq("id", parsed.data.profileId)
-    .maybeSingle();
-  if (!target) return { ok: false, error: "invalid" };
-
-  // The last owner cannot be demoted.
-  if (ownerRole && target.admin_role_id === ownerRole.id && parsed.data.roleId !== ownerRole.id) {
-    const { count } = await admin
-      .from("profiles")
-      .select("id", { count: "exact", head: true })
-      .eq("admin_role_id", ownerRole.id);
-    if ((count ?? 0) <= 1) return { ok: false, error: "lastOwner" };
+  if (error) {
+    // Do not leave a login behind that has no profile.
+    await admin.auth.admin.deleteUser(userId);
+    return { ok: false, error: "unknown" };
   }
 
-  const [oldRole, newRole] = await Promise.all([
-    target.admin_role_id
-      ? admin.from("admin_roles").select("slug").eq("id", target.admin_role_id).maybeSingle()
-      : Promise.resolve({ data: null }),
-    admin.from("admin_roles").select("slug").eq("id", parsed.data.roleId).maybeSingle(),
-  ]);
-  if (!newRole.data) return { ok: false, error: "invalid" };
+  await recordAudit({
+    action: "admin.created",
+    targetType: "profile",
+    targetId: userId,
+    metadata: {
+      before: { role_slug: null, role_id: null },
+      after: { role_slug: role.slug, role_id: role.id },
+    },
+  });
+
+  revalidatePath("/admin/team");
+  return { ok: true };
+}
+
+/** The owner changes a sub-admin's name, desks and, optionally, password. */
+export async function updateSubAdminAction(formData: FormData): Promise<TeamState> {
+  const ctx = await requireAdminsManager();
+  if (!ctx) return { ok: false, error: "forbidden" };
+
+  const newPassword = String(formData.get("password") ?? "");
+  const parsed = z
+    .object({
+      profileId: uuidSchema,
+      name: nameSchema,
+      password: z.union([z.literal(""), passwordSchema]),
+    })
+    .safeParse({
+      profileId: formData.get("profileId"),
+      name: formData.get("name"),
+      password: newPassword,
+    });
+  const role = await resolveDeskRole(readAccess(formData));
+  if (!parsed.success || !role) return { ok: false, error: "invalid" };
+
+  const admin = createAdminClient();
+  const target = await loadSubAdmin(admin, parsed.data.profileId);
+  if (!target) return { ok: false, error: "invalid" };
+  if (target.isOwner) return { ok: false, error: "owner" };
+
+  if (parsed.data.password) {
+    const reset = await admin.auth.admin.updateUserById(parsed.data.profileId, {
+      password: parsed.data.password,
+    });
+    if (reset.error) return { ok: false, error: "unknown" };
+  }
 
   await recordAudit({
     action: "admin.role_changed",
     targetType: "profile",
     targetId: parsed.data.profileId,
     metadata: {
-      before: {
-        role_slug: oldRole.data?.slug ?? null,
-        role_id: target.admin_role_id,
-      },
+      before: { role_slug: target.slug, role_id: target.roleId },
       after: {
-        role_slug: newRole.data.slug,
-        role_id: parsed.data.roleId,
+        role_slug: role.slug,
+        role_id: role.id,
+        // The password itself is never recorded, only that it was reset.
+        password_reset: parsed.data.password !== "",
       },
     },
   });
 
-  const { error: assignError } = await admin
+  const { error } = await admin
     .from("profiles")
-    .update({ admin_role_id: parsed.data.roleId })
+    .update({ admin_role_id: role.id, display_name: parsed.data.name })
     .eq("id", parsed.data.profileId);
-  if (assignError) return { ok: false, error: "unknown" };
+  if (error) return { ok: false, error: "unknown" };
 
   revalidatePath("/admin/team");
   return { ok: true };
+}
+
+/** Removing a sub-admin deletes their login. Owners cannot be removed. */
+export async function removeSubAdminAction(formData: FormData): Promise<TeamState> {
+  const ctx = await requireAdminsManager();
+  if (!ctx) return { ok: false, error: "forbidden" };
+
+  const parsed = z
+    .object({ profileId: uuidSchema })
+    .safeParse({ profileId: formData.get("profileId") });
+  if (!parsed.success) return { ok: false, error: "invalid" };
+
+  const admin = createAdminClient();
+  const target = await loadSubAdmin(admin, parsed.data.profileId);
+  if (!target) return { ok: false, error: "invalid" };
+  if (target.isOwner) return { ok: false, error: "owner" };
+
+  await recordAudit({
+    action: "admin.removed",
+    targetType: "profile",
+    targetId: parsed.data.profileId,
+    metadata: {
+      before: { role_slug: target.slug, role_id: target.roleId },
+      after: { role_slug: null, role_id: null },
+    },
+  });
+
+  const { error } = await admin.auth.admin.deleteUser(parsed.data.profileId);
+  if (error) return { ok: false, error: "unknown" };
+
+  revalidatePath("/admin/team");
+  return { ok: true };
+}
+
+/** An admin account and whether it holds `admins.manage` (an owner). */
+async function loadSubAdmin(admin: ReturnType<typeof createAdminClient>, profileId: string) {
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("admin_role_id")
+    .eq("id", profileId)
+    .eq("role", "admin")
+    .maybeSingle();
+  if (!profile) return null;
+
+  const role = profile.admin_role_id
+    ? (
+        await admin
+          .from("admin_roles")
+          .select("slug, capabilities")
+          .eq("id", profile.admin_role_id)
+          .maybeSingle()
+      ).data
+    : null;
+
+  return {
+    roleId: profile.admin_role_id,
+    slug: role?.slug ?? null,
+    isOwner: role?.capabilities.includes("admins.manage") ?? false,
+  };
 }

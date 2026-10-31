@@ -56,6 +56,18 @@ async function signIn(
   }
 }
 
+/**
+ * Open the admin product form and wait for its initial focus on the title. The
+ * dialog moves focus there in an effect; filling another field before that
+ * lands sends the rest of the keystrokes into the title.
+ */
+async function openNewProductForm(page: Page) {
+  await page.getByRole("button", { name: /new product/i }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByLabel(/Product Title/i)).toBeFocused();
+  return dialog;
+}
+
 test("@auth an approved user lands in the app", async ({ page }) => {
   await signIn(page, "sofia.martinez@example.com");
   await expect(page).toHaveURL(/\/en\/discover$/);
@@ -294,9 +306,12 @@ test("@auth comments and replies on a post", async ({ page }) => {
   const composer = page.getByPlaceholder(/write a comment/i);
   await composer.fill("E2E root comment");
   await page.getByRole("button", { name: /post comment/i }).click();
-  await expect(page.getByText("E2E root comment")).toBeVisible();
-  // Wait for the composer to clear before starting a reply; the visible text
-  // above can still be the textarea value for one render.
+  // Match the rendered comment, not the composer's textarea, which still holds
+  // the text until the post lands. A retry finds earlier runs' comments too,
+  // so any one of them proves the thread renders.
+  await expect(
+    page.getByRole("paragraph").filter({ hasText: "E2E root comment" }).first(),
+  ).toBeVisible();
   await expect(composer).toHaveValue("");
 
   await page
@@ -309,7 +324,9 @@ test("@auth comments and replies on a post", async ({ page }) => {
   const postReply = page.getByRole("button", { name: /post reply/i });
   await expect(postReply).toBeVisible();
   await postReply.click();
-  await expect(page.getByText("E2E reply comment")).toBeVisible();
+  await expect(
+    page.getByRole("paragraph").filter({ hasText: "E2E reply comment" }).first(),
+  ).toBeVisible();
 });
 
 test("@auth authors delete posts from the archive, not the feed", async ({ page }) => {
@@ -360,10 +377,8 @@ test("@auth the audit and team desks render cleanly", async ({ page }) => {
   await expect(page.getByRole("heading", { name: /audit trail/i })).toBeVisible();
 
   await page.goto("/en/admin/team");
-  await expect(page.getByRole("heading", { name: /team & roles/i })).toBeVisible();
-  // Roles are collapsible cards now: open the first one before checking the matrix.
-  await page.locator("summary").first().click();
-  await expect(page.getByRole("checkbox").first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^team$/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /add sub-admin/i }).first()).toBeVisible();
 
   const relevant = errors.filter((error) =>
     /MISSING_MESSAGE|is not a function|use\(\)/.test(error),
@@ -493,8 +508,9 @@ test("@auth the marketplace paginates, filters, and opens details", async ({ pag
   await expect(detail).toBeVisible();
   await expect(detail.getByText(/Artisan Partner Direct/i)).toBeVisible();
 
-  // The concierge channels come from the admin-editable setting: email opens the
-  // Gmail composer, and the seeded phone drives the WhatsApp and call links.
+  // Seeded products carry no contact of their own, so the dialog falls back to
+  // the catalog-wide concierge: email opens the Gmail composer and the phone
+  // drives WhatsApp. There is no call button and the address is not printed.
   await expect(detail.getByRole("link", { name: /contact concierge/i })).toHaveAttribute(
     "href",
     /^https:\/\/mail\.google\.com\/mail\/\?.*to=concierge%40globallinkup\.com/,
@@ -503,10 +519,9 @@ test("@auth the marketplace paginates, filters, and opens details", async ({ pag
     "href",
     /^https:\/\/wa\.me\/34612345678\?text=/,
   );
-  await expect(detail.getByRole("link", { name: "Call +34 612 345 678" })).toHaveAttribute(
-    "href",
-    "tel:+34612345678",
-  );
+  await expect(detail.locator('a[href^="tel:"]')).toHaveCount(0);
+  await expect(detail.getByText("concierge@globallinkup.com")).toHaveCount(0);
+  await expect(detail.getByText(/^Disclaimer$/)).toBeVisible();
 
   await detail.getByRole("button", { name: /close detail panel/i }).click();
 
@@ -523,55 +538,44 @@ test("@auth the marketplace paginates, filters, and opens details", async ({ pag
   await expect(page.getByText(/Artisanal Ceramic Espresso Set/)).toBeVisible();
 });
 
-test("@auth an admin edits a role and the desk updates without a reload", async ({ page }) => {
+test("@auth an owner creates a sub-admin and the desk lists it without a reload", async ({
+  page,
+}) => {
   await signIn(page, "admin@globallinkup.test");
   await page.goto("/en/admin/team");
   await page.waitForTimeout(1200);
 
-  // Idempotent: on a rerun the role from the previous run already exists.
-  const roleName = "E2E Desk";
-  await page.getByPlaceholder(/role name/i).fill(roleName);
-  await page.getByRole("button", { name: /create role/i }).click();
+  const stamp = Date.now();
+  const email = `e2e-sub-admin-${stamp}@example.com`;
+  await page
+    .getByRole("button", { name: /add sub-admin/i })
+    .first()
+    .click();
+  const dialog = page.getByRole("dialog", { name: /add a sub-admin/i });
+  // Same initial-focus race as the product form: wait for it before typing.
+  await expect(dialog.getByLabel(/^name$/i)).toBeFocused();
+  await dialog.getByLabel(/^name$/i).fill(`E2E Sub ${stamp}`);
+  await dialog.getByLabel(/login email/i).fill(email);
+  await dialog.getByLabel(/^password$/i).fill("E2e-pass-12345");
+  await dialog.getByRole("checkbox", { name: /marketplace/i }).check();
+  await dialog.getByRole("button", { name: /^create$/i }).click();
 
-  const card = page.locator("details").filter({ hasText: roleName });
-  await expect(card).toBeVisible({ timeout: 15_000 });
+  // The credentials are shown once, then the new account is listed.
+  const created = page.getByRole("dialog", { name: /sub-admin created/i });
+  await expect(created).toContainText(email, { timeout: 15_000 });
+  await created.getByRole("button", { name: /^done$/i }).click();
 
-  const summary = card.locator("summary");
-  const save = card.getByRole("button", { name: /^save$/i });
-  async function openCard() {
-    if (!(await card.evaluate((element) => (element as HTMLDetailsElement).open))) {
-      await summary.click();
-    }
-  }
+  const row = page.locator("li").filter({ hasText: email });
+  await expect(row).toBeVisible({ timeout: 15_000 });
+  await expect(row).toContainText(/marketplace/i);
 
-  // Each save must land on the summary without a page reload — the desk used to
-  // keep stale server props until a manual refresh. Every step below waits for a
-  // text change that only fresh server props can produce.
-  await openCard();
-  const checks = card.getByRole("checkbox");
-  const total = await checks.count();
-  let checked = false;
-  for (let index = 0; index < total; index += 1) {
-    if (await checks.nth(index).isChecked()) {
-      checked = true;
-      await checks.nth(index).uncheck();
-    }
-  }
-  if (checked) {
-    await save.click();
-    await expect(summary).toContainText(/0 permissions/i, { timeout: 15_000 });
-  }
-
-  await openCard();
-  await checks.first().check();
-  await save.click();
-  await expect(summary).toContainText(/1 permission/i, { timeout: 15_000 });
-
-  // Leave it empty so the next run starts from the same state.
-  await openCard();
-  await checks.first().uncheck();
-  await save.click();
-  await expect(summary).toContainText(/0 permissions/i, { timeout: 15_000 });
+  // Leave the desk as it was found so the next run starts clean.
+  await row.getByRole("button", { name: /^remove/i }).click();
+  await page
+    .getByRole("alertdialog")
+    .getByRole("button", { name: /^remove$/i })
+    .click();
+  await expect(row).toHaveCount(0, { timeout: 15_000 });
 });
 
 test("@auth an admin reviews a dossier and approves a pending persona", async ({ page }) => {
@@ -607,7 +611,9 @@ test("@auth an admin previews a product with its gallery", async ({ page }) => {
   await signIn(page, "admin@globallinkup.test");
   await page.goto("/en/admin/marketplace");
   await page.waitForTimeout(1200);
+  // Target the seeded piece by name: drafts created by other tests sort first.
   await page
+    .locator('[data-product-name="Handmade Oaxacan Leather Travel Bag"]')
     .getByRole("button", { name: /^preview$/i })
     .first()
     .click();
@@ -620,29 +626,37 @@ test("@auth an admin previews a product with its gallery", async ({ page }) => {
     .click();
 });
 
-test("@auth an admin edits the marketplace concierge contact", async ({ page }) => {
+test("@auth an admin saves a per-product contact from the product form", async ({ page }) => {
   await signIn(page, "admin@globallinkup.test");
   await page.goto("/en/admin/marketplace");
   await page.waitForTimeout(1200);
 
-  const panel = page
-    .locator("section")
-    .filter({ has: page.getByRole("heading", { name: /concierge contact/i }) });
-  const phone = panel.getByLabel(/phone/i);
-  await expect(phone).toHaveValue("+34 612 345 678");
+  // Unique per run: the trashed rows of earlier runs stay in the catalog.
+  const name = `E2E Contact Piece ${Date.now()}`;
+  const dialog = await openNewProductForm(page);
+  await dialog.getByLabel(/Product Title/i).fill(name);
+  await dialog.getByLabel(/Price/i).fill("25");
+  await dialog.getByLabel(/contact email/i).fill("maker@example.com");
+  await dialog.getByLabel(/contact phone/i).fill("+34 600 999 888");
+  await dialog.getByRole("button", { name: /save as draft/i }).click();
+  await expect(dialog).toBeHidden({ timeout: 20_000 });
 
-  await phone.fill("+34 600 999 888");
-  await panel.getByRole("button", { name: /save contact/i }).click();
-  await expect(panel.getByText(/saved\. the marketplace/i)).toBeVisible({ timeout: 15_000 });
+  // Reopening the piece reads the contact back from the product row.
+  const row = page.locator(`[data-product-name="${name}"]`);
+  await expect(row).toBeVisible({ timeout: 15_000 });
+  await row.getByRole("button", { name: /^edit$/i }).click();
+  const edit = page.getByRole("dialog", { name: /edit marketplace piece/i });
+  await expect(edit.getByLabel(/contact email/i)).toHaveValue("maker@example.com");
+  await expect(edit.getByLabel(/contact phone/i)).toHaveValue("+34 600 999 888");
+  await edit.getByRole("button", { name: /cancel/i }).click();
 
-  // The save writes platform_settings, so a reload must read the new number.
-  await page.reload();
-  await expect(page.getByLabel(/phone/i)).toHaveValue("+34 600 999 888");
-
-  // Restore the seed so the member-side catalog assertions stay stable.
-  await page.getByLabel(/phone/i).fill("+34 612 345 678");
-  await page.getByRole("button", { name: /save contact/i }).click();
-  await expect(page.getByText(/saved\. the marketplace/i)).toBeVisible({ timeout: 15_000 });
+  // Trash it so the draft does not crowd the desk on later runs.
+  await row.getByRole("button", { name: /delete product/i }).click();
+  await page
+    .getByRole("alertdialog")
+    .getByRole("button", { name: /move to trash/i })
+    .click();
+  await expect(row.getByText("Trash", { exact: true })).toBeVisible({ timeout: 10_000 });
 });
 
 test("@auth an admin creates, trashes, and restores a draft product", async ({ page }) => {
@@ -650,9 +664,7 @@ test("@auth an admin creates, trashes, and restores a draft product", async ({ p
   await page.goto("/en/admin/marketplace");
   await page.waitForTimeout(1200);
 
-  await page.getByRole("button", { name: /new product/i }).click();
-  const dialog = page.getByRole("dialog");
-  await expect(dialog).toBeVisible();
+  const dialog = await openNewProductForm(page);
   await dialog.getByLabel(/Product Title/i).fill("E2E Draft Piece");
   await dialog.getByLabel(/Price/i).fill("18");
   await dialog.getByLabel(/Origin/i).fill("Barcelona, ES");

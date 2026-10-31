@@ -56,13 +56,15 @@ export function ProductDialog({
 
 function DialogContent({
   product,
-  contact,
+  contact: catalogContact,
   onClose,
 }: {
   product: MarketplaceProduct;
   contact: MarketplaceContact;
   onClose: () => void;
 }) {
+  // The piece's own contact wins; the catalog-wide concierge is the fallback.
+  const contact = product.contact.email || product.contact.phone ? product.contact : catalogContact;
   const t = useTranslations("Marketplace.drawer");
   const [index, setIndex] = useState(0);
   const [lightbox, setLightbox] = useState(false);
@@ -208,19 +210,9 @@ function DialogContent({
               labels={{
                 email: t("contactCta"),
                 whatsapp: t("whatsappCta"),
-                call: t("callCta", { phone: contact.phone }),
                 unavailable: t("contactUnavailable"),
               }}
             />
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-x-space-md gap-y-2 border-t border-outline-variant pt-space-md font-label-md text-label-md text-secondary">
-            {(["fairCompensation", "customsInsured", "directMaker"] as const).map((key) => (
-              <div key={key} className="flex items-center gap-1">
-                <Icon name="check_circle" className="text-sm text-tertiary" />
-                <span>{t(`trust.${key}`)}</span>
-              </div>
-            ))}
           </div>
         </div>
       </div>

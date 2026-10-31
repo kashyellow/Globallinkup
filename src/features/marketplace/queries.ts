@@ -11,6 +11,8 @@ export type MarketplaceProduct = {
   id: string;
   name: string;
   originLabel: string;
+  /** Per-product channels; blank means use the catalog-wide concierge contact. */
+  contact: MarketplaceContact;
   createdAt: string;
   price: number;
   description: string;
@@ -18,7 +20,7 @@ export type MarketplaceProduct = {
   imageAlt: string;
 };
 
-/** Concierge channels, admin-editable. Both are empty until an admin fills them. */
+/** Concierge channels. Both are empty until an admin fills them. */
 export type MarketplaceContact = {
   email: string;
   phone: string;
@@ -29,7 +31,8 @@ export type MarketplacePage = {
   total: number;
 };
 
-const PAGE_COLUMNS = "id, name, price_cents, description, origin_label, created_at";
+const PAGE_COLUMNS =
+  "id, name, price_cents, description, origin_label, contact_email, contact_phone, created_at";
 
 function safeNeedle(value: string) {
   // PostgREST's `or` expression is comma/parenthesis-delimited; keep the search
@@ -111,6 +114,7 @@ export async function getMarketplacePage({
         id: row.id,
         name: row.name,
         originLabel: row.origin_label ?? "",
+        contact: { email: row.contact_email ?? "", phone: row.contact_phone ?? "" },
         createdAt: row.created_at ?? "",
         price: (row.price_cents ?? 0) / 100,
         description: row.description ?? "",
@@ -133,8 +137,8 @@ export async function getMarketplaceContact(): Promise<MarketplaceContact> {
       .maybeSingle(),
   );
 
-  // Cloud projects have no seeded row: an admin fills these in from
-  // /admin/marketplace, and until then the public side warns instead of linking.
+  // Cloud projects have no seeded row: products carry their own contact
+  // and this is only the fallback; until either is set the public side warns instead of linking.
   const value = (data?.value ?? {}) as { email?: string; phone?: string };
 
   return {
