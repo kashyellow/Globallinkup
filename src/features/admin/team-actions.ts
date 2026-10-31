@@ -181,21 +181,21 @@ async function recordInviteAudit(actorId: string, roleId: string | null) {
   });
 }
 
-export async function revokeInviteAction(formData: FormData): Promise<void> {
+export async function revokeInviteAction(formData: FormData): Promise<TeamState> {
   const ctx = await requireAdminsManager();
-  if (!ctx) return;
+  if (!ctx) return { ok: false, error: "forbidden" };
 
   const parsed = z
     .object({ inviteId: uuidSchema })
     .safeParse({ inviteId: formData.get("inviteId") });
-  if (!parsed.success) return;
+  if (!parsed.success) return { ok: false, error: "invalid" };
 
   const { data: invite } = await ctx.supabase
     .from("admin_invites")
     .select("id, admin_role_id, accepted_at")
     .eq("id", parsed.data.inviteId)
     .maybeSingle();
-  if (!invite) return;
+  if (!invite) return { ok: false, error: "invalid" };
 
   const role = invite.admin_role_id
     ? (
@@ -212,7 +212,7 @@ export async function revokeInviteAction(formData: FormData): Promise<void> {
     .from("admin_invites")
     .delete()
     .eq("id", parsed.data.inviteId);
-  if (error) return;
+  if (error) return { ok: false, error: "unknown" };
 
   await recordAudit({
     action: "admin.invite_revoked",
@@ -225,6 +225,7 @@ export async function revokeInviteAction(formData: FormData): Promise<void> {
   });
 
   revalidatePath("/admin/team");
+  return { ok: true };
 }
 
 export async function saveRoleAction(_previous: TeamState, formData: FormData): Promise<TeamState> {
@@ -308,14 +309,14 @@ export async function createRoleAction(
   return { ok: true };
 }
 
-export async function assignRoleAction(formData: FormData): Promise<void> {
+export async function assignRoleAction(formData: FormData): Promise<TeamState> {
   const ctx = await requireAdminsManager();
-  if (!ctx) return;
+  if (!ctx) return { ok: false, error: "forbidden" };
 
   const parsed = z
     .object({ profileId: uuidSchema, roleId: uuidSchema })
     .safeParse({ profileId: formData.get("profileId"), roleId: formData.get("roleId") });
-  if (!parsed.success) return;
+  if (!parsed.success) return { ok: false, error: "invalid" };
 
   const admin = createAdminClient();
   const { data: ownerRole } = await admin
@@ -328,7 +329,7 @@ export async function assignRoleAction(formData: FormData): Promise<void> {
     .select("admin_role_id")
     .eq("id", parsed.data.profileId)
     .maybeSingle();
-  if (!target) return;
+  if (!target) return { ok: false, error: "invalid" };
 
   // The last owner cannot be demoted.
   if (ownerRole && target.admin_role_id === ownerRole.id && parsed.data.roleId !== ownerRole.id) {
@@ -336,7 +337,7 @@ export async function assignRoleAction(formData: FormData): Promise<void> {
       .from("profiles")
       .select("id", { count: "exact", head: true })
       .eq("admin_role_id", ownerRole.id);
-    if ((count ?? 0) <= 1) return;
+    if ((count ?? 0) <= 1) return { ok: false, error: "lastOwner" };
   }
 
   const [oldRole, newRole] = await Promise.all([
@@ -345,7 +346,7 @@ export async function assignRoleAction(formData: FormData): Promise<void> {
       : Promise.resolve({ data: null }),
     admin.from("admin_roles").select("slug").eq("id", parsed.data.roleId).maybeSingle(),
   ]);
-  if (!newRole.data) return;
+  if (!newRole.data) return { ok: false, error: "invalid" };
 
   await recordAudit({
     action: "admin.role_changed",
@@ -363,10 +364,12 @@ export async function assignRoleAction(formData: FormData): Promise<void> {
     },
   });
 
-  await admin
+  const { error: assignError } = await admin
     .from("profiles")
     .update({ admin_role_id: parsed.data.roleId })
     .eq("id", parsed.data.profileId);
+  if (assignError) return { ok: false, error: "unknown" };
 
   revalidatePath("/admin/team");
+  return { ok: true };
 }

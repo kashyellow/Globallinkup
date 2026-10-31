@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
 
 import { Icon } from "@/components/ui/icon";
@@ -14,6 +14,8 @@ import {
   saveRoleAction,
   type TeamState,
 } from "@/features/admin/team-actions";
+import { usePendingAction } from "@/features/shared/use-pending-action";
+import { useRefresh } from "@/features/shared/refresh-provider";
 import { ADMIN_CAPABILITIES } from "@/lib/admin-capabilities";
 import { cn } from "@/lib/utils";
 
@@ -44,6 +46,7 @@ export function TeamView({
   invites: TeamInvite[];
 }) {
   const t = useTranslations("Admin.team");
+  const roleNames = new Map(roles.map((role) => [role.id, role.name]));
 
   return (
     <div className="mx-auto w-full max-w-[1000px] space-y-space-lg px-margin-mobile pt-space-lg pb-page-mobile md:space-y-space-xl md:px-margin md:pt-block md:pb-page">
@@ -58,38 +61,25 @@ export function TeamView({
         <ul className="grid gap-space-sm sm:grid-cols-2">
           {admins.map((admin) => (
             <li
-              key={admin.id}
+              // Remount on a role change so the select shows the saved role, not
+              // the previous server render.
+              key={`${admin.id}:${admin.roleId ?? ""}`}
               className="flex flex-col gap-space-sm rounded-2xl border border-outline-variant bg-surface-low p-space-md"
             >
               <span className="flex flex-wrap items-center gap-2 font-label-lg text-label-lg font-semibold text-on-surface">
                 {admin.name}
-                {admin.roleId === null ? (
-                  <span className="rounded-full border border-outline-variant px-2 py-0.5 font-label-md text-label-md font-normal text-on-surface-variant">
-                    {t("noRole")}
-                  </span>
-                ) : null}
-              </span>
-              <form action={assignRoleAction} className="flex items-center gap-2">
-                <input type="hidden" name="profileId" value={admin.id} />
-                <select
-                  name="roleId"
-                  defaultValue={admin.roleId ?? ""}
-                  aria-label={`${admin.name}: ${t("rolesTitle")}`}
-                  className={cn(FIELD, "min-w-0 flex-1")}
+                <span
+                  className={cn(
+                    "rounded-full border px-2 py-0.5 font-label-md text-label-md font-normal",
+                    admin.roleId
+                      ? "border-admin-border bg-admin-surface text-admin-text"
+                      : "border-outline-variant text-on-surface-variant",
+                  )}
                 >
-                  <option value="" disabled>
-                    {t("noRole")}
-                  </option>
-                  {roles.map((role) => (
-                    <option key={role.id} value={role.id}>
-                      {role.name}
-                    </option>
-                  ))}
-                </select>
-                <button type="submit" className={BUTTON}>
-                  {t("save")}
-                </button>
-              </form>
+                  {admin.roleId ? (roleNames.get(admin.roleId) ?? t("noRole")) : t("noRole")}
+                </span>
+              </span>
+              <AdminRoleForm admin={admin} roles={roles} />
             </li>
           ))}
         </ul>
@@ -124,15 +114,7 @@ export function TeamView({
                 </p>
                 <div className="flex flex-wrap items-start gap-2">
                   <InviteLinkButton email={invite.email} roleId={invite.roleId} />
-                  <form action={revokeInviteAction}>
-                    <input type="hidden" name="inviteId" value={invite.id} />
-                    <button
-                      type="submit"
-                      className="inline-flex min-h-10 items-center rounded-full border border-danger-border px-3 font-label-md text-label-md text-danger-text hover:bg-danger-surface"
-                    >
-                      {t("revoke")}
-                    </button>
-                  </form>
+                  <RevokeInviteForm inviteId={invite.id} />
                 </div>
               </li>
             ))}
@@ -143,9 +125,78 @@ export function TeamView({
   );
 }
 
+/**
+ * Assigning is a bare mutation, so the desk has to refetch the route itself:
+ * the server action's `revalidatePath` targets the locale-less path, which does
+ * not invalidate the cache entry for `/en/admin/team`.
+ */
+function AdminRoleForm({ admin, roles }: { admin: TeamAdmin; roles: TeamRole[] }) {
+  const t = useTranslations("Admin.team");
+  const { refresh } = useRefresh();
+  const { isPending, run } = usePendingAction();
+  const [error, setError] = useState<string | null>(null);
+  const pending = isPending("assign");
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    setError(null);
+    await run("assign", async () => {
+      const result = await assignRoleAction(formData);
+      if (!result.ok) {
+        setError(result.error ?? "unknown");
+        return;
+      }
+      refresh();
+    });
+  }
+
+  return (
+    <form onSubmit={submit} className="flex flex-col gap-2">
+      <div className="flex items-center gap-2">
+        <input type="hidden" name="profileId" value={admin.id} />
+        <select
+          name="roleId"
+          defaultValue={admin.roleId ?? ""}
+          aria-label={`${admin.name}: ${t("rolesTitle")}`}
+          className={cn(FIELD, "min-w-0 flex-1")}
+        >
+          <option value="" disabled>
+            {t("noRole")}
+          </option>
+          {roles.map((role) => (
+            <option key={role.id} value={role.id}>
+              {role.name}
+            </option>
+          ))}
+        </select>
+        <button type="submit" disabled={pending} className={BUTTON}>
+          {pending ? <Spinner className="h-4 w-4 text-current" label={t("working")} /> : null}
+          {t("save")}
+        </button>
+      </div>
+      {error ? (
+        <p role="alert" className="font-body-sm text-body-sm text-danger-text">
+          {error === "lastOwner" ? t("lastOwnerHint") : t(`errors.${error}` as never)}
+        </p>
+      ) : null}
+    </form>
+  );
+}
+
+/** Every mutation below refreshes the route, or the desk shows stale props. */
+
 function InviteForm({ roles }: { roles: TeamRole[] }) {
   const t = useTranslations("Admin.team");
-  const [state, action, pending] = useActionState(inviteAdminAction, INITIAL);
+  const { refresh } = useRefresh();
+  const [state, action, pending] = useActionState(
+    async (previous: TeamState, formData: FormData) => {
+      const next = await inviteAdminAction(previous, formData);
+      if (next.ok) refresh();
+      return next;
+    },
+    INITIAL,
+  );
   const [copied, setCopied] = useState(false);
 
   return (
@@ -228,7 +279,15 @@ function CapabilityChecks({ selected }: { selected: string[] }) {
 
 function RoleForm({ role }: { role: TeamRole }) {
   const t = useTranslations("Admin.team");
-  const [state, action, pending] = useActionState(saveRoleAction, INITIAL);
+  const { refresh } = useRefresh();
+  const [state, action, pending] = useActionState(
+    async (previous: TeamState, formData: FormData) => {
+      const next = await saveRoleAction(previous, formData);
+      if (next.ok) refresh();
+      return next;
+    },
+    INITIAL,
+  );
 
   return (
     <details className="group rounded-2xl border border-outline-variant bg-surface-low">
@@ -271,7 +330,15 @@ function RoleForm({ role }: { role: TeamRole }) {
 
 function InviteLinkButton({ email, roleId }: { email: string; roleId: string | null }) {
   const t = useTranslations("Admin.team");
-  const [state, action, pending] = useActionState(inviteAdminAction, INITIAL);
+  const { refresh } = useRefresh();
+  const [state, action, pending] = useActionState(
+    async (previous: TeamState, formData: FormData) => {
+      const next = await inviteAdminAction(previous, formData);
+      if (next.ok) refresh();
+      return next;
+    },
+    INITIAL,
+  );
 
   return (
     <form action={action} className="space-y-1">
@@ -295,9 +362,56 @@ function InviteLinkButton({ email, roleId }: { email: string; roleId: string | n
   );
 }
 
+function RevokeInviteForm({ inviteId }: { inviteId: string }) {
+  const t = useTranslations("Admin.team");
+  const { refresh } = useRefresh();
+  const { isPending, run } = usePendingAction();
+  const [error, setError] = useState(false);
+  const pending = isPending("revoke");
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    setError(false);
+    await run("revoke", async () => {
+      const result = await revokeInviteAction(formData);
+      if (!result.ok) {
+        setError(true);
+        return;
+      }
+      refresh();
+    });
+  }
+
+  return (
+    <form onSubmit={submit}>
+      <input type="hidden" name="inviteId" value={inviteId} />
+      <button
+        type="submit"
+        disabled={pending}
+        className="inline-flex min-h-10 items-center gap-2 rounded-full border border-danger-border px-3 font-label-md text-label-md text-danger-text hover:bg-danger-surface disabled:opacity-60"
+      >
+        {pending ? <Spinner className="h-3.5 w-3.5 text-current" label={t("working")} /> : null}
+        {t("revoke")}
+      </button>
+      {error ? (
+        <span className="block font-body-sm text-body-sm text-danger-text">{t("saveError")}</span>
+      ) : null}
+    </form>
+  );
+}
+
 function CreateRoleForm() {
   const t = useTranslations("Admin.team");
-  const [state, action, pending] = useActionState(createRoleAction, INITIAL);
+  const { refresh } = useRefresh();
+  const [state, action, pending] = useActionState(
+    async (previous: TeamState, formData: FormData) => {
+      const next = await createRoleAction(previous, formData);
+      if (next.ok) refresh();
+      return next;
+    },
+    INITIAL,
+  );
 
   return (
     <form
