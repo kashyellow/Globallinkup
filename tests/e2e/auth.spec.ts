@@ -523,6 +523,57 @@ test("@auth the marketplace paginates, filters, and opens details", async ({ pag
   await expect(page.getByText(/Artisanal Ceramic Espresso Set/)).toBeVisible();
 });
 
+test("@auth an admin edits a role and the desk updates without a reload", async ({ page }) => {
+  await signIn(page, "admin@globallinkup.test");
+  await page.goto("/en/admin/team");
+  await page.waitForTimeout(1200);
+
+  // Idempotent: on a rerun the role from the previous run already exists.
+  const roleName = "E2E Desk";
+  await page.getByPlaceholder(/role name/i).fill(roleName);
+  await page.getByRole("button", { name: /create role/i }).click();
+
+  const card = page.locator("details").filter({ hasText: roleName });
+  await expect(card).toBeVisible({ timeout: 15_000 });
+
+  const summary = card.locator("summary");
+  const save = card.getByRole("button", { name: /^save$/i });
+  async function openCard() {
+    if (!(await card.evaluate((element) => (element as HTMLDetailsElement).open))) {
+      await summary.click();
+    }
+  }
+
+  // Each save must land on the summary without a page reload — the desk used to
+  // keep stale server props until a manual refresh. Every step below waits for a
+  // text change that only fresh server props can produce.
+  await openCard();
+  const checks = card.getByRole("checkbox");
+  const total = await checks.count();
+  let checked = false;
+  for (let index = 0; index < total; index += 1) {
+    if (await checks.nth(index).isChecked()) {
+      checked = true;
+      await checks.nth(index).uncheck();
+    }
+  }
+  if (checked) {
+    await save.click();
+    await expect(summary).toContainText(/0 permissions/i, { timeout: 15_000 });
+  }
+
+  await openCard();
+  await checks.first().check();
+  await save.click();
+  await expect(summary).toContainText(/1 permission/i, { timeout: 15_000 });
+
+  // Leave it empty so the next run starts from the same state.
+  await openCard();
+  await checks.first().uncheck();
+  await save.click();
+  await expect(summary).toContainText(/0 permissions/i, { timeout: 15_000 });
+});
+
 test("@auth an admin reviews a dossier and approves a pending persona", async ({ page }) => {
   await signIn(page, "admin@globallinkup.test");
   await page.goto("/en/admin/users?status=pending");
@@ -548,7 +599,7 @@ test("@auth an admin reviews a dossier and approves a pending persona", async ({
   await card.getByRole("button", { name: /approve/i }).click();
   await expect(card).toHaveCount(0, { timeout: 10_000 });
 
-  await page.getByRole("link", { name: /^approved$/i }).click();
+  await page.getByRole("link", { name: /^approved/i }).click();
   await expect(page.getByRole("heading", { name: /Pending Applicant/ })).toBeVisible();
 });
 
@@ -562,7 +613,7 @@ test("@auth an admin previews a product with its gallery", async ({ page }) => {
     .click();
   const preview = page.getByRole("dialog");
   await expect(preview).toBeVisible();
-  await expect(preview.getByText(/ADMIN PREVIEW/i)).toBeVisible();
+  await expect(preview.getByRole("heading", { name: /Handmade Oaxacan/i })).toBeVisible();
   await preview
     .getByRole("button", { name: /close preview/i })
     .first()
