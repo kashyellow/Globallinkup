@@ -56,6 +56,18 @@ async function signIn(
   }
 }
 
+/**
+ * Open the admin product form and wait for its initial focus on the title. The
+ * dialog moves focus there in an effect; filling another field before that
+ * lands sends the rest of the keystrokes into the title.
+ */
+async function openNewProductForm(page: Page) {
+  await page.getByRole("button", { name: /new product/i }).click();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByLabel(/Product Title/i)).toBeFocused();
+  return dialog;
+}
+
 test("@auth an approved user lands in the app", async ({ page }) => {
   await signIn(page, "sofia.martinez@example.com");
   await expect(page).toHaveURL(/\/en\/discover$/);
@@ -540,6 +552,8 @@ test("@auth an owner creates a sub-admin and the desk lists it without a reload"
     .first()
     .click();
   const dialog = page.getByRole("dialog", { name: /add a sub-admin/i });
+  // Same initial-focus race as the product form: wait for it before typing.
+  await expect(dialog.getByLabel(/^name$/i)).toBeFocused();
   await dialog.getByLabel(/^name$/i).fill(`E2E Sub ${stamp}`);
   await dialog.getByLabel(/login email/i).fill(email);
   await dialog.getByLabel(/^password$/i).fill("E2e-pass-12345");
@@ -619,11 +633,7 @@ test("@auth an admin saves a per-product contact from the product form", async (
 
   // Unique per run: the trashed rows of earlier runs stay in the catalog.
   const name = `E2E Contact Piece ${Date.now()}`;
-  await page.getByRole("button", { name: /new product/i }).click();
-  const dialog = page.getByRole("dialog");
-  // The dialog focuses the title on open; filling before that lands can send
-  // later keystrokes into the title instead of the field being filled.
-  await expect(dialog.getByLabel(/Product Title/i)).toBeFocused();
+  const dialog = await openNewProductForm(page);
   await dialog.getByLabel(/Product Title/i).fill(name);
   await dialog.getByLabel(/Price/i).fill("25");
   await dialog.getByLabel(/contact email/i).fill("maker@example.com");
@@ -654,9 +664,7 @@ test("@auth an admin creates, trashes, and restores a draft product", async ({ p
   await page.goto("/en/admin/marketplace");
   await page.waitForTimeout(1200);
 
-  await page.getByRole("button", { name: /new product/i }).click();
-  const dialog = page.getByRole("dialog");
-  await expect(dialog).toBeVisible();
+  const dialog = await openNewProductForm(page);
   await dialog.getByLabel(/Product Title/i).fill("E2E Draft Piece");
   await dialog.getByLabel(/Price/i).fill("18");
   await dialog.getByLabel(/Origin/i).fill("Barcelona, ES");
