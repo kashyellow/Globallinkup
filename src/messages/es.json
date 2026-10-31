@@ -667,44 +667,65 @@
       "searchAction": "Buscar"
     },
     "team": {
-      "title": "Equipo y roles",
-      "body": "Crea cuentas de administración con un enlace de invitación de un solo uso y decide a qué puede acceder cada rol.",
-      "forbidden": "Tu rol no puede gestionar el equipo.",
-      "inviteTitle": "Invitar a un administrador",
-      "inviteBody": "Generamos un enlace que compartes tú: no se envía correo y nunca ves su contraseña.",
+      "title": "Equipo",
+      "body": "Crea cuentas de subadministrador y elige en qué áreas puede trabajar cada uno.",
+      "subAdminCount": "{count, plural, =0 {Sin subadministradores} one {# subadministrador} other {# subadministradores}}",
+      "add": "Añadir subadministrador",
+      "edit": "Editar",
+      "remove": "Quitar",
+      "subAdminsTitle": "Subadministradores",
+      "noSubAdmins": "Aún no hay subadministradores",
+      "noSubAdminsBody": "Añade a alguien que ayude con miembros, moderación o el marketplace. Tú eliges su acceso y lo que puede ver.",
+      "ownersTitle": "Propietarios",
+      "ownerHint": "Acceso total, incluido el registro de auditoría, los ajustes y este equipo. No se pueden editar aquí.",
+      "createTitle": "Añadir un subadministrador",
+      "createBody": "Tú eliges su acceso. Comparte tú mismo el email y la contraseña.",
+      "editTitle": "Editar subadministrador",
+      "editBody": "Cambia su nombre, áreas o contraseña. El email de acceso no cambia.",
+      "nameLabel": "Nombre",
+      "namePlaceholder": "p. ej. María López",
+      "loginEmail": "Email de acceso",
       "emailPlaceholder": "persona@ejemplo.com",
-      "generateLink": "Generar enlace",
-      "working": "Procesando…",
-      "linkOnce": "Copia este enlace ahora — se muestra una sola vez.",
-      "copy": "Copiar",
-      "copied": "Copiado",
-      "adminsTitle": "Administradores",
-      "rolesTitle": "Roles",
-      "invitesTitle": "Invitaciones pendientes",
-      "noInvites": "No hay invitaciones pendientes.",
-      "systemRole": "Rol del sistema",
-      "permissionsCount": "{count, plural, one {# permiso} other {# permisos}}",
+      "passwordLabel": "Contraseña",
+      "passwordHint": "8+ caracteres con mayúsculas, minúsculas y un número.",
+      "newPasswordLabel": "Nueva contraseña",
+      "newPasswordHint": "Déjala vacía para mantener la contraseña actual.",
+      "showPassword": "Mostrar contraseña",
+      "hidePassword": "Ocultar contraseña",
+      "generate": "Generar",
+      "desksLabel": "Acceso",
+      "members": {
+        "label": "Miembros",
+        "hint": "Aceptar, rechazar y suspender usuarios."
+      },
+      "moderation": {
+        "label": "Moderación",
+        "hint": "Moderar publicaciones, comentarios y reportes."
+      },
+      "marketplace": {
+        "label": "Marketplace",
+        "hint": "Crear, editar, publicar y archivar productos."
+      },
+      "noAccess": "Sin acceso",
+      "create": "Crear",
       "save": "Guardar",
-      "createRole": "Crear rol",
-      "newRoleTitle": "Nuevo rol",
-      "roleNamePlaceholder": "Nombre del rol",
-      "saved": "Guardado",
-      "saveError": "No se pudo guardar.",
-      "roleExists": "Ya existe un rol con ese nombre.",
-      "lastOwnerHint": "El último propietario no puede ser degradado.",
+      "working": "Procesando…",
+      "createdTitle": "Subadministrador creado",
+      "createdOnce": "Cópialos ahora. La contraseña solo se muestra esta vez y no se puede consultar después.",
+      "copy": "Copiar",
+      "copyBoth": "Copiar ambos",
+      "copied": "Copiado",
+      "done": "Listo",
+      "removeTitle": "¿Quitar a {name}?",
+      "removeHint": "Se elimina su acceso y ya no puede iniciar sesión. No se puede deshacer.",
+      "confirmRemove": "Quitar",
       "errors": {
         "forbidden": "No puedes gestionar el equipo.",
-        "invalid": "Revisa el correo y el rol.",
-        "exists": "Esa cuenta ya existe.",
-        "unknown": "Algo salió mal.",
-        "link": "Ese enlace ya no es válido.",
-        "weak": "Elige una contraseña más fuerte."
-      },
-      "assignLater": "Asignar después —",
-      "noRole": "—",
-      "revoke": "Revocar",
-      "newLink": "Nuevo enlace",
-      "linkFailed": "No se pudo generar el enlace."
+        "invalid": "Revisa el nombre y el email, usa una contraseña de 8+ caracteres con mayúsculas, minúsculas y un número, y elige al menos un área.",
+        "exists": "Ya existe una cuenta con ese email.",
+        "owner": "Los propietarios no se pueden cambiar aquí.",
+        "unknown": "Algo salió mal."
+      }
     },
     "capabilities": {
       "members": {
@@ -1514,23 +1535,6 @@
         "rejected": "Perfil rechazado",
         "suspended": "Cuenta suspendida"
       }
-    }
-  },
-  "AcceptInvite": {
-    "title": "Elige tu contraseña",
-    "body": "Te invitaron al equipo de GlobalLinkup. Elige una contraseña para terminar de configurar tu cuenta.",
-    "password": "Contraseña",
-    "confirm": "Confirmar contraseña",
-    "submit": "Activar cuenta",
-    "working": "Activando…",
-    "expired": "A este enlace le falta el token. Pide uno nuevo a quien te invitó.",
-    "errors": {
-      "invalid": "A este enlace le falta el token.",
-      "link": "El enlace no es válido o ya se usó. Pide uno nuevo.",
-      "weak": "Elige una contraseña más fuerte.",
-      "unknown": "Algo salió mal.",
-      "password": "Usa 8+ caracteres con mayúsculas, minúsculas y un número.",
-      "mismatch": "Las contraseñas no coinciden."
     }
   }
 }

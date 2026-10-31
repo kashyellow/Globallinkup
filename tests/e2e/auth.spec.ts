@@ -360,10 +360,8 @@ test("@auth the audit and team desks render cleanly", async ({ page }) => {
   await expect(page.getByRole("heading", { name: /audit trail/i })).toBeVisible();
 
   await page.goto("/en/admin/team");
-  await expect(page.getByRole("heading", { name: /team & roles/i })).toBeVisible();
-  // Roles are collapsible cards now: open the first one before checking the matrix.
-  await page.locator("summary").first().click();
-  await expect(page.getByRole("checkbox").first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: /^team$/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /add sub-admin/i }).first()).toBeVisible();
 
   const relevant = errors.filter((error) =>
     /MISSING_MESSAGE|is not a function|use\(\)/.test(error),
@@ -523,55 +521,42 @@ test("@auth the marketplace paginates, filters, and opens details", async ({ pag
   await expect(page.getByText(/Artisanal Ceramic Espresso Set/)).toBeVisible();
 });
 
-test("@auth an admin edits a role and the desk updates without a reload", async ({ page }) => {
+test("@auth an owner creates a sub-admin and the desk lists it without a reload", async ({
+  page,
+}) => {
   await signIn(page, "admin@globallinkup.test");
   await page.goto("/en/admin/team");
   await page.waitForTimeout(1200);
 
-  // Idempotent: on a rerun the role from the previous run already exists.
-  const roleName = "E2E Desk";
-  await page.getByPlaceholder(/role name/i).fill(roleName);
-  await page.getByRole("button", { name: /create role/i }).click();
+  const stamp = Date.now();
+  const email = `e2e-sub-admin-${stamp}@example.com`;
+  await page
+    .getByRole("button", { name: /add sub-admin/i })
+    .first()
+    .click();
+  const dialog = page.getByRole("dialog", { name: /add a sub-admin/i });
+  await dialog.getByLabel(/^name$/i).fill(`E2E Sub ${stamp}`);
+  await dialog.getByLabel(/login email/i).fill(email);
+  await dialog.getByLabel(/^password$/i).fill("E2e-pass-12345");
+  await dialog.getByRole("checkbox", { name: /marketplace/i }).check();
+  await dialog.getByRole("button", { name: /^create$/i }).click();
 
-  const card = page.locator("details").filter({ hasText: roleName });
-  await expect(card).toBeVisible({ timeout: 15_000 });
+  // The credentials are shown once, then the new account is listed.
+  const created = page.getByRole("dialog", { name: /sub-admin created/i });
+  await expect(created).toContainText(email, { timeout: 15_000 });
+  await created.getByRole("button", { name: /^done$/i }).click();
 
-  const summary = card.locator("summary");
-  const save = card.getByRole("button", { name: /^save$/i });
-  async function openCard() {
-    if (!(await card.evaluate((element) => (element as HTMLDetailsElement).open))) {
-      await summary.click();
-    }
-  }
+  const row = page.locator("li").filter({ hasText: email });
+  await expect(row).toBeVisible({ timeout: 15_000 });
+  await expect(row).toContainText(/marketplace/i);
 
-  // Each save must land on the summary without a page reload — the desk used to
-  // keep stale server props until a manual refresh. Every step below waits for a
-  // text change that only fresh server props can produce.
-  await openCard();
-  const checks = card.getByRole("checkbox");
-  const total = await checks.count();
-  let checked = false;
-  for (let index = 0; index < total; index += 1) {
-    if (await checks.nth(index).isChecked()) {
-      checked = true;
-      await checks.nth(index).uncheck();
-    }
-  }
-  if (checked) {
-    await save.click();
-    await expect(summary).toContainText(/0 permissions/i, { timeout: 15_000 });
-  }
-
-  await openCard();
-  await checks.first().check();
-  await save.click();
-  await expect(summary).toContainText(/1 permission/i, { timeout: 15_000 });
-
-  // Leave it empty so the next run starts from the same state.
-  await openCard();
-  await checks.first().uncheck();
-  await save.click();
-  await expect(summary).toContainText(/0 permissions/i, { timeout: 15_000 });
+  // Leave the desk as it was found so the next run starts clean.
+  await row.getByRole("button", { name: /^remove/i }).click();
+  await page
+    .getByRole("alertdialog")
+    .getByRole("button", { name: /^remove$/i })
+    .click();
+  await expect(row).toHaveCount(0, { timeout: 15_000 });
 });
 
 test("@auth an admin reviews a dossier and approves a pending persona", async ({ page }) => {
