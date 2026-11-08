@@ -1,3 +1,4 @@
+# Supabase CLI v3 exist but have breaking changes, so we stick with v2, for now
 [tools]
-supabase = "latest"
-vercel = { version = "62.2.0", allow_builds = ["esbuild"], trust_policy_excludes = ["undici"] }
+supabase = "2"
+vercel = { version = "51", allow_builds = ["esbuild"], trust_policy_excludes = ["undici"] }
