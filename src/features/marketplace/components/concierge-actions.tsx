@@ -22,15 +22,17 @@ export function ConciergeActions({
   contact,
   emailSubject,
   whatsappMessage,
+  emailOnly = false,
   labels,
 }: {
   contact: MarketplaceContact;
   emailSubject: string;
   whatsappMessage: string;
+  emailOnly?: boolean;
   labels: { email: string; whatsapp: string; unavailable: string };
 }) {
   const email = gmailComposeHref(contact.email, emailSubject);
-  const whatsapp = whatsappHref(contact.phone, whatsappMessage);
+  const whatsapp = emailOnly ? null : whatsappHref(contact.phone, whatsappMessage);
 
   if (!email && !whatsapp) {
     return <InlineAlert tone="warning">{labels.unavailable}</InlineAlert>;

@@ -68,6 +68,7 @@ export function MarketplaceInquiryDialog({
           contact={contact}
           emailSubject={t("emailSubject")}
           whatsappMessage={t("whatsappMessage")}
+          emailOnly
           labels={{
             email: t("emailCta"),
             whatsapp: t("whatsappCta"),

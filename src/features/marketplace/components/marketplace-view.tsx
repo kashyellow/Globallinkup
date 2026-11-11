@@ -124,15 +124,34 @@ export function MarketplaceView({
               <h1 className="font-title text-title-mobile font-bold text-balance text-on-surface md:text-title">
                 {t("banner.title")}
               </h1>
-              <p className="max-w-[58ch] font-body-sm text-body-sm text-pretty text-on-surface-variant md:font-body-md md:text-body-md">
-                {t("banner.intro")}
-              </p>
             </div>
           </div>
 
-          <div className="mt-space-sm flex items-start gap-2 font-body-sm text-body-sm text-on-surface-variant">
-            <Icon name="lock" className="mt-0.5 shrink-0 text-base text-tertiary" />
-            <span>{t("banner.note")}</span>
+          {/* Advertise CTA */}
+          <div className="mt-space-md bezel-tray">
+            <div
+              className="flex flex-col items-start justify-between gap-space-sm bezel-core p-space-md md:flex-row md:items-center md:gap-space-md md:p-space-lg"
+              style={{ "--bezel-core-bg": "var(--color-surface-container)" } as CSSProperties}
+            >
+              <div>
+                <h2 className="font-headline-sm text-headline-sm font-semibold text-on-surface">
+                  {t("advertise.title")}
+                </h2>
+                <p className="mt-1 max-w-xl font-body-sm text-body-sm text-pretty text-secondary">
+                  {t("advertise.body")}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setInquiryOpen(true)}
+                className={cn(
+                  "inline-flex min-h-11 w-full shrink-0 items-center justify-center rounded-full bg-primary px-5 py-2.5 font-label-lg text-label-lg font-semibold text-on-primary transition-opacity duration-300 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px md:w-auto",
+                  EASE,
+                )}
+              >
+                {t("advertise.cta")}
+              </button>
+            </div>
           </div>
         </div>
       </section>

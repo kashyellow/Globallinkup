@@ -331,8 +331,6 @@
     "banner": {
       "badge": "Catálogo Curado Oficial de GlobalLinkup",
       "title": "Mercado GlobalLinkup",
-      "intro": "Bienes culturales curados, artesanías, esenciales de viaje y artículos de socios internacionales verificados y publicados exclusivamente por los administradores de GlobalLinkup.",
-      "note": "Todos los artículos se curan y gestionan mediante alianzas directas con artesanos. Los usuarios normales no pueden publicar anuncios.",
       "statTitle": "100% Verificado",
       "statSubtitle": "Cero comisiones de terceros"
     },
@@ -361,6 +359,11 @@
     "card": {
       "priceLabel": "PRECIO",
       "viewDetails": "Ver Detalles"
+    },
+    "advertise": {
+      "title": "¿Quieres Anunciar Tu Mercancía?",
+      "body": "¡Muestra tus productos a nuestra comunidad! Contacta a nuestro equipo de administración para conocer las oportunidades de publicidad.",
+      "cta": "Contactar al Administrador"
     },
     "notice": {
       "title": "Cómo Funciona el Comercio Curado de GlobalLinkup",

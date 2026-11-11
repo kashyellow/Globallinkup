@@ -331,8 +331,6 @@
     "banner": {
       "badge": "Official GlobalLinkup Curated Catalog",
       "title": "GlobalLinkup Marketplace",
-      "intro": "Curated cultural goods, artisan crafts, travel essentials, and international partner items verified and published exclusively by GlobalLinkup administrators.",
-      "note": "All items curated and fulfilled via direct artisan partnerships. Normal users cannot publish listings.",
       "statTitle": "100% Vetted",
       "statSubtitle": "Zero 3rd-party seller fees"
     },
@@ -361,6 +359,11 @@
     "card": {
       "priceLabel": "PRICE",
       "viewDetails": "View Details"
+    },
+    "advertise": {
+      "title": "Want to Advertise Your Merch?",
+      "body": "Showcase your products to our community! Contact our admin team to learn more about advertising opportunities.",
+      "cta": "Contact Admin"
     },
     "notice": {
       "title": "How GlobalLinkup Curated Commerce Works",
