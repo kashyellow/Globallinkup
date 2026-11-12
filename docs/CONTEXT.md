@@ -110,6 +110,10 @@ These are confirmed and supersede the PRD where it disagrees:
   only when step 2 is submitted, so abandoning persona setup leaves no
   half-registered account. Email confirmation must stay disabled (PRD OQ-1);
   a full page refresh at step 2 intentionally returns to step 1.
+- **Admins can invite members** (ADR 0010, 2026-11-12). `/admin/invite` (members
+  desk) sends a Supabase invite email; the auth user exists before the persona,
+  staged in `member_invites`. The invitee sets a password at `/accept-invite`,
+  completes the prefilled persona and is approved on submit, skipping review.
 - **Posts support up to six images** and one level of threaded comments. Comments
   are post engagement, not chat: no inbox, realtime delivery, mentions, or
   comment notifications. Comment deletion is admin-only; authors remove their
@@ -198,3 +202,7 @@ ADR 0002.
   Resend (or another provider) with a verified sending domain is a **pre-launch
   requirement**; it is dashboard configuration, not a package. Admin accounts use
   invite links shared by the owner, so they do not depend on SMTP.
+  **Member invites** (ADR 0010) are sent by Supabase and are blocked by the same
+  gap. The cloud project also needs `supabase/templates/invite.html` pasted into
+  Auth → Email Templates → Invite user, and the email OTP expiry set to 86400 s
+  to match `supabase/config.toml`.

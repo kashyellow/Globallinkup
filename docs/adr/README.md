@@ -15,6 +15,7 @@ A record is not a plan: it states the context, the decision, and what it costs.
 | [0007](./0007-global-countries.md)              | Global country coverage               | proposed | 2026-10-27 |
 | [0008](./0008-remove-cultural-interests.md)     | Remove cultural interests             | accepted | 2026-10-30 |
 | [0009](./0009-marketplace-concierge-contact.md) | Marketplace concierge contact         | accepted | 2026-10-30 |
+| [0010](./0010-member-invites.md)                | Admins invite members by email        | accepted | 2026-11-12 |
 
 ## Template
 
