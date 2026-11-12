@@ -17,6 +17,15 @@ const AVATAR_PNG = Buffer.from(
   "base64",
 );
 
+try {
+  process.loadEnvFile(".env.local"); // Supabase keys for the cleanup below
+} catch {
+  // CI exports them instead.
+}
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
 test.skip(!AUTH_E2E, "needs a seeded Supabase stack (AUTH_E2E=1)");
 test.describe.configure({ mode: "serial" });
 
@@ -26,6 +35,18 @@ async function signIn(page: Page, email: string, password: string) {
   await page.fill("#login-password", password);
   await page.locator("form button[type=submit]").click();
   await page.waitForURL(/\/(admin|discover|verify|create-persona)/, { timeout: 20_000 });
+}
+
+/**
+ * The invitee ends up approved, which would add a member to the Discover count
+ * other specs assert on (they run in parallel). Delete the account right away.
+ */
+async function removeUser(request: APIRequestContext, email: string) {
+  const headers = { apikey: SERVICE_KEY!, Authorization: `Bearer ${SERVICE_KEY}` };
+  const list = await request.get(`${SUPABASE_URL}/auth/v1/admin/users?per_page=1000`, { headers });
+  const { users } = (await list.json()) as { users: { id: string; email: string }[] };
+  const id = users.find((user) => user.email === email)?.id;
+  if (id) await request.delete(`${SUPABASE_URL}/auth/v1/admin/users/${id}`, { headers });
 }
 
 async function inviteLink(request: APIRequestContext, page: Page, email: string) {
@@ -50,68 +71,74 @@ async function inviteLink(request: APIRequestContext, page: Page, email: string)
 
 test("admin invites a member who finishes setup and lands approved", async ({ page, request }) => {
   const email = `invitee-${Date.now()}@example.com`;
+  try {
+    await signIn(page, ADMIN_EMAIL, ADMIN_PASSWORD);
+    await page.goto("/en/admin/invite");
+    await page.waitForTimeout(750); // hydration: the photo input's onChange
+    await page.locator('input[name="photoPicker"]').setInputFiles({
+      name: "avatar.png",
+      mimeType: "image/png",
+      buffer: AVATAR_PNG,
+    });
+    const crop = page.getByRole("dialog", { name: /fit your portrait/i });
+    await crop.getByRole("button", { name: /use this crop/i }).click();
+    await expect(page.getByAltText("Selected profile photo")).toBeVisible();
 
-  await signIn(page, ADMIN_EMAIL, ADMIN_PASSWORD);
-  await page.goto("/en/admin/invite");
-  await page.waitForTimeout(750); // hydration: the photo input's onChange
-  await page.locator('input[name="photoPicker"]').setInputFiles({
-    name: "avatar.png",
-    mimeType: "image/png",
-    buffer: AVATAR_PNG,
-  });
-  const crop = page.getByRole("dialog", { name: /fit your portrait/i });
-  await crop.getByRole("button", { name: /use this crop/i }).click();
-  await expect(page.getByAltText("Selected profile photo")).toBeVisible();
+    await page.fill('input[name="email"]', email);
+    await page.fill('input[name="fullName"]', "Invited Person");
+    await page.selectOption('select[name="locale"]', "en");
+    await page.getByRole("button", { name: "Send invitation" }).click();
+    await expect(page.getByText("Invitation sent.")).toBeVisible({ timeout: 15_000 });
+    const row = page.getByRole("listitem").filter({ hasText: email });
+    await expect(row.getByText("Sent", { exact: true })).toBeVisible();
 
-  await page.fill('input[name="email"]', email);
-  await page.fill('input[name="fullName"]', "Invited Person");
-  await page.selectOption('select[name="locale"]', "en");
-  await page.getByRole("button", { name: "Send invitation" }).click();
-  await expect(page.getByText("Invitation sent.")).toBeVisible({ timeout: 15_000 });
-  const row = page.getByRole("listitem").filter({ hasText: email });
-  await expect(row.getByText("Sent", { exact: true })).toBeVisible();
+    // The same address again points at Resend instead of a second account.
+    await page.fill('input[name="email"]', email.toUpperCase());
+    await page.fill('input[name="fullName"]', "Invited Person");
+    await page.getByRole("button", { name: "Send invitation" }).click();
+    await expect(page.getByText(/already has a pending invitation/)).toBeVisible();
 
-  // The same address again points at Resend instead of a second account.
-  await page.fill('input[name="email"]', email.toUpperCase());
-  await page.fill('input[name="fullName"]', "Invited Person");
-  await page.getByRole("button", { name: "Send invitation" }).click();
-  await expect(page.getByText(/already has a pending invitation/)).toBeVisible();
+    const link = await inviteLink(request, page, email);
+    expect(link, "the invite email should reach Mailpit with a confirm link").toBeTruthy();
 
-  const link = await inviteLink(request, page, email);
-  expect(link, "the invite email should reach Mailpit with a confirm link").toBeTruthy();
+    // A mail scanner only GETs the link: that must not use up the token.
+    await page.goto(link!);
+    await expect(page.getByRole("button", { name: "Continue" })).toBeVisible();
+    await page.goto(link!);
+    // Still signed in as the admin: continuing must switch to the invitee.
+    await page.getByRole("button", { name: "Continue" }).click();
+    await expect(page).toHaveURL(/\/en\/accept-invite$/);
+    await expect(page.locator("#invite-email")).toHaveValue(email);
 
-  // A mail scanner only GETs the link: that must not use up the token.
-  await page.goto(link!);
-  await expect(page.getByRole("button", { name: "Continue" })).toBeVisible();
-  await page.goto(link!);
-  // Still signed in as the admin: continuing must switch to the invitee.
-  await page.getByRole("button", { name: "Continue" }).click();
-  await expect(page).toHaveURL(/\/en\/accept-invite$/);
-  await expect(page.locator("#invite-email")).toHaveValue(email);
+    // The persona form is not reachable before the password and terms step.
+    await page.goto("/en/create-persona");
+    await expect(page).toHaveURL(/\/en\/accept-invite$/);
+    await page.goto("/en/accept-invite");
+    await page.waitForTimeout(750); // hydration: controlled inputs reset otherwise
+    await page.fill("#reset-password", INVITEE_PASSWORD);
+    await page.fill("#reset-confirm", INVITEE_PASSWORD);
+    await page.check("#invite-terms");
+    await page.locator("form button[type=submit]").click();
 
-  // The persona form is not reachable before the password and terms step.
-  await page.goto("/en/create-persona");
-  await expect(page).toHaveURL(/\/en\/accept-invite$/);
-  await page.goto("/en/accept-invite");
-  await page.waitForTimeout(750); // hydration: controlled inputs reset otherwise
-  await page.fill("#reset-password", INVITEE_PASSWORD);
-  await page.fill("#reset-confirm", INVITEE_PASSWORD);
-  await page.check("#invite-terms");
-  await page.locator("form button[type=submit]").click();
+    await expect(page).toHaveURL(/\/en\/create-persona$/, { timeout: 15_000 });
+    await expect(page.locator("#persona-fullname")).toHaveValue("Invited Person");
+    await page.fill("#persona-city", "Lisbon");
+    await page.fill("#persona-bio", "Joined through an admin invitation.");
+    await page.locator("#persona-language-ES").click();
+    await page.fill("#persona-whatsapp", "+351 900 000 001");
+    await page.locator("form button[type=submit]").click();
+    await expect(page).toHaveURL(/\/en\/profile$/, { timeout: 20_000 });
 
-  await expect(page).toHaveURL(/\/en\/create-persona$/, { timeout: 15_000 });
-  await expect(page.locator("#persona-fullname")).toHaveValue("Invited Person");
-  await page.fill("#persona-city", "Lisbon");
-  await page.fill("#persona-bio", "Joined through an admin invitation.");
-  await page.locator("#persona-language-ES").click();
-  await page.fill("#persona-whatsapp", "+351 900 000 001");
-  await page.locator("form button[type=submit]").click();
-  await expect(page).toHaveURL(/\/en\/profile$/, { timeout: 20_000 });
-
-  // The new password works on its own and the account is approved.
-  await page.context().clearCookies();
-  await signIn(page, email, INVITEE_PASSWORD);
-  await expect(page).toHaveURL(/\/en\/discover$/);
+    // Only approved members reach /profile. The new password works on its own:
+    // checked over the Auth API, since the account is deleted straight after.
+    const login = await request.post(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+      headers: { apikey: ANON_KEY! },
+      data: { email, password: INVITEE_PASSWORD },
+    });
+    expect(login.ok()).toBe(true);
+  } finally {
+    await removeUser(request, email);
+  }
 });
 
 test("an expired invite link shows the expired state", async ({ page }) => {
