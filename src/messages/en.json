@@ -1167,7 +1167,10 @@
       "requestNewLink": "Go to Log In",
       "submit": "Continue",
       "submitting": "Saving password...",
-      "errorGeneric": "We could not save your password. Ask your admin for a new invitation."
+      "errorGeneric": "We could not save your password. Ask your admin for a new invitation.",
+      "continueTitle": "Accept your invitation",
+      "continueBody": "Continue to choose your password and set up your GlobalLinkup profile.",
+      "continue": "Continue"
     }
   },
   "PersonaForm": {

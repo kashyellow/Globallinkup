@@ -6,6 +6,7 @@ import { postAuthPath } from "@/lib/auth";
 import { getRequestOrigin } from "@/lib/origin";
 import { RESET_REQUEST_COOKIE, RESET_REQUEST_MAX_AGE } from "@/lib/auth-cookies";
 import { REMEMBER_COOKIE, REMEMBER_MAX_AGE } from "@/lib/supabase/cookies";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import {
   acceptInviteSchema,
@@ -218,5 +219,12 @@ export async function acceptInviteAction(input: unknown): Promise<AuthResult> {
 
   const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
   if (error) return { ok: false, error: mapAuthError(error) };
+
+  // Invite rows are service-role writes only; `save_persona` reads this stamp.
+  const { error: termsError } = await createAdminClient()
+    .from("member_invites")
+    .update({ terms_accepted_at: new Date().toISOString() })
+    .eq("user_id", user.id);
+  if (termsError) return { ok: false, error: "unknown" };
   return { ok: true, redirectTo: "/create-persona" };
 }

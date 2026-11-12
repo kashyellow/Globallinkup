@@ -59,12 +59,13 @@ export async function inviteMemberAction(
   const { email, fullName, locale } = parsed.data;
 
   const admin = createAdminClient();
-  const { data: pending } = await admin
+  const { data: pending, error: lookupError } = await admin
     .from("member_invites")
     .select("user_id")
     .eq("email", email)
     .is("accepted_at", null)
     .maybeSingle();
+  if (lookupError) return { ok: false, error: "unknown" };
   if (pending) return { ok: false, error: "alreadyInvited" };
 
   const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
@@ -95,8 +96,10 @@ export async function inviteMemberAction(
     invited_by: ctx.user.id,
   });
   if (insertError) {
-    // Do not leave an invited login behind that nobody can see or revoke.
     if (avatarPath) await admin.storage.from("avatars").remove([avatarPath]);
+    // A concurrent invite for the same email staged this user first: keep it.
+    if (insertError.code === "23505") return { ok: false, error: "alreadyInvited" };
+    // Do not leave an invited login behind that nobody can see or revoke.
     await admin.auth.admin.deleteUser(userId);
     return { ok: false, error: "unknown" };
   }

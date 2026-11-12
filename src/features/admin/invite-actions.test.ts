@@ -9,6 +9,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => ({
   capabilities: ["members.review"] as string[],
   openInvite: null as null | Record<string, unknown>,
+  lookupError: null as null | { code: string },
+  insertError: null as null | { code: string },
   profileExists: false,
   inviteResult: { data: { user: { id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" } }, error: null } as {
     data: { user: { id: string } | null };
@@ -52,11 +54,11 @@ function query(table: string) {
           : state.profileExists
             ? { id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" }
             : null,
-      error: null,
+      error: table === "member_invites" ? state.lookupError : null,
     }),
     insert: async (row: Record<string, unknown>) => {
       state.inserts.push(row);
-      return { error: null };
+      return { error: state.insertError };
     },
     then: (resolve: (value: { error: null }) => void) => resolve({ error: null }),
   };
@@ -110,6 +112,8 @@ function idForm() {
 beforeEach(() => {
   state.capabilities = ["members.review"];
   state.openInvite = null;
+  state.lookupError = null;
+  state.insertError = null;
   state.profileExists = false;
   state.inviteResult = { data: { user: { id: USER_ID } }, error: null };
   state.invites = [];
@@ -153,6 +157,21 @@ describe("inviteMemberAction", () => {
     const result = await inviteMemberAction({ ok: false }, inviteForm());
     expect(result).toEqual({ ok: false, error: "alreadyInvited" });
     expect(state.invites).toHaveLength(0);
+  });
+
+  it("does not treat a failed pending-invite lookup as no invite", async () => {
+    state.lookupError = { code: "08006" };
+    const result = await inviteMemberAction({ ok: false }, inviteForm());
+    expect(result).toEqual({ ok: false, error: "unknown" });
+    expect(state.invites).toHaveLength(0);
+  });
+
+  it("keeps a concurrent invite's account when its own insert collides", async () => {
+    // Re-inviting an unconfirmed user returns the same id the other request staged.
+    state.insertError = { code: "23505" };
+    const result = await inviteMemberAction({ ok: false }, inviteForm());
+    expect(result).toEqual({ ok: false, error: "alreadyInvited" });
+    expect(state.deleted).toHaveLength(0);
   });
 
   it("reports an existing member's email as in use", async () => {

@@ -6,7 +6,8 @@
 -- front; the name, optional photo and email language are staged here until the
 -- invitee submits their persona. No `profiles` row exists before then, so an
 -- unfinished invitee never reaches the members review queue. `save_persona`
--- approves an invited member on submit and audits it against the inviter.
+-- approves an invited member on submit, when the session came through the
+-- emailed link and the terms were accepted, and audits it against the inviter.
 -- ============================================================================
 
 create table public.member_invites (
@@ -19,6 +20,11 @@ create table public.member_invites (
   created_at timestamptz not null default now(),
   last_sent_at timestamptz not null default now(),
   opened_at timestamptz,
+  -- The auth session `verifyOtp` created from the emailed link. Supabase lets
+  -- `/signup` take over an unconfirmed invited user, so only this session has
+  -- proved it reads the invitee's mailbox.
+  verified_session_id uuid,
+  terms_accepted_at timestamptz,
   accepted_at timestamptz,
   constraint member_invites_email_format
     check (email ~ '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$' and email = lower(email)),
@@ -111,10 +117,14 @@ begin
   select approval_status into v_status from public.profiles where id = v_uid;
 
   if not found then
-    -- An admin vouched for an invited member: no review queue.
+    -- An admin vouched for an invited member: no review queue. Only for the
+    -- session that opened the emailed link, after the terms step.
     select i.invited_by, true into v_inviter, v_invited
     from public.member_invites i
-    where i.user_id = v_uid and i.accepted_at is null;
+    where i.user_id = v_uid
+      and i.accepted_at is null
+      and i.terms_accepted_at is not null
+      and i.verified_session_id::text = (auth.jwt() ->> 'session_id');
     v_invited := coalesce(v_invited, false);
     v_status := case when v_invited then 'approved' else 'pending' end;
 
@@ -129,8 +139,10 @@ begin
       p_languages, v_status, pg_catalog.now()
     );
 
+    -- A persona closes any open invite; unverified ones go through review.
+    update public.member_invites set accepted_at = pg_catalog.now()
+    where user_id = v_uid and accepted_at is null;
     if v_invited then
-      update public.member_invites set accepted_at = pg_catalog.now() where user_id = v_uid;
       insert into public.audit_events (actor_id, action, target_type, target_id)
       values (v_inviter, 'member.invite_accepted', 'profile', v_uid);
     end if;

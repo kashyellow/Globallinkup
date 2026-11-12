@@ -379,7 +379,9 @@ export type Database = {
           last_sent_at: string;
           locale: string;
           opened_at: string | null;
+          terms_accepted_at: string | null;
           user_id: string;
+          verified_session_id: string | null;
         };
         ComputedFields: never;
         Insert: {
@@ -392,7 +394,9 @@ export type Database = {
           last_sent_at?: string;
           locale: string;
           opened_at?: string | null;
+          terms_accepted_at?: string | null;
           user_id: string;
+          verified_session_id?: string | null;
         };
         Update: {
           accepted_at?: string | null;
@@ -404,7 +408,9 @@ export type Database = {
           last_sent_at?: string;
           locale?: string;
           opened_at?: string | null;
+          terms_accepted_at?: string | null;
           user_id?: string;
+          verified_session_id?: string | null;
         };
         Relationships: [
           {

@@ -33,15 +33,23 @@ picks their own password and completes the rest of the persona.
    service role only.
 4. **Link.** `supabase/templates/invite.html` (bilingual EN + ES) links to
    `{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=invite`. The route
-   `src/app/[locale]/auth/confirm/route.ts` calls `verifyOtp`, marks the invite
-   opened and sends the invitee to `/accept-invite`. A bad or used token shows
-   the expired-invitation state.
+   `src/app/[locale]/auth/confirm/route.ts` only forwards a GET to a "Continue"
+   page (mail scanners prefetch links and would burn the one-time token); the
+   page POSTs back, the route calls `verifyOtp`, marks the invite opened, stores
+   the new session's `session_id` as `verified_session_id`, and sends the
+   invitee to `/accept-invite`. A bad or used token shows the expired state.
 5. **Onboarding.** `/accept-invite` sets the password and checks the terms
-   (`acceptInviteAction`), then `/create-persona` opens prefilled with the
-   admin's name and photo, both editable.
-6. **Approval.** `save_persona` approves a caller with an open invite on the
-   first submit, sets `accepted_at`, and writes a `member.invite_accepted` audit
-   row with the inviter as actor.
+   (`acceptInviteAction` stamps `terms_accepted_at`), then `/create-persona`
+   opens prefilled with the admin's name and photo, both editable.
+   `/create-persona` sends an invitee without `terms_accepted_at` back to
+   `/accept-invite`.
+6. **Approval.** `save_persona` approves on the first submit only when the
+   caller's JWT `session_id` equals `verified_session_id` and the terms were
+   accepted; it then writes a `member.invite_accepted` audit row with the
+   inviter as actor. Any first persona closes the open invite (`accepted_at`).
+   Reason: with email confirmations off, Supabase `/signup` with a pending
+   invitee's address signs the caller in as that unconfirmed user, so "has an
+   open invite" alone proves nothing. Only the link session proves the mailbox.
 7. **Resend / revoke.** Resend re-calls `inviteUserByEmail` and is only possible
    before the link is opened (afterwards Supabase treats the email as confirmed;
    the invitee uses Forgot password). Revoke deletes the auth user and photo,
@@ -52,6 +60,12 @@ picks their own password and completes the rest of the persona.
 ## Consequences
 
 - An invited person skips the review queue: the inviting admin vouches for them.
+- Auto-approval is tied to the session that opened the link. An invitee who
+  abandons after the password step and later logs in with the password (or
+  uses Forgot password) finishes normally but lands in the review queue.
+- A stranger who uses `/signup` with a pending invitee's email gets a session
+  for that unconfirmed user; they cannot be auto-approved, and their persona
+  goes to review where the admin sees it.
 - Unfinished invitees are real auth users with no profile. They can only be seen
   and removed from the Invite tab.
 - Invites depend on outbound email. Until custom SMTP is configured the cloud

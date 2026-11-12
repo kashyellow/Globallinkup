@@ -9,20 +9,34 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(10);
+select plan(13);
 
 insert into auth.users (id, email)
 values
   ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'invitee.a@example.com'),
   ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'invitee.b@example.com'),
-  ('cccccccc-cccc-cccc-cccc-cccccccccccc', 'plain.signup@example.com');
+  ('cccccccc-cccc-cccc-cccc-cccccccccccc', 'plain.signup@example.com'),
+  ('dddddddd-dddd-dddd-dddd-dddddddddddd', 'invitee.d@example.com');
 
 insert into public.member_invites (user_id, email, display_name, locale, invited_by)
 values
   ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 'invitee.a@example.com', 'Invitee A', 'en',
    '11111111-1111-1111-1111-111111111111'),
   ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 'invitee.b@example.com', 'Invitee B', 'es',
+   '11111111-1111-1111-1111-111111111111'),
+  ('dddddddd-dddd-dddd-dddd-dddddddddddd', 'invitee.d@example.com', 'Invitee D', 'en',
    '11111111-1111-1111-1111-111111111111');
+
+-- A proved the email in session 5e55… and accepted the terms. B accepted the
+-- terms from a session that never came through the link (a /signup takeover).
+-- D came through the link but skipped the terms step.
+update public.member_invites
+set verified_session_id = '5e555555-5555-5555-5555-555555555555', terms_accepted_at = now()
+where user_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
+update public.member_invites set terms_accepted_at = now()
+where user_id = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
+update public.member_invites set verified_session_id = '5e5dddd5-5555-5555-5555-555555555555'
+where user_id = 'dddddddd-dddd-dddd-dddd-dddddddddddd';
 
 -- A members-desk reviewer (mateo) and a marketplace-only sub-admin (sofia).
 insert into public.admin_roles (slug, name, capabilities)
@@ -49,7 +63,7 @@ select throws_ok(
 -- Visibility -----------------------------------------------------------------
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"33333333-3333-3333-3333-333333333333","role":"authenticated"}';
-select is((select count(*)::int from public.member_invites), 2, 'a members-desk admin sees every invite');
+select is((select count(*)::int from public.member_invites), 3, 'a members-desk admin sees every invite');
 reset role;
 
 set local role authenticated;
@@ -63,7 +77,7 @@ select is((select count(*)::int from public.member_invites), 0, 'a member sees n
 reset role;
 
 set local role authenticated;
-set local request.jwt.claims = '{"sub":"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa","role":"authenticated"}';
+set local request.jwt.claims = '{"sub":"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa","role":"authenticated","session_id":"5e555555-5555-5555-5555-555555555555"}';
 select is(
   (select array_agg(user_id)::text from public.member_invites),
   '{aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa}',
@@ -97,6 +111,30 @@ select is(
    where action = 'member.invite_accepted' and target_id = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'),
   '11111111-1111-1111-1111-111111111111'::uuid,
   'the acceptance is audited against the inviter'
+);
+
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb","role":"authenticated","session_id":"5e5bbbb5-5555-5555-5555-555555555555"}';
+select is(
+  public.save_persona('Invitee B', 'ES', 'Madrid', null, null, '[]'::jsonb, null, '+34600000002'),
+  'pending'::public.approval_status,
+  'a session that never came through the invite link is not auto-approved'
+);
+reset role;
+
+set local role authenticated;
+set local request.jwt.claims = '{"sub":"dddddddd-dddd-dddd-dddd-dddddddddddd","role":"authenticated","session_id":"5e5dddd5-5555-5555-5555-555555555555"}';
+select is(
+  public.save_persona('Invitee D', 'ES', 'Madrid', null, null, '[]'::jsonb, null, '+34600000003'),
+  'pending'::public.approval_status,
+  'an invitee who skipped the terms step is not auto-approved'
+);
+reset role;
+
+select isnt(
+  (select accepted_at from public.member_invites where user_id = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'),
+  null,
+  'a persona submitted without auto-approval still closes the invite'
 );
 
 set local role authenticated;

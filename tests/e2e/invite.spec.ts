@@ -80,10 +80,18 @@ test("admin invites a member who finishes setup and lands approved", async ({ pa
   const link = await inviteLink(request, page, email);
   expect(link, "the invite email should reach Mailpit with a confirm link").toBeTruthy();
 
-  // Still signed in as the admin: the link must switch to the invitee.
+  // A mail scanner only GETs the link: that must not use up the token.
   await page.goto(link!);
+  await expect(page.getByRole("button", { name: "Continue" })).toBeVisible();
+  await page.goto(link!);
+  // Still signed in as the admin: continuing must switch to the invitee.
+  await page.getByRole("button", { name: "Continue" }).click();
   await expect(page).toHaveURL(/\/en\/accept-invite$/);
   await expect(page.locator("#invite-email")).toHaveValue(email);
+
+  // The persona form is not reachable before the password and terms step.
+  await page.goto("/en/create-persona");
+  await expect(page).toHaveURL(/\/en\/accept-invite$/);
   await page.fill("#reset-password", INVITEE_PASSWORD);
   await page.fill("#reset-confirm", INVITEE_PASSWORD);
   await page.check("#invite-terms");
@@ -106,6 +114,7 @@ test("admin invites a member who finishes setup and lands approved", async ({ pa
 
 test("an expired invite link shows the expired state", async ({ page }) => {
   await page.goto("/en/auth/confirm?token_hash=bogus&type=invite");
+  await page.getByRole("button", { name: "Continue" }).click();
   await expect(page).toHaveURL(/\/en\/accept-invite\?error=expired$/);
   await expect(page.getByText("This invitation has expired or was already used")).toBeVisible();
 });

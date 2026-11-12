@@ -1167,7 +1167,10 @@
       "requestNewLink": "Ir a Iniciar sesión",
       "submit": "Continuar",
       "submitting": "Guardando contraseña...",
-      "errorGeneric": "No pudimos guardar tu contraseña. Pide a tu administrador una nueva invitación."
+      "errorGeneric": "No pudimos guardar tu contraseña. Pide a tu administrador una nueva invitación.",
+      "continueTitle": "Acepta tu invitación",
+      "continueBody": "Continúa para elegir tu contraseña y crear tu perfil en GlobalLinkup.",
+      "continue": "Continuar"
     }
   },
   "PersonaForm": {
