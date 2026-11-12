@@ -8,6 +8,7 @@ import { RESET_REQUEST_COOKIE, RESET_REQUEST_MAX_AGE } from "@/lib/auth-cookies"
 import { REMEMBER_COOKIE, REMEMBER_MAX_AGE } from "@/lib/supabase/cookies";
 import { createClient } from "@/lib/supabase/server";
 import {
+  acceptInviteSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
   signInSchema,
@@ -191,4 +192,31 @@ export async function updatePasswordAction(input: unknown): Promise<AuthResult> 
   const cookieStore = await cookies();
   cookieStore.delete(RESET_REQUEST_COOKIE);
   return { ok: true, redirectTo: "/login" };
+}
+
+/**
+ * Invite step 1 (ADR 0010). The confirm route already signed the invitee in;
+ * they now choose their own password. Only an open invite may do this.
+ */
+export async function acceptInviteAction(input: unknown): Promise<AuthResult> {
+  const parsed = acceptInviteSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid" };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "invalid" };
+
+  const { data: invite } = await supabase
+    .from("member_invites")
+    .select("user_id")
+    .eq("user_id", user.id)
+    .is("accepted_at", null)
+    .maybeSingle();
+  if (!invite) return { ok: false, error: "invalid" };
+
+  const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
+  if (error) return { ok: false, error: mapAuthError(error) };
+  return { ok: true, redirectTo: "/create-persona" };
 }

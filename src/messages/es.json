@@ -1111,6 +1111,18 @@
       "errorWeakPassword": "Elige una contraseña más fuerte: 8+ caracteres con mayúscula, minúscula y número.",
       "errorRateLimited": "Demasiados intentos. Espera un momento e inténtalo de nuevo.",
       "errorGeneric": "No pudimos actualizar tu contraseña. Solicita un enlace nuevo."
+    },
+    "acceptInvite": {
+      "title": "Configura tu cuenta",
+      "subtitle": "Te invitaron a GlobalLinkup. Elige una contraseña y luego completa tu perfil.",
+      "emailLabel": "Correo electrónico",
+      "passwordLabel": "Contraseña",
+      "invalidTitle": "Esta invitación ha caducado o ya se usó",
+      "invalidBody": "Pide al administrador que te invitó una nueva invitación. Si ya creaste una contraseña, inicia sesión.",
+      "requestNewLink": "Ir a Iniciar sesión",
+      "submit": "Continuar",
+      "submitting": "Guardando contraseña...",
+      "errorGeneric": "No pudimos guardar tu contraseña. Pide a tu administrador una nueva invitación."
     }
   },
   "PersonaForm": {

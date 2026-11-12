@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { forgotPasswordSchema, resetPasswordSchema, signInSchema, signUpSchema } from "./auth";
+import {
+  acceptInviteSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
+  signInSchema,
+  signUpSchema,
+} from "./auth";
 
 describe("signUpSchema", () => {
   const valid = {
@@ -63,5 +69,21 @@ describe("resetPasswordSchema", () => {
     expect(
       resetPasswordSchema.safeParse({ password: "Password123", confirm: "Password124" }).success,
     ).toBe(false);
+  });
+});
+
+describe("acceptInviteSchema", () => {
+  const valid = { password: "Abcdefg1", confirm: "Abcdefg1", acceptedTerms: true };
+
+  it("accepts a strong matching password with the terms accepted", () => {
+    expect(acceptInviteSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it("rejects a mismatched confirmation", () => {
+    expect(acceptInviteSchema.safeParse({ ...valid, confirm: "Abcdefg2" }).success).toBe(false);
+  });
+
+  it("requires the terms", () => {
+    expect(acceptInviteSchema.safeParse({ ...valid, acceptedTerms: false }).success).toBe(false);
   });
 });

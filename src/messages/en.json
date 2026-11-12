@@ -1111,6 +1111,18 @@
       "errorWeakPassword": "Choose a stronger password: 8+ characters with upper, lower and a number.",
       "errorRateLimited": "Too many attempts. Please wait a moment and try again.",
       "errorGeneric": "We could not update your password. Please request a new link."
+    },
+    "acceptInvite": {
+      "title": "Set up your account",
+      "subtitle": "You were invited to GlobalLinkup. Choose a password, then complete your profile.",
+      "emailLabel": "Email address",
+      "passwordLabel": "Password",
+      "invalidTitle": "This invitation has expired or was already used",
+      "invalidBody": "Ask the admin who invited you to send a new invitation. If you already set a password, log in instead.",
+      "requestNewLink": "Go to Log In",
+      "submit": "Continue",
+      "submitting": "Saving password...",
+      "errorGeneric": "We could not save your password. Ask your admin for a new invitation."
     }
   },
   "PersonaForm": {
