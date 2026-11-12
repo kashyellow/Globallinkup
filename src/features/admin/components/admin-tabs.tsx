@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 export const ADMIN_TABS = [
   { href: "/admin", key: "dashboard", icon: "dashboard", requires: "reports.manage" },
   { href: "/admin/users", key: "users", icon: "how_to_reg", requires: "members.review" },
+  { href: "/admin/invite", key: "invite", icon: "person_add", requires: "members.review" },
   {
     href: "/admin/marketplace",
     key: "marketplace",

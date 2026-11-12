@@ -425,7 +425,9 @@
       "marketplaceShort": "Marketplace",
       "moderationShort": "Moderation",
       "auditShort": "Audit",
-      "teamShort": "Team"
+      "teamShort": "Team",
+      "invite": "Invite user",
+      "inviteShort": "Invite"
     },
     "users": {
       "searchLabel": "Search members",
@@ -757,7 +759,50 @@
       }
     },
     "pendingRoleTitle": "Your access is pending",
-    "pendingRoleBody": "An owner still has to assign your role. You can sign in again once that happens."
+    "pendingRoleBody": "An owner still has to assign your role. You can sign in again once that happens.",
+    "invite": {
+      "title": "Invite user",
+      "body": "Invite a person by email. They choose their own password, complete their profile and join already approved.",
+      "emailLabel": "Email address",
+      "nameLabel": "Full name",
+      "localeLabel": "Invitation language",
+      "localeEn": "English",
+      "localeEs": "Spanish",
+      "addPhoto": "Add photo",
+      "changePhoto": "Change photo",
+      "removePhoto": "Remove photo",
+      "photoHint": "Optional. They can change it later.",
+      "photoPreviewAlt": "Selected profile photo",
+      "send": "Send invitation",
+      "sending": "Sending…",
+      "pendingTitle": "Pending invitations ({count})",
+      "noPending": "No pending invitations.",
+      "statusSent": "Sent",
+      "statusOpened": "Link opened, setup unfinished",
+      "openedHint": "They can finish by using Forgot password on the login page.",
+      "lastSent": "Last sent {date}",
+      "resend": "Resend",
+      "revoke": "Revoke",
+      "revokeTitle": "Revoke the invitation for {name}?",
+      "revokeBody": "This deletes their unfinished account and photo. The invitation link stops working.",
+      "working": "Working…",
+      "notices": {
+        "sent": "Invitation sent.",
+        "resent": "Invitation sent again.",
+        "revoked": "Invitation revoked."
+      },
+      "errors": {
+        "forbidden": "You do not have access to invite members.",
+        "invalid": "Check the email address and name, then try again.",
+        "photoInvalid": "Use a PNG, JPEG or WebP photo up to 5 MB.",
+        "emailInUse": "This email already belongs to an account.",
+        "alreadyInvited": "This email already has a pending invitation. Use Resend in the list below.",
+        "sendFailed": "The invitation email could not be sent. Email delivery may not be configured yet; contact the site owner.",
+        "notResendable": "This invitation can no longer be re-sent.",
+        "notRevocable": "This person already completed their profile. Manage them from Users.",
+        "unknown": "Something went wrong. Please try again."
+      }
+    }
   },
   "Connections": {
     "header": {

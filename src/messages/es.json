@@ -425,7 +425,9 @@
       "marketplaceShort": "Marketplace",
       "moderationShort": "Moderación",
       "auditShort": "Auditoría",
-      "teamShort": "Equipo"
+      "teamShort": "Equipo",
+      "invite": "Invitar usuario",
+      "inviteShort": "Invitar"
     },
     "users": {
       "searchLabel": "Buscar miembros",
@@ -757,7 +759,50 @@
       }
     },
     "pendingRoleTitle": "Tu acceso está pendiente",
-    "pendingRoleBody": "Un propietario todavía debe asignarte un rol. Podrás entrar cuando lo haga."
+    "pendingRoleBody": "Un propietario todavía debe asignarte un rol. Podrás entrar cuando lo haga.",
+    "invite": {
+      "title": "Invitar usuario",
+      "body": "Invita a una persona por correo. Elige su propia contraseña, completa su perfil y entra ya aprobada.",
+      "emailLabel": "Correo electrónico",
+      "nameLabel": "Nombre completo",
+      "localeLabel": "Idioma de la invitación",
+      "localeEn": "Inglés",
+      "localeEs": "Español",
+      "addPhoto": "Añadir foto",
+      "changePhoto": "Cambiar foto",
+      "removePhoto": "Quitar foto",
+      "photoHint": "Opcional. Podrá cambiarla después.",
+      "photoPreviewAlt": "Foto de perfil seleccionada",
+      "send": "Enviar invitación",
+      "sending": "Enviando…",
+      "pendingTitle": "Invitaciones pendientes ({count})",
+      "noPending": "No hay invitaciones pendientes.",
+      "statusSent": "Enviada",
+      "statusOpened": "Enlace abierto, registro sin terminar",
+      "openedHint": "Puede terminar usando ¿Olvidaste tu contraseña? en la página de inicio de sesión.",
+      "lastSent": "Último envío {date}",
+      "resend": "Reenviar",
+      "revoke": "Revocar",
+      "revokeTitle": "¿Revocar la invitación de {name}?",
+      "revokeBody": "Esto elimina su cuenta sin terminar y su foto. El enlace de invitación deja de funcionar.",
+      "working": "Procesando…",
+      "notices": {
+        "sent": "Invitación enviada.",
+        "resent": "Invitación reenviada.",
+        "revoked": "Invitación revocada."
+      },
+      "errors": {
+        "forbidden": "No tienes acceso para invitar miembros.",
+        "invalid": "Revisa el correo y el nombre e inténtalo de nuevo.",
+        "photoInvalid": "Usa una foto PNG, JPEG o WebP de hasta 5 MB.",
+        "emailInUse": "Este correo ya pertenece a una cuenta.",
+        "alreadyInvited": "Este correo ya tiene una invitación pendiente. Usa Reenviar en la lista de abajo.",
+        "sendFailed": "No se pudo enviar el correo de invitación. Puede que el envío de correo aún no esté configurado; contacta con el propietario del sitio.",
+        "notResendable": "Esta invitación ya no se puede reenviar.",
+        "notRevocable": "Esta persona ya completó su perfil. Gestiónala desde Usuarios.",
+        "unknown": "Algo salió mal. Inténtalo de nuevo."
+      }
+    }
   },
   "Connections": {
     "header": {
