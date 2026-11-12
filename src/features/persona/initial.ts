@@ -13,7 +13,7 @@ import type { PersonaInitial } from "./components/create-persona-view";
  */
 export async function loadPersonaInitial(): Promise<PersonaInitial | undefined> {
   const profile = await getCurrentProfile();
-  if (!profile) return undefined;
+  if (!profile) return loadInviteInitial();
 
   const supabase = await getServerClient();
   const contacts = {
@@ -78,5 +78,41 @@ export async function loadPersonaInitial(): Promise<PersonaInitial | undefined> 
     avatarUrl,
     hasStoredAvatar: Boolean(profile.avatar_url),
     ...contacts,
+  };
+}
+
+/**
+ * An invited member's first persona (ADR 0010): the name and photo the admin
+ * entered, editable like any other field. `undefined` without an open invite.
+ */
+async function loadInviteInitial(): Promise<PersonaInitial | undefined> {
+  const supabase = await getServerClient();
+  if (!supabase) return undefined;
+
+  const { data: invite } = await supabase
+    .from("member_invites")
+    .select("display_name, avatar_path")
+    .is("accepted_at", null)
+    .maybeSingle();
+  if (!invite) return undefined;
+
+  return {
+    fullName: invite.display_name,
+    headline: "",
+    country: "ES",
+    city: "",
+    dateOfBirth: "",
+    languages: [],
+    bio: "",
+    avatarUrl: invite.avatar_path
+      ? await createSignedImageUrl(supabase, "avatars", invite.avatar_path)
+      : null,
+    hasStoredAvatar: Boolean(invite.avatar_path),
+    whatsapp: "",
+    telegram: "",
+    instagram: "",
+    facebook: "",
+    tiktok: "",
+    x: "",
   };
 }
