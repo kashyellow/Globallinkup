@@ -368,6 +368,61 @@ export type Database = {
           },
         ];
       };
+      member_invites: {
+        Row: {
+          accepted_at: string | null;
+          avatar_path: string | null;
+          created_at: string;
+          display_name: string;
+          email: string;
+          invited_by: string | null;
+          last_sent_at: string;
+          locale: string;
+          opened_at: string | null;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          accepted_at?: string | null;
+          avatar_path?: string | null;
+          created_at?: string;
+          display_name: string;
+          email: string;
+          invited_by?: string | null;
+          last_sent_at?: string;
+          locale: string;
+          opened_at?: string | null;
+          user_id: string;
+        };
+        Update: {
+          accepted_at?: string | null;
+          avatar_path?: string | null;
+          created_at?: string;
+          display_name?: string;
+          email?: string;
+          invited_by?: string | null;
+          last_sent_at?: string;
+          locale?: string;
+          opened_at?: string | null;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "member_invites_invited_by_fkey";
+            columns: ["invited_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "member_invites_invited_by_fkey";
+            columns: ["invited_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles_public";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       notifications: {
         Row: {
           created_at: string;
