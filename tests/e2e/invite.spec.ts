@@ -92,6 +92,8 @@ test("admin invites a member who finishes setup and lands approved", async ({ pa
   // The persona form is not reachable before the password and terms step.
   await page.goto("/en/create-persona");
   await expect(page).toHaveURL(/\/en\/accept-invite$/);
+  await page.goto("/en/accept-invite");
+  await page.waitForTimeout(750); // hydration: controlled inputs reset otherwise
   await page.fill("#reset-password", INVITEE_PASSWORD);
   await page.fill("#reset-confirm", INVITEE_PASSWORD);
   await page.check("#invite-terms");
