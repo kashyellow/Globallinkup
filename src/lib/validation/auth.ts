@@ -28,6 +28,18 @@ export const signUpSchema = z
     message: "passwordMismatch",
   });
 
+/** Invite step 1 (ADR 0010): the invitee picks a password and accepts the terms. */
+export const acceptInviteSchema = z
+  .object({
+    password: passwordSchema,
+    confirm: z.string(),
+    acceptedTerms: z.literal(true, { message: "termsRequired" }),
+  })
+  .refine((value) => value.password === value.confirm, {
+    path: ["confirm"],
+    message: "passwordMismatch",
+  });
+
 export const signInSchema = z.object({
   email: emailSchema,
   password: z.string().min(1, "passwordRequired"),

@@ -75,7 +75,7 @@ No chat. No community/groups. No user-to-user marketplace. No stories/reels/live
 | `USER` | Default. Can create a Persona, discover people, connect, post, browse Marketplace. Sees protected contact info only after mutual connection. |
 | `ADMIN` | Everything a `USER` can do, plus the Admin area: user approval/management, post moderation, Marketplace management, reports. |
 
-Only two roles exist. No sub-admin, moderator, vendor, or seller roles.
+Only two roles exist. No moderator, vendor, or seller roles. Admins may be owner or sub-admin per ADR 0002.
 
 ### 3.2 Account (approval) states
 
@@ -225,6 +225,7 @@ Navigation: **Dashboard · Users · Posts · Marketplace · Reports · Settings*
 - **FR-9.5 (M)** Settings (minimal; e.g. platform/marketplace contact defaults).
 - **FR-9.6 (M)** Only `ADMIN` can access Admin operations, enforced server-side/DB-side.
 - **FR-9.7 (M)** Dashboard: small summary (counts of pending users, open reports, etc.). Not an enterprise dashboard.
+- **FR-9.8 (M)** Invite user (ADR 0010): an admin with the members desk enters an email, full name, optional photo and the email language; Supabase emails an invitation. The invitee sets their own password, accepts the terms, completes the prefilled persona and is approved on submit. Pending invites can be re-sent until the link is opened and revoked until the persona is submitted; an existing member's email or a pending invite is rejected.
 
 ### 5.10 Navigation (FR-10)
 

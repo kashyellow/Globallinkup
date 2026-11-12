@@ -82,6 +82,7 @@ export const ICON_NAMES = [
   "lock",
   "lock_clock",
   "lock_open",
+  "login",
   "lock_reset",
   "logout",
   "mail",

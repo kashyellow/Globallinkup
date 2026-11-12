@@ -1,13 +1,15 @@
 "use server";
 
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 
 import { postAuthPath } from "@/lib/auth";
-import { getPublicEnv } from "@/lib/env";
+import { getRequestOrigin } from "@/lib/origin";
 import { RESET_REQUEST_COOKIE, RESET_REQUEST_MAX_AGE } from "@/lib/auth-cookies";
 import { REMEMBER_COOKIE, REMEMBER_MAX_AGE } from "@/lib/supabase/cookies";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import {
+  acceptInviteSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
   signInSchema,
@@ -56,31 +58,6 @@ function mapAuthError(error: { code?: string; status?: number; message?: string 
     return "rateLimited";
   }
   return "unknown";
-}
-
-/**
- * The canonical origin for absolute links. Prefers the configured
- * `NEXT_PUBLIC_SITE_URL`; only falls back to request headers in local dev, so a
- * spoofed host cannot redirect a recovery link off-site (F-S2-10).
- */
-async function getRequestOrigin() {
-  const siteUrl = getPublicEnv().NEXT_PUBLIC_SITE_URL;
-  if (siteUrl) return siteUrl.replace(/\/+$/, "");
-
-  // A production deployment must configure the canonical origin; falling back
-  // to a request header there would let a spoofed host poison reset links.
-  if (process.env.NODE_ENV === "production") {
-    throw new Error(
-      "NEXT_PUBLIC_SITE_URL is required in production to build password-reset links.",
-    );
-  }
-
-  const requestHeaders = await headers();
-  const host =
-    requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
-  const protocol =
-    requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
-  return `${protocol}://${host}`;
 }
 
 export async function signUpAction(input: unknown): Promise<AuthResult> {
@@ -216,4 +193,38 @@ export async function updatePasswordAction(input: unknown): Promise<AuthResult> 
   const cookieStore = await cookies();
   cookieStore.delete(RESET_REQUEST_COOKIE);
   return { ok: true, redirectTo: "/login" };
+}
+
+/**
+ * Invite step 1 (ADR 0010). The confirm route already signed the invitee in;
+ * they now choose their own password. Only an open invite may do this.
+ */
+export async function acceptInviteAction(input: unknown): Promise<AuthResult> {
+  const parsed = acceptInviteSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: "invalid" };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, error: "invalid" };
+
+  const { data: invite } = await supabase
+    .from("member_invites")
+    .select("user_id")
+    .eq("user_id", user.id)
+    .is("accepted_at", null)
+    .maybeSingle();
+  if (!invite) return { ok: false, error: "invalid" };
+
+  const { error } = await supabase.auth.updateUser({ password: parsed.data.password });
+  if (error) return { ok: false, error: mapAuthError(error) };
+
+  // Invite rows are service-role writes only; `save_persona` reads this stamp.
+  const { error: termsError } = await createAdminClient()
+    .from("member_invites")
+    .update({ terms_accepted_at: new Date().toISOString() })
+    .eq("user_id", user.id);
+  if (termsError) return { ok: false, error: "unknown" };
+  return { ok: true, redirectTo: "/create-persona" };
 }

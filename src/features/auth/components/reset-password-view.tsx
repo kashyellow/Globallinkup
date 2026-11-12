@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import { Icon } from "@/components/ui/icon";
-import { updatePasswordAction, type AuthError } from "@/features/auth/actions";
+import { acceptInviteAction, updatePasswordAction, type AuthError } from "@/features/auth/actions";
 import { Link, useRouter } from "@/lib/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { RecoveryShell } from "./recovery-shell";
@@ -24,9 +24,37 @@ const EASE = "duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]";
 const FIELD_BASE =
   "h-11 w-full rounded-full border bg-surface pr-12 pl-11 font-body-md text-body-md text-on-surface transition-colors placeholder:text-placeholder focus-visible:outline-2 focus-visible:outline-offset-2";
 
-export function ResetPasswordView({ hasRecoverySession }: { hasRecoverySession: boolean }) {
-  const t = useTranslations("Auth.resetPassword");
+/** Keys the invite step words differently; everything else reads from resetPassword. */
+const INVITE_KEYS = new Set([
+  "title",
+  "subtitle",
+  "passwordLabel",
+  "invalidTitle",
+  "invalidBody",
+  "requestNewLink",
+  "submit",
+  "submitting",
+  "errorGeneric",
+]);
+
+/**
+ * Set-password screen for a recovery link, or — with `invite` — for an invited
+ * member's first password (ADR 0010), which also locks the email and asks for
+ * the terms.
+ */
+export function ResetPasswordView({
+  hasRecoverySession,
+  invite,
+}: {
+  hasRecoverySession: boolean;
+  invite?: { email: string };
+}) {
+  const tReset = useTranslations("Auth.resetPassword");
+  const tInvite = useTranslations("Auth.acceptInvite");
+  const tRegister = useTranslations("Auth.register");
+  const t = (key: string) => (invite && INVITE_KEYS.has(key) ? tInvite(key) : tReset(key));
   const router = useRouter();
+  const [terms, setTerms] = useState(false);
 
   const linkState: LinkState = hasRecoverySession ? "valid" : "invalid";
   const [password, setPassword] = useState("");
@@ -45,7 +73,7 @@ export function ResetPasswordView({ hasRecoverySession }: { hasRecoverySession: 
   const passed = Object.values(rules).filter(Boolean).length;
 
   const confirmValid = confirm.length > 0 && confirm === password;
-  const formValid = passed === 3 && confirmValid;
+  const formValid = passed === 3 && confirmValid && (!invite || terms);
 
   const showConfirmError = submitted && !confirmValid;
 
@@ -60,7 +88,9 @@ export function ResetPasswordView({ hasRecoverySession }: { hasRecoverySession: 
 
     setSubmitting(true);
     try {
-      const result = await updatePasswordAction({ password, confirm });
+      const result = invite
+        ? await acceptInviteAction({ password, confirm, acceptedTerms: terms })
+        : await updatePasswordAction({ password, confirm });
       if (!result.ok) {
         setServerError(result.error);
         setSubmitting(false);
@@ -86,14 +116,14 @@ export function ResetPasswordView({ hasRecoverySession }: { hasRecoverySession: 
           </h1>
           <p className="max-w-md font-body-md text-body-md text-secondary">{t("invalidBody")}</p>
           <Link
-            href="/forgot-password"
+            href={invite ? "/login" : "/forgot-password"}
             className={cn(
               "inline-flex h-12 items-center justify-center gap-space-xs rounded-full bg-primary px-space-lg font-label-lg text-label-lg font-semibold text-on-primary transition-colors",
               EASE,
               "hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary active:translate-y-px",
             )}
           >
-            <Icon name="refresh" className="text-lg" />
+            <Icon name={invite ? "login" : "refresh"} className="text-lg" />
             {t("requestNewLink")}
           </Link>
         </div>
@@ -107,6 +137,31 @@ export function ResetPasswordView({ hasRecoverySession }: { hasRecoverySession: 
           </div>
 
           <form className="flex flex-col gap-space-md" onSubmit={submit} noValidate>
+            {invite ? (
+              <div className="flex flex-col gap-1.5">
+                <label
+                  className="font-label-md text-label-md font-semibold text-on-surface"
+                  htmlFor="invite-email"
+                >
+                  {tInvite("emailLabel")}
+                </label>
+                <div className="relative">
+                  <input
+                    id="invite-email"
+                    type="email"
+                    value={invite.email}
+                    readOnly
+                    aria-readonly
+                    className={cn(FIELD_BASE, "border-outline-variant bg-surface-container")}
+                  />
+                  <Icon
+                    name="mail"
+                    className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-lg text-secondary"
+                  />
+                </div>
+              </div>
+            ) : null}
+
             {/* New password */}
             <div className="flex flex-col gap-1.5">
               <div className="flex flex-wrap items-baseline justify-between gap-x-space-sm">
@@ -243,6 +298,44 @@ export function ResetPasswordView({ hasRecoverySession }: { hasRecoverySession: 
                 </span>
               ) : null}
             </div>
+
+            {invite ? (
+              <div className="flex items-start gap-space-sm">
+                <input
+                  id="invite-terms"
+                  name="terms"
+                  type="checkbox"
+                  required
+                  aria-invalid={(submitted && !terms) || undefined}
+                  checked={terms}
+                  onChange={(event) => setTerms(event.target.checked)}
+                  className="mt-0 h-6 w-6 shrink-0 cursor-pointer rounded border-outline-variant bg-surface accent-primary"
+                />
+                <label
+                  className="cursor-pointer font-body-sm text-body-sm leading-relaxed text-secondary select-none"
+                  htmlFor="invite-terms"
+                >
+                  {tRegister.rich("terms", {
+                    terms: (chunks) => (
+                      <Link
+                        href="/terms"
+                        className="font-semibold text-on-surface underline decoration-primary/50 underline-offset-2 transition-colors hover:text-primary"
+                      >
+                        {chunks}
+                      </Link>
+                    ),
+                    privacy: (chunks) => (
+                      <Link
+                        href="/privacy"
+                        className="font-semibold text-on-surface underline decoration-primary/50 underline-offset-2 transition-colors hover:text-primary"
+                      >
+                        {chunks}
+                      </Link>
+                    ),
+                  })}
+                </label>
+              </div>
+            ) : null}
 
             {serverError ? (
               <div

@@ -609,3 +609,34 @@ export async function getAuditEvents({
     })),
   };
 }
+
+export type PendingInvite = {
+  userId: string;
+  email: string;
+  displayName: string;
+  locale: "en" | "es";
+  createdAt: string;
+  lastSentAt: string;
+  openedAt: string | null;
+};
+
+/** Invites whose persona is not submitted yet (ADR 0010), newest first. */
+export async function getPendingInvites(): Promise<PendingInvite[]> {
+  const supabase = await createClient();
+  const rows = unwrap(
+    await supabase
+      .from("member_invites")
+      .select("user_id, email, display_name, locale, created_at, last_sent_at, opened_at")
+      .is("accepted_at", null)
+      .order("created_at", { ascending: false }),
+  );
+  return (rows ?? []).map((row) => ({
+    userId: row.user_id,
+    email: row.email,
+    displayName: row.display_name,
+    locale: row.locale === "es" ? "es" : "en",
+    createdAt: row.created_at,
+    lastSentAt: row.last_sent_at,
+    openedAt: row.opened_at,
+  }));
+}

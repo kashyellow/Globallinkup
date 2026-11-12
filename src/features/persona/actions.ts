@@ -32,7 +32,7 @@ export async function savePersonaAction(input: unknown): Promise<PersonaResult> 
   // The path comes back from the upload action, so it is already ours — but the
   // profile row is what readers resolve, so refuse anything outside the
   // caller's storage folder before it is written.
-  const avatarPath = nonEmpty(data.avatarPath);
+  let avatarPath = nonEmpty(data.avatarPath);
   if (avatarPath && !avatarPath.startsWith(`${user.id}/`)) {
     return { ok: false, error: "invalid" };
   }
@@ -42,11 +42,20 @@ export async function savePersonaAction(input: unknown): Promise<PersonaResult> 
   // path is supplied, so the check is app-level rather than a nullable-column
   // constraint (admins and legacy rows may still have no avatar).
   const currentProfile = await getCurrentProfile();
+  const supabase = await createClient();
+  // An invited member may keep the photo their admin uploaded (ADR 0010).
+  if (!avatarPath && !currentProfile) {
+    const { data: invite } = await supabase
+      .from("member_invites")
+      .select("avatar_path")
+      .eq("user_id", user.id)
+      .is("accepted_at", null)
+      .maybeSingle();
+    avatarPath = invite?.avatar_path ?? null;
+  }
   if (!avatarPath && !currentProfile?.avatar_url) {
     return { ok: false, error: "avatarRequired" };
   }
-
-  const supabase = await createClient();
 
   const { data: status, error } = await supabase.rpc("save_persona", {
     p_display_name: data.fullName,
