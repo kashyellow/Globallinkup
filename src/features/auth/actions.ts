@@ -1,9 +1,9 @@
 "use server";
 
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 
 import { postAuthPath } from "@/lib/auth";
-import { getPublicEnv } from "@/lib/env";
+import { getRequestOrigin } from "@/lib/origin";
 import { RESET_REQUEST_COOKIE, RESET_REQUEST_MAX_AGE } from "@/lib/auth-cookies";
 import { REMEMBER_COOKIE, REMEMBER_MAX_AGE } from "@/lib/supabase/cookies";
 import { createClient } from "@/lib/supabase/server";
@@ -56,31 +56,6 @@ function mapAuthError(error: { code?: string; status?: number; message?: string 
     return "rateLimited";
   }
   return "unknown";
-}
-
-/**
- * The canonical origin for absolute links. Prefers the configured
- * `NEXT_PUBLIC_SITE_URL`; only falls back to request headers in local dev, so a
- * spoofed host cannot redirect a recovery link off-site (F-S2-10).
- */
-async function getRequestOrigin() {
-  const siteUrl = getPublicEnv().NEXT_PUBLIC_SITE_URL;
-  if (siteUrl) return siteUrl.replace(/\/+$/, "");
-
-  // A production deployment must configure the canonical origin; falling back
-  // to a request header there would let a spoofed host poison reset links.
-  if (process.env.NODE_ENV === "production") {
-    throw new Error(
-      "NEXT_PUBLIC_SITE_URL is required in production to build password-reset links.",
-    );
-  }
-
-  const requestHeaders = await headers();
-  const host =
-    requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
-  const protocol =
-    requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
-  return `${protocol}://${host}`;
 }
 
 export async function signUpAction(input: unknown): Promise<AuthResult> {

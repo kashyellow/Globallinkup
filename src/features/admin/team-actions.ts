@@ -4,10 +4,9 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { recordAudit } from "@/lib/audit";
+import { requireAdminCapability } from "@/features/admin/guard";
 import { deskCapabilities, deskRole, type DeskAccess } from "@/features/admin/desks";
-import { getCurrentProfile, getCurrentUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
 import { uuidSchema } from "@/lib/validation/ids";
 
 export type TeamState = { ok: boolean; error?: string };
@@ -16,19 +15,6 @@ const emailSchema = z.email();
 // Same rule the sign-up form enforces: 8+ characters with upper, lower and a digit.
 const passwordSchema = z.string().min(8).max(72).regex(/[a-z]/).regex(/[A-Z]/).regex(/\d/);
 const nameSchema = z.string().trim().min(2).max(60);
-
-async function requireAdminsManager() {
-  const user = await getCurrentUser();
-  const profile = await getCurrentProfile();
-  if (!user || !profile || profile.role !== "admin" || profile.approval_status !== "approved") {
-    return null;
-  }
-  const supabase = await createClient();
-  const { data } = await supabase.rpc("my_capabilities");
-  const capabilities = Array.isArray(data) ? data : [];
-  if (!capabilities.includes("admins.manage")) return null;
-  return { user, profile, supabase };
-}
 
 function readAccess(formData: FormData): DeskAccess {
   return {
@@ -61,7 +47,7 @@ export async function createSubAdminAction(
   _previous: TeamState,
   formData: FormData,
 ): Promise<TeamState> {
-  const ctx = await requireAdminsManager();
+  const ctx = await requireAdminCapability("admins.manage");
   if (!ctx) return { ok: false, error: "forbidden" };
 
   const parsed = z
@@ -118,7 +104,7 @@ export async function createSubAdminAction(
 
 /** The owner changes a sub-admin's name, desks and, optionally, password. */
 export async function updateSubAdminAction(formData: FormData): Promise<TeamState> {
-  const ctx = await requireAdminsManager();
+  const ctx = await requireAdminCapability("admins.manage");
   if (!ctx) return { ok: false, error: "forbidden" };
 
   const newPassword = String(formData.get("password") ?? "");
@@ -175,7 +161,7 @@ export async function updateSubAdminAction(formData: FormData): Promise<TeamStat
 
 /** Removing a sub-admin deletes their login. Owners cannot be removed. */
 export async function removeSubAdminAction(formData: FormData): Promise<TeamState> {
-  const ctx = await requireAdminsManager();
+  const ctx = await requireAdminCapability("admins.manage");
   if (!ctx) return { ok: false, error: "forbidden" };
 
   const parsed = z
