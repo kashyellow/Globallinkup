@@ -149,8 +149,9 @@ export async function requestPasswordResetAction(
       const origin = await getRequestOrigin();
       const supabase = await createClient();
       await supabase.auth.resetPasswordForEmail(email, {
-        // `next` is locale-less: the callback prefixes the active locale once.
-        redirectTo: `${origin}/${locale}/auth/callback?next=/reset-password`,
+        // The callback defaults to /reset-password; the email template appends
+        // `?token_hash=` to this URL, so it must not carry its own query.
+        redirectTo: `${origin}/${locale}/auth/callback`,
       });
     } catch (error) {
       // A production deployment without a canonical origin is a configuration

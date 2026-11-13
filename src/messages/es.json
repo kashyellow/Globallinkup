@@ -1130,6 +1130,9 @@
       "backToLogin": "Volver a Iniciar Sesión"
     },
     "resetPassword": {
+      "continueTitle": "Restablece tu contraseña",
+      "continueBody": "Continúa para elegir una nueva contraseña para tu cuenta de GlobalLinkup.",
+      "continue": "Continuar",
       "title": "Establece una nueva contraseña",
       "subtitle": "Elige una contraseña nueva y segura para tu cuenta de GlobalLinkup.",
       "passwordLabel": "Nueva contraseña",

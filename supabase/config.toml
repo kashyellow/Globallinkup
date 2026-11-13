@@ -252,6 +252,12 @@ otp_expiry = 86400
 subject = "You're invited to GlobalLinkup · Invitación a GlobalLinkup"
 content_path = "./supabase/templates/invite.html"
 
+# Password reset: token_hash link so it opens in any browser (no PKCE cookie).
+# The cloud project needs the same template pasted into Auth > Email Templates.
+[auth.email.template.recovery]
+subject = "Reset your password · Restablece tu contraseña"
+content_path = "./supabase/templates/recovery.html"
+
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]
 # enabled = true

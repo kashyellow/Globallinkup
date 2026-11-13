@@ -1130,6 +1130,9 @@
       "backToLogin": "Back to Log In"
     },
     "resetPassword": {
+      "continueTitle": "Reset your password",
+      "continueBody": "Continue to choose a new password for your GlobalLinkup account.",
+      "continue": "Continue",
       "title": "Set a new password",
       "subtitle": "Choose a strong new password for your GlobalLinkup account.",
       "passwordLabel": "New password",
