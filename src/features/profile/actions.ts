@@ -19,27 +19,40 @@ export type DeleteAccountResult =
 
 const BUCKETS = ["avatars", "post-images"] as const;
 const PAGE_SIZE = 100;
+// A member can upload to `<id>/sub/…` with their own JWT, so folders are walked
+// too. The caps keep a pathological tree from holding the request open.
+const MAX_DEPTH = 5;
+const MAX_ROUNDS = 100;
 
-async function removeUserFolder(
+async function removeFolder(
   admin: ReturnType<typeof createAdminClient>,
   bucket: (typeof BUCKETS)[number],
-  userId: string,
+  prefix: string,
+  depth = 0,
 ) {
-  // Every upload lives under `<user-id>/` (buildStoragePath). Removed files drop
-  // out of the listing, so reading page one until it is empty covers a folder of
-  // any size.
-  for (;;) {
-    const { data, error } = await admin.storage.from(bucket).list(userId, { limit: PAGE_SIZE });
+  for (let round = 0; round < MAX_ROUNDS; round += 1) {
+    const { data, error } = await admin.storage.from(bucket).list(prefix, { limit: PAGE_SIZE });
     if (error) {
-      console.error("[delete-account] storage list failed", { bucket });
+      console.error("[delete-account] storage list failed", { bucket, prefix });
       return;
     }
     if (!data || data.length === 0) return;
+
+    // Folder rows have no id and cannot be removed; their files can.
+    const files = data.filter((entry) => entry.id !== null);
+    if (depth < MAX_DEPTH) {
+      for (const folder of data.filter((entry) => entry.id === null)) {
+        await removeFolder(admin, bucket, `${prefix}/${folder.name}`, depth + 1);
+      }
+    }
+    // Removed files leave the listing, so page one is the next page. With no
+    // files left to remove, nothing more can change and the loop must end.
+    if (files.length === 0) return;
     const removed = await admin.storage
       .from(bucket)
-      .remove(data.map((file) => `${userId}/${file.name}`));
+      .remove(files.map((file) => `${prefix}/${file.name}`));
     if (removed.error) {
-      console.error("[delete-account] storage remove failed", { bucket });
+      console.error("[delete-account] storage remove failed", { bucket, prefix });
       return;
     }
   }
@@ -57,7 +70,7 @@ export async function deleteOwnAccountAction(input: unknown): Promise<DeleteAcco
   }
 
   const admin = createAdminClient();
-  for (const bucket of BUCKETS) await removeUserFolder(admin, bucket, user.id);
+  for (const bucket of BUCKETS) await removeFolder(admin, bucket, user.id);
 
   const { error } = await admin.auth.admin.deleteUser(user.id);
   if (error) return { ok: false, error: "unknown" };

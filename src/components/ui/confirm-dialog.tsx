@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
+import { useId, useRef, type ReactNode } from "react";
 
 import { Spinner } from "@/components/ui/spinner";
 import { useDialogA11y } from "@/features/shared/use-dialog-a11y";
@@ -39,6 +39,8 @@ export function ConfirmDialog({
   onConfirm: () => void;
   onClose: () => void;
 }) {
+  const titleId = useId();
+  const bodyId = useId();
   const cancelRef = useRef<HTMLButtonElement>(null);
   const containerRef = useDialogA11y(open, onClose, cancelRef);
 
@@ -58,21 +60,18 @@ export function ConfirmDialog({
         ref={containerRef}
         role="alertdialog"
         aria-modal="true"
-        aria-labelledby="confirm-dialog-title"
-        aria-describedby="confirm-dialog-body"
+        aria-labelledby={titleId}
+        aria-describedby={bodyId}
         tabIndex={-1}
         className="w-full max-w-md rounded-t-[1.5rem] border border-outline-variant bg-surface-low p-space-lg shadow-lift-lg outline-none sm:rounded-[1.5rem]"
       >
         <h2
-          id="confirm-dialog-title"
+          id={titleId}
           className="font-headline-sm text-headline-sm font-semibold text-on-surface"
         >
           {title}
         </h2>
-        <p
-          id="confirm-dialog-body"
-          className="mt-1 font-body-sm text-body-sm text-pretty text-secondary"
-        >
+        <p id={bodyId} className="mt-1 font-body-sm text-body-sm text-pretty text-secondary">
           {body}
         </p>
         {children}

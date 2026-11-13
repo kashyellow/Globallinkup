@@ -8,8 +8,12 @@ const state = vi.hoisted(() => ({
     role: string;
     approval_status: string;
   },
-  listPages: [[]] as { name: string }[][],
+  listPages: [[]] as { name: string; id?: string | null }[][],
   cursors: {} as Record<string, number>,
+  /** Pages per folder path; the member's own folder falls back to `listPages`. */
+  folders: {} as Record<string, { name: string; id: string | null }[][]>,
+  /** Folder entries stay listed after `remove` (Storage cannot delete a folder row). */
+  listCalls: 0,
   storageError: false,
   deleteError: false,
   removed: [] as { bucket: string; paths: string[] }[],
@@ -33,11 +37,15 @@ vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: () => ({
     storage: {
       from: (bucket: string) => ({
-        list: async () => {
+        list: async (prefix: string) => {
           if (state.storageError) return { data: null, error: { message: "boom" } };
-          // Each bucket walks the pages once (removed files leave the listing), then runs empty.
-          const page = (state.cursors[bucket] = (state.cursors[bucket] ?? -1) + 1);
-          return { data: state.listPages[page] ?? [], error: null };
+          if (++state.listCalls > 60)
+            throw new Error("list called too often: the cleanup would never end");
+          // Each folder walks its pages once (removed files leave the listing), then runs empty.
+          const key = `${bucket}:${prefix}`;
+          const page = (state.cursors[key] = (state.cursors[key] ?? -1) + 1);
+          const pages = state.folders[prefix] ?? (prefix === USER_ID ? state.listPages : []);
+          return { data: pages[page] ?? [], error: null };
         },
         remove: async (paths: string[]) => {
           state.removed.push({ bucket, paths });
@@ -70,6 +78,8 @@ beforeEach(() => {
   state.profile = { role: "user", approval_status: "approved" };
   state.listPages = [[]];
   state.cursors = {};
+  state.folders = {};
+  state.listCalls = 0;
   state.storageError = false;
   state.deleteError = false;
   state.removed = [];
@@ -127,6 +137,23 @@ describe("deleteOwnAccountAction", () => {
       expect(paths[0]).toBe(`${USER_ID}/f0.png`);
       expect(paths.at(-1)).toBe(`${USER_ID}/f119.png`);
     }
+  });
+
+  it("empties subfolders and ends even when a folder row stays listed", async () => {
+    // A member can upload to avatars/<id>/sub/x.png with their own JWT.
+    state.listPages = [
+      [
+        { name: "sub", id: null },
+        { name: "a.png", id: "1" },
+      ],
+      [{ name: "sub", id: null }],
+    ];
+    state.folders[`${USER_ID}/sub`] = [[{ name: "x.png", id: "2" }], []];
+    expect((await deleteOwnAccountAction({ confirm: "DELETE" })).ok).toBe(true);
+
+    const paths = state.removed.filter((call) => call.bucket === "avatars").flatMap((c) => c.paths);
+    expect([...paths].sort()).toEqual([`${USER_ID}/a.png`, `${USER_ID}/sub/x.png`]);
+    expect(state.deleted).toEqual([USER_ID]);
   });
 
   it("deletes the user, writes an id-only audit row and signs out", async () => {

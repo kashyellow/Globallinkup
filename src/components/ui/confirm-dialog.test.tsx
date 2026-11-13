@@ -22,6 +22,32 @@ function renderDialog(props: Partial<React.ComponentProps<typeof ConfirmDialog>>
 }
 
 describe("ConfirmDialog", () => {
+  it("names each dialog by its own title when two are on the page", () => {
+    const props = { open: true, cancelLabel: "Cancel", onConfirm: () => {}, onClose: () => {} };
+    render(
+      <>
+        <ConfirmDialog
+          {...props}
+          title="Delete this post?"
+          body="Post body"
+          confirmLabel="Delete"
+        />
+        <ConfirmDialog
+          {...props}
+          title="Delete your profile?"
+          body="Profile body"
+          confirmLabel="Go"
+        />
+      </>,
+    );
+    expect(
+      screen.getByRole("alertdialog", { name: "Delete your profile?" }),
+    ).toHaveAccessibleDescription("Profile body");
+    expect(
+      screen.getByRole("alertdialog", { name: "Delete this post?" }),
+    ).toHaveAccessibleDescription("Post body");
+  });
+
   it("renders children inside the dialog", () => {
     renderDialog({ children: <input aria-label="Type DELETE" /> });
     expect(screen.getByRole("alertdialog")).toContainElement(screen.getByLabelText("Type DELETE"));

@@ -48,6 +48,7 @@ test("a member deletes their profile and can no longer sign in", async ({ page, 
   try {
     // Register with a persona: the account starts pending.
     await page.goto("/en/register");
+    await page.waitForTimeout(750); // hydration: controlled inputs reset otherwise
     await page.fill("#reg-email", email);
     await page.fill("#reg-password", PASSWORD);
     await page.fill("#reg-confirm", PASSWORD);
