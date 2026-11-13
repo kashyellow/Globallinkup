@@ -58,7 +58,7 @@ select lives_ok(
 
 -- Admins can edit their own profile --------------------------------------------
 select lives_ok(
-  $$ select public.save_persona('Admin persona', 'ID', 'Jakarta', p_whatsapp => '+628123456789') $$,
+  $$ select public.save_persona('Admin persona', 'ID', 'Jakarta', p_languages => '["en"]'::jsonb, p_whatsapp => '+628123456789') $$,
   'an admin can edit their own profile'
 );
 reset role;
