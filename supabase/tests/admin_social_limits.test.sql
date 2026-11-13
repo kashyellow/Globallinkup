@@ -56,12 +56,10 @@ select lives_ok(
   'an admin can still comment'
 );
 
--- Persona writes are member-only --------------------------------------------
-select throws_ok(
+-- Admins can edit their own profile --------------------------------------------
+select lives_ok(
   $$ select public.save_persona('Admin persona', 'ID', 'Jakarta', p_whatsapp => '+628123456789') $$,
-  '42501',
-  null,
-  'an admin cannot write a persona'
+  'an admin can edit their own profile'
 );
 reset role;
 
