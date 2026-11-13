@@ -5,6 +5,7 @@ import type { OwnProfile } from "../queries";
 import { ProfileActivity } from "./activity-panel";
 import { BioCard } from "./bio-card";
 import { ContactLocker } from "./contact-locker";
+import { DeleteProfileCard } from "./delete-profile-card";
 import { DossierHeader } from "./dossier-header";
 
 /**
@@ -35,6 +36,7 @@ export function ProfileView({ profile }: { profile: OwnProfile }) {
             <ProfileActivity dispatches={profile.dispatches} circles={profile.unveiled} />
           </Reveal>
         </div>
+        {profile.role !== "admin" ? <DeleteProfileCard /> : null}
       </div>
     </div>
   );

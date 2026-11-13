@@ -1553,6 +1553,21 @@
       "empty": "Aún no tienes conexiones. Las solicitudes aceptadas aparecerán aquí.",
       "connectedSince": "Conectado {date}",
       "loadMore": "Mostrar {count} conexiones más"
+    },
+    "delete": {
+      "title": "Zona de peligro",
+      "body": "Elimina tu perfil y todo lo asociado: tu persona, foto, publicaciones, comentarios y conexiones. Esta acción no se puede deshacer.",
+      "button": "Eliminar perfil",
+      "dialogTitle": "¿Eliminar tu perfil para siempre?",
+      "dialogBody": "Se cerrará tu sesión y tu cuenta se eliminará de inmediato. Podrás registrarte de nuevo más adelante.",
+      "typeLabel": "Escribe DELETE para confirmar",
+      "confirm": "Eliminar para siempre",
+      "working": "Eliminando…",
+      "errors": {
+        "forbidden": "Esta cuenta no se puede eliminar.",
+        "invalid": "Escribe DELETE exactamente para confirmar.",
+        "unknown": "Algo salió mal. Inténtalo de nuevo."
+      }
     }
   },
   "Resources": {

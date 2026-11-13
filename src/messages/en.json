@@ -1553,6 +1553,21 @@
       "empty": "No connections yet. Accepted requests will appear here.",
       "connectedSince": "Connected {date}",
       "loadMore": "Show {count} more connections"
+    },
+    "delete": {
+      "title": "Danger zone",
+      "body": "Delete your profile and everything tied to it: your persona, photo, posts, comments and connections. This cannot be undone.",
+      "button": "Delete profile",
+      "dialogTitle": "Delete your profile forever?",
+      "dialogBody": "You will be signed out and your account removed immediately. You can register again later.",
+      "typeLabel": "Type DELETE to confirm",
+      "confirm": "Delete forever",
+      "working": "Deleting…",
+      "errors": {
+        "forbidden": "This account cannot be deleted.",
+        "invalid": "Type DELETE exactly to confirm.",
+        "unknown": "Something went wrong. Please try again."
+      }
     }
   },
   "Resources": {
