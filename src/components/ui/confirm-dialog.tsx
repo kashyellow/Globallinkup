@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, type ReactNode } from "react";
 
 import { Spinner } from "@/components/ui/spinner";
 import { useDialogA11y } from "@/features/shared/use-dialog-a11y";
@@ -18,7 +18,9 @@ export function ConfirmDialog({
   cancelLabel,
   pendingLabel,
   pending = false,
+  confirmDisabled = false,
   tone = "danger",
+  children,
   onConfirm,
   onClose,
 }: {
@@ -29,6 +31,10 @@ export function ConfirmDialog({
   cancelLabel: string;
   pendingLabel?: string;
   pending?: boolean;
+  /** Keeps confirm off until the caller's extra check (e.g. a typed word) passes. */
+  confirmDisabled?: boolean;
+  /** Extra content between the body and the buttons, e.g. a confirmation field. */
+  children?: ReactNode;
   tone?: "danger" | "primary";
   onConfirm: () => void;
   onClose: () => void;
@@ -69,6 +75,7 @@ export function ConfirmDialog({
         >
           {body}
         </p>
+        {children}
 
         <div className="mt-space-lg flex flex-col-reverse gap-space-sm sm:flex-row sm:justify-end">
           <button
@@ -83,7 +90,7 @@ export function ConfirmDialog({
           <button
             type="button"
             onClick={onConfirm}
-            disabled={pending}
+            disabled={pending || confirmDisabled}
             className={cn(
               "inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-space-lg py-2.5 font-label-lg text-label-lg font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-70",
               tone === "danger"
