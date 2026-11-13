@@ -73,6 +73,8 @@ export async function inviteMemberAction(
     data: { locale },
   });
   if (error || !data.user) {
+    // Log the provider error (no email address) so SMTP faults are diagnosable.
+    console.error("invite failed", error?.status, error?.code, error?.message);
     const exists = error?.code === "email_exists" || error?.status === 422;
     return { ok: false, error: exists ? "emailInUse" : "sendFailed" };
   }

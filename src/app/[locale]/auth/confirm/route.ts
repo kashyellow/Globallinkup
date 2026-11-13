@@ -75,7 +75,9 @@ export async function POST(
         // 303: the browser follows a POST redirect with a GET.
         return NextResponse.redirect(new URL(`/${locale}/accept-invite`, url.origin), 303);
       }
-    } catch {
+      console.error("invite verify failed", error?.status, error?.code, error?.message);
+    } catch (e) {
+      console.error("invite confirm threw", e instanceof Error ? e.message : e);
       // Unconfigured Supabase or a bad token: fall through to expired.
     }
   }
