@@ -160,6 +160,7 @@ Each requirement has an ID (`FR-x.y`) so tests and tickets can reference it. Pri
 - **FR-3.3 (M)** Contact details are entered separately and never appear publicly without a connection.
 - **FR-3.4 (C)** Persona photo gallery (multiple photos). Deferred — see OQ-7.
 - **FR-3.5 (M)** Log out, and access password/account settings from here.
+- **FR-3.6 (M)** Delete own account from the Profile page: immediate and permanent, confirmed by typing `DELETE`. Not available to suspended members or admins. See `docs/superpowers/specs/2026-11-13-delete-profile-design.md`.
 
 ### 5.4 Discovery — "Persona" (FR-4)
 
@@ -442,6 +443,8 @@ The same rules are re-checked by RLS server-side.
 ### 7.6 Compliance (open — see OQ-11)
 
 Age gate, Terms of Service, Privacy Policy, data export/deletion, and GDPR/CCPA posture are **not** currently specified. Flagged for stakeholder decision.
+
+> **Update 2026-11-13:** self-service account deletion is built (FR-3.6). The age gate and data export remain open.
 
 ---
 

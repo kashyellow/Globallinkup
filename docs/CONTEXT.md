@@ -114,6 +114,12 @@ These are confirmed and supersede the PRD where it disagrees:
   desk) sends a Supabase invite email; the auth user exists before the persona,
   staged in `member_invites`. The invitee sets a password at `/accept-invite`,
   completes the prefilled persona and is approved on submit, skipping review.
+- **Members can delete their own account** (2026-11-13). The Profile page has a
+  "Danger zone" card; the member types `DELETE` and the account is removed
+  immediately and permanently (auth user, cascading rows, files in `avatars` and
+  `post-images`). Suspended members and admins are refused on the server, so a
+  suspended member cannot erase the reports against them. One `member.deleted`
+  audit row (id only) is written. No grace period or restore.
 - **Posts support up to six images** and one level of threaded comments. Comments
   are post engagement, not chat: no inbox, realtime delivery, mentions, or
   comment notifications. Comment deletion is admin-only; authors remove their
